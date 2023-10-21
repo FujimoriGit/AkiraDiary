@@ -1,3 +1,12 @@
+---
+name: AD1.0 pull request template
+about: Describe this issue template's purpose here.
+title: "[AD1.0] "
+labels: AD1.0
+assignees: ''
+
+---
+
 ## 関連Issue
 
 このセクションでは、このPRが関連するIssueやタスクをリンクしてください。以下のように記述します。
