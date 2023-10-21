@@ -9,4 +9,4 @@
  - [ライブラリ管理ツール](https://github.com/FujimoriGit/AkiraDiary/blob/main/wiki/tech/LibraryManagementSelection.md)
 
 ### ブランチ命名規則
- - [ブランチ命名規則](https://github.com/FujimoriGit/AkiraDiary/blob/main/wiki/rules/branchNaming.md)
+ - [ブランチ命名規則](https://github.com/FujimoriGit/AkiraDiary/blob/BR_develop-1.0/wiki/rules/branchNaming.md)
