@@ -45,6 +45,7 @@ jobs:
 
     # ビルド
     - name: Xcode build
+      working-directory: ./Macho
       run: set -o pipefail &&
         xcodebuild
         -sdk iphonesimulator
@@ -53,6 +54,7 @@ jobs:
     
     # 単体テストの実行
     - name: Xcode test
+      working-directory: ./Macho
       run: set -o pipefail &&
         xcodebuild
         -sdk iphonesimulator
