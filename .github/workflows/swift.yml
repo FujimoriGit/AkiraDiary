@@ -23,13 +23,13 @@ on:
 
 env:
 # チェックアウト
-  DEVELOPER_DIR: /Applications/Xcode.app
+  DEVELOPER_DIR: /Applications/Xcode_15.0.app
 
 jobs:
   build:
 
      # 実行環境はmacosに設定
-    runs-on: macos-latest
+    runs-on: macos-13
 
     steps:
     # チェックアウト(リポジトリからソースコードを取得)
