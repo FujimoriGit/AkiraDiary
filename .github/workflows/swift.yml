@@ -59,7 +59,7 @@ jobs:
         xcodebuild
         -sdk iphonesimulator
         -configuration Debug
-        -destination 'platform=iOS Simulator,name=iPhone 14'
+        -destination id:838DD7EC-B8E9-43D5-A866-75BA36207564
         -scheme Macho
         -skip-testing:MachoUITests
         clean test
