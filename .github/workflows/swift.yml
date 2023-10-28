@@ -1,0 +1,62 @@
+# This workflow will build a Swift project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
+
+name: Swift
+
+on:
+  push:
+    branches: 
+      - 'BR_develop**'
+      - 'BR_topic/**'
+    paths-ignore:
+      - 'doc/*'
+      - 'wiki/**'
+      - README.md
+  pull_request:
+    branches: 
+      - 'BR_develop**'
+      - 'BR_topic/**'
+    paths-ignore:
+      - 'doc/*'
+      - 'wiki/**'
+      - README.md
+
+env:
+# チェックアウト
+  DEVELOPER_DIR: /Applications/Xcode_15.0.app
+
+jobs:
+  build:
+
+     # 実行環境はmacosに設定
+    runs-on: macos-latest
+
+    steps:
+    # チェックアウト(リポジトリからソースコードを取得)
+    - uses: actions/checkout@v3
+
+    # Xcodeの一覧出力
+    - name: Show Xcode list
+      run: ls /Applications | grep 'Xcode'
+
+    # Xcodeのバージョン出力
+    - name: Show Xcode version
+      run: xcodebuild -version
+
+    # ビルド
+    - name: Xcode build
+      run: set -o pipefail &&
+        xcodebuild
+        -sdk iphonesimulator
+        -configuration Debug
+        build
+    
+    # 単体テストの実行
+    - name: Xcode test
+      run: set -o pipefail &&
+        xcodebuild
+        -sdk iphonesimulator
+        -configuration Debug
+        -destination 'platform=iOS Simulator,name=iPhone 14'
+        -skip-testing:MachoUITests
+        clean test
