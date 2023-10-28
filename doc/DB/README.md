@@ -30,3 +30,6 @@
 --- | --- | --- | ---
 タグID | UUID | プライマリーキー | -	
 タグ名 | String | - | -
+
+## ER図
+![ER図](png/akira-diary-realm-db_ER_%20figure.png)
