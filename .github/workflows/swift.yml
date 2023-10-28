@@ -23,7 +23,7 @@ on:
 
 env:
 # チェックアウト
-  DEVELOPER_DIR: /Applications/Xcode_14.2.app
+  DEVELOPER_DIR: /Applications/Xcode.app
 
 jobs:
   build:
