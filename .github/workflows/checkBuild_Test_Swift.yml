@@ -35,6 +35,12 @@ jobs:
     # チェックアウト(リポジトリからソースコードを取得)
     - uses: actions/checkout@v3
 
+    # SSHの有効化
+    - run:
+    name: Enable SSH
+    command: |
+       for ip in $(dig @8.8.8.8 github.com +short); do ssh-keyscan github.com,$ip; ssh-keyscan $ip; done 2>/dev/null >> ~/.ssh/known_hosts
+
     # Xcodeの一覧出力
     - name: Show Xcode list
       run: ls /Applications | grep 'Xcode'
