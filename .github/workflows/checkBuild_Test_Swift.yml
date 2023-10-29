@@ -75,7 +75,6 @@ jobs:
         -configuration Debug
         -resolvePackageDependencies
         -scheme Macho
-        -scmProvider system
         build |
         bundle exec xcpretty
     
