@@ -58,6 +58,13 @@ jobs:
         bundle config path vendor/bundle
         bundle install --jobs 4 --retry 3
 
+    - name: Cache Swift Packages
+      uses: actions/cache@v1
+      with:
+        path: SourcePackages
+        key: ${{ runner.os }}-spm-${{ hashFiles('*.xcodeproj/project.xcworkspace/ xcshareddata/swiftpm/Package.resolved') }}
+        restore-keys: ${{ runner.os }}-spm-
+
     # ビルド
     - name: Xcode build
       working-directory: ./Macho
@@ -66,7 +73,7 @@ jobs:
         -sdk iphonesimulator
         -configuration Debug
         -resolvePackageDependencies
-        -scheme Macho
+        -clonedSourcePackagesDirPath SourcePackages
         -scmProvider xcode
         build |
         bundle exec xcpretty
@@ -80,6 +87,6 @@ jobs:
         -configuration Debug
         -destination 'platform=iOS Simulator'
         -scheme Macho
-        -skip-testing MachoUITests
+        -skip-testing:MachoUITests
         clean test |
         bundle exec xcpretty
