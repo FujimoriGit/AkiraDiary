@@ -65,6 +65,7 @@ jobs:
         xcodebuild
         -sdk iphonesimulator
         -configuration Debug
+        -resolvePackageDependencies
         build |
         bundle exec xcpretty
     
