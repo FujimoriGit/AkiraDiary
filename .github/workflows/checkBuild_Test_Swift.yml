@@ -35,14 +35,6 @@ jobs:
     # チェックアウト(リポジトリからソースコードを取得)
     - uses: actions/checkout@v3
 
-    # SSHの有効化
-    - name: Enable SSH
-      run: |
-        for ip in $(dig @8.8.8.8 github.com +short);
-        do ssh-keyscan github.com,$ip;
-        ssh-keyscan $ip;
-        done 2>/dev/null >> ~/.ssh/known_hosts
-
     # Xcodeの一覧出力
     - name: Show Xcode list
       run: ls /Applications | grep 'Xcode'
@@ -86,7 +78,7 @@ jobs:
         xcodebuild
         -sdk iphonesimulator
         -configuration Debug
-        -destination id=838DD7EC-B8E9-43D5-A866-75BA36207564
+        -destination platform='iOS Simulator', name='iPhone 14'
         -scheme Macho
         -skip-testing MachoUITests
         clean test |
