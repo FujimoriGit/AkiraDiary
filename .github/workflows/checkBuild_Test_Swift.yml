@@ -60,13 +60,14 @@ jobs:
 
     # ビルド
     - name: Xcode build
+      working-directory: ./Macho
       run: set -o pipefail &&
         xcodebuild
-        -project ./Macho/Macho.xcodeproj
         -sdk iphonesimulator
         -configuration Debug
         -resolvePackageDependencies
         -scheme Macho
+        -scmProvider system
         build |
         bundle exec xcpretty
     
