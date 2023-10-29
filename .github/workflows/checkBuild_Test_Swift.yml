@@ -87,6 +87,8 @@ jobs:
         -configuration Debug
         -destination 'platform=iOS Simulator'
         -scheme Macho
+        -resolvePackageDependencies
+        -scmProvider xcode
         -skip-testing:MachoUITests
         clean test |
         bundle exec xcpretty
