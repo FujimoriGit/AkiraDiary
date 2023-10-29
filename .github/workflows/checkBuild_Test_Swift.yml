@@ -36,9 +36,8 @@ jobs:
     - uses: actions/checkout@v3
 
     # SSHの有効化
-    - run:
-    name: Enable SSH
-    command: |
+    - name: Enable SSH
+      run: |
         for ip in $(dig @8.8.8.8 github.com +short);
         do ssh-keyscan github.com,$ip;
         ssh-keyscan $ip;
