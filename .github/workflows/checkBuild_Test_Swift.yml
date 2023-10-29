@@ -78,7 +78,7 @@ jobs:
         xcodebuild
         -sdk iphonesimulator
         -configuration Debug
-        -destination platform='iOS Simulator', name='iPhone 14'
+        -destination 'platform=iOS Simulator,name=iPhone 14'
         -scheme Macho
         -skip-testing MachoUITests
         clean test |
