@@ -39,7 +39,10 @@ jobs:
     - run:
     name: Enable SSH
     command: |
-       for ip in $(dig @8.8.8.8 github.com +short); do ssh-keyscan github.com,$ip; ssh-keyscan $ip; done 2>/dev/null >> ~/.ssh/known_hosts
+        for ip in $(dig @8.8.8.8 github.com +short);
+        do ssh-keyscan github.com,$ip;
+        ssh-keyscan $ip;
+        done 2>/dev/null >> ~/.ssh/known_hosts
 
     # Xcodeの一覧出力
     - name: Show Xcode list
