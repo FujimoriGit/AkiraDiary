@@ -20,7 +20,7 @@
 エンティティ | 型 | 説明 | 備考
 --- | --- | --- | ---
 実施トレーニングID	| UUID | プライマリーキー | -
-実施項目 | TrainingEventEntity | 実施したトレーニン種目 | -
+実施項目 | TrainingEventEntity | 実施したトレーニング種目 | -
 目標達成有無 | enum | 目標を達成したかどうかの指標 | -
 
 ### トレーニング項目エンティティ(TrainingEventEntity)
