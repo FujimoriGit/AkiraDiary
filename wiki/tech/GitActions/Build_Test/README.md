@@ -78,13 +78,30 @@ jobs:
         bundle config path vendor/bundle
         bundle install --jobs 4 --retry 3
 
+    # SPMのライブラリのキャッシュ
+    - name: Cache Swift Packages
+      # usesで使用している"actions/cache@v2"はGit側が用意してくれているキャッシュする関数みたいなやつ
+      uses: actions/cache@v2
+      with:
+        path: SourcePackages
+        key: ${{ runner.os }}-spm-${{ hashFiles('*.xcodeproj/project.xcworkspace/ xcshareddata/swiftpm/Package.resolved') }}
+        restore-keys: ${{ runner.os }}-spm-
+
     # ビルド
     - name: Xcode build
-      working-directory: ./Macho
       run: set -o pipefail &&
         xcodebuild
+        -project ./Macho/Macho.xcodeproj
         -sdk iphonesimulator
         -configuration Debug
+        # Package.resolvedというSPMライブラリの依存関係を定義したファイルを
+        # 自動で探して依存関係の解決を行なっていれるオプション(SPM使うときいるやつ)
+        -resolvePackageDependencies
+        # SPMのライブラリのソースコードを任意のディレクトリに格納するオプション(キャッシュするために指定する)
+        -clonedSourcePackagesDirPath SourcePackages
+        # SPMライブラリのFetchにSSH認証設定が必要になることがあるため、XcodeのSSH設定を使用するようにするオプション
+        # (デフォルトではシステムのSSH設定を使用するらしいが、CI環境でSSH認証設定してないのでXcodeの設定を使用)
+        -scmProvider xcode
         build |
         bundle exec xcpretty
     
@@ -95,12 +112,18 @@ jobs:
         xcodebuild
         -sdk iphonesimulator
         -configuration Debug
-        -destination id=838DD7EC-B8E9-43D5-A866-75BA36207564
+        -destination 'platform=iOS Simulator'
         -scheme Macho
-        -skip-testing MachoUITests
+        -resolvePackageDependencies
+        -scmProvider xcode
+        -skip-testing:MachoUITests
         clean test |
         bundle exec xcpretty
 
 ```
 
-詳しくは[こちら](https://qiita.com/uhooi/items/29664ecf0254eb637951)の記事を参照する
+詳しくは[こちら](https://qiita.com/uhooi/items/29664ecf0254eb637951)の記事を参照
+
+SPMのキャッシュについては[こちら](https://zenn.dev/ty/articles/2fc8b8f8103557addad5)の記事を参照
+
+プロジェクトのビルドやテストの実行はxcodebuildコマンドを使用しており、詳しい仕様は[ドキュメント](https://developer.apple.com/library/archive/technotes/tn2339/_index.html)を参照
