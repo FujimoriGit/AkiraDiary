@@ -59,7 +59,7 @@ jobs:
         bundle install --jobs 4 --retry 3
 
     - name: Cache Swift Packages
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
         path: SourcePackages
         key: ${{ runner.os }}-spm-${{ hashFiles('*.xcodeproj/project.xcworkspace/ xcshareddata/swiftpm/Package.resolved') }}
@@ -67,9 +67,9 @@ jobs:
 
     # ビルド
     - name: Xcode build
-      working-directory: ./Macho
       run: set -o pipefail &&
         xcodebuild
+        -project ./Macho/Macho.xcodeproj
         -sdk iphonesimulator
         -configuration Debug
         -resolvePackageDependencies
