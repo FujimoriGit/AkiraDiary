@@ -7,8 +7,8 @@ TCAの仕様と、本プロジェクトでのコーディングルールにつ�
 ## TCAについて
 TCAを構成する要素一覧を以下に示す。<br>
 
-- **State** : 機能がロジックを実行し、UIをレンダリングするために必要なデータを記述するタイプ。Reducer protocolのrequired property。
-- **Action** : ユーザーアクション、通知、イベントソースなど、機能内で発生する可能性のあるすべてのアクションを表すタイプ。Reducer protocolのrequired property。
+- **State** : 機能がロジックを実行し、UIをレンダリングするために必要なデータを記述するタイプ。
+- **Action** : ユーザーアクション、通知、イベントソースなど、機能内で発生する可能性のあるすべてのアクションを表すタイプ。
 - **Reducer** : アクションが与えられた場合に、アプリの現在の状態を次の状態に進化させる方法を記述する関数。Reducerは、値を返すことによって実行できる APIリクエストなど、実行する必要があるEffectを返す責任もある。
 - **Store** : 実際に機能を駆動するランタイム。すべてのユーザーアクションをStoreに送信すると、StoreでReducerとEffectを実行できるようになり、Store内の状態の変化を観察してUIを更新できる。
 
@@ -188,45 +188,99 @@ struct CounterView: View {
 </details>
 
 ## 画面遷移
-以下サンプルコードに倣い、各Reducerクラスのextensionに記載する。
+以下の動画の連絡帳アプリを例に、画面遷移の実装方法を示す。
+
+
+※ ＋-ボタンタップで上部の数値をインクリメント/デクリメントし、<br>
+&emsp; factボタンタップで現在の数値に関する情報を[APIリクエスト](numbersapi.com)で取得し、表示している。
+
+### Reducer
+
 <details><summary>サンプルコード</summary>
 
+```swift
+
+```
+</details>
+
+### View
+
+<details><summary>サンプルコード</summary>
 
 ```swift
-// MARK: - extension (for presentation)
-
-extension ContactsFeature {
+struct ContactsView: View {
     
-    // 命名は「Destination」に統一。
-    struct Destination: Reducer {
-        
-        enum State: Equatable {
+    let store: StoreOf<ContactsFeature>
+    
+    var body: some View {
+        // Push遷移の場合、NavigationStackStoreでラップ.
+        NavigationStackStore(store.scope(state: \.path, action: { .path($0) })) {
+            WithViewStore(store, observe: \.contacts) { viewStore in
+                List {
+                    ForEach(viewStore.state) { contact in
+                        NavigationLink(state: ContactDetailFeature.State(contact: contact)) {
+                            HStack {
+                                Text(contact.name)
+                                Spacer()
+                                Button {
+                                    viewStore.send(.deleteButtonTapped(id: contact.id))
+                                } label: {
+                                    Image(systemName: "trash")
+                                        .foregroundColor(.red)
+                                }
+                            }
+                        }
+                        .buttonStyle(.borderless)
+                    }
+                }
+                .navigationTitle("Contacts")
+                .toolbar {
+                    ToolbarItem {
+                        Button {
+                            viewStore.send(.addButtonTapped)
+                        } label: {
+                            Image(systemName: "plus")
+                        }
+                    }
+                }
+            }
+        } destination: { store in
             
-            case addContact(AddContactFeature.State)
-            case alert(AlertState<ContactsFeature.Action.Alert>)
-            case top
+            ContactDetailView(store: store)
         }
-        
-        enum Action: Equatable {
+        // Modal遷移の場合、sheetのmodifierを使用.
+        .sheet(
+            store: store.scope(state: \.$destination, action: { .destination($0) }),
+            state: /ContactsFeature.Destination.State.addContact,
+            action: ContactsFeature.Destination.Action.addContact
+        ) { addContactStore in
             
-            case addContact(AddContactFeature.Action)
-            case alert(ContactsFeature.Action.Alert)
-            case top
+            NavigationStack {
+                // 次画面のインスタンス生成
+                AddContactView(store: addContactStore)
+            }
         }
-        
-        var body: some ReducerOf<Self> {
-            
-            Scope(state: /State.addContact, action: /Action.addContact) {
+        // Alert表示の場合、alertのmodifierを使用.
+        .alert(
+            store: store.scope(state: \.$destination, action: { .destination($0) }),
+            state: /ContactsFeature.Destination.State.alert,
+            action: ContactsFeature.Destination.Action.alert
+        )
+    }
+}
 
-                // 遷移
-                AddContactFeature()
-            }
-            
-            Scope(state: /State.top, action: /Action.top) {
-                
-                
-            }
-        }
+struct ContactsView_Previews: PreviewProvider {
+    
+    static var previews: some View {
+        ContactsView(
+            store: Store(initialState: ContactsFeature.State(
+                contacts: [Contact(id: UUID(), name: "Blob"),
+                           Contact(id: UUID(), name: "Blob Jr"),
+                           Contact(id: UUID(), name: "Blob Sr"),])) {
+                               
+                               ContactsFeature()
+                           }
+        )
     }
 }
 ```
@@ -237,10 +291,10 @@ extension ContactsFeature {
 <br>
 
 > Macho<br>
-&emsp;└ AppControllers<br>
-&emsp;&emsp; └ フォルダ（画面名）<br>
-&emsp;&emsp;&emsp;&emsp; ├ [画面名]Feature.swift<br>
-&emsp;&emsp;&emsp;&emsp; └ [画面名]View.swift
+&emsp;┗ AppControllers<br>
+&emsp;&emsp; ┗ フォルダ（画面名）<br>
+&emsp;&emsp;&emsp;&emsp; ┣ [画面名]Feature.swift<br>
+&emsp;&emsp;&emsp;&emsp; ┗ [画面名]View.swift
 
 ## テストについて
 新規機能を実装する際に、テストの実装を義務づける。<br>
