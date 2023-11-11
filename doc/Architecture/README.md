@@ -12,11 +12,16 @@ TCAを構成する要素一覧を以下に示す。<br>
 - **Reducer** : アクションが与えられた場合に、アプリの現在の状態を次の状態に進化させる方法を記述する関数。Reducerは、値を返すことによって実行できる APIリクエストなど、実行する必要があるEffectを返す責任もある。
 - **Store** : 実際に機能を駆動するランタイム。すべてのユーザーアクションをStoreに送信すると、StoreでReducerとEffectを実行できるようになり、Store内の状態の変化を観察してUIを更新できる。
 
-以下の動画のカウンターアプリを例に、ビジネスロジック、Viewの説明を示す。
+## TCA実装ガイド
+
+以下の動画のカウンターアプリを例に、Reducer、Viewの実装方法を示す。
 
 https://github.com/FujimoriGit/AkiraDiary/assets/30285609/da4335a2-d9da-4842-a866-9ee6004f6b39
 
-### ビジネスロジック
+※ ＋-ボタンタップで上部の数値をインクリメント/デクリメントし、<br>
+&emsp; factボタンタップで現在の数値に関する情報を[APIリクエスト](numbersapi.com)で取得し、表示している。
+
+### Reducer
 
 <details><summary>サンプルコード</summary>
 
@@ -25,12 +30,11 @@ https://github.com/FujimoriGit/AkiraDiary/assets/30285609/da4335a2-d9da-4842-a86
 import ComposableArchitecture
 import Foundation
 
-
-
 struct CounterFeature: Reducer {
     
-    // MARK: State
-    
+    // MARK: - State
+
+    // 画面の状態を表す. ViewModel的な役割.
     struct State: Equatable {
         
         var count = 0
@@ -40,6 +44,8 @@ struct CounterFeature: Reducer {
     
     // MARK: - Action
     
+    // 画面で発生する可能性のあるすべてのアクションを表す.
+    // 各アクションは、イベント名を記載すること.
     enum Action: Equatable {
         
         /// インクリメントボタンタップ時
@@ -106,9 +112,78 @@ struct CounterFeature: Reducer {
 
 <details><summary>サンプルコード</summary>
 
-
 ```swift
+import ComposableArchitecture
+import SwiftUI
 
+struct CounterView: View {
+    
+    // MARK: - Store
+    
+    let store: StoreOf<CounterFeature>
+    
+    // MARK: - body
+    
+    var body: some View {
+        // Stateを監視するため、WithViewStoreでラップする.
+        WithViewStore(store, observe: { $0 }) { viewStore in
+            VStack {
+                Text("\(viewStore.count)")
+                    .font(.largeTitle)
+                    .padding()
+                    .background(Color.black.opacity(0.1))
+                    .cornerRadius(10)
+                HStack {
+                    Button("-") {
+                        // アクションをsend
+                        viewStore.send(.decrementButtonTapped)
+                    }
+                    .font(.largeTitle)
+                    .padding()
+                    .background(Color.black.opacity(0.1))
+                    .cornerRadius(10)
+                    
+                    Button("+") {
+                        // アクションをsend
+                        viewStore.send(.incrementButtonTapped)
+                    }
+                    .font(.largeTitle)
+                    .padding()
+                    .background(Color.black.opacity(0.1))
+                    .cornerRadius(10)
+                    
+                    Button("Fact") {
+                        // アクションをsend
+                        viewStore.send(.factButtonTapped)
+                    }
+                    .font(.largeTitle)
+                    .padding()
+                    .background(Color.black.opacity(0.1))
+                    .cornerRadius(10)
+                    
+                    if viewStore.isLoading {
+                        
+                      ProgressView()
+                    }
+                    else if let fact = viewStore.fact {
+                        
+                      Text(fact)
+                        .font(.largeTitle)
+                        .multilineTextAlignment(.center)
+                        .padding()
+                    }
+                }
+            }
+        }
+    }
+}
+
+#Preview {
+    CounterView(store: Store(initialState: CounterFeature.State()) {
+        
+        CounterFeature()
+    })
+}
 ```
 </details>
 
