@@ -12,8 +12,11 @@ TCAを構成する要素一覧を以下に示す。<br>
 - **Reducer** : アクションが与えられた場合に、アプリの現在の状態を次の状態に進化させる方法を記述する関数。Reducerは、値を返すことによって実行できる APIリクエストなど、実行する必要があるEffectを返す責任もある。
 - **Store** : 実際に機能を駆動するランタイム。すべてのユーザーアクションをStoreに送信すると、StoreでReducerとEffectを実行できるようになり、Store内の状態の変化を観察してUIを更新できる。
 
-## ビジネスロジック
+以下の動画のカウンターアプリを例に、ビジネスロジック、Viewの説明を示す。
 
+https://github.com/FujimoriGit/AkiraDiary/assets/30285609/da4335a2-d9da-4842-a866-9ee6004f6b39
+
+### ビジネスロジック
 
 <details><summary>サンプルコード</summary>
 
@@ -99,7 +102,7 @@ struct CounterFeature: Reducer {
 ```
 </details>
 
-## View
+### View
 
 <details><summary>サンプルコード</summary>
 
