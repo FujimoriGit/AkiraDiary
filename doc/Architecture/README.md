@@ -12,14 +12,24 @@ TCAを構成する要素一覧を以下に示す。<br>
 - **Reducer** : アクションが与えられた場合に、アプリの現在の状態を次の状態に進化させる方法を記述する関数。Reducerは、値を返すことによって実行できる APIリクエストなど、実行する必要があるEffectを返す責任もある。
 - **Store** : 実際に機能を駆動するランタイム。すべてのユーザーアクションをStoreに送信すると、StoreでReducerとEffectを実行できるようになり、Store内の状態の変化を観察してUIを更新できる。
 
-## TCA実装ガイド
+## フォルダ構成
+フォルダ構成は以下にようにする。
+<br>
 
-以下の動画のカウンターアプリを例に、Reducer、Viewの実装方法を示す。
+> Macho<br>
+&emsp;┗ AppControllers（フォルダ）<br>
+&emsp;&emsp; ┗ [画面名]（フォルダ）<br>
+&emsp;&emsp;&emsp;&emsp; ┣ [画面名]Feature.swift<br>
+&emsp;&emsp;&emsp;&emsp; ┗ [画面名]View.swift
+
+## ビジネスロジック
+
+以下の動画のカウンターアプリを例に、ビジネスロジックの実装方法を示す。
 
 https://github.com/FujimoriGit/AkiraDiary/assets/30285609/da4335a2-d9da-4842-a866-9ee6004f6b39
 
 ※ ＋-ボタンタップで上部の数値をインクリメント/デクリメントし、<br>
-&emsp; factボタンタップで現在の数値に関する情報を[APIリクエスト](numbersapi.com)で取得し、表示している。
+&emsp; factボタンタップで現在の数値に関する情報を[APIリクエスト](http://www.numbersapi.com)で取得し、表示している。
 
 ### Reducer
 
@@ -176,13 +186,6 @@ struct CounterView: View {
             }
         }
     }
-}
-
-#Preview {
-    CounterView(store: Store(initialState: CounterFeature.State()) {
-        
-        CounterFeature()
-    })
 }
 ```
 </details>
@@ -392,17 +395,11 @@ struct ContactsView: View {
         )
     }
 }
+```
 </details>
 
-## フォルダ構成
-フォルダ構成は以下にようにする。
-<br>
-
-> Macho<br>
-&emsp;┗ AppControllers（フォルダ）<br>
-&emsp;&emsp; ┗ [画面名]（フォルダ）<br>
-&emsp;&emsp;&emsp;&emsp; ┣ [画面名]Feature.swift<br>
-&emsp;&emsp;&emsp;&emsp; ┗ [画面名]View.swift
+画面遷移について、詳細は以下を参照。<br>
+[初めてのプレゼンテーション](https://pointfreeco.github.io/swift-composable-architecture/main/tutorials/composablearchitecture/02-01-yourfirstpresentation)
 
 ## テストについて
 新規機能を実装する際に、テストの実装を義務づける。<br>
