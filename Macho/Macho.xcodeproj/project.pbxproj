@@ -7,9 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D9B7FCCF2B08CA7A00932D32 /* CounterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B7FCCE2B08CA7A00932D32 /* CounterView.swift */; };
 		D9D72B882AECF352007668FA /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = D9D72B872AECF352007668FA /* ComposableArchitecture */; };
 		D9D72B8B2AECF417007668FA /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = D9D72B8A2AECF417007668FA /* Realm */; };
 		D9D72B8D2AECF417007668FA /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D9D72B8C2AECF417007668FA /* RealmSwift */; };
+		D9D72B902AED0F9A007668FA /* CounterFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D72B8F2AED0F9A007668FA /* CounterFeature.swift */; };
+		D9D72B932AED2E06007668FA /* CounterFeatureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D72B922AED2E06007668FA /* CounterFeatureTests.swift */; };
+		D9D72B952AED3766007668FA /* NumberFactClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D72B942AED3766007668FA /* NumberFactClient.swift */; };
+		D9D72B972AF5D194007668FA /* ContactsFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D72B962AF5D194007668FA /* ContactsFeature.swift */; };
+		D9D72B9A2AF5D57D007668FA /* ContactsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D72B992AF5D57D007668FA /* ContactsView.swift */; };
+		D9D72B9C2AF5D6ED007668FA /* AddContactFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D72B9B2AF5D6ED007668FA /* AddContactFeature.swift */; };
+		D9D72B9E2AF5D7D0007668FA /* AddContactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D72B9D2AF5D7D0007668FA /* AddContactView.swift */; };
+		D9D72BA02AF6239B007668FA /* ContactsFeatureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D72B9F2AF6239B007668FA /* ContactsFeatureTests.swift */; };
+		D9D72BA22AFF23ED007668FA /* ContactDetailFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D72BA12AFF23EC007668FA /* ContactDetailFeature.swift */; };
+		D9D72BA42AFF2482007668FA /* ContactDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D72BA32AFF2482007668FA /* ContactDetailView.swift */; };
 		D9F160F12AE39EE40061307C /* MachoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F160F02AE39EE40061307C /* MachoApp.swift */; };
 		D9F160F32AE39EE40061307C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F160F22AE39EE40061307C /* ContentView.swift */; };
 		D9F160F52AE39EE60061307C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9F160F42AE39EE60061307C /* Assets.xcassets */; };
@@ -37,6 +48,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D9B7FCCE2B08CA7A00932D32 /* CounterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterView.swift; sourceTree = "<group>"; };
+		D9D72B8F2AED0F9A007668FA /* CounterFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterFeature.swift; sourceTree = "<group>"; };
+		D9D72B912AED1A14007668FA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		D9D72B922AED2E06007668FA /* CounterFeatureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterFeatureTests.swift; sourceTree = "<group>"; };
+		D9D72B942AED3766007668FA /* NumberFactClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberFactClient.swift; sourceTree = "<group>"; };
+		D9D72B962AF5D194007668FA /* ContactsFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsFeature.swift; sourceTree = "<group>"; };
+		D9D72B992AF5D57D007668FA /* ContactsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsView.swift; sourceTree = "<group>"; };
+		D9D72B9B2AF5D6ED007668FA /* AddContactFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContactFeature.swift; sourceTree = "<group>"; };
+		D9D72B9D2AF5D7D0007668FA /* AddContactView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContactView.swift; sourceTree = "<group>"; };
+		D9D72B9F2AF6239B007668FA /* ContactsFeatureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsFeatureTests.swift; sourceTree = "<group>"; };
+		D9D72BA12AFF23EC007668FA /* ContactDetailFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactDetailFeature.swift; sourceTree = "<group>"; };
+		D9D72BA32AFF2482007668FA /* ContactDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactDetailView.swift; sourceTree = "<group>"; };
 		D9F160ED2AE39EE40061307C /* Macho.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Macho.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9F160F02AE39EE40061307C /* MachoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachoApp.swift; sourceTree = "<group>"; };
 		D9F160F22AE39EE40061307C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -77,6 +100,79 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D9B7FCD02B08CAB500932D32 /* Counter */ = {
+			isa = PBXGroup;
+			children = (
+				D9D72B8F2AED0F9A007668FA /* CounterFeature.swift */,
+				D9B7FCCE2B08CA7A00932D32 /* CounterView.swift */,
+			);
+			path = Counter;
+			sourceTree = "<group>";
+		};
+		D9B7FCD12B08CAD700932D32 /* Contacts */ = {
+			isa = PBXGroup;
+			children = (
+				D9D72B962AF5D194007668FA /* ContactsFeature.swift */,
+				D9D72B992AF5D57D007668FA /* ContactsView.swift */,
+				D9B7FCD32B08CB3900932D32 /* AddContact */,
+				D9B7FCD22B08CAE900932D32 /* ContactDetail */,
+			);
+			path = Contacts;
+			sourceTree = "<group>";
+		};
+		D9B7FCD22B08CAE900932D32 /* ContactDetail */ = {
+			isa = PBXGroup;
+			children = (
+				D9D72BA12AFF23EC007668FA /* ContactDetailFeature.swift */,
+				D9D72BA32AFF2482007668FA /* ContactDetailView.swift */,
+			);
+			path = ContactDetail;
+			sourceTree = "<group>";
+		};
+		D9B7FCD32B08CB3900932D32 /* AddContact */ = {
+			isa = PBXGroup;
+			children = (
+				D9D72B9B2AF5D6ED007668FA /* AddContactFeature.swift */,
+				D9D72B9D2AF5D7D0007668FA /* AddContactView.swift */,
+			);
+			path = AddContact;
+			sourceTree = "<group>";
+		};
+		D9B7FCD42B08CB8B00932D32 /* NumberFactClient */ = {
+			isa = PBXGroup;
+			children = (
+				D9D72B942AED3766007668FA /* NumberFactClient.swift */,
+			);
+			path = NumberFactClient;
+			sourceTree = "<group>";
+		};
+		D9B7FCD62B08CBB200932D32 /* TCASample */ = {
+			isa = PBXGroup;
+			children = (
+				D9D72B922AED2E06007668FA /* CounterFeatureTests.swift */,
+				D9D72B9F2AF6239B007668FA /* ContactsFeatureTests.swift */,
+			);
+			path = TCASample;
+			sourceTree = "<group>";
+		};
+		D9D72B8E2AED0F74007668FA /* TCASample */ = {
+			isa = PBXGroup;
+			children = (
+				D9B7FCD42B08CB8B00932D32 /* NumberFactClient */,
+				D9B7FCD12B08CAD700932D32 /* Contacts */,
+				D9B7FCD02B08CAB500932D32 /* Counter */,
+				D9D72B982AF5D568007668FA /* View */,
+			);
+			path = TCASample;
+			sourceTree = "<group>";
+		};
+		D9D72B982AF5D568007668FA /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 		D9F160E42AE39EE40061307C = {
 			isa = PBXGroup;
 			children = (
@@ -100,6 +196,8 @@
 		D9F160EF2AE39EE40061307C /* Macho */ = {
 			isa = PBXGroup;
 			children = (
+				D9D72B912AED1A14007668FA /* Info.plist */,
+				D9D72B8E2AED0F74007668FA /* TCASample */,
 				D9F160F02AE39EE40061307C /* MachoApp.swift */,
 				D9F160F22AE39EE40061307C /* ContentView.swift */,
 				D9F160F42AE39EE60061307C /* Assets.xcassets */,
@@ -119,6 +217,7 @@
 		D9F161002AE39EE60061307C /* MachoTests */ = {
 			isa = PBXGroup;
 			children = (
+				D9B7FCD62B08CBB200932D32 /* TCASample */,
 				D9F161012AE39EE60061307C /* MachoTests.swift */,
 			);
 			path = MachoTests;
@@ -272,8 +371,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D9D72B902AED0F9A007668FA /* CounterFeature.swift in Sources */,
 				D9F160F32AE39EE40061307C /* ContentView.swift in Sources */,
 				D9F160F12AE39EE40061307C /* MachoApp.swift in Sources */,
+				D9D72B9A2AF5D57D007668FA /* ContactsView.swift in Sources */,
+				D9D72BA42AFF2482007668FA /* ContactDetailView.swift in Sources */,
+				D9D72BA22AFF23ED007668FA /* ContactDetailFeature.swift in Sources */,
+				D9B7FCCF2B08CA7A00932D32 /* CounterView.swift in Sources */,
+				D9D72B952AED3766007668FA /* NumberFactClient.swift in Sources */,
+				D9D72B972AF5D194007668FA /* ContactsFeature.swift in Sources */,
+				D9D72B9C2AF5D6ED007668FA /* AddContactFeature.swift in Sources */,
+				D9D72B9E2AF5D7D0007668FA /* AddContactView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -282,6 +390,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				D9F161022AE39EE60061307C /* MachoTests.swift in Sources */,
+				D9D72BA02AF6239B007668FA /* ContactsFeatureTests.swift in Sources */,
+				D9D72B932AED2E06007668FA /* CounterFeatureTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -440,6 +550,7 @@
 				DEVELOPMENT_TEAM = 676WN4U5D4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Macho/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -469,6 +580,7 @@
 				DEVELOPMENT_TEAM = 676WN4U5D4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Macho/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
