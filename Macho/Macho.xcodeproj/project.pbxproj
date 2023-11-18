@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BC65DA9B2AF5DE570073444D /* DiarySearchTagEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DA9A2AF5DE570073444D /* DiarySearchTagEntity.swift */; };
+		BC65DA9D2AF5DEEB0073444D /* BaseRealmEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DA9C2AF5DEEB0073444D /* BaseRealmEntity.swift */; };
+		BC65DA9F2AF5E0B70073444D /* RealmAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DA9E2AF5E0B70073444D /* RealmAccessor.swift */; };
+		BCDAA1F92B084D1D00C35EEE /* RealmObserverExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCDAA1F82B084D1D00C35EEE /* RealmObserverExecutor.swift */; };
 		D9D72B882AECF352007668FA /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = D9D72B872AECF352007668FA /* ComposableArchitecture */; };
 		D9D72B8B2AECF417007668FA /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = D9D72B8A2AECF417007668FA /* Realm */; };
 		D9D72B8D2AECF417007668FA /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D9D72B8C2AECF417007668FA /* RealmSwift */; };
@@ -37,6 +41,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		BC65DA9A2AF5DE570073444D /* DiarySearchTagEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiarySearchTagEntity.swift; sourceTree = "<group>"; };
+		BC65DA9C2AF5DEEB0073444D /* BaseRealmEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BaseRealmEntity.swift; path = ../../../../../../../../Downloads/AppModels/Realm/Entities/BaseRealmEntity.swift; sourceTree = "<group>"; };
+		BC65DA9E2AF5E0B70073444D /* RealmAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmAccessor.swift; sourceTree = "<group>"; };
+		BCDAA1F82B084D1D00C35EEE /* RealmObserverExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmObserverExecutor.swift; sourceTree = "<group>"; };
 		D9F160ED2AE39EE40061307C /* Macho.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Macho.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9F160F02AE39EE40061307C /* MachoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachoApp.swift; sourceTree = "<group>"; };
 		D9F160F22AE39EE40061307C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -77,6 +85,33 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BC65DA952AF5DE230073444D /* AppModels */ = {
+			isa = PBXGroup;
+			children = (
+				BC65DA962AF5DE2C0073444D /* Realm */,
+			);
+			path = AppModels;
+			sourceTree = "<group>";
+		};
+		BC65DA962AF5DE2C0073444D /* Realm */ = {
+			isa = PBXGroup;
+			children = (
+				BC65DA9E2AF5E0B70073444D /* RealmAccessor.swift */,
+				BCDAA1F82B084D1D00C35EEE /* RealmObserverExecutor.swift */,
+				BC65DA972AF5DE330073444D /* Entities */,
+			);
+			path = Realm;
+			sourceTree = "<group>";
+		};
+		BC65DA972AF5DE330073444D /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				BC65DA9A2AF5DE570073444D /* DiarySearchTagEntity.swift */,
+				BC65DA9C2AF5DEEB0073444D /* BaseRealmEntity.swift */,
+			);
+			path = Entities;
+			sourceTree = "<group>";
+		};
 		D9F160E42AE39EE40061307C = {
 			isa = PBXGroup;
 			children = (
@@ -102,6 +137,7 @@
 			children = (
 				D9F160F02AE39EE40061307C /* MachoApp.swift */,
 				D9F160F22AE39EE40061307C /* ContentView.swift */,
+				BC65DA952AF5DE230073444D /* AppModels */,
 				D9F160F42AE39EE60061307C /* Assets.xcassets */,
 				D9F160F62AE39EE60061307C /* Preview Content */,
 			);
@@ -273,7 +309,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				D9F160F32AE39EE40061307C /* ContentView.swift in Sources */,
+				BC65DA9D2AF5DEEB0073444D /* BaseRealmEntity.swift in Sources */,
+				BCDAA1F92B084D1D00C35EEE /* RealmObserverExecutor.swift in Sources */,
 				D9F160F12AE39EE40061307C /* MachoApp.swift in Sources */,
+				BC65DA9F2AF5E0B70073444D /* RealmAccessor.swift in Sources */,
+				BC65DA9B2AF5DE570073444D /* DiarySearchTagEntity.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
