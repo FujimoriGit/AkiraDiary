@@ -190,9 +190,13 @@ struct CounterView: View {
 ```
 </details>
 
+ビジネスロジックについて、詳細は以下を参照。<br>
+[初めての機能](https://pointfreeco.github.io/swift-composable-architecture/main/tutorials/composablearchitecture/01-01-yourfirstfeature)
+
 ## 画面遷移
 以下の動画の連絡帳アプリを例に、画面遷移の実装方法を示す。
 
+https://github.com/FujimoriGit/AkiraDiary/assets/30285609/5de370f7-f29c-45ff-90c5-086c8c4e6683
 
 ### Reducer（遷移元）
 
