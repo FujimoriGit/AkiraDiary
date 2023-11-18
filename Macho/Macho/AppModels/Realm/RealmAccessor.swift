@@ -52,9 +52,9 @@ struct RealmAccessor {
     /// RealmDBに保存しているデータの削除
     /// - Parameter records: 削除したいレコードの配列
     /// - Returns: 削除に成功した場合はtrue、失敗した場合はfalseを返す
-    func delete<T>(records: [T]) async -> Bool where T: BaseRealmEntity {
+    func delete<T>(type: T.Type, where filterHandler: ((Query<T.RealmObject>) -> Query<Bool>)) async -> Bool where T: BaseRealmEntity {
         
-        return await self.realm.delete(records: records)
+        return await self.realm.delete(type: type, where: filterHandler)
     }
     
     /// RealmDBに保存しているすべてのデータを削除
@@ -141,12 +141,12 @@ fileprivate actor RealmActor {
     
     /// RealmDBに保存しているデータを非同期で削除
     /// - Parameter records: 削除したいレコードの配列
-    func delete<T>(records: [T]) async -> Bool where T: BaseRealmEntity {
+    func delete<T>(type: T.Type, where filterHandler: ((Query<T.RealmObject>) -> Query<Bool>)) async -> Bool where T: BaseRealmEntity {
         
-        let realmRecords = records.map { $0.toRealmObject() }
+        guard let targetRecords = realm?.objects(T.RealmObject.self).where(filterHandler) else { return false }
         return await executeAsyncWrite { [unowned self] in
             
-            realmRecords.forEach { self.realm?.delete($0) }
+            Array(targetRecords).forEach { self.realm?.delete($0) }
         }
     }
     
