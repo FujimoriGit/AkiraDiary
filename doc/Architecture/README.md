@@ -191,19 +191,143 @@ struct CounterView: View {
 以下の動画の連絡帳アプリを例に、画面遷移の実装方法を示す。
 
 
-※ ＋-ボタンタップで上部の数値をインクリメント/デクリメントし、<br>
-&emsp; factボタンタップで現在の数値に関する情報を[APIリクエスト](numbersapi.com)で取得し、表示している。
-
-### Reducer
+### Reducer（遷移元）
 
 <details><summary>サンプルコード</summary>
 
 ```swift
+import ComposableArchitecture
+import Foundation
 
+struct Contact: Equatable, Identifiable {
+    
+    let id: UUID
+    var name: String
+}
+
+struct ContactsFeature: Reducer {
+    
+    // MARK - State
+
+    struct State: Equatable {
+        
+        var contacts: IdentifiedArrayOf<Contact> = []
+        // modal(present)にて遷移を行う際に使用するプロパティラッパー @PresentationState
+        // presentのため、双方向バインディングを行える仕組みになっている.
+        // nilは子ビューが表示されないことを表し、nil以外の場合は表示されることを表します.
+        @PresentationState var destination: Destination.State?
+        var path = StackState<ContactDetailFeature.State>()
+    }
+    
+    // MARK - Action
+
+    enum Action: Equatable {
+        
+        case addButtonTapped
+        case deleteButtonTapped(id: Contact.ID)
+        case destination(PresentationAction<Destination.Action>)
+        case path(StackAction<ContactDetailFeature.State, ContactDetailFeature.Action>)
+        
+        enum Alert: Equatable {
+            
+            case confirmDeletion(id: Contact.ID)
+        }
+    }
+    
+    @Dependency(\.uuid) var uuid
+    
+    var body: some ReducerOf<Self> {
+        
+        Reduce { state, action in
+            
+            switch action {
+                
+            case .addButtonTapped:
+                // 遷移時の子ビューにcontactを注入
+                state.destination = .addContact(
+                    AddContactFeature.State(
+                        contact: Contact(id: self.uuid(), name: "")
+                    )
+                )
+                return .none
+                
+            case let .destination(.presented(.addContact(.delegate(.saveContact(contact))))):
+                state.contacts.append(contact)
+                return .none
+                
+            case let .destination(.presented(.alert(.confirmDeletion(id: id)))):
+                state.contacts.remove(id: id)
+                return .none
+                
+            case let .deleteButtonTapped(id: id):
+                // alert表示要求
+                state.destination = .alert(.deleteConfirmation(id: id))
+                return .none
+                
+            case let .path(.element(id: id, action: .delegate(.confirmDeletion))):
+                guard let detailState = state.path[id: id]
+                else { return .none }
+                state.contacts.remove(id: detailState.contact.id)
+                return .none
+            }
+        }
+        // Modal遷移を実装する場合、ifLet関数を使用し、Destinationから遷移を要求する
+        .ifLet(\.$destination, action: /Action.destination) {
+            
+            Destination()
+        }
+        // Push遷移を実装する場合forEach関数を使用し、直接遷移を実施する
+        .forEach(\.path, action: /Action.path) {
+            
+            // 遷移先画面のReducerを生成する
+            ContactDetailFeature()
+        }
+    }
+}
+
+// Destinationの実装は、extensionブロックで行ってください.
+extension ContactsFeature {
+    
+    // Reducer（ContactsFeature）内にネストされたDestinationという名前の新しいReducerを定義します.
+    // このReducerは、プレゼンテーションロジックを保持します.
+    struct Destination: Reducer {
+        
+        // MARK - State
+
+        enum State: Equatable {
+            
+            case addContact(AddContactFeature.State)
+            case alert(AlertState<ContactsFeature.Action.Alert>)
+        }
+        
+        // MARK - Action
+
+        enum Action: Equatable {
+            
+            case addContact(AddContactFeature.Action)
+            case alert(ContactsFeature.Action.Alert)
+        }
+
+        // MARK - body
+
+        var body: some ReducerOf<Self> {
+            
+            // 遷移する子ビューをScopeを使用して定義する.
+            // https://pointfreeco.github.io/swift-composable-architecture/main/documentation/composablearchitecture/scope/
+            // state: 親ステート内の子ステートを識別する書き込み可能なキーパス
+            // action: 親アクション内の子アクションを識別するケースパス
+            Scope(state: /State.addContact, action: /Action.addContact) {
+                
+                // 子ビューで実行するReducer 
+                AddContactFeature()
+            }
+        }
+    }
+}
 ```
 </details>
 
-### View
+### View（遷移元）
 
 <details><summary>サンプルコード</summary>
 
@@ -256,7 +380,7 @@ struct ContactsView: View {
         ) { addContactStore in
             
             NavigationStack {
-                // 次画面のインスタンス生成
+                // 遷移先Viewのインスタンス生成.
                 AddContactView(store: addContactStore)
             }
         }
@@ -268,22 +392,6 @@ struct ContactsView: View {
         )
     }
 }
-
-struct ContactsView_Previews: PreviewProvider {
-    
-    static var previews: some View {
-        ContactsView(
-            store: Store(initialState: ContactsFeature.State(
-                contacts: [Contact(id: UUID(), name: "Blob"),
-                           Contact(id: UUID(), name: "Blob Jr"),
-                           Contact(id: UUID(), name: "Blob Sr"),])) {
-                               
-                               ContactsFeature()
-                           }
-        )
-    }
-}
-```
 </details>
 
 ## フォルダ構成
@@ -291,8 +399,8 @@ struct ContactsView_Previews: PreviewProvider {
 <br>
 
 > Macho<br>
-&emsp;┗ AppControllers<br>
-&emsp;&emsp; ┗ フォルダ（画面名）<br>
+&emsp;┗ AppControllers（フォルダ）<br>
+&emsp;&emsp; ┗ [画面名]（フォルダ）<br>
 &emsp;&emsp;&emsp;&emsp; ┣ [画面名]Feature.swift<br>
 &emsp;&emsp;&emsp;&emsp; ┗ [画面名]View.swift
 
