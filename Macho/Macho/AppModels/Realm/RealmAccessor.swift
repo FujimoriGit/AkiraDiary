@@ -24,9 +24,12 @@ struct RealmAccessor {
     ///   - type: 取得したいデータの型
     ///   - filterHandler:  Realm Queryで取得したいデータを指定する
     /// - Returns: 引数で指定した条件にマッチしたEntityの配列を返す
-    func read<T>(type: T.Type, where filterHandler: ((Query<T.RealmObject>) -> Query<Bool>)? = nil) async -> [T] where T: BaseRealmEntity {
+    func read<T>(type: T.Type, where filterHandler: ((T) -> Bool)? = nil) async -> [T] where T: BaseRealmEntity {
         
-        return await self.realm.read(type: type, where: filterHandler)
+        let result = await self.realm.read(type: type)
+        guard let filterHandler = filterHandler else { return result }
+        
+        return result.filter(filterHandler)
     }
     
     /// RealmDBにデータを保存する
@@ -52,7 +55,7 @@ struct RealmAccessor {
     /// RealmDBに保存しているデータの削除
     /// - Parameter records: 削除したいレコードの配列
     /// - Returns: 削除に成功した場合はtrue、失敗した場合はfalseを返す
-    func delete<T>(type: T.Type, where filterHandler: ((Query<T.RealmObject>) -> Query<Bool>)) async -> Bool where T: BaseRealmEntity {
+    func delete<T>(type: T.Type, where filterHandler: @escaping (T) -> Bool) async -> Bool where T: BaseRealmEntity {
         
         return await self.realm.delete(type: type, where: filterHandler)
     }
@@ -103,15 +106,11 @@ fileprivate actor RealmActor {
     
     /// 任意のデータをRealmDBから取得する
     ///   - type: 取得したいデータの型
-    ///   - filterHandler:  Realm Queryで取得したいデータを指定する
-    /// - Returns: 引数で指定した条件にマッチしたEntityの配列を返す
-    func read<T>(type: T.Type, where filterHandler: ((Query<T.RealmObject>) -> Query<Bool>)? = nil) -> [T] where T: BaseRealmEntity {
+    /// - Returns: 引数で指定したデータ型のレコード配列を返す
+    func read<T>(type: T.Type) -> [T] where T: BaseRealmEntity {
         
         guard let result = realm?.objects(T.RealmObject.self) else { return [] }
-        guard let filterHandler = filterHandler else { return toUnManagedObject(result) }
-        
-        let filterResult = result.where(filterHandler)
-        return toUnManagedObject(filterResult)
+        return toUnManagedObject(result)
     }
     
     /// RealmDBにデータを保存する
@@ -141,12 +140,13 @@ fileprivate actor RealmActor {
     
     /// RealmDBに保存しているデータを非同期で削除
     /// - Parameter records: 削除したいレコードの配列
-    func delete<T>(type: T.Type, where filterHandler: ((Query<T.RealmObject>) -> Query<Bool>)) async -> Bool where T: BaseRealmEntity {
+    func delete<T>(type: T.Type, where filterHandler: @escaping (T) -> Bool) async -> Bool where T: BaseRealmEntity {
         
-        guard let targetRecords = realm?.objects(T.RealmObject.self).where(filterHandler) else { return false }
+        guard let targetRecords = realm?.objects(T.RealmObject.self).filter({ filterHandler(T(realmObject: $0)) }) else { return false }
+       
         return await executeAsyncWrite { [unowned self] in
             
-            Array(targetRecords).forEach { self.realm?.delete($0) }
+            targetRecords.forEach { self.realm?.delete($0) }
         }
     }
     
