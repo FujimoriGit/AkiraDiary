@@ -3,7 +3,7 @@
 ## GitHub Actionsとは
 定義したジョブを任意で設定した起動契機で順次実行してくれるCI/CDツール。
 実行環境はGitHubが提供してくれるクラウドになり、その中でもOSなどは自分で設定できる。
-詳しくは[こちらを](https://www.kagoya.jp/howto/it-glossary/develop/githubactions/)参照
+詳しくは[こちら](https://www.kagoya.jp/howto/it-glossary/develop/githubactions/)を参照
 
 ## GitActionsの導入方法
 以下ディレクトリに実行するジョブを実行するymlファイルを配置する
