@@ -118,7 +118,10 @@ extension ContactsFeature {
         }
         var body: some ReducerOf<Self> {
             
-            // 
+            // 遷移する子ビューをScopeを使用して定義する.
+            // https://pointfreeco.github.io/swift-composable-architecture/main/documentation/composablearchitecture/scope/
+            // state: 親ステート内の子ステートを識別する書き込み可能なキーパス
+            // action: 親アクション内の子アクションを識別するケースパス
             Scope(state: /State.addContact, action: /Action.addContact) {
                 
                 AddContactFeature()
