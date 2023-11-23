@@ -8,10 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		BC65DA9B2AF5DE570073444D /* DiarySearchTagEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DA9A2AF5DE570073444D /* DiarySearchTagEntity.swift */; };
-		BC65DA9D2AF5DEEB0073444D /* BaseRealmEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DA9C2AF5DEEB0073444D /* BaseRealmEntity.swift */; };
 		BC65DA9F2AF5E0B70073444D /* RealmAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DA9E2AF5E0B70073444D /* RealmAccessor.swift */; };
 		BCDAA1F92B084D1D00C35EEE /* RealmObserverExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCDAA1F82B084D1D00C35EEE /* RealmObserverExecutor.swift */; };
 		BCDAA2072B089AE100C35EEE /* RealmAccessorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCDAA2062B089AE100C35EEE /* RealmAccessorTest.swift */; };
+		BCDAA20D2B0F059800C35EEE /* BaseRealmEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCDAA20C2B0F059800C35EEE /* BaseRealmEntity.swift */; };
 		D9D72B882AECF352007668FA /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = D9D72B872AECF352007668FA /* ComposableArchitecture */; };
 		D9D72B8B2AECF417007668FA /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = D9D72B8A2AECF417007668FA /* Realm */; };
 		D9D72B8D2AECF417007668FA /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D9D72B8C2AECF417007668FA /* RealmSwift */; };
@@ -43,10 +43,10 @@
 
 /* Begin PBXFileReference section */
 		BC65DA9A2AF5DE570073444D /* DiarySearchTagEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiarySearchTagEntity.swift; sourceTree = "<group>"; };
-		BC65DA9C2AF5DEEB0073444D /* BaseRealmEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BaseRealmEntity.swift; path = ../../../../../../../../Downloads/AppModels/Realm/Entities/BaseRealmEntity.swift; sourceTree = "<group>"; };
 		BC65DA9E2AF5E0B70073444D /* RealmAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmAccessor.swift; sourceTree = "<group>"; };
 		BCDAA1F82B084D1D00C35EEE /* RealmObserverExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmObserverExecutor.swift; sourceTree = "<group>"; };
 		BCDAA2062B089AE100C35EEE /* RealmAccessorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmAccessorTest.swift; sourceTree = "<group>"; };
+		BCDAA20C2B0F059800C35EEE /* BaseRealmEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseRealmEntity.swift; sourceTree = "<group>"; };
 		D9F160ED2AE39EE40061307C /* Macho.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Macho.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9F160F02AE39EE40061307C /* MachoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachoApp.swift; sourceTree = "<group>"; };
 		D9F160F22AE39EE40061307C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -109,7 +109,7 @@
 			isa = PBXGroup;
 			children = (
 				BC65DA9A2AF5DE570073444D /* DiarySearchTagEntity.swift */,
-				BC65DA9C2AF5DEEB0073444D /* BaseRealmEntity.swift */,
+				BCDAA20C2B0F059800C35EEE /* BaseRealmEntity.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -328,7 +328,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D9F160F32AE39EE40061307C /* ContentView.swift in Sources */,
-				BC65DA9D2AF5DEEB0073444D /* BaseRealmEntity.swift in Sources */,
+				BCDAA20D2B0F059800C35EEE /* BaseRealmEntity.swift in Sources */,
 				BCDAA1F92B084D1D00C35EEE /* RealmObserverExecutor.swift in Sources */,
 				D9F160F12AE39EE40061307C /* MachoApp.swift in Sources */,
 				BC65DA9F2AF5E0B70073444D /* RealmAccessor.swift in Sources */,
