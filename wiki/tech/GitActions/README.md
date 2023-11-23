@@ -28,6 +28,6 @@
 
 
 ## 定義ジョブ一覧
- - [ビルド、テストジョブ](https://github.com/FujimoriGit/AkiraDiary/blob/BR_develop-1.0/wiki/tech/GitActions/Build_Test)
+ - [ビルド、テストジョブ](https://github.com/FujimoriGit/AkiraDiary/tree/BR_topic/1.0/%2314_ci_cd_create/wiki/tech/GitActions/Build_Test)
 
 
