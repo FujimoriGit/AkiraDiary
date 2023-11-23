@@ -1,6 +1,6 @@
 ### ビルドとテストの自動化方法
 
-Akira Diaryでは[checkBuild_Test_Swift.yml](.github/workflows/checkBuild_Test_Swift.yml)でビルドとテストのチェックをPushまたはPull Requestを作成したときに実行されるようにしている。
+Akira Diaryでは[checkBuild_Test_Swift.yml](https://github.com/FujimoriGit/AkiraDiary/blob/BR_topic/1.0/%2314_ci_cd_create/.github/workflows/checkBuild_Test_Swift.yml)でビルドとテストのチェックをPushまたはPull Requestを作成したときに実行されるようにしている。
 
 ## ymlファイルの解説
 
