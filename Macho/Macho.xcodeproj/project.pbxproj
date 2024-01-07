@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BC65DA9B2AF5DE570073444D /* DiarySearchTagEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DA9A2AF5DE570073444D /* DiarySearchTagEntity.swift */; };
+		BC65DA9F2AF5E0B70073444D /* RealmAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DA9E2AF5E0B70073444D /* RealmAccessor.swift */; };
+		BCDAA1F92B084D1D00C35EEE /* RealmObserverExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCDAA1F82B084D1D00C35EEE /* RealmObserverExecutor.swift */; };
+		BCDAA2072B089AE100C35EEE /* RealmAccessorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCDAA2062B089AE100C35EEE /* RealmAccessorTest.swift */; };
+		BCDAA20D2B0F059800C35EEE /* BaseRealmEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCDAA20C2B0F059800C35EEE /* BaseRealmEntity.swift */; };
 		D9B7FCCF2B08CA7A00932D32 /* CounterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B7FCCE2B08CA7A00932D32 /* CounterView.swift */; };
 		D9D72B882AECF352007668FA /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = D9D72B872AECF352007668FA /* ComposableArchitecture */; };
 		D9D72B8B2AECF417007668FA /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = D9D72B8A2AECF417007668FA /* Realm */; };
@@ -48,6 +53,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		BC65DA9A2AF5DE570073444D /* DiarySearchTagEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiarySearchTagEntity.swift; sourceTree = "<group>"; };
+		BC65DA9E2AF5E0B70073444D /* RealmAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmAccessor.swift; sourceTree = "<group>"; };
+		BCDAA1F82B084D1D00C35EEE /* RealmObserverExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmObserverExecutor.swift; sourceTree = "<group>"; };
+		BCDAA2062B089AE100C35EEE /* RealmAccessorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmAccessorTest.swift; sourceTree = "<group>"; };
+		BCDAA20C2B0F059800C35EEE /* BaseRealmEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseRealmEntity.swift; sourceTree = "<group>"; };
 		D9B7FCCE2B08CA7A00932D32 /* CounterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterView.swift; sourceTree = "<group>"; };
 		D9D72B8F2AED0F9A007668FA /* CounterFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterFeature.swift; sourceTree = "<group>"; };
 		D9D72B912AED1A14007668FA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -100,6 +110,49 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BC65DA952AF5DE230073444D /* AppModels */ = {
+			isa = PBXGroup;
+			children = (
+				BC65DA962AF5DE2C0073444D /* Realm */,
+			);
+			path = AppModels;
+			sourceTree = "<group>";
+		};
+		BC65DA962AF5DE2C0073444D /* Realm */ = {
+			isa = PBXGroup;
+			children = (
+				BC65DA9E2AF5E0B70073444D /* RealmAccessor.swift */,
+				BCDAA1F82B084D1D00C35EEE /* RealmObserverExecutor.swift */,
+				BC65DA972AF5DE330073444D /* Entities */,
+			);
+			path = Realm;
+			sourceTree = "<group>";
+		};
+		BC65DA972AF5DE330073444D /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				BC65DA9A2AF5DE570073444D /* DiarySearchTagEntity.swift */,
+				BCDAA20C2B0F059800C35EEE /* BaseRealmEntity.swift */,
+			);
+			path = Entities;
+			sourceTree = "<group>";
+		};
+		BCDAA2042B089ABD00C35EEE /* AppModels */ = {
+			isa = PBXGroup;
+			children = (
+				BCDAA2052B089AC700C35EEE /* Realm */,
+			);
+			path = AppModels;
+			sourceTree = "<group>";
+		};
+		BCDAA2052B089AC700C35EEE /* Realm */ = {
+			isa = PBXGroup;
+			children = (
+				BCDAA2062B089AE100C35EEE /* RealmAccessorTest.swift */,
+			);
+			path = Realm;
+			sourceTree = "<group>";
+		};
 		D9B7FCD02B08CAB500932D32 /* Counter */ = {
 			isa = PBXGroup;
 			children = (
@@ -161,16 +214,8 @@
 				D9B7FCD42B08CB8B00932D32 /* NumberFactClient */,
 				D9B7FCD12B08CAD700932D32 /* Contacts */,
 				D9B7FCD02B08CAB500932D32 /* Counter */,
-				D9D72B982AF5D568007668FA /* View */,
 			);
 			path = TCASample;
-			sourceTree = "<group>";
-		};
-		D9D72B982AF5D568007668FA /* View */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = View;
 			sourceTree = "<group>";
 		};
 		D9F160E42AE39EE40061307C = {
@@ -200,6 +245,7 @@
 				D9D72B8E2AED0F74007668FA /* TCASample */,
 				D9F160F02AE39EE40061307C /* MachoApp.swift */,
 				D9F160F22AE39EE40061307C /* ContentView.swift */,
+				BC65DA952AF5DE230073444D /* AppModels */,
 				D9F160F42AE39EE60061307C /* Assets.xcassets */,
 				D9F160F62AE39EE60061307C /* Preview Content */,
 			);
@@ -219,6 +265,7 @@
 			children = (
 				D9B7FCD62B08CBB200932D32 /* TCASample */,
 				D9F161012AE39EE60061307C /* MachoTests.swift */,
+				BCDAA2042B089ABD00C35EEE /* AppModels */,
 			);
 			path = MachoTests;
 			sourceTree = "<group>";
@@ -373,6 +420,8 @@
 			files = (
 				D9D72B902AED0F9A007668FA /* CounterFeature.swift in Sources */,
 				D9F160F32AE39EE40061307C /* ContentView.swift in Sources */,
+				BCDAA20D2B0F059800C35EEE /* BaseRealmEntity.swift in Sources */,
+				BCDAA1F92B084D1D00C35EEE /* RealmObserverExecutor.swift in Sources */,
 				D9F160F12AE39EE40061307C /* MachoApp.swift in Sources */,
 				D9D72B9A2AF5D57D007668FA /* ContactsView.swift in Sources */,
 				D9D72BA42AFF2482007668FA /* ContactDetailView.swift in Sources */,
@@ -382,6 +431,8 @@
 				D9D72B972AF5D194007668FA /* ContactsFeature.swift in Sources */,
 				D9D72B9C2AF5D6ED007668FA /* AddContactFeature.swift in Sources */,
 				D9D72B9E2AF5D7D0007668FA /* AddContactView.swift in Sources */,
+				BC65DA9F2AF5E0B70073444D /* RealmAccessor.swift in Sources */,
+				BC65DA9B2AF5DE570073444D /* DiarySearchTagEntity.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -389,6 +440,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BCDAA2072B089AE100C35EEE /* RealmAccessorTest.swift in Sources */,
 				D9F161022AE39EE60061307C /* MachoTests.swift in Sources */,
 				D9D72BA02AF6239B007668FA /* ContactsFeatureTests.swift in Sources */,
 				D9D72B932AED2E06007668FA /* CounterFeatureTests.swift in Sources */,
