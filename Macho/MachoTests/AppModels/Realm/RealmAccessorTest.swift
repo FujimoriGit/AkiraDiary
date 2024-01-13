@@ -83,7 +83,7 @@ final class RealmAccessorTest: XCTestCase {
         let updateValue = ["id": targetID, "tagName": expectedData.tagName] as [String : Any]
         await updateTestData(value: updateValue)
         
-        guard let result = await realm.read(type: DiarySearchTagEntity.self) { $0.id == expectedData.id }.first else {
+        guard let result = await realm.read(type: DiarySearchTagEntity.self, where: { $0.id == expectedData.id }).first else {
             
             XCTFail("Fail read")
             return
@@ -135,6 +135,7 @@ final class RealmAccessorTest: XCTestCase {
         
         // fulfillを待つ
         await fulfillment(of: [expectation], timeout: 10)
+        cancellable.cancel()
         
         // Assertiton開始
         guard let target = results.filter({ $0.id == expectedData.id }).first else {
@@ -175,6 +176,7 @@ final class RealmAccessorTest: XCTestCase {
         
         // fulfillを待つ
         await fulfillment(of: [expectation], timeout: 10)
+        cancellable.cancel()
         
         // Assertiton開始
         guard let target = results.filter({ $0.id == expectedData.id }).first else {
@@ -212,9 +214,10 @@ final class RealmAccessorTest: XCTestCase {
         
         // fulfillを待つ
         await fulfillment(of: [expectation], timeout: 10)
+        cancellable.cancel()
         
         // Assertiton開始
-        if let target = results.filter({ $0.id == deleteTarget.id }).first {
+        if results.contains(where: { $0.id == deleteTarget.id }) {
             
             XCTFail("Fail delete")
         }
