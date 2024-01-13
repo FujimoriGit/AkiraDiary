@@ -8,7 +8,8 @@
 import ComposableArchitecture
 import Foundation
 
-struct DiaryListFeature: Reducer {
+@Reducer
+struct DiaryListFeature: Reducer, Sendable {
     
     struct State: Equatable {
         
@@ -18,7 +19,8 @@ struct DiaryListFeature: Reducer {
     enum Action: Sendable {
         
         /// 日記一覧のリスト
-        case diaries(id: DiaryListItemFeature.State.ID, action: DiaryListItemFeature.Action)
+//        case diaries(id: DiaryListItemFeature.State.ID, action: DiaryListItemFeature.Action)
+        case diaries(IdentifiedActionOf<DiaryListItemFeature>)
         /// フィルターボタン押下時のアクション
         case tappedFilterButton
         /// グラフボタン押下時のアクション
@@ -75,8 +77,15 @@ struct DiaryListFeature: Reducer {
                 return .none
             }
         }
-        .forEach(\.diaries, action: /Action.diaries(id:action:)) {
+        .forEach(\.diaries, action: \.diaries) {
             DiaryListItemFeature()
         }
+//        .forEach(\.diaries, action: /Action.diaries(id:action:)) {
+//            DiaryListItemFeature()
+//        }
+//        .forEach(\.diaries, action: Action.diaries) {
+//            DiaryListItemFeature()
+//        }
+        
     }
 }

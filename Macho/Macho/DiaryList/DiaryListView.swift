@@ -107,7 +107,8 @@ private extension DiaryListView {
     
     func createListSection(viewStore: ViewStore<DiaryListFeature.State, DiaryListFeature.Action>) -> some View {
         VStack {
-            ForEachStore(store.scope(state: \.diaries, action: { .diaries(id: $0.0, action: $0.1) })) { store in
+            ForEachStore(store.scope(state: \.diaries,
+                                     action: \.diaries)) { store in
                 DiaryListItemView(store: store)
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(minHeight: diaryItemMinHeightSize)

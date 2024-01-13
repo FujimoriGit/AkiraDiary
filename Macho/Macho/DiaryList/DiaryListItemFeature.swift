@@ -21,13 +21,18 @@ struct DiaryListItemFeature: Reducer, Sendable {
     
     enum Action: Sendable {
         
+        case delete
     }
     
     var body: some ReducerOf<Self> {
         
         Reduce { state, action in
             
-            return .none
+            switch action {
+                
+            case .delete:
+                return .none
+            }
         }
     }
 }
