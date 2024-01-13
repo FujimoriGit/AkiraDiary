@@ -15,8 +15,9 @@ struct DiaryListView: View {
     // MARK: layout property
     // size property
     private let controlSectionHeight: CGFloat = 100
-    private let filterIconSize: CGSize = .init(width: 16, height: 16)
-    private let grahIconSize: CGSize = .init(width: 39, height: 39)
+    private let filterIconSize: CGFloat = 16
+    private let graphIconSize: CGSize = .init(width: 39, height: 39)
+    private let diaryItemMinHeightSize: CGFloat = 120
     
     // font property
     private let filterButtonFontSize: CGFloat = 15
@@ -27,14 +28,11 @@ struct DiaryListView: View {
     // radius property
     private let filetrButtonRadius: CGFloat = 8
 
-    
     var body: some View {
         NavigationStack {
-            GeometryReader{ geometry in
-                createMainView()
-            }
+            createMainView()
             .navigationTitle("Diary List")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
@@ -42,14 +40,23 @@ struct DiaryListView: View {
 private extension DiaryListView {
     
     func createMainView() -> some View {
-        WithViewStore(store, observe: { $0 }) { viewStore in
-            VStack {
-                createControlSection(viewStore: viewStore)
-                    .frame(height: controlSectionHeight, alignment: .bottom)
-                Divider()
-                Spacer()
-                createListSection(viewStore: viewStore)
+        GeometryReader { geometry in
+            WithViewStore(store, observe: { $0 }) { viewStore in
+                VStack {
+                    createControlSection(viewStore: viewStore)
+                        .frame(height: controlSectionHeight, alignment: .bottom)
+                    Divider()
+                    Spacer()
+                    ScrollView(.vertical) {
+                        createListSection(viewStore: viewStore)
+                    }
+                    .refreshable {
+                        viewStore.send(.refreshList)
+                    }
+                }
             }
+            .frame(width: geometry.size.width,
+                   height: geometry.size.height)
         }
     }
     
@@ -57,17 +64,15 @@ private extension DiaryListView {
         HStack {
             // filterボタン
             Button(action: {
-                // TODO: filter画面表示
+                viewStore.send(.tappedFilterButton)
             }, label: {
                 HStack {
                     Text("filter")
                         .font(.system(size: filterButtonFontSize, weight: .regular))
                         .foregroundStyle(.white)
-                    // TODO: アイコンを追加
-//                    Image("", bundle: nil)
-//                        .resizable()
-//                        .frame(width: filterIconSize.width,
-//                               height: filterIconSize.height)
+                    Image(systemName: "arrowtriangle.down.fill")
+                        .foregroundStyle(Color.white)
+                        .font(.system(size: filterIconSize))
                 }
                 .padding(.horizontal, 10)
                 .padding(.vertical, 5)
@@ -79,26 +84,22 @@ private extension DiaryListView {
             
             // グラフボタン
             Button(action: {
-                // TODO: グラフ画面への遷移
+                viewStore.send(.tappedGraphButton)
             }, label: {
-                // TODO: アイコンを追加
-                Image("", bundle: nil)
+                Image("graph_circle", bundle: nil)
                     .resizable()
-                    .frame(width: grahIconSize.width,
-                           height: grahIconSize.height)
-                    .background(Color.black.opacity(0.5))
+                    .frame(width: graphIconSize.width,
+                           height: graphIconSize.height)
             })
             
             // 日記新規作成ボタン
             Button(action: {
-                // TODO: グラフ画面への遷移
+                viewStore.send(.tappedCreateNewDiaryButton)
             }, label: {
-                // TODO: アイコンを追加
-                Image("", bundle: nil)
+                Image("plus_circle", bundle: nil)
                     .resizable()
-                    .frame(width: grahIconSize.width,
-                           height: grahIconSize.height)
-                    .background(Color.black.opacity(0.5))
+                    .frame(width: graphIconSize.width,
+                           height: graphIconSize.height)
             })
         }
         .padding(.horizontal, controlSectionPaddingHorizontal)
@@ -106,8 +107,10 @@ private extension DiaryListView {
     
     func createListSection(viewStore: ViewStore<DiaryListFeature.State, DiaryListFeature.Action>) -> some View {
         VStack {
-            ForEachStore(store.scope(state: \.diaries, action: {  .diaries(id: $0.0, action: $0.1) })) { store in
+            ForEachStore(store.scope(state: \.diaries, action: { .diaries(id: $0.0, action: $0.1) })) { store in
                 DiaryListItemView(store: store)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(minHeight: diaryItemMinHeightSize)
             }
         }
     }
