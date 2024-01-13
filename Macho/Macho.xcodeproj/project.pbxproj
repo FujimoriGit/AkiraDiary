@@ -12,6 +12,10 @@
 		BCDAA1F92B084D1D00C35EEE /* RealmObserverExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCDAA1F82B084D1D00C35EEE /* RealmObserverExecutor.swift */; };
 		BCDAA2072B089AE100C35EEE /* RealmAccessorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCDAA2062B089AE100C35EEE /* RealmAccessorTest.swift */; };
 		BCDAA20D2B0F059800C35EEE /* BaseRealmEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCDAA20C2B0F059800C35EEE /* BaseRealmEntity.swift */; };
+		BCF3B7092B4A7BFC0073D39D /* DiaryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF3B7082B4A7BFC0073D39D /* DiaryListView.swift */; };
+		BCF3B70B2B4A7CDC0073D39D /* DiaryListFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF3B70A2B4A7CDC0073D39D /* DiaryListFeature.swift */; };
+		BCF3B70D2B4A8B860073D39D /* DiaryListItemFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF3B70C2B4A8B860073D39D /* DiaryListItemFeature.swift */; };
+		BCF3B70F2B4A9A560073D39D /* DiaryListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF3B70E2B4A9A560073D39D /* DiaryListItemView.swift */; };
 		D9B7FCCF2B08CA7A00932D32 /* CounterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B7FCCE2B08CA7A00932D32 /* CounterView.swift */; };
 		D9D72B882AECF352007668FA /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = D9D72B872AECF352007668FA /* ComposableArchitecture */; };
 		D9D72B8B2AECF417007668FA /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = D9D72B8A2AECF417007668FA /* Realm */; };
@@ -58,6 +62,10 @@
 		BCDAA1F82B084D1D00C35EEE /* RealmObserverExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmObserverExecutor.swift; sourceTree = "<group>"; };
 		BCDAA2062B089AE100C35EEE /* RealmAccessorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmAccessorTest.swift; sourceTree = "<group>"; };
 		BCDAA20C2B0F059800C35EEE /* BaseRealmEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseRealmEntity.swift; sourceTree = "<group>"; };
+		BCF3B7082B4A7BFC0073D39D /* DiaryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryListView.swift; sourceTree = "<group>"; };
+		BCF3B70A2B4A7CDC0073D39D /* DiaryListFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryListFeature.swift; sourceTree = "<group>"; };
+		BCF3B70C2B4A8B860073D39D /* DiaryListItemFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryListItemFeature.swift; sourceTree = "<group>"; };
+		BCF3B70E2B4A9A560073D39D /* DiaryListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryListItemView.swift; sourceTree = "<group>"; };
 		D9B7FCCE2B08CA7A00932D32 /* CounterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterView.swift; sourceTree = "<group>"; };
 		D9D72B8F2AED0F9A007668FA /* CounterFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterFeature.swift; sourceTree = "<group>"; };
 		D9D72B912AED1A14007668FA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -153,6 +161,17 @@
 			path = Realm;
 			sourceTree = "<group>";
 		};
+		BCF3B7072B4A7BE40073D39D /* DiaryList */ = {
+			isa = PBXGroup;
+			children = (
+				BCF3B7082B4A7BFC0073D39D /* DiaryListView.swift */,
+				BCF3B70A2B4A7CDC0073D39D /* DiaryListFeature.swift */,
+				BCF3B70C2B4A8B860073D39D /* DiaryListItemFeature.swift */,
+				BCF3B70E2B4A9A560073D39D /* DiaryListItemView.swift */,
+			);
+			path = DiaryList;
+			sourceTree = "<group>";
+		};
 		D9B7FCD02B08CAB500932D32 /* Counter */ = {
 			isa = PBXGroup;
 			children = (
@@ -245,6 +264,7 @@
 				D9D72B8E2AED0F74007668FA /* TCASample */,
 				D9F160F02AE39EE40061307C /* MachoApp.swift */,
 				D9F160F22AE39EE40061307C /* ContentView.swift */,
+				BCF3B7072B4A7BE40073D39D /* DiaryList */,
 				BC65DA952AF5DE230073444D /* AppModels */,
 				D9F160F42AE39EE60061307C /* Assets.xcassets */,
 				D9F160F62AE39EE60061307C /* Preview Content */,
@@ -429,10 +449,14 @@
 				D9B7FCCF2B08CA7A00932D32 /* CounterView.swift in Sources */,
 				D9D72B952AED3766007668FA /* NumberFactClient.swift in Sources */,
 				D9D72B972AF5D194007668FA /* ContactsFeature.swift in Sources */,
+				BCF3B70D2B4A8B860073D39D /* DiaryListItemFeature.swift in Sources */,
 				D9D72B9C2AF5D6ED007668FA /* AddContactFeature.swift in Sources */,
+				BCF3B70B2B4A7CDC0073D39D /* DiaryListFeature.swift in Sources */,
 				D9D72B9E2AF5D7D0007668FA /* AddContactView.swift in Sources */,
 				BC65DA9F2AF5E0B70073444D /* RealmAccessor.swift in Sources */,
+				BCF3B7092B4A7BFC0073D39D /* DiaryListView.swift in Sources */,
 				BC65DA9B2AF5DE570073444D /* DiarySearchTagEntity.swift in Sources */,
+				BCF3B70F2B4A9A560073D39D /* DiaryListItemView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
