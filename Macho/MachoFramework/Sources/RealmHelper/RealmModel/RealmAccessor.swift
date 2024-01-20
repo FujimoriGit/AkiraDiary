@@ -8,12 +8,12 @@
 import Combine
 import RealmSwift
 
-struct RealmAccessor {
+public struct RealmAccessor {
     
     private let realm: RealmActor
     
     // MARK: - RealmAccessor initialize method
-    init() async {
+    public init() async {
         
         realm = await RealmActor.getSingleton()
     }
@@ -24,7 +24,7 @@ struct RealmAccessor {
     ///   - type: 取得したいデータの型
     ///   - filterHandler:  Realm Queryで取得したいデータを指定する
     /// - Returns: 引数で指定した条件にマッチしたEntityの配列を返す
-    func read<T>(type: T.Type, where filterHandler: ((T) -> Bool)? = nil) async -> [T] where T: BaseRealmEntity {
+    public func read<T>(type: T.Type, where filterHandler: ((T) -> Bool)? = nil) async -> [T] where T: BaseRealmEntity {
         
         let result = await self.realm.read(type: type)
         guard let filterHandler = filterHandler else { return result }
@@ -36,7 +36,7 @@ struct RealmAccessor {
     /// - Parameter records: 保存したいデータの配列
     /// - Returns: 保存に成功した場合はtrue、失敗した場合はfalseを返す
     /// 重複したレコードが存在する場合は更新する
-    func insert<T>(records: [T]) async -> Bool where T: BaseRealmEntity {
+    public func insert<T>(records: [T]) async -> Bool where T: BaseRealmEntity {
         
         return await self.realm.insert(records: records)
     }
@@ -47,7 +47,7 @@ struct RealmAccessor {
     ///   - value: 更新するデータの主キーと更新したいカラムをDictionary型で指定する
     /// - Returns: 更新に成功した場合はtrue、失敗した場合はfalseを返す
     /// 重複したレコードが存在する場合は更新する
-    func update<T>(type: T.Type, value: [String: Any]) async -> Bool where T: BaseRealmEntity {
+    public func update<T>(type: T.Type, value: [String: Any]) async -> Bool where T: BaseRealmEntity {
         
         return await self.realm.update(type: type, value: value)
     }
@@ -55,14 +55,14 @@ struct RealmAccessor {
     /// RealmDBに保存しているデータの削除
     /// - Parameter records: 削除したいレコードの配列
     /// - Returns: 削除に成功した場合はtrue、失敗した場合はfalseを返す
-    func delete<T>(type: T.Type, where filterHandler: @escaping (T) -> Bool) async -> Bool where T: BaseRealmEntity {
+    public func delete<T>(type: T.Type, where filterHandler: @escaping (T) -> Bool) async -> Bool where T: BaseRealmEntity {
         
         return await self.realm.delete(type: type, where: filterHandler)
     }
     
     /// RealmDBに保存しているすべてのデータを削除
     /// - Returns: 削除に成功した場合はtrue、失敗した場合はfalseを返す
-    func deleteAll() async -> Bool {
+    public func deleteAll() async -> Bool {
         
         return await self.realm.deleteAll()
     }
@@ -70,7 +70,7 @@ struct RealmAccessor {
     /// 指定した型に対応するRealmオブジェクトテーブルの変更を監視するPublisherを返す
     /// - Parameter type: 監視するデータの型
     /// - Returns: 監視用のPublisher
-    func observeDidChangeRealmObject<T>(subject: PassthroughSubject<[T], Never>) async -> NotificationToken? where T: BaseRealmEntity {
+    public func observeDidChangeRealmObject<T>(subject: PassthroughSubject<[T], Never>) async -> NotificationToken? where T: BaseRealmEntity {
         
         return await realm.readObjectsForObserve(type: T.self) { updateSnapshot in
             

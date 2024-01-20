@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import Macho
+@testable import RealmHelper
 
 final class RealmAccessorTest: XCTestCase {
     

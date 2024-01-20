@@ -1,14 +1,14 @@
-//
-//  ContentView.swift
-//  Macho
-//
-//  Created by 藤森大輝 on 2023/10/21.
-//
+// The Swift Programming Language
+// https://docs.swift.org/swift-book
 
+import MachoView
 import SwiftUI
 
-struct ContentView: View {
-    var body: some View {
+public struct ContentView: View {
+    
+    public init() {}
+    
+    public var body: some View {
         VStack {
             Image(systemName: "globe")
                 .imageScale(.large)

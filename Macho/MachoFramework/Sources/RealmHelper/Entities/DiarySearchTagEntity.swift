@@ -8,32 +8,32 @@
 import Foundation
 import RealmSwift
 
-struct DiarySearchTagEntity: BaseRealmEntity {
+public struct DiarySearchTagEntity: BaseRealmEntity {
     
-    let id: UUID
-    let tagName: String
+    public let id: UUID
+    public let tagName: String
     
-    static let executor = RealmObserverExecutor<Self>()
+    public static let executor = RealmObserverExecutor<Self>()
     
-    init(id: UUID, tagName: String) {
+    public init(id: UUID, tagName: String) {
         
         self.id = id
         self.tagName = tagName
     }
     
-    init(realmObject: DiarySearchTagRealmObject) {
+    public init(realmObject: DiarySearchTagRealmObject) {
         
         id = realmObject.id
         tagName = realmObject.tagName
     }
     
-    func toRealmObject() -> DiarySearchTagRealmObject {
+    public func toRealmObject() -> DiarySearchTagRealmObject {
         
         return DiarySearchTagRealmObject(id: id, tagName: tagName)
     }
 }
 
-class DiarySearchTagRealmObject: Object {
+public class DiarySearchTagRealmObject: Object {
     
     @Persisted(primaryKey: true) var id: UUID
     @Persisted var tagName: String
