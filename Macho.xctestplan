@@ -6,13 +6,53 @@
       "options" : {
 
       }
+    },
+    {
+      "enabled" : false,
+      "id" : "D91E4347-97CC-4DE1-A3B1-EF596C23353D",
+      "name" : "Configuration 2",
+      "options" : {
+
+      }
+    },
+    {
+      "enabled" : false,
+      "id" : "6FA244B6-5145-4214-BEEE-5EF64128EE18",
+      "name" : "Configuration 2 (copy)",
+      "options" : {
+
+      }
     }
   ],
   "defaultOptions" : {
-
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Macho.xcodeproj",
+      "identifier" : "D9F160FC2AE39EE60061307C",
+      "name" : "MachoTests"
+    }
   },
   "testTargets" : [
-
+    {
+      "target" : {
+        "containerPath" : "container:Macho.xcodeproj",
+        "identifier" : "D9F160FC2AE39EE60061307C",
+        "name" : "MachoTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Macho.xcodeproj",
+        "identifier" : "D9F161062AE39EE60061307C",
+        "name" : "MachoUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:MachoFramework",
+        "identifier" : "MachoFrameworkTests",
+        "name" : "MachoFrameworkTests"
+      }
+    }
   ],
   "version" : 1
 }
