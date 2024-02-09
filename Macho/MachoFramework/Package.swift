@@ -10,6 +10,7 @@ let package = Package(
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "MachoFramework",
+            type: .dynamic,
             targets: ["MachoFramework"]),
     ],
     dependencies: [
@@ -39,7 +40,10 @@ let package = Package(
         ),
         .target(
             name: "RealmHelper",
-            dependencies: [.product(name: "RealmSwift", package: "realm-swift")]
+            dependencies: [
+                .product(name: "RealmSwift", package: "realm-swift"),
+                .product(name: "Realm", package: "realm-swift")
+            ]
         ),
         .testTarget(
             name: "MachoFrameworkTests",

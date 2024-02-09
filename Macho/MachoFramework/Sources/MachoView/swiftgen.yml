@@ -8,3 +8,6 @@ xcassets:
   outputs:
     templateName: swift5
     output: Assets.swift
+    params:
+      ForceProvidesNamespaces:  true
+      ForceFileNameEnum:  true

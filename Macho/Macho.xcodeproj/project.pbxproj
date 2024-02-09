@@ -7,8 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BC0940B32B5B6ACC00E11B53 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BC0940B22B5B6ACC00E11B53 /* MachoFramework */; };
 		BC0940B52B5B6CAD00E11B53 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BC0940B42B5B6CAD00E11B53 /* MachoFramework */; };
+		BC0940D02B6F532100E11B53 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BC0940CF2B6F532100E11B53 /* MachoFramework */; };
+		BC0940D22B6F6B0100E11B53 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BC0940D12B6F6B0100E11B53 /* MachoFramework */; };
 		D9F160F12AE39EE40061307C /* MachoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F160F02AE39EE40061307C /* MachoApp.swift */; };
 		D9F160F52AE39EE60061307C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9F160F42AE39EE60061307C /* Assets.xcassets */; };
 		D9F160F82AE39EE60061307C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9F160F72AE39EE60061307C /* Preview Assets.xcassets */; };
@@ -54,7 +55,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				BC0940B52B5B6CAD00E11B53 /* MachoFramework in Frameworks */,
-				BC0940B32B5B6ACC00E11B53 /* MachoFramework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -62,6 +62,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC0940D02B6F532100E11B53 /* MachoFramework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -69,12 +70,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC0940D22B6F6B0100E11B53 /* MachoFramework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BC0940CE2B6F532100E11B53 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		D9F160E42AE39EE40061307C = {
 			isa = PBXGroup;
 			children = (
@@ -83,6 +92,7 @@
 				D9F161002AE39EE60061307C /* MachoTests */,
 				D9F1610A2AE39EE60061307C /* MachoUITests */,
 				D9F160EE2AE39EE40061307C /* Products */,
+				BC0940CE2B6F532100E11B53 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -149,7 +159,6 @@
 			);
 			name = Macho;
 			packageProductDependencies = (
-				BC0940B22B5B6ACC00E11B53 /* MachoFramework */,
 				BC0940B42B5B6CAD00E11B53 /* MachoFramework */,
 			);
 			productName = Macho;
@@ -170,6 +179,9 @@
 				D9F160FF2AE39EE60061307C /* PBXTargetDependency */,
 			);
 			name = MachoTests;
+			packageProductDependencies = (
+				BC0940CF2B6F532100E11B53 /* MachoFramework */,
+			);
 			productName = MachoTests;
 			productReference = D9F160FD2AE39EE60061307C /* MachoTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -188,6 +200,9 @@
 				D9F161092AE39EE60061307C /* PBXTargetDependency */,
 			);
 			name = MachoUITests;
+			packageProductDependencies = (
+				BC0940D12B6F6B0100E11B53 /* MachoFramework */,
+			);
 			productName = MachoUITests;
 			productReference = D9F161072AE39EE60061307C /* MachoUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
@@ -610,12 +625,18 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		BC0940B22B5B6ACC00E11B53 /* MachoFramework */ = {
+		BC0940B42B5B6CAD00E11B53 /* MachoFramework */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MachoFramework;
 		};
-		BC0940B42B5B6CAD00E11B53 /* MachoFramework */ = {
+		BC0940CF2B6F532100E11B53 /* MachoFramework */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = BC0940B12B5B6ACC00E11B53 /* XCLocalSwiftPackageReference "MachoFramework" */;
+			productName = MachoFramework;
+		};
+		BC0940D12B6F6B0100E11B53 /* MachoFramework */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BC0940B12B5B6ACC00E11B53 /* XCLocalSwiftPackageReference "MachoFramework" */;
 			productName = MachoFramework;
 		};
 /* End XCSwiftPackageProductDependency section */
