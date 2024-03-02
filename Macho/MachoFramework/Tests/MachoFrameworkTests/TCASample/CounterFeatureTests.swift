@@ -6,7 +6,7 @@
 //  
 //
 
-@testable import Macho
+@testable import MachoView
 import ComposableArchitecture
 import XCTest
 
