@@ -38,15 +38,19 @@ struct DiaryListItemView: View {
                             Text(viewStore.title)
                                 .font(.system(size: titleFontSize))
                             Spacer()
-                            Text(viewStore.date.formatted(date: .abbreviated, time: .omitted))
+                            Text(viewStore.date.toString(.init(date: .jp),
+                                                         isOmissionTens: true))
                                 .font(.system(size: dateFontSize))
                         }
                         Spacer()
                             .frame(height: titlePaddingBottom)
                         Text(viewStore.message)
                             .font(.system(size: messageFontSize))
-                            .fixedSize(horizontal: false, vertical: true)
+                            .fixedSize(horizontal: false,
+                                       vertical: true)
                             .multilineTextAlignment(.leading)
+                            .frame(maxWidth: .infinity,
+                                   alignment: .leading)
                     }
                 }
                 .padding(.vertical, baseVerticalPadding)
@@ -59,7 +63,7 @@ struct DiaryListItemView: View {
 }
 
 #Preview {
-    DiaryListItemView(store: Store(initialState: DiaryListItemFeature.State(title: "2024/1/1", message: "Test Messag xxxxxxxxdjlsjfksdjflsjfjlsjflajdkfjdjksjfkjsdfjalfkdsjflsdjfasjkjflsd", date: Date(), isWin: true)) {
+    DiaryListItemView(store: Store(initialState: DiaryListItemFeature.State(title: "2024/1/1", message: "Test Messag", date: Date(), isWin: true)) {
         DiaryListItemFeature()
     })
 }
