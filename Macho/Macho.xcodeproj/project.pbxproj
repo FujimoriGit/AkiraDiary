@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		BC65DA9B2AF5DE570073444D /* DiarySearchTagEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DA9A2AF5DE570073444D /* DiarySearchTagEntity.swift */; };
 		BC65DA9F2AF5E0B70073444D /* RealmAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DA9E2AF5E0B70073444D /* RealmAccessor.swift */; };
+		BCBF8F602B92E5D200FFCD92 /* FrameButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBF8F5F2B92E5D200FFCD92 /* FrameButtonStyle.swift */; };
+		BCBF8F622B92EDD700FFCD92 /* FillButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBF8F612B92EDD700FFCD92 /* FillButtonStyle.swift */; };
+		BCBF8F642B92EF9E00FFCD92 /* BorderModifire.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBF8F632B92EF9E00FFCD92 /* BorderModifire.swift */; };
 		BCDAA1F92B084D1D00C35EEE /* RealmObserverExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCDAA1F82B084D1D00C35EEE /* RealmObserverExecutor.swift */; };
 		BCDAA2072B089AE100C35EEE /* RealmAccessorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCDAA2062B089AE100C35EEE /* RealmAccessorTest.swift */; };
 		BCDAA20D2B0F059800C35EEE /* BaseRealmEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCDAA20C2B0F059800C35EEE /* BaseRealmEntity.swift */; };
@@ -55,6 +58,9 @@
 /* Begin PBXFileReference section */
 		BC65DA9A2AF5DE570073444D /* DiarySearchTagEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiarySearchTagEntity.swift; sourceTree = "<group>"; };
 		BC65DA9E2AF5E0B70073444D /* RealmAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmAccessor.swift; sourceTree = "<group>"; };
+		BCBF8F5F2B92E5D200FFCD92 /* FrameButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameButtonStyle.swift; sourceTree = "<group>"; };
+		BCBF8F612B92EDD700FFCD92 /* FillButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FillButtonStyle.swift; sourceTree = "<group>"; };
+		BCBF8F632B92EF9E00FFCD92 /* BorderModifire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderModifire.swift; sourceTree = "<group>"; };
 		BCDAA1F82B084D1D00C35EEE /* RealmObserverExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmObserverExecutor.swift; sourceTree = "<group>"; };
 		BCDAA2062B089AE100C35EEE /* RealmAccessorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmAccessorTest.swift; sourceTree = "<group>"; };
 		BCDAA20C2B0F059800C35EEE /* BaseRealmEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseRealmEntity.swift; sourceTree = "<group>"; };
@@ -135,6 +141,32 @@
 				BCDAA20C2B0F059800C35EEE /* BaseRealmEntity.swift */,
 			);
 			path = Entities;
+			sourceTree = "<group>";
+		};
+		BCBF8F5D2B92E58A00FFCD92 /* ViewParts */ = {
+			isa = PBXGroup;
+			children = (
+				BCBF8F652B92F08E00FFCD92 /* View */,
+				BCBF8F5E2B92E59700FFCD92 /* Button */,
+			);
+			path = ViewParts;
+			sourceTree = "<group>";
+		};
+		BCBF8F5E2B92E59700FFCD92 /* Button */ = {
+			isa = PBXGroup;
+			children = (
+				BCBF8F5F2B92E5D200FFCD92 /* FrameButtonStyle.swift */,
+				BCBF8F612B92EDD700FFCD92 /* FillButtonStyle.swift */,
+			);
+			path = Button;
+			sourceTree = "<group>";
+		};
+		BCBF8F652B92F08E00FFCD92 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				BCBF8F632B92EF9E00FFCD92 /* BorderModifire.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		BCDAA2042B089ABD00C35EEE /* AppModels */ = {
@@ -245,6 +277,7 @@
 				D9D72B8E2AED0F74007668FA /* TCASample */,
 				D9F160F02AE39EE40061307C /* MachoApp.swift */,
 				D9F160F22AE39EE40061307C /* ContentView.swift */,
+				BCBF8F5D2B92E58A00FFCD92 /* ViewParts */,
 				BC65DA952AF5DE230073444D /* AppModels */,
 				D9F160F42AE39EE60061307C /* Assets.xcassets */,
 				D9F160F62AE39EE60061307C /* Preview Content */,
@@ -427,12 +460,15 @@
 				D9D72BA42AFF2482007668FA /* ContactDetailView.swift in Sources */,
 				D9D72BA22AFF23ED007668FA /* ContactDetailFeature.swift in Sources */,
 				D9B7FCCF2B08CA7A00932D32 /* CounterView.swift in Sources */,
+				BCBF8F602B92E5D200FFCD92 /* FrameButtonStyle.swift in Sources */,
 				D9D72B952AED3766007668FA /* NumberFactClient.swift in Sources */,
 				D9D72B972AF5D194007668FA /* ContactsFeature.swift in Sources */,
 				D9D72B9C2AF5D6ED007668FA /* AddContactFeature.swift in Sources */,
 				D9D72B9E2AF5D7D0007668FA /* AddContactView.swift in Sources */,
+				BCBF8F642B92EF9E00FFCD92 /* BorderModifire.swift in Sources */,
 				BC65DA9F2AF5E0B70073444D /* RealmAccessor.swift in Sources */,
 				BC65DA9B2AF5DE570073444D /* DiarySearchTagEntity.swift in Sources */,
+				BCBF8F622B92EDD700FFCD92 /* FillButtonStyle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

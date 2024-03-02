@@ -14,6 +14,28 @@ struct ContentView: View {
                 .imageScale(.large)
                 .foregroundStyle(.tint)
             Text("Hello, world!")
+            Button {
+                print("tapped button")
+            } label: {
+                HStack(spacing: .zero) {
+                    Spacer()
+                    Text("Frame Button")
+                    Spacer()
+                }
+                .padding(.vertical, 8)
+            }
+            .frameButtonStyle(backgroundColor: .blue, cornerRadius: 20)
+            Button {
+                print("tapped button")
+            } label: {
+                HStack(spacing: .zero) {
+                    Spacer()
+                    Text("Fill Button")
+                    Spacer()
+                }
+                .padding(.vertical, 8)
+            }
+            .fillButtonStyle()
         }
         .padding()
     }
