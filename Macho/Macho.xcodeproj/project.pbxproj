@@ -11,7 +11,7 @@
 		BC65DA9F2AF5E0B70073444D /* RealmAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DA9E2AF5E0B70073444D /* RealmAccessor.swift */; };
 		BCBF8F602B92E5D200FFCD92 /* FrameButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBF8F5F2B92E5D200FFCD92 /* FrameButtonStyle.swift */; };
 		BCBF8F622B92EDD700FFCD92 /* FillButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBF8F612B92EDD700FFCD92 /* FillButtonStyle.swift */; };
-		BCBF8F642B92EF9E00FFCD92 /* BorderModifire.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBF8F632B92EF9E00FFCD92 /* BorderModifire.swift */; };
+		BCBF8F642B92EF9E00FFCD92 /* BorderModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBF8F632B92EF9E00FFCD92 /* BorderModifier.swift */; };
 		BCDAA1F92B084D1D00C35EEE /* RealmObserverExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCDAA1F82B084D1D00C35EEE /* RealmObserverExecutor.swift */; };
 		BCDAA2072B089AE100C35EEE /* RealmAccessorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCDAA2062B089AE100C35EEE /* RealmAccessorTest.swift */; };
 		BCDAA20D2B0F059800C35EEE /* BaseRealmEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCDAA20C2B0F059800C35EEE /* BaseRealmEntity.swift */; };
@@ -60,7 +60,7 @@
 		BC65DA9E2AF5E0B70073444D /* RealmAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmAccessor.swift; sourceTree = "<group>"; };
 		BCBF8F5F2B92E5D200FFCD92 /* FrameButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameButtonStyle.swift; sourceTree = "<group>"; };
 		BCBF8F612B92EDD700FFCD92 /* FillButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FillButtonStyle.swift; sourceTree = "<group>"; };
-		BCBF8F632B92EF9E00FFCD92 /* BorderModifire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderModifire.swift; sourceTree = "<group>"; };
+		BCBF8F632B92EF9E00FFCD92 /* BorderModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderModifier.swift; sourceTree = "<group>"; };
 		BCDAA1F82B084D1D00C35EEE /* RealmObserverExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmObserverExecutor.swift; sourceTree = "<group>"; };
 		BCDAA2062B089AE100C35EEE /* RealmAccessorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmAccessorTest.swift; sourceTree = "<group>"; };
 		BCDAA20C2B0F059800C35EEE /* BaseRealmEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseRealmEntity.swift; sourceTree = "<group>"; };
@@ -146,8 +146,7 @@
 		BCBF8F5D2B92E58A00FFCD92 /* ViewParts */ = {
 			isa = PBXGroup;
 			children = (
-				BCBF8F652B92F08E00FFCD92 /* View */,
-				BCBF8F5E2B92E59700FFCD92 /* Button */,
+				BCBF8F662B92F5D400FFCD92 /* Modifier */,
 			);
 			path = ViewParts;
 			sourceTree = "<group>";
@@ -164,9 +163,18 @@
 		BCBF8F652B92F08E00FFCD92 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				BCBF8F632B92EF9E00FFCD92 /* BorderModifire.swift */,
+				BCBF8F632B92EF9E00FFCD92 /* BorderModifier.swift */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		BCBF8F662B92F5D400FFCD92 /* Modifier */ = {
+			isa = PBXGroup;
+			children = (
+				BCBF8F652B92F08E00FFCD92 /* View */,
+				BCBF8F5E2B92E59700FFCD92 /* Button */,
+			);
+			path = Modifier;
 			sourceTree = "<group>";
 		};
 		BCDAA2042B089ABD00C35EEE /* AppModels */ = {
@@ -465,7 +473,7 @@
 				D9D72B972AF5D194007668FA /* ContactsFeature.swift in Sources */,
 				D9D72B9C2AF5D6ED007668FA /* AddContactFeature.swift in Sources */,
 				D9D72B9E2AF5D7D0007668FA /* AddContactView.swift in Sources */,
-				BCBF8F642B92EF9E00FFCD92 /* BorderModifire.swift in Sources */,
+				BCBF8F642B92EF9E00FFCD92 /* BorderModifier.swift in Sources */,
 				BC65DA9F2AF5E0B70073444D /* RealmAccessor.swift in Sources */,
 				BC65DA9B2AF5DE570073444D /* DiarySearchTagEntity.swift in Sources */,
 				BCBF8F622B92EDD700FFCD92 /* FillButtonStyle.swift in Sources */,

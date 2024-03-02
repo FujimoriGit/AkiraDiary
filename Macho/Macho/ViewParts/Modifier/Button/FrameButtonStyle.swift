@@ -33,7 +33,7 @@ struct FrameButtonStyle: ButtonStyle {
         configuration.label
             .foregroundStyle(foregroundColor)
             .background(configuration.isPressed ? pressedBackgroundColor : backgroundColor)
-            .borderModifire(cornerRadius: cornerRadius,
+            .borderModifier(cornerRadius: cornerRadius,
                             borderColor: foregroundColor,
                             frameWidth: frameWidth)
     }

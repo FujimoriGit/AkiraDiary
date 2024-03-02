@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct BorderModifire: ViewModifier {
+struct BorderModifier: ViewModifier {
     
     private let cornerRadius: CGFloat
     private let borderColor: Color
@@ -42,11 +42,11 @@ extension View {
     ///   - cornerRadius: 角の丸み（デフォルトでは4）
     ///   - borderColor: boderに色（デフォルトでは透明色）
     ///   - frameWidth: boderの長さ（デフォルトでは0）
-    func borderModifire(cornerRadius: CGFloat = 4,
+    func borderModifier(cornerRadius: CGFloat = 4,
                               borderColor: Color = .clear,
                               frameWidth: CGFloat = 0) -> some View {
         
-        self.modifier(BorderModifire(cornerRadius: cornerRadius,
+        self.modifier(BorderModifier(cornerRadius: cornerRadius,
                                            borderColor: borderColor,
                                            frameWidth: frameWidth))
     }

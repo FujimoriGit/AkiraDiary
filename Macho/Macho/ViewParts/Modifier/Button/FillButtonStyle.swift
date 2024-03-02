@@ -30,7 +30,7 @@ struct FillButtonStyle: ButtonStyle {
         configuration.label
             .foregroundStyle(foregroundColor)
             .background(configuration.isPressed ? pressedBackgroundColor : backgroundColor)
-            .borderModifire(cornerRadius: cornerRadius)
+            .borderModifier(cornerRadius: cornerRadius)
     }
 }
 
