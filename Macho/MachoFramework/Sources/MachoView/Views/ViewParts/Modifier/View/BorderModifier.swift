@@ -43,11 +43,11 @@ extension View {
     ///   - borderColor: boderに色（デフォルトでは透明色）
     ///   - frameWidth: boderの長さ（デフォルトでは0）
     func borderModifier(cornerRadius: CGFloat = 4,
-                              borderColor: Color = .clear,
-                              frameWidth: CGFloat = 0) -> some View {
+                        borderColor: Color = .clear,
+                        frameWidth: CGFloat = 0) -> some View {
         
         self.modifier(BorderModifier(cornerRadius: cornerRadius,
-                                           borderColor: borderColor,
-                                           frameWidth: frameWidth))
+                                     borderColor: borderColor,
+                                     frameWidth: frameWidth))
     }
 }

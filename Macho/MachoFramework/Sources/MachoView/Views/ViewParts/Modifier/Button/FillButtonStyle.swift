@@ -46,12 +46,12 @@ extension Button {
     ///   - cornerRadius: ボタンの角の丸み
     func fillButtonStyle(foregroundColor: Color = .white,
                          backgroundColor: Color = .black,
-                          pressedBackgroundColor: Color = .gray,
-                          cornerRadius: CGFloat = 4) -> some View {
+                         pressedBackgroundColor: Color = .gray,
+                         cornerRadius: CGFloat = 4) -> some View {
         
         self.buttonStyle(FillButtonStyle(foregroundColor: foregroundColor,
-                                          backgroundColor: backgroundColor,
-                                          pressedBackgroundColor: pressedBackgroundColor,
-                                          cornerRadius: cornerRadius))
+                                         backgroundColor: backgroundColor,
+                                         pressedBackgroundColor: pressedBackgroundColor,
+                                         cornerRadius: cornerRadius))
     }
 }
