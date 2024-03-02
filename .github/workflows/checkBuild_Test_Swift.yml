@@ -71,6 +71,7 @@ jobs:
       run: set -o pipefail &&
         xcodebuild
         -workspace ./Macho/Macho.xcworkspace
+        -scheme Macho
         -sdk iphonesimulator
         -configuration Debug
         -resolvePackageDependencies

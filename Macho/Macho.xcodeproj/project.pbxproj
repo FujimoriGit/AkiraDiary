@@ -7,34 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-<<<<<<< HEAD
-		BC65DA9B2AF5DE570073444D /* DiarySearchTagEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DA9A2AF5DE570073444D /* DiarySearchTagEntity.swift */; };
-		BC65DA9F2AF5E0B70073444D /* RealmAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DA9E2AF5E0B70073444D /* RealmAccessor.swift */; };
-		BCBF8F602B92E5D200FFCD92 /* FrameButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBF8F5F2B92E5D200FFCD92 /* FrameButtonStyle.swift */; };
-		BCBF8F622B92EDD700FFCD92 /* FillButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBF8F612B92EDD700FFCD92 /* FillButtonStyle.swift */; };
-		BCBF8F642B92EF9E00FFCD92 /* BorderModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBF8F632B92EF9E00FFCD92 /* BorderModifier.swift */; };
-		BCDAA1F92B084D1D00C35EEE /* RealmObserverExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCDAA1F82B084D1D00C35EEE /* RealmObserverExecutor.swift */; };
-		BCDAA2072B089AE100C35EEE /* RealmAccessorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCDAA2062B089AE100C35EEE /* RealmAccessorTest.swift */; };
-		BCDAA20D2B0F059800C35EEE /* BaseRealmEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCDAA20C2B0F059800C35EEE /* BaseRealmEntity.swift */; };
-		D9B7FCCF2B08CA7A00932D32 /* CounterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B7FCCE2B08CA7A00932D32 /* CounterView.swift */; };
-		D9D72B882AECF352007668FA /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = D9D72B872AECF352007668FA /* ComposableArchitecture */; };
-		D9D72B8B2AECF417007668FA /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = D9D72B8A2AECF417007668FA /* Realm */; };
-		D9D72B8D2AECF417007668FA /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D9D72B8C2AECF417007668FA /* RealmSwift */; };
-		D9D72B902AED0F9A007668FA /* CounterFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D72B8F2AED0F9A007668FA /* CounterFeature.swift */; };
-		D9D72B932AED2E06007668FA /* CounterFeatureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D72B922AED2E06007668FA /* CounterFeatureTests.swift */; };
-		D9D72B952AED3766007668FA /* NumberFactClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D72B942AED3766007668FA /* NumberFactClient.swift */; };
-		D9D72B972AF5D194007668FA /* ContactsFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D72B962AF5D194007668FA /* ContactsFeature.swift */; };
-		D9D72B9A2AF5D57D007668FA /* ContactsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D72B992AF5D57D007668FA /* ContactsView.swift */; };
-		D9D72B9C2AF5D6ED007668FA /* AddContactFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D72B9B2AF5D6ED007668FA /* AddContactFeature.swift */; };
-		D9D72B9E2AF5D7D0007668FA /* AddContactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D72B9D2AF5D7D0007668FA /* AddContactView.swift */; };
-		D9D72BA02AF6239B007668FA /* ContactsFeatureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D72B9F2AF6239B007668FA /* ContactsFeatureTests.swift */; };
-		D9D72BA22AFF23ED007668FA /* ContactDetailFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D72BA12AFF23EC007668FA /* ContactDetailFeature.swift */; };
-		D9D72BA42AFF2482007668FA /* ContactDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D72BA32AFF2482007668FA /* ContactDetailView.swift */; };
-=======
 		BC0940B52B5B6CAD00E11B53 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BC0940B42B5B6CAD00E11B53 /* MachoFramework */; };
 		BC0940D02B6F532100E11B53 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BC0940CF2B6F532100E11B53 /* MachoFramework */; };
 		BC0940D22B6F6B0100E11B53 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BC0940D12B6F6B0100E11B53 /* MachoFramework */; };
->>>>>>> origin
 		D9F160F12AE39EE40061307C /* MachoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F160F02AE39EE40061307C /* MachoApp.swift */; };
 		D9F160F52AE39EE60061307C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9F160F42AE39EE60061307C /* Assets.xcassets */; };
 		D9F160F82AE39EE60061307C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9F160F72AE39EE60061307C /* Preview Assets.xcassets */; };
@@ -61,20 +36,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-<<<<<<< HEAD
-		BC65DA9A2AF5DE570073444D /* DiarySearchTagEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiarySearchTagEntity.swift; sourceTree = "<group>"; };
-		BC65DA9E2AF5E0B70073444D /* RealmAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmAccessor.swift; sourceTree = "<group>"; };
-		BCBF8F5F2B92E5D200FFCD92 /* FrameButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameButtonStyle.swift; sourceTree = "<group>"; };
-		BCBF8F612B92EDD700FFCD92 /* FillButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FillButtonStyle.swift; sourceTree = "<group>"; };
-		BCBF8F632B92EF9E00FFCD92 /* BorderModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderModifier.swift; sourceTree = "<group>"; };
-		BCDAA1F82B084D1D00C35EEE /* RealmObserverExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmObserverExecutor.swift; sourceTree = "<group>"; };
-		BCDAA2062B089AE100C35EEE /* RealmAccessorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmAccessorTest.swift; sourceTree = "<group>"; };
-		BCDAA20C2B0F059800C35EEE /* BaseRealmEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseRealmEntity.swift; sourceTree = "<group>"; };
-		D9B7FCCE2B08CA7A00932D32 /* CounterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterView.swift; sourceTree = "<group>"; };
-		D9D72B8F2AED0F9A007668FA /* CounterFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterFeature.swift; sourceTree = "<group>"; };
-=======
 		BC0940B62B5BC57C00E11B53 /* Macho.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = Macho.xctestplan; path = ../Macho.xctestplan; sourceTree = "<group>"; };
->>>>>>> origin
 		D9D72B912AED1A14007668FA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D9F160ED2AE39EE40061307C /* Macho.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Macho.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9F160F02AE39EE40061307C /* MachoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachoApp.swift; sourceTree = "<group>"; };
@@ -119,145 +81,7 @@
 			isa = PBXGroup;
 			children = (
 			);
-<<<<<<< HEAD
-			path = AppModels;
-			sourceTree = "<group>";
-		};
-		BC65DA962AF5DE2C0073444D /* Realm */ = {
-			isa = PBXGroup;
-			children = (
-				BC65DA9E2AF5E0B70073444D /* RealmAccessor.swift */,
-				BCDAA1F82B084D1D00C35EEE /* RealmObserverExecutor.swift */,
-				BC65DA972AF5DE330073444D /* Entities */,
-			);
-			path = Realm;
-			sourceTree = "<group>";
-		};
-		BC65DA972AF5DE330073444D /* Entities */ = {
-			isa = PBXGroup;
-			children = (
-				BC65DA9A2AF5DE570073444D /* DiarySearchTagEntity.swift */,
-				BCDAA20C2B0F059800C35EEE /* BaseRealmEntity.swift */,
-			);
-			path = Entities;
-			sourceTree = "<group>";
-		};
-		BCBF8F5D2B92E58A00FFCD92 /* ViewParts */ = {
-			isa = PBXGroup;
-			children = (
-				BCBF8F662B92F5D400FFCD92 /* Modifier */,
-			);
-			path = ViewParts;
-			sourceTree = "<group>";
-		};
-		BCBF8F5E2B92E59700FFCD92 /* Button */ = {
-			isa = PBXGroup;
-			children = (
-				BCBF8F5F2B92E5D200FFCD92 /* FrameButtonStyle.swift */,
-				BCBF8F612B92EDD700FFCD92 /* FillButtonStyle.swift */,
-			);
-			path = Button;
-			sourceTree = "<group>";
-		};
-		BCBF8F652B92F08E00FFCD92 /* View */ = {
-			isa = PBXGroup;
-			children = (
-				BCBF8F632B92EF9E00FFCD92 /* BorderModifier.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		BCBF8F662B92F5D400FFCD92 /* Modifier */ = {
-			isa = PBXGroup;
-			children = (
-				BCBF8F652B92F08E00FFCD92 /* View */,
-				BCBF8F5E2B92E59700FFCD92 /* Button */,
-			);
-			path = Modifier;
-			sourceTree = "<group>";
-		};
-		BCDAA2042B089ABD00C35EEE /* AppModels */ = {
-			isa = PBXGroup;
-			children = (
-				BCDAA2052B089AC700C35EEE /* Realm */,
-			);
-			path = AppModels;
-			sourceTree = "<group>";
-		};
-		BCDAA2052B089AC700C35EEE /* Realm */ = {
-			isa = PBXGroup;
-			children = (
-				BCDAA2062B089AE100C35EEE /* RealmAccessorTest.swift */,
-			);
-			path = Realm;
-			sourceTree = "<group>";
-		};
-		D9B7FCD02B08CAB500932D32 /* Counter */ = {
-			isa = PBXGroup;
-			children = (
-				D9D72B8F2AED0F9A007668FA /* CounterFeature.swift */,
-				D9B7FCCE2B08CA7A00932D32 /* CounterView.swift */,
-			);
-			path = Counter;
-			sourceTree = "<group>";
-		};
-		D9B7FCD12B08CAD700932D32 /* Contacts */ = {
-			isa = PBXGroup;
-			children = (
-				D9D72B962AF5D194007668FA /* ContactsFeature.swift */,
-				D9D72B992AF5D57D007668FA /* ContactsView.swift */,
-				D9B7FCD32B08CB3900932D32 /* AddContact */,
-				D9B7FCD22B08CAE900932D32 /* ContactDetail */,
-			);
-			path = Contacts;
-			sourceTree = "<group>";
-		};
-		D9B7FCD22B08CAE900932D32 /* ContactDetail */ = {
-			isa = PBXGroup;
-			children = (
-				D9D72BA12AFF23EC007668FA /* ContactDetailFeature.swift */,
-				D9D72BA32AFF2482007668FA /* ContactDetailView.swift */,
-			);
-			path = ContactDetail;
-			sourceTree = "<group>";
-		};
-		D9B7FCD32B08CB3900932D32 /* AddContact */ = {
-			isa = PBXGroup;
-			children = (
-				D9D72B9B2AF5D6ED007668FA /* AddContactFeature.swift */,
-				D9D72B9D2AF5D7D0007668FA /* AddContactView.swift */,
-			);
-			path = AddContact;
-			sourceTree = "<group>";
-		};
-		D9B7FCD42B08CB8B00932D32 /* NumberFactClient */ = {
-			isa = PBXGroup;
-			children = (
-				D9D72B942AED3766007668FA /* NumberFactClient.swift */,
-			);
-			path = NumberFactClient;
-			sourceTree = "<group>";
-		};
-		D9B7FCD62B08CBB200932D32 /* TCASample */ = {
-			isa = PBXGroup;
-			children = (
-				D9D72B922AED2E06007668FA /* CounterFeatureTests.swift */,
-				D9D72B9F2AF6239B007668FA /* ContactsFeatureTests.swift */,
-			);
-			path = TCASample;
-			sourceTree = "<group>";
-		};
-		D9D72B8E2AED0F74007668FA /* TCASample */ = {
-			isa = PBXGroup;
-			children = (
-				D9B7FCD42B08CB8B00932D32 /* NumberFactClient */,
-				D9B7FCD12B08CAD700932D32 /* Contacts */,
-				D9B7FCD02B08CAB500932D32 /* Counter */,
-			);
-			path = TCASample;
-=======
 			name = Frameworks;
->>>>>>> origin
 			sourceTree = "<group>";
 		};
 		D9F160E42AE39EE40061307C = {
@@ -287,12 +111,6 @@
 			children = (
 				D9D72B912AED1A14007668FA /* Info.plist */,
 				D9F160F02AE39EE40061307C /* MachoApp.swift */,
-<<<<<<< HEAD
-				D9F160F22AE39EE40061307C /* ContentView.swift */,
-				BCBF8F5D2B92E58A00FFCD92 /* ViewParts */,
-				BC65DA952AF5DE230073444D /* AppModels */,
-=======
->>>>>>> origin
 				D9F160F42AE39EE60061307C /* Assets.xcassets */,
 				D9F160F62AE39EE60061307C /* Preview Content */,
 			);
@@ -467,22 +285,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D9F160F12AE39EE40061307C /* MachoApp.swift in Sources */,
-<<<<<<< HEAD
-				D9D72B9A2AF5D57D007668FA /* ContactsView.swift in Sources */,
-				D9D72BA42AFF2482007668FA /* ContactDetailView.swift in Sources */,
-				D9D72BA22AFF23ED007668FA /* ContactDetailFeature.swift in Sources */,
-				D9B7FCCF2B08CA7A00932D32 /* CounterView.swift in Sources */,
-				BCBF8F602B92E5D200FFCD92 /* FrameButtonStyle.swift in Sources */,
-				D9D72B952AED3766007668FA /* NumberFactClient.swift in Sources */,
-				D9D72B972AF5D194007668FA /* ContactsFeature.swift in Sources */,
-				D9D72B9C2AF5D6ED007668FA /* AddContactFeature.swift in Sources */,
-				D9D72B9E2AF5D7D0007668FA /* AddContactView.swift in Sources */,
-				BCBF8F642B92EF9E00FFCD92 /* BorderModifier.swift in Sources */,
-				BC65DA9F2AF5E0B70073444D /* RealmAccessor.swift in Sources */,
-				BC65DA9B2AF5DE570073444D /* DiarySearchTagEntity.swift in Sources */,
-				BCBF8F622B92EDD700FFCD92 /* FillButtonStyle.swift in Sources */,
-=======
->>>>>>> origin
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
