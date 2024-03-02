@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
+<<<<<<< HEAD
 		BC65DA9B2AF5DE570073444D /* DiarySearchTagEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DA9A2AF5DE570073444D /* DiarySearchTagEntity.swift */; };
 		BC65DA9F2AF5E0B70073444D /* RealmAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DA9E2AF5E0B70073444D /* RealmAccessor.swift */; };
 		BCBF8F602B92E5D200FFCD92 /* FrameButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBF8F5F2B92E5D200FFCD92 /* FrameButtonStyle.swift */; };
@@ -29,8 +30,12 @@
 		D9D72BA02AF6239B007668FA /* ContactsFeatureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D72B9F2AF6239B007668FA /* ContactsFeatureTests.swift */; };
 		D9D72BA22AFF23ED007668FA /* ContactDetailFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D72BA12AFF23EC007668FA /* ContactDetailFeature.swift */; };
 		D9D72BA42AFF2482007668FA /* ContactDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D72BA32AFF2482007668FA /* ContactDetailView.swift */; };
+=======
+		BC0940B52B5B6CAD00E11B53 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BC0940B42B5B6CAD00E11B53 /* MachoFramework */; };
+		BC0940D02B6F532100E11B53 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BC0940CF2B6F532100E11B53 /* MachoFramework */; };
+		BC0940D22B6F6B0100E11B53 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BC0940D12B6F6B0100E11B53 /* MachoFramework */; };
+>>>>>>> origin
 		D9F160F12AE39EE40061307C /* MachoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F160F02AE39EE40061307C /* MachoApp.swift */; };
-		D9F160F32AE39EE40061307C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F160F22AE39EE40061307C /* ContentView.swift */; };
 		D9F160F52AE39EE60061307C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9F160F42AE39EE60061307C /* Assets.xcassets */; };
 		D9F160F82AE39EE60061307C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9F160F72AE39EE60061307C /* Preview Assets.xcassets */; };
 		D9F161022AE39EE60061307C /* MachoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F161012AE39EE60061307C /* MachoTests.swift */; };
@@ -56,6 +61,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+<<<<<<< HEAD
 		BC65DA9A2AF5DE570073444D /* DiarySearchTagEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiarySearchTagEntity.swift; sourceTree = "<group>"; };
 		BC65DA9E2AF5E0B70073444D /* RealmAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmAccessor.swift; sourceTree = "<group>"; };
 		BCBF8F5F2B92E5D200FFCD92 /* FrameButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameButtonStyle.swift; sourceTree = "<group>"; };
@@ -66,19 +72,12 @@
 		BCDAA20C2B0F059800C35EEE /* BaseRealmEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseRealmEntity.swift; sourceTree = "<group>"; };
 		D9B7FCCE2B08CA7A00932D32 /* CounterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterView.swift; sourceTree = "<group>"; };
 		D9D72B8F2AED0F9A007668FA /* CounterFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterFeature.swift; sourceTree = "<group>"; };
+=======
+		BC0940B62B5BC57C00E11B53 /* Macho.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = Macho.xctestplan; path = ../Macho.xctestplan; sourceTree = "<group>"; };
+>>>>>>> origin
 		D9D72B912AED1A14007668FA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		D9D72B922AED2E06007668FA /* CounterFeatureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterFeatureTests.swift; sourceTree = "<group>"; };
-		D9D72B942AED3766007668FA /* NumberFactClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberFactClient.swift; sourceTree = "<group>"; };
-		D9D72B962AF5D194007668FA /* ContactsFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsFeature.swift; sourceTree = "<group>"; };
-		D9D72B992AF5D57D007668FA /* ContactsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsView.swift; sourceTree = "<group>"; };
-		D9D72B9B2AF5D6ED007668FA /* AddContactFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContactFeature.swift; sourceTree = "<group>"; };
-		D9D72B9D2AF5D7D0007668FA /* AddContactView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContactView.swift; sourceTree = "<group>"; };
-		D9D72B9F2AF6239B007668FA /* ContactsFeatureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsFeatureTests.swift; sourceTree = "<group>"; };
-		D9D72BA12AFF23EC007668FA /* ContactDetailFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactDetailFeature.swift; sourceTree = "<group>"; };
-		D9D72BA32AFF2482007668FA /* ContactDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactDetailView.swift; sourceTree = "<group>"; };
 		D9F160ED2AE39EE40061307C /* Macho.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Macho.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9F160F02AE39EE40061307C /* MachoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachoApp.swift; sourceTree = "<group>"; };
-		D9F160F22AE39EE40061307C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		D9F160F42AE39EE60061307C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D9F160F72AE39EE60061307C /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D9F160FD2AE39EE60061307C /* MachoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MachoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -93,9 +92,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D9D72B8D2AECF417007668FA /* RealmSwift in Frameworks */,
-				D9D72B8B2AECF417007668FA /* Realm in Frameworks */,
-				D9D72B882AECF352007668FA /* ComposableArchitecture in Frameworks */,
+				BC0940B52B5B6CAD00E11B53 /* MachoFramework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -103,6 +100,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC0940D02B6F532100E11B53 /* MachoFramework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -110,17 +108,18 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC0940D22B6F6B0100E11B53 /* MachoFramework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		BC65DA952AF5DE230073444D /* AppModels */ = {
+		BC0940CE2B6F532100E11B53 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				BC65DA962AF5DE2C0073444D /* Realm */,
 			);
+<<<<<<< HEAD
 			path = AppModels;
 			sourceTree = "<group>";
 		};
@@ -256,15 +255,20 @@
 				D9B7FCD02B08CAB500932D32 /* Counter */,
 			);
 			path = TCASample;
+=======
+			name = Frameworks;
+>>>>>>> origin
 			sourceTree = "<group>";
 		};
 		D9F160E42AE39EE40061307C = {
 			isa = PBXGroup;
 			children = (
+				BC0940B62B5BC57C00E11B53 /* Macho.xctestplan */,
 				D9F160EF2AE39EE40061307C /* Macho */,
 				D9F161002AE39EE60061307C /* MachoTests */,
 				D9F1610A2AE39EE60061307C /* MachoUITests */,
 				D9F160EE2AE39EE40061307C /* Products */,
+				BC0940CE2B6F532100E11B53 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -282,11 +286,13 @@
 			isa = PBXGroup;
 			children = (
 				D9D72B912AED1A14007668FA /* Info.plist */,
-				D9D72B8E2AED0F74007668FA /* TCASample */,
 				D9F160F02AE39EE40061307C /* MachoApp.swift */,
+<<<<<<< HEAD
 				D9F160F22AE39EE40061307C /* ContentView.swift */,
 				BCBF8F5D2B92E58A00FFCD92 /* ViewParts */,
 				BC65DA952AF5DE230073444D /* AppModels */,
+=======
+>>>>>>> origin
 				D9F160F42AE39EE60061307C /* Assets.xcassets */,
 				D9F160F62AE39EE60061307C /* Preview Content */,
 			);
@@ -304,9 +310,7 @@
 		D9F161002AE39EE60061307C /* MachoTests */ = {
 			isa = PBXGroup;
 			children = (
-				D9B7FCD62B08CBB200932D32 /* TCASample */,
 				D9F161012AE39EE60061307C /* MachoTests.swift */,
-				BCDAA2042B089ABD00C35EEE /* AppModels */,
 			);
 			path = MachoTests;
 			sourceTree = "<group>";
@@ -337,9 +341,7 @@
 			);
 			name = Macho;
 			packageProductDependencies = (
-				D9D72B872AECF352007668FA /* ComposableArchitecture */,
-				D9D72B8A2AECF417007668FA /* Realm */,
-				D9D72B8C2AECF417007668FA /* RealmSwift */,
+				BC0940B42B5B6CAD00E11B53 /* MachoFramework */,
 			);
 			productName = Macho;
 			productReference = D9F160ED2AE39EE40061307C /* Macho.app */;
@@ -359,6 +361,9 @@
 				D9F160FF2AE39EE60061307C /* PBXTargetDependency */,
 			);
 			name = MachoTests;
+			packageProductDependencies = (
+				BC0940CF2B6F532100E11B53 /* MachoFramework */,
+			);
 			productName = MachoTests;
 			productReference = D9F160FD2AE39EE60061307C /* MachoTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -377,6 +382,9 @@
 				D9F161092AE39EE60061307C /* PBXTargetDependency */,
 			);
 			name = MachoUITests;
+			packageProductDependencies = (
+				BC0940D12B6F6B0100E11B53 /* MachoFramework */,
+			);
 			productName = MachoUITests;
 			productReference = D9F161072AE39EE60061307C /* MachoUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
@@ -414,8 +422,7 @@
 			);
 			mainGroup = D9F160E42AE39EE40061307C;
 			packageReferences = (
-				D9D72B862AECF352007668FA /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
-				D9D72B892AECF417007668FA /* XCRemoteSwiftPackageReference "realm-swift" */,
+				BC0940B12B5B6ACC00E11B53 /* XCLocalSwiftPackageReference "MachoFramework" */,
 			);
 			productRefGroup = D9F160EE2AE39EE40061307C /* Products */;
 			projectDirPath = "";
@@ -459,11 +466,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D9D72B902AED0F9A007668FA /* CounterFeature.swift in Sources */,
-				D9F160F32AE39EE40061307C /* ContentView.swift in Sources */,
-				BCDAA20D2B0F059800C35EEE /* BaseRealmEntity.swift in Sources */,
-				BCDAA1F92B084D1D00C35EEE /* RealmObserverExecutor.swift in Sources */,
 				D9F160F12AE39EE40061307C /* MachoApp.swift in Sources */,
+<<<<<<< HEAD
 				D9D72B9A2AF5D57D007668FA /* ContactsView.swift in Sources */,
 				D9D72BA42AFF2482007668FA /* ContactDetailView.swift in Sources */,
 				D9D72BA22AFF23ED007668FA /* ContactDetailFeature.swift in Sources */,
@@ -477,6 +481,8 @@
 				BC65DA9F2AF5E0B70073444D /* RealmAccessor.swift in Sources */,
 				BC65DA9B2AF5DE570073444D /* DiarySearchTagEntity.swift in Sources */,
 				BCBF8F622B92EDD700FFCD92 /* FillButtonStyle.swift in Sources */,
+=======
+>>>>>>> origin
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -484,10 +490,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BCDAA2072B089AE100C35EEE /* RealmAccessorTest.swift in Sources */,
 				D9F161022AE39EE60061307C /* MachoTests.swift in Sources */,
-				D9D72BA02AF6239B007668FA /* ContactsFeatureTests.swift in Sources */,
-				D9D72B932AED2E06007668FA /* CounterFeatureTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -643,7 +646,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Macho/Preview Content\"";
-				DEVELOPMENT_TEAM = 676WN4U5D4;
+				DEVELOPMENT_TEAM = 56LYVN6DMF;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Macho/Info.plist;
@@ -673,7 +676,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Macho/Preview Content\"";
-				DEVELOPMENT_TEAM = 676WN4U5D4;
+				DEVELOPMENT_TEAM = 56LYVN6DMF;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Macho/Info.plist;
@@ -812,40 +815,27 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		D9D72B862AECF352007668FA /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "http://github.com/pointfreeco/swift-composable-architecture#Installation";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.3.0;
-			};
+/* Begin XCLocalSwiftPackageReference section */
+		BC0940B12B5B6ACC00E11B53 /* XCLocalSwiftPackageReference "MachoFramework" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = MachoFramework;
 		};
-		D9D72B892AECF417007668FA /* XCRemoteSwiftPackageReference "realm-swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/realm/realm-swift.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 10.43.1;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
+/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		D9D72B872AECF352007668FA /* ComposableArchitecture */ = {
+		BC0940B42B5B6CAD00E11B53 /* MachoFramework */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D9D72B862AECF352007668FA /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
-			productName = ComposableArchitecture;
+			productName = MachoFramework;
 		};
-		D9D72B8A2AECF417007668FA /* Realm */ = {
+		BC0940CF2B6F532100E11B53 /* MachoFramework */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D9D72B892AECF417007668FA /* XCRemoteSwiftPackageReference "realm-swift" */;
-			productName = Realm;
+			package = BC0940B12B5B6ACC00E11B53 /* XCLocalSwiftPackageReference "MachoFramework" */;
+			productName = MachoFramework;
 		};
-		D9D72B8C2AECF417007668FA /* RealmSwift */ = {
+		BC0940D12B6F6B0100E11B53 /* MachoFramework */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D9D72B892AECF417007668FA /* XCRemoteSwiftPackageReference "realm-swift" */;
-			productName = RealmSwift;
+			package = BC0940B12B5B6ACC00E11B53 /* XCLocalSwiftPackageReference "MachoFramework" */;
+			productName = MachoFramework;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
