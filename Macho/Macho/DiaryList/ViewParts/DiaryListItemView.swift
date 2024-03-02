@@ -12,31 +12,38 @@ struct DiaryListItemView: View {
     
     let store: StoreOf<DiaryListItemFeature>
     
-    // MARK: layout property
+    // MARK: - layout property
     
-    // size property
-    private let winLoseLabelFontSize: Font = .system(size: 25, weight: .heavy)
+    // MARK: size property
+    
+    private let winLoseLabelFontSize: CGFloat = 25
     private let titleFontSize: CGFloat = 20
     private let messageFontSize: CGFloat = 14
     private let dateFontSize: CGFloat = 10
     
-    // padding property
-    private let baseVerticalPadding: CGFloat = 30
+    // MARK: padding property
+    
+    private let baseTopPadding: CGFloat = 16
+    private let baseBottomPadding: CGFloat = 30
     private let baseHorizontalPadding: CGFloat = 15
     private let titlePaddingBottom: CGFloat = 10
-    
+    private let winLoseLabelTrailingPadding: CGFloat = 16
     
     var body: some View {
         WithViewStore(store, observe: { $0 }) { viewStore in
             VStack {
-                HStack(alignment: .center) {
+                HStack(spacing: .zero) {
                     Text(viewStore.isWin ? "Win" : "Lose")
-                        .font(winLoseLabelFontSize)
+                        .font(.system(size: winLoseLabelFontSize,
+                                      weight: .heavy))
                         .foregroundStyle(viewStore.isWin ? Color.green : Color.red)
+                    Spacer()
+                        .frame(width: winLoseLabelTrailingPadding)
                     VStack(spacing: .zero) {
                         HStack(spacing: .zero) {
                             Text(viewStore.title)
-                                .font(.system(size: titleFontSize))
+                                .font(.system(size: titleFontSize,
+                                              weight: .bold))
                             Spacer()
                             Text(viewStore.date.toString(.init(date: .jp),
                                                          isOmissionTens: true))
@@ -51,11 +58,12 @@ struct DiaryListItemView: View {
                             .multilineTextAlignment(.leading)
                             .frame(maxWidth: .infinity,
                                    alignment: .leading)
+                        Spacer()
                     }
                 }
-                .padding(.vertical, baseVerticalPadding)
+                .padding(.top, baseTopPadding)
+                .padding(.bottom, baseBottomPadding)
                 .padding(.horizontal, baseHorizontalPadding)
-                
                 Divider()
             }
         }

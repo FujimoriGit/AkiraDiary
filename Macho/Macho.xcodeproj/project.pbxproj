@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		BC4DEBC22B92FB29005AB5C5 /* DateFormat_Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4DEBC12B92FB29005AB5C5 /* DateFormat_Date+Extension.swift */; };
+		BC4DEBC52B9318D9005AB5C5 /* ScrollState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4DEBC42B9318D9005AB5C5 /* ScrollState.swift */; };
 		BC65DA9B2AF5DE570073444D /* DiarySearchTagEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DA9A2AF5DE570073444D /* DiarySearchTagEntity.swift */; };
 		BC65DA9F2AF5E0B70073444D /* RealmAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65DA9E2AF5E0B70073444D /* RealmAccessor.swift */; };
 		BCDAA1F92B084D1D00C35EEE /* RealmObserverExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCDAA1F82B084D1D00C35EEE /* RealmObserverExecutor.swift */; };
@@ -60,6 +61,7 @@
 
 /* Begin PBXFileReference section */
 		BC4DEBC12B92FB29005AB5C5 /* DateFormat_Date+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormat_Date+Extension.swift"; sourceTree = "<group>"; };
+		BC4DEBC42B9318D9005AB5C5 /* ScrollState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollState.swift; sourceTree = "<group>"; };
 		BC65DA9A2AF5DE570073444D /* DiarySearchTagEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiarySearchTagEntity.swift; sourceTree = "<group>"; };
 		BC65DA9E2AF5E0B70073444D /* RealmAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmAccessor.swift; sourceTree = "<group>"; };
 		BCDAA1F82B084D1D00C35EEE /* RealmObserverExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmObserverExecutor.swift; sourceTree = "<group>"; };
@@ -139,6 +141,14 @@
 			path = Utilities;
 			sourceTree = "<group>";
 		};
+		BC4DEBC32B9318B7005AB5C5 /* Entity */ = {
+			isa = PBXGroup;
+			children = (
+				BC4DEBC42B9318D9005AB5C5 /* ScrollState.swift */,
+			);
+			path = Entity;
+			sourceTree = "<group>";
+		};
 		BC65DA952AF5DE230073444D /* AppModels */ = {
 			isa = PBXGroup;
 			children = (
@@ -201,6 +211,7 @@
 		BCF3B7072B4A7BE40073D39D /* DiaryList */ = {
 			isa = PBXGroup;
 			children = (
+				BC4DEBC32B9318B7005AB5C5 /* Entity */,
 				BC4DEBBF2B92F8E6005AB5C5 /* ViewParts */,
 				BCF3B7082B4A7BFC0073D39D /* DiaryListView.swift */,
 				BCF3B70A2B4A7CDC0073D39D /* DiaryListFeature.swift */,
@@ -480,6 +491,7 @@
 				D9F160F32AE39EE40061307C /* ContentView.swift in Sources */,
 				BCDAA20D2B0F059800C35EEE /* BaseRealmEntity.swift in Sources */,
 				BCDAA1F92B084D1D00C35EEE /* RealmObserverExecutor.swift in Sources */,
+				BC4DEBC52B9318D9005AB5C5 /* ScrollState.swift in Sources */,
 				D9F160F12AE39EE40061307C /* MachoApp.swift in Sources */,
 				D9D72B9A2AF5D57D007668FA /* ContactsView.swift in Sources */,
 				D9D72BA42AFF2482007668FA /* ContactDetailView.swift in Sources */,

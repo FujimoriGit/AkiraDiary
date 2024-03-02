@@ -13,6 +13,9 @@ struct DiaryListFeature: Reducer, Sendable {
     
     struct State: Equatable {
         
+        /// スクロール中かどうか
+        var currentScrollState = ScrollState()
+        /// 日記リストに表示する日記の項目の要素
         var diaries = IdentifiedArrayOf<DiaryListItemFeature.State>()
     }
     
@@ -31,6 +34,8 @@ struct DiaryListFeature: Reducer, Sendable {
         case tappedDiaryItem(item: DiaryListItemFeature.State)
         /// 日記一覧リストのPull To Refresh時のアクション
         case refreshList
+        /// スクロール時の処理
+        case onScroll(state: ScrollState)
     }
     
     var body: some ReducerOf<Self> {
@@ -74,6 +79,10 @@ struct DiaryListFeature: Reducer, Sendable {
                 return .none
                 
             case .refreshList:
+                return .none
+                
+            case .onScroll(let scrollState):
+                state.currentScrollState = scrollState
                 return .none
             }
         }
