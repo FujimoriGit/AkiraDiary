@@ -70,7 +70,8 @@ jobs:
     - name: Xcode build
       run: set -o pipefail &&
         xcodebuild
-        -project ./Macho/Macho.xcodeproj
+        -workspace ./Macho/Macho.xcworkspace
+        -scheme Macho
         -sdk iphonesimulator
         -configuration Debug
         -resolvePackageDependencies
