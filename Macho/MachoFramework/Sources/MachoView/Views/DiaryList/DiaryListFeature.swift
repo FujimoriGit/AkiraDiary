@@ -53,8 +53,6 @@ struct DiaryListFeature: Reducer, Sendable {
         case tappedGraphButton
         /// 新規アイテム追加ボタン押下時のアクション
         case tappedCreateNewDiaryButton
-        /// 日記リストがスクロールされたときのアクション
-//        case onScrollDiaryList(isScrolling: Bool, isBounceAtBottom: Bool)
         
         // MARK: Effect Actions
         
