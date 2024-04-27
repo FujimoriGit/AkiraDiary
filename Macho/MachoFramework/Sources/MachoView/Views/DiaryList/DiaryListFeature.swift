@@ -19,6 +19,9 @@ struct DiaryListFeature: Reducer, Sendable {
         var diaries = IdentifiedArrayOf<DiaryListItemFeature.State>()
         /// スクロール位置追跡リストのコンポーネントState
         var trackableList = TrackableListFeature.State()
+        
+        // MARK: Observed State
+        
         /// 日記リスト画面で監視したいプロパティを持つState
         var viewState = ViewState()
         
@@ -28,6 +31,8 @@ struct DiaryListFeature: Reducer, Sendable {
             var isScrolling = false
             /// 日記リストのスクロールエリアのY軸のoffset
             var isBounced = false
+            /// 日記リストの読み込み中かどうか
+            var isLoadingDiaries = false
         }
     }
     
@@ -48,72 +53,123 @@ struct DiaryListFeature: Reducer, Sendable {
         case tappedGraphButton
         /// 新規アイテム追加ボタン押下時のアクション
         case tappedCreateNewDiaryButton
-        /// 日記一覧の各アイテム押下時のアクション
-        case tappedDiaryItem(item: DiaryListItemFeature.State)
-        /// 日記一覧リストのPull To Refresh時のアクション
-        case pullToRefreshListAtBottom
+        /// 日記リストがスクロールされたときのアクション
+//        case onScrollDiaryList(isScrolling: Bool, isBounceAtBottom: Bool)
+        
+        // MARK: Effect Actions
+        
+        /// 日記リストの更新を受信する
+        case receiveLoadDiaryItems(items: [DiaryListItemFeature.State])
     }
+    
+    @Dependency(\.diaryListFetchApi) var diaryListFetchCliant
     
     var body: some ReducerOf<Self> {
         
         Scope(state: \.trackableList, action: \.trackableList) {
             TrackableListFeature()
         }
+        // リストのスクロール情報の監視
         .onChange(of: \.trackableList) { _, trackableListState in
-            Reduce { state, _ in
-                print("onChange trackableList state: \(trackableListState)")
+            Reduce { state, action in
+                
+                // Stateの更新
                 state.viewState.isScrolling = trackableListState.isScrolling
                 state.viewState.isBounced = trackableListState.isBouncedAtBottom
-                return .none
+                
+                // バウンスしていたかつ、ロード中でない場合は日記リストの追加取得を行う
+                if state.viewState.isBounced,
+                   !state.viewState.isLoadingDiaries {
+                    
+                    print("start loading diary items.")
+                    // ロード中にStateを更新する
+                    state.viewState.isLoadingDiaries = true
+                    
+                    let startDate = state.diaries.last?.date ?? Date()
+                    // バウンスした際はデータをリロードする
+                    return loadDiaryListItem(startDate)
+                }
+                else {
+                    
+                    return .none
+                }
             }
         }
         Reduce { state, action in
             
             switch action {
+            
+            // 日記項目のComponentのDelegateAction
+            case .diaries(.element(let id, let delegateAction)):
+                switch delegateAction {
+                    
+                case .tappedDiaryItem:
+                    // TODO: 日記詳細画面への遷移を実装する
+                    print("show detail view.")
+                    return .none
+                    
+                case .deleteItemSwipeAction:
+                    // TODO: Realmの処理実装後に、Realmの削除に同期してStateの更新をするようにする
+                    state.diaries.removeAll { $0.id == id }
+                    print("delete item(\(id)).")
+                    
+                    // TODO: アイテムを削除する処理を実行する
+                    return .none
+                    
+                case .editItemSwipeAction:
+                    // TODO: 編集画面への遷移を実装する
+                    print("show edit view.")
+                    
+                    return .none
+                }
                 
-            case .diaries, .trackableList:
+            case .trackableList:
                 return .none
                 
             case .tappedFilterButton:
-//                print("--------------------------")
-//                print("tapped filter button")
-//                print("\(state.diaries.map { $0.title + ": " + $0.id.uuidString + "\n" })")
-//                print("--------------------------")
+                // TODO: フィルター表示処理を実行
                 state.diaries.append(.init(title: "filter", message: "test", date: Date(), isWin: true))
                 return .none
                 
             case .tappedGraphButton:
-//                print("--------------------------")
-//                print("tapped graph button")
-//                print("\(state.diaries.map { $0.title + ": " + $0.id.uuidString + "\n" })")
-//                print("--------------------------")
+                // TODO: グラフ画面表示を実行
                 state.diaries.append(.init(title: "graph", message: "test", date: Date(), isWin: true))
                 return .none
                 
             case .tappedCreateNewDiaryButton:
-//                print("--------------------------")
-//                print("tapped create new diary button")
-//                print("\(state.diaries.map { $0.title + ": " + $0.id.uuidString + "\n" })")
-//                print("--------------------------")
+                // TODO: 日記作成画面表示を実行
                 state.diaries.append(.init(title: "create", message: "test", date: Date(), isWin: true))
                 return .none
                 
-            case .tappedDiaryItem(let item):
-//                print("--------------------------")
-//                print("tapped diary item")
-//                print(item)
-//                print("--------------------------")
+            case .receiveLoadDiaryItems(let items):
+                print("complete load diary items.")
+                
+                // Stateの更新
+                state.diaries += items
+                state.viewState.isLoadingDiaries = false
+                
                 return .none
                 
-            case .pullToRefreshListAtBottom:
-                print("refresh diary")
-                return .run { _ in
-                    // TODO: Realmから一覧を取得する処理
-                }
+//            case .onScrollDiaryList(let isScrolling, let isBouncedAtBottom):
+                
             }
         }
         .forEach(\.diaries, action: \.diaries) {
             DiaryListItemFeature()
+        }
+    }
+}
+
+private extension DiaryListFeature {
+    
+    func loadDiaryListItem(_ startDate: Date) -> Effect<DiaryListFeature.Action> {
+        
+        // TODO: debug
+        print("do loadDiaryListItem.")
+        
+        return .run { send in
+            // TODO: リスト取得処理を行う
+            try await send(.receiveLoadDiaryItems(items: diaryListFetchCliant.fetch(startDate)), animation: .spring)
         }
     }
 }

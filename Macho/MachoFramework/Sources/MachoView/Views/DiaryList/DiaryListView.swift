@@ -28,7 +28,7 @@ struct DiaryListView: View {
     private let controlSectionHeight: CGFloat = 100
     private let filterIconSize: CGFloat = 16
     private let graphIconSize: CGSize = .init(width: 39, height: 39)
-    private let diaryItemMinHeightSize: CGFloat = 120
+    private let diaryItemMinHeightSize: CGFloat = 75
     private let indicatorHeight: CGFloat = 100
     
     // MARK: font property
@@ -76,7 +76,7 @@ private extension DiaryListView {
                             createControlSection(viewStore: viewStore)
                         }
                         createListSection(viewStore: viewStore)
-                        IndicatorView(isShowing: viewStore.isBounced)
+                        IndicatorView(isShowing: viewStore.isBounced && viewStore.isLoadingDiaries)
                             .frame(maxHeight: indicatorHeight)
                         Spacer()
                     }
@@ -99,6 +99,7 @@ private extension DiaryListView {
             Divider()
                 .frame(maxWidth: .infinity)
         }
+        .background(Color(asset: CustomColor.appPrimaryBackgroundColor))
     }
     
     func createListSection(viewStore: ViewStore<DiaryListFeature.State.ViewState, DiaryListFeature.Action>) -> some View {

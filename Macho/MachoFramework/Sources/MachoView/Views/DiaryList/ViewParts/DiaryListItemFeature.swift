@@ -21,6 +21,8 @@ struct DiaryListItemFeature: Reducer, Sendable {
     
     enum Action: Sendable {
         
+        /// アイテムをタップ
+        case tappedDiaryItem
         /// アイテム削除のスワイプアクション
         case deleteItemSwipeAction
         /// アイテム編集のスワイプアクション
@@ -30,17 +32,7 @@ struct DiaryListItemFeature: Reducer, Sendable {
     var body: some ReducerOf<Self> {
         
         Reduce { state, action in
-            
-            switch action {
-                
-            case .deleteItemSwipeAction:
-                print("delete")
-                return .none
-            
-            case .editItemSwipeAction:
-                print("editItem")
-                return .none
-            }
+            return .none
         }
     }
 }

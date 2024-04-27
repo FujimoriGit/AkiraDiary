@@ -42,52 +42,21 @@ struct DiaryListItemView: View {
     
     var body: some View {
         WithViewStore(store, observe: { $0 }) { viewStore in
-            VStack {
-                HStack(spacing: .zero) {
-                    Text(viewStore.isWin ? "Win" : "Lose")
-                        .font(.system(size: winLoseLabelFontSize,
-                                      weight: .heavy))
-                        .foregroundStyle(viewStore.isWin ? Color.green : Color.red)
-                    Spacer()
-                        .frame(width: winLoseLabelTrailingPadding)
-                    VStack(spacing: .zero) {
-                        HStack(spacing: .zero) {
-                            Text(viewStore.title)
-                                .font(.system(size: titleFontSize,
-                                              weight: .bold))
-                            Spacer()
-                            Text(viewStore.date.toString(.init(date: .jp),
-                                                         isOmissionTens: true))
-                                .font(.system(size: dateFontSize))
-                        }
-                        Spacer()
-                            .frame(height: titlePaddingBottom)
-                        Text(viewStore.message)
-                            .font(.system(size: messageFontSize))
-                            .fixedSize(horizontal: false,
-                                       vertical: true)
-                            .multilineTextAlignment(.leading)
-                            .frame(maxWidth: .infinity,
-                                   alignment: .leading)
-                        Spacer()
-                    }
-                }
-                .padding(.top, baseTopPadding)
-                .padding(.bottom, baseBottomPadding)
-                .padding(.horizontal, baseHorizontalPadding)
-                Divider()
-                    .frame(maxWidth: .infinity)
-            }
+            Button(action: {
+                viewStore.send(.tappedDiaryItem)
+            }, label: {
+                createDiaryItemContent(viewStore: viewStore)
+            })
             .foregroundStyle(Color(asset: CustomColor.appPrimaryTextColor))
             .background(Color(asset: CustomColor.appPrimaryBackgroundColor))
             .addSwipeAction {
                 SwipeAction(tint: Color(asset: CustomColor.deleteSwipeBackgroundColor),
                             icon: Image(systemName: "trash.fill")) {
-                    print("delete.")
+                    viewStore.send(.deleteItemSwipeAction, animation: .spring)
                 }
                 SwipeAction(tint: Color(asset: CustomColor.editSwipeBackgroundColor),
                             icon: Image(systemName: "pencil")) {
-                    print("edit.")
+                    viewStore.send(.editItemSwipeAction)
                 }
             }
         }
@@ -97,6 +66,57 @@ struct DiaryListItemView: View {
 // MARK: - private method
 
 private extension DiaryListItemView {
+    
+    func createDiaryItemContent(viewStore: ViewStore<DiaryListItemFeature.State, DiaryListItemFeature.Action>) -> some View {
+        VStack {
+            HStack(spacing: .zero) {
+                createWinLoseIcon(isWin: viewStore.isWin)
+                Spacer()
+                    .frame(width: winLoseLabelTrailingPadding)
+                VStack(spacing: .zero) {
+                    createTopContents(title: viewStore.title,
+                                      date: viewStore.date.toString(.init(date: .jp),
+                                                                    isOmissionTens: true))
+                    Spacer()
+                        .frame(height: titlePaddingBottom)
+                    createMessageContent(message: viewStore.message)
+                }
+            }
+            .padding(.top, baseTopPadding)
+            .padding(.bottom, baseBottomPadding)
+            .padding(.horizontal, baseHorizontalPadding)
+            Divider()
+                .frame(maxWidth: .infinity)
+        }
+    }
+    
+    func createWinLoseIcon(isWin: Bool) -> some View {
+        Text(isWin ? "Win" : "Lose")
+            .font(.system(size: winLoseLabelFontSize,
+                          weight: .heavy))
+            .foregroundStyle(isWin ? Color(asset: CustomColor.winColor) : Color(asset: CustomColor.loseColor))
+    }
+    
+    func createTopContents(title: String, date: String) -> some View {
+        HStack(spacing: .zero) {
+            Text(title)
+                .font(.system(size: titleFontSize,
+                              weight: .bold))
+            Spacer()
+            Text(date)
+                .font(.system(size: dateFontSize))
+        }
+    }
+    
+    func createMessageContent(message: String) -> some View {
+        Text(message)
+            .font(.system(size: messageFontSize))
+            .fixedSize(horizontal: false,
+                       vertical: true)
+            .multilineTextAlignment(.leading)
+            .frame(maxWidth: .infinity,
+                   alignment: .leading)
+    }
     
     func createEditItemButton(_ action: @escaping () -> Void) -> some View {
         Button(action: action) {
