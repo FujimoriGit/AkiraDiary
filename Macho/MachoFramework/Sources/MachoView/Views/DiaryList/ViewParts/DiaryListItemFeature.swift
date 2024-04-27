@@ -9,7 +9,7 @@ import ComposableArchitecture
 import Foundation
 
 struct DiaryListItemFeature: Reducer, Sendable {
-        
+    
     struct State: Equatable, Identifiable, Sendable {
         
         let id = UUID()
@@ -21,7 +21,10 @@ struct DiaryListItemFeature: Reducer, Sendable {
     
     enum Action: Sendable {
         
-        case delete
+        /// アイテム削除のスワイプアクション
+        case deleteItemSwipeAction
+        /// アイテム編集のスワイプアクション
+        case editItemSwipeAction
     }
     
     var body: some ReducerOf<Self> {
@@ -30,7 +33,12 @@ struct DiaryListItemFeature: Reducer, Sendable {
             
             switch action {
                 
-            case .delete:
+            case .deleteItemSwipeAction:
+                print("delete")
+                return .none
+            
+            case .editItemSwipeAction:
+                print("editItem")
                 return .none
             }
         }

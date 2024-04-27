@@ -10,7 +10,16 @@ import SwiftUI
 
 struct DiaryListView: View {
     
-    var store: StoreOf<DiaryListFeature>
+    // MARK: - tca store property
+    
+    private var store: StoreOf<DiaryListFeature>
+    
+    // MARK: - initialize method
+    
+    init(store: StoreOf<DiaryListFeature>) {
+        
+        self.store = store
+    }
     
     // MARK: - layout property
     
@@ -20,15 +29,19 @@ struct DiaryListView: View {
     private let filterIconSize: CGFloat = 16
     private let graphIconSize: CGSize = .init(width: 39, height: 39)
     private let diaryItemMinHeightSize: CGFloat = 120
+    private let indicatorHeight: CGFloat = 100
     
     // MARK: font property
     
+    private let navigationTitleFontSize: CGFloat = 20
     private let filterButtonFontSize: CGFloat = 15
     
     // MARK: padding property
     
     private let controlSectionPaddingHorizontal: CGFloat = 19
     private let graphButtonPaddingTrailing: CGFloat = 8
+    private let controlSectionPaddingBottom: CGFloat = 8
+    private let controlSectionContentsPaddingBottom: CGFloat = 16
     
     // MARK: radius property
     
@@ -39,8 +52,13 @@ struct DiaryListView: View {
     var body: some View {
         NavigationStack {
             createMainView()
-                .navigationTitle("Diary List")
                 .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Text("Diary List")
+                            .font(.system(size: navigationTitleFontSize))
+                    }
+                }
         }
     }
 }
@@ -51,74 +69,50 @@ private extension DiaryListView {
     
     func createMainView() -> some View {
         GeometryReader { geometry in
-            WithViewStore(store, observe: { $0 }) { viewStore in
-                ZStack {
-                    if viewStore.currentScrollState.isScrolling {
-                        VStack {
-                            createControlHeaderView(viewStore: viewStore)
-                            Spacer()
+            WithViewStore(store, observe: \.viewState) { viewStore in
+                ZStack(alignment: .top) {
+                    VStack(spacing: .zero) {
+                        if !viewStore.isScrolling {
+                            createControlSection(viewStore: viewStore)
                         }
-                    }
-                    VStack {
+                        createListSection(viewStore: viewStore)
+                        IndicatorView(isShowing: viewStore.isBounced)
+                            .frame(maxHeight: indicatorHeight)
                         Spacer()
-                        ScrollViewReader{ proxy in
-                            ScrollView(.vertical) {
-                                VStack(spacing: .zero) {
-                                    createControlSection(viewStore: viewStore)
-                                        .frame(height: controlSectionHeight,
-                                               alignment: .bottom)
-                                    Spacer()
-                                        .frame(height: 8) // TODO: マジックナンバー
-                                    createListSection(viewStore: viewStore)
-                                }
-                                .background {
-                                    GeometryReader { geometry in
-                                        Color.clear.onChange(of: geometry.frame(in: .named("ScrollView")).minY) { _, offsetY in
-                                            viewStore.send(.onScroll(state: ScrollState(offsetY: offsetY)))
-                                        }
-                                    }
-                                }
-                            }
-                            .refreshable {
-                                viewStore.send(.refreshList)
-                            }
-                            .scrollBounceBehavior(.basedOnSize)
-                        }
+                    }
+                    if viewStore.isScrolling {
+                        createControlHeaderView(viewStore: viewStore)
                     }
                 }
+                .toolbar(viewStore.isScrolling ? .hidden : .visible, for: .navigationBar)
             }
             .frame(width: geometry.size.width,
                    height: geometry.size.height)
         }
     }
     
-    func createControlSection(viewStore: ViewStore<DiaryListFeature.State, DiaryListFeature.Action>) -> some View {
+    func createControlSection(viewStore: ViewStore<DiaryListFeature.State.ViewState, DiaryListFeature.Action>) -> some View {
         VStack {
-            Spacer()
             createControlHeaderView(viewStore: viewStore)
             Spacer()
-                .frame(height: 16) // TODO: マジックナンバー
+                .frame(height: controlSectionContentsPaddingBottom)
             Divider()
                 .frame(maxWidth: .infinity)
         }
     }
     
-    func createListSection(viewStore: ViewStore<DiaryListFeature.State, DiaryListFeature.Action>) -> some View {
-        VStack {
+    func createListSection(viewStore: ViewStore<DiaryListFeature.State.ViewState, DiaryListFeature.Action>) -> some View {
+        TrackableList(store: store.scope(state: \.trackableList, action: \.trackableList)) {
             ForEachStore(store.scope(state: \.diaries,
                                      action: \.diaries)) { store in
                 DiaryListItemView(store: store)
-                    .fixedSize(horizontal: false, vertical: true)
                     .frame(minHeight: diaryItemMinHeightSize)
-                    .scrollTransition { view, phase in
-                        view
-                            .opacity(phase.isIdentity ? 1 : 0)
-                    }
             }
         }
+        .scrollIndicators(.hidden)
     }
     
-    func createControlHeaderView(viewStore: ViewStore<DiaryListFeature.State, DiaryListFeature.Action>) -> some View {
+    func createControlHeaderView(viewStore: ViewStore<DiaryListFeature.State.ViewState, DiaryListFeature.Action>) -> some View {
         HStack(spacing: .zero) {
             createFilterButton {
                 viewStore.send(.tappedFilterButton)
@@ -134,6 +128,7 @@ private extension DiaryListView {
             }
         }
         .padding(.horizontal, controlSectionPaddingHorizontal)
+        .background(Color(asset: CustomColor.scrollingToolBarAreaBackgroundColor))
     }
     
     func createFilterButton(_ action: @escaping () -> Void) -> some View {
@@ -155,7 +150,7 @@ private extension DiaryListView {
     
     func createGraphButton(_ action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            Image("graph_circle", bundle: nil)
+            Image(asset: CustomImage.graphCircle)
                 .resizable()
                 .frame(width: graphIconSize.width,
                        height: graphIconSize.height)
@@ -164,7 +159,7 @@ private extension DiaryListView {
     
     func createNewDiaryButton(_ action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            Image("plus_circle", bundle: nil)
+            Image(asset: CustomImage.plusCircle)
                 .resizable()
                 .frame(width: graphIconSize.width,
                        height: graphIconSize.height)
