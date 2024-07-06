@@ -1,5 +1,5 @@
 //
-//  DiarySearchTagEntity.swift
+//  TrainingTagEntity.swift
 //  Macho
 //
 //  Created by 佐藤汰一 on 2023/11/04.
@@ -8,7 +8,7 @@
 import Foundation
 import RealmSwift
 
-public struct DiarySearchTagEntity: BaseRealmEntity {
+public struct TrainingTagEntity: BaseRealmEntity {
     
     public let id: UUID
     public let tagName: String
@@ -21,19 +21,19 @@ public struct DiarySearchTagEntity: BaseRealmEntity {
         self.tagName = tagName
     }
     
-    public init(realmObject: DiarySearchTagRealmObject) {
+    public init(realmObject: TrainingTagRealmObject) {
         
         id = realmObject.id
         tagName = realmObject.tagName
     }
     
-    public func toRealmObject() -> DiarySearchTagRealmObject {
+    public func toRealmObject() -> TrainingTagRealmObject {
         
-        return DiarySearchTagRealmObject(id: id, tagName: tagName)
+        return TrainingTagRealmObject(id: id, tagName: tagName)
     }
 }
 
-public class DiarySearchTagRealmObject: Object {
+public class TrainingTagRealmObject: Object {
     
     @Persisted(primaryKey: true) var id: UUID
     @Persisted var tagName: String

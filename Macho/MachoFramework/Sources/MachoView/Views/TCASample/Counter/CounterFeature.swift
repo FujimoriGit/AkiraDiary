@@ -41,10 +41,10 @@ struct CounterFeature: Reducer {
     // MARK: - body
     
     enum CancelID { case timer }
-
-
-      @Dependency(\.continuousClock) var clock
-      @Dependency(\.numberFact) var numberFact
+    
+    
+    @Dependency(\.continuousClock) var clock
+    @Dependency(\.numberFact) var numberFact
 
 
     var body: some ReducerOf<Self> {
