@@ -199,7 +199,11 @@ final class DiaryListViewTests: XCTestCase {
         
         // TODO: タップ後の画面遷移処理はまだ実装できていないので、実装後にテストの期待値を実装する
         // 日記リストのセルタップ時の動作
-        await store.send(.diaries(.element(id: diariesState[0].id, action: .tappedDiaryItem)))
+        await store.send(.diaries(.element(id: diariesState[0].id, action: .tappedDiaryItem))) {
+            
+            // 編集画面をナビゲーションスタックに追加
+            $0.path.append(.detailScreen(.init()))
+        }
     }
     
     // 日記項目削除確認アラートで削除を選択した時のケース
@@ -264,6 +268,46 @@ final class DiaryListViewTests: XCTestCase {
             
             // アラート削除
             $0.alert = nil
+            // 編集画面をナビゲーションスタックに追加
+            $0.path.append(.editScreen(.init()))
+        }
+    }
+    
+    // 日記作成ボタンを押下した時のケース
+    @MainActor
+    func testTappedAddDiaryButton() async {
+        
+        let store = TestStore(
+            initialState: DiaryListFeature.State()) {
+                
+            DiaryListFeature()
+        }
+        
+        // TODO: 日記作成画面への遷移が未実装のため、実装後にテストの期待値を実装する
+        // 日記作成ボタンを押下
+        await store.send(.tappedCreateNewDiaryButton) {
+            
+            // 日記作成画面をナビゲーションスタックに追加
+            $0.path.append(.createScreen(.init()))
+        }
+    }
+    
+    // グラフボタンを押下した時のケース
+    @MainActor
+    func testTappedGraphButton() async {
+        
+        let store = TestStore(
+            initialState: DiaryListFeature.State()) {
+                
+            DiaryListFeature()
+        }
+        
+        // TODO: グラフ画面への遷移が未実装のため、実装後にテストの期待値を実装する
+        // グラフボタンを押下
+        await store.send(.tappedGraphButton) {
+            
+            // グラフ画面をナビゲーションスタックに追加
+            $0.path.append(.graphScreen(.init()))
         }
     }
 }

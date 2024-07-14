@@ -19,6 +19,10 @@ struct DiaryListFeature: Reducer, Sendable {
         
         @PresentationState var alert: AlertState<Action.Alert>?
         
+        // MARK: Navigation States
+        
+        var path = StackState<Path.State>()
+        
         // MARK: Component States
         
         /// 日記リストに表示する日記の項目の要素
@@ -46,10 +50,14 @@ struct DiaryListFeature: Reducer, Sendable {
     
     enum Action: Sendable, Equatable {
         
-        // MARK: Presentation Actions
+        // MARK: Presentation Action
         
         /// アラートの表示
         case alert(PresentationAction<Alert>)
+        
+        // MARK: Navigation Action
+        
+        case path(StackAction<Path.State, Path.Action>)
         
         // MARK: Component Actions
         
@@ -120,6 +128,7 @@ struct DiaryListFeature: Reducer, Sendable {
                 case .confirmEditItem(let id):
                     // TODO: 編集画面への遷移を実装する
                     print("show edit view(target_id=\(id).")
+                    state.path.append(.editScreen(.init()))
                     return .none
                     
                 case .confirmDeleteItem(let id):
@@ -132,8 +141,11 @@ struct DiaryListFeature: Reducer, Sendable {
                 default:
                     return .none
                 }
-                                                
+                
             case .alert:
+                return .none
+                
+            case .path:
                 return .none
                 
             case .onAppearView:
@@ -149,6 +161,7 @@ struct DiaryListFeature: Reducer, Sendable {
                 case .tappedDiaryItem:
                     // TODO: 日記詳細画面への遷移を実装する
                     print("show detail view.")
+                    state.path.append(.detailScreen(.init()))
                     return .none
                     
                 case .deleteItemSwipeAction:
@@ -194,10 +207,12 @@ struct DiaryListFeature: Reducer, Sendable {
                 
             case .tappedGraphButton:
                 // TODO: グラフ画面表示を実行
+                state.path.append(.graphScreen(.init()))
                 return .none
                 
             case .tappedCreateNewDiaryButton:
                 // TODO: 日記作成画面表示を実行
+                state.path.append(.createScreen(.init()))
                 return .none
                 
             case .receiveLoadDiaryItems(let items):
@@ -225,9 +240,71 @@ struct DiaryListFeature: Reducer, Sendable {
             }
         }
         .forEach(\.diaries, action: \.diaries) {
+            
             DiaryListItemFeature()
         }
+        .forEach(\.path, action: \.path) {
+            
+            Path()
+        }
         .ifLet(\.$alert, action: \.alert)
+    }
+}
+
+// MARK: - Path Definition
+
+extension DiaryListFeature {
+    
+    @Reducer
+    struct Path: Equatable {
+        
+        enum State: Equatable, Sendable {
+            
+            // 日記編集画面
+            case editScreen(DiaryListFeature.State)
+            // 日記作成画面
+            case createScreen(DiaryListFeature.State)
+            // グラフ画面
+            case graphScreen(DiaryListFeature.State)
+            // 詳細画面
+            case detailScreen(DiaryListFeature.State)
+        }
+        
+        enum Action: Equatable, Sendable {
+            
+            // 日記編集画面
+            case editScreen(DiaryListFeature.Action)
+            // 日記作成画面
+            case createScreen(DiaryListFeature.Action)
+            // グラフ画面
+            case graphScreen(DiaryListFeature.Action)
+            // 詳細画面
+            case detailScreen(DiaryListFeature.Action)
+        }
+        
+        var body: some ReducerOf<Self> {
+            
+            Scope(state: \.editScreen, action: \.editScreen) {
+                
+                // TODO: 編集画面に置き換える
+                DiaryListFeature()
+            }
+            Scope(state: \.createScreen, action: \.createScreen) {
+                
+                // TODO: 作成画面に置き換える
+                DiaryListFeature()
+            }
+            Scope(state: \.graphScreen, action: \.graphScreen) {
+                
+                // TODO: グラフ画面に置き換える
+                DiaryListFeature()
+            }
+            Scope(state: \.detailScreen, action: \.detailScreen) {
+                
+                // TODO: 詳細画面に置き換える
+                DiaryListFeature()
+            }
+        }
     }
 }
 

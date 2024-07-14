@@ -50,7 +50,7 @@ struct DiaryListView: View {
     // MARK: - view property
     
     var body: some View {
-        NavigationStack {
+        NavigationStackStore(store.scope(state: \.path, action: \.path)) {
             createMainView()
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
@@ -59,7 +59,7 @@ struct DiaryListView: View {
                             .font(.system(size: navigationTitleFontSize))
                     }
                 }
-        }
+        } destination: { getDestination($0) }
         .alert(store: store.scope(state: \.$alert, action: \.alert))
     }
 }
@@ -168,6 +168,34 @@ private extension DiaryListView {
                 .resizable()
                 .frame(width: graphIconSize.width,
                        height: graphIconSize.height)
+        }
+    }
+}
+
+// MARK: - Navigation Stack Route Definition
+
+private extension DiaryListView {
+    
+    func getDestination(_ state: DiaryListFeature.Path.State) -> some View {
+        switch state {
+            
+        // TODO: 実装出来次第正しい画面に変更する
+        case .editScreen(let editScreenState):
+            DiaryListView(store: StoreOf<DiaryListFeature>(initialState: editScreenState) {
+                DiaryListFeature()
+            })
+        case .createScreen(let createScreenState):
+            DiaryListView(store: StoreOf<DiaryListFeature>(initialState: createScreenState) {
+                DiaryListFeature()
+            })
+        case .graphScreen(let graphScreenState):
+            DiaryListView(store: StoreOf<DiaryListFeature>(initialState: graphScreenState) {
+                DiaryListFeature()
+            })
+        case .detailScreen(let detailScreenState):
+            DiaryListView(store: StoreOf<DiaryListFeature>(initialState: detailScreenState) {
+                DiaryListFeature()
+            })
         }
     }
 }
