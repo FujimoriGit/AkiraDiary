@@ -32,6 +32,15 @@ struct DiaryListItemFeature: Reducer, Sendable {
     var body: some ReducerOf<Self> {
         
         Reduce { state, action in
+            switch action {
+                
+            case .tappedDiaryItem:
+                print("tappedDiaryItem")
+            case .deleteItemSwipeAction:
+                print("deleteItemSwipeAction")
+            case .editItemSwipeAction:
+                print("editItemSwipeAction")
+            }
             return .none
         }
     }

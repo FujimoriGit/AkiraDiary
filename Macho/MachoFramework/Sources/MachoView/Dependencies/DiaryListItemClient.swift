@@ -12,9 +12,14 @@ struct DiaryListItemClient {
     
     // TODO: 戻り値の型を日記アイテムに変える
     /// 日記リストの取得を行う
-    let fetch: (Date) async throws -> [DiaryListItemFeature.State]
+    /// - Parameters:
+    ///   - startDate: 日記取得の開始日付
+    ///   - limitCount: 日記取得上限数(0以下の場合は無制限)
+    let fetch: (_ startDate: Date, _ limitCount: Int) async throws -> [DiaryListItemFeature.State]
+    
     /// 日記リストの情報を削除する
-    let deleteItem: (UUID) async throws -> Void
+    /// - Parameter deleteItem: 削除対象の日記ID
+    let deleteItem: (_ deleteItem: UUID) async throws -> Void
 }
 
 // MARK: 日記リスト取得APIの処理内容を注入
@@ -22,7 +27,7 @@ struct DiaryListItemClient {
 extension DiaryListItemClient: DependencyKey {
     
     /// 日記リスト取得の本来の処理
-    static let liveValue = Self { fetchStartDate in
+    static let liveValue = Self { fetchStartDate, limitCount  in
         
         // TODO: 日記の情報を返す
         return []
@@ -32,13 +37,13 @@ extension DiaryListItemClient: DependencyKey {
     }
     
     /// デフォルトのPreview時のモック処理
-    static var previewValue = Self { _ in
+    static var previewValue = Self { _, _ in
         
         return [.init(title: "preview", message: "reload message", date: Date(), isWin: false)]
     } deleteItem: { _ in }
     
     /// デフォルトのTest時のモック処理
-    static var testValue = Self { _ in
+    static var testValue = Self { _, _ in
         
         return [.init(title: "test", message: "reload message", date: Date(timeIntervalSince1970: .zero), isWin: false)]
     } deleteItem: { _ in }

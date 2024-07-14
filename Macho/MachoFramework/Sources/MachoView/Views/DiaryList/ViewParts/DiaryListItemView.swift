@@ -52,7 +52,7 @@ struct DiaryListItemView: View {
             .addSwipeAction {
                 SwipeAction(tint: Color(asset: CustomColor.deleteSwipeBackgroundColor),
                             icon: Image(systemName: "trash.fill")) {
-                    viewStore.send(.deleteItemSwipeAction, animation: .spring)
+                    viewStore.send(.deleteItemSwipeAction)
                 }
                 SwipeAction(tint: Color(asset: CustomColor.editSwipeBackgroundColor),
                             icon: Image(systemName: "pencil")) {

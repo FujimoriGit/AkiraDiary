@@ -98,7 +98,7 @@ struct TrackableList<Content>: View where Content: View {
                         GeometryReader { inside in
                             Color.clear.onChange(of: inside.size) {
                                 viewStore.send(.onChangeScrollViewContentSize(container: outside.size,
-                                                                              content: inside.size), animation: .spring)
+                                                                              content: inside.size), animation: .default)
                             }
                         }
                     }
@@ -113,7 +113,7 @@ struct TrackableList<Content>: View where Content: View {
                 }
                 .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
                     viewStore.send(.onScroll(offset: offset),
-                                   animation: .spring)
+                                   animation: .default)
                 }
             }
         }

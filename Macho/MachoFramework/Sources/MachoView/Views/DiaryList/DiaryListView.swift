@@ -60,6 +60,7 @@ struct DiaryListView: View {
                     }
                 }
         }
+        .alert(store: store.scope(state: \.$alert, action: \.alert))
     }
 }
 
@@ -85,6 +86,9 @@ private extension DiaryListView {
                     }
                 }
                 .toolbar(viewStore.isScrolling ? .hidden : .visible, for: .navigationBar)
+                .onAppear {
+                    viewStore.send(.onAppearView)
+                }
             }
             .frame(width: geometry.size.width,
                    height: geometry.size.height)
@@ -171,6 +175,39 @@ private extension DiaryListView {
 // MARK: - preview
 
 #Preview {
-    DiaryListView(store: Store(initialState: DiaryListFeature.State()) { DiaryListFeature()
-    })
+    
+    struct SampleView: View {
+        
+        private let state: DiaryListFeature.State
+        
+        init() {
+            
+            var diaries: IdentifiedArrayOf<DiaryListItemFeature.State> = []
+            
+            for i in 0...10 {
+                diaries.append(DiaryListItemFeature.State(title: "\(i)", message: "", date: Date(), isWin: true))
+            }
+            
+            self.state = DiaryListFeature.State(diaries: diaries)
+        }
+        
+        var body: some View {
+            DiaryListView(store: Store(initialState: state) {
+                withDependencies {
+                    $0.diaryListFetchApi = DiaryListItemClient(fetch: { startDate, limitCount in
+                        if Int.random(in: 0...10) <= 5 {
+                            return [.init(title: "fetch item", message: "sample", date: Date(), isWin: false)]
+                        }
+                        else {
+                            throw NSError()
+                        }
+                    }, deleteItem: { _ in })
+                } operation: {
+                    DiaryListFeature()
+                }
+            })
+        }
+    }
+    
+    return SampleView()
 }
