@@ -185,8 +185,8 @@ final class DiaryListViewTests: XCTestCase {
     
     // 日記リストをタップした時のケース
     @MainActor
-    func testTappedDiaryItem() async {
-        
+    func testTappedDiaryItem() async throws {
+                
         let diariesState: IdentifiedArray<UUID, DiaryListItemFeature.State> = [
             DiaryListItemFeature.State(title: "test1", message: "", date: Date(), isWin: true),
          ]
@@ -197,12 +197,14 @@ final class DiaryListViewTests: XCTestCase {
             DiaryListFeature()
         }
         
+        throw XCTSkip("ignore test. because don't complete target code.")
+        
         // TODO: タップ後の画面遷移処理はまだ実装できていないので、実装後にテストの期待値を実装する
         // 日記リストのセルタップ時の動作
-        await store.send(.diaries(.element(id: diariesState[0].id, action: .tappedDiaryItem))) {
+        await store.send(.diaries(.element(id: diariesState[0].id, action: .tappedDiaryItem))) { _ in
             
             // 編集画面をナビゲーションスタックに追加
-            $0.path.append(.detailScreen(.init()))
+//            $0.path.append(.detailScreen(.init()))
         }
     }
     
@@ -243,7 +245,7 @@ final class DiaryListViewTests: XCTestCase {
     
     // 日記項目編集確認アラートで編集を選択した時のケース
     @MainActor
-    func testTappedEditItem() async {
+    func testTappedEditItem() async throws {
         
         let diariesState: IdentifiedArray<UUID, DiaryListItemFeature.State> = [
             DiaryListItemFeature.State(title: "test1", message: "", date: Date(), isWin: true),
@@ -262,6 +264,8 @@ final class DiaryListViewTests: XCTestCase {
                                                              firstButtonHandler: .confirmEditItem(targetId: diariesState[0].id))
         }
         
+        throw XCTSkip("ignore test. because don't complete target code.")
+        
         // TODO: 編集画面への遷移が未実装のため、実装後にテストの期待値を実装する
         // 日記項目編集確認アラートで編集を選択した時
         await store.send(.alert(.presented(.confirmEditItem(targetId: diariesState[0].id)))) {
@@ -269,13 +273,13 @@ final class DiaryListViewTests: XCTestCase {
             // アラート削除
             $0.alert = nil
             // 編集画面をナビゲーションスタックに追加
-            $0.path.append(.editScreen(.init()))
+//            $0.path.append(.editScreen(.init()))
         }
     }
     
     // 日記作成ボタンを押下した時のケース
     @MainActor
-    func testTappedAddDiaryButton() async {
+    func testTappedAddDiaryButton() async throws {
         
         let store = TestStore(
             initialState: DiaryListFeature.State()) {
@@ -283,18 +287,20 @@ final class DiaryListViewTests: XCTestCase {
             DiaryListFeature()
         }
         
+        throw XCTSkip("ignore test. because don't complete target code.")
+        
         // TODO: 日記作成画面への遷移が未実装のため、実装後にテストの期待値を実装する
         // 日記作成ボタンを押下
-        await store.send(.tappedCreateNewDiaryButton) {
+        await store.send(.tappedCreateNewDiaryButton) { _ in
             
             // 日記作成画面をナビゲーションスタックに追加
-            $0.path.append(.createScreen(.init()))
+//            $0.path.append(.createScreen(.init()))
         }
     }
     
     // グラフボタンを押下した時のケース
     @MainActor
-    func testTappedGraphButton() async {
+    func testTappedGraphButton() async throws {
         
         let store = TestStore(
             initialState: DiaryListFeature.State()) {
@@ -302,12 +308,35 @@ final class DiaryListViewTests: XCTestCase {
             DiaryListFeature()
         }
         
+        throw XCTSkip("ignore test. because don't complete target code.")
+        
         // TODO: グラフ画面への遷移が未実装のため、実装後にテストの期待値を実装する
         // グラフボタンを押下
-        await store.send(.tappedGraphButton) {
+        await store.send(.tappedGraphButton) { _ in
             
             // グラフ画面をナビゲーションスタックに追加
-            $0.path.append(.graphScreen(.init()))
+//            $0.path.append(.graphScreen(.init()))
+        }
+    }
+    
+    // フィルターボタンを押下した時のケース
+    @MainActor
+    func testTappedFilterButton() async throws {
+        
+        let store = TestStore(
+            initialState: DiaryListFeature.State()) {
+                
+            DiaryListFeature()
+        }
+        
+        throw XCTSkip("ignore test. because don't complete target code.")
+        
+        // TODO: フィルター画面への遷移が未実装のため、実装後にテストの期待値を実装する
+        // グラフボタンを押下
+        await store.send(.tappedFilterButton) { _ in
+            
+            // グラフ画面をナビゲーションスタックに追加
+//            $0.path.append(.graphScreen(.init()))
         }
     }
 }

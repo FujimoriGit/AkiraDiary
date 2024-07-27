@@ -59,8 +59,9 @@ struct DiaryListView: View {
                             .font(.system(size: navigationTitleFontSize))
                     }
                 }
-        } destination: { getDestination($0) }
+        } destination: { getNavigationDestination($0) }
         .alert(store: store.scope(state: \.$alert, action: \.alert))
+        .sheet(store: store.scope(state: \.$destination, action: \.destination)) { getModalDestination($0.withState({ $0 })) }
     }
 }
 
@@ -176,25 +177,41 @@ private extension DiaryListView {
 
 private extension DiaryListView {
     
-    func getDestination(_ state: DiaryListFeature.Path.State) -> some View {
+    func getNavigationDestination(_ state: DiaryListFeature.Path.State) -> some View {
         switch state {
             
         // TODO: 実装出来次第正しい画面に変更する
         case .editScreen(let editScreenState):
-            DiaryListView(store: StoreOf<DiaryListFeature>(initialState: editScreenState) {
-                DiaryListFeature()
+            AddContactView(store: StoreOf<AddContactFeature>(initialState: editScreenState) {
+                AddContactFeature()
             })
         case .createScreen(let createScreenState):
-            DiaryListView(store: StoreOf<DiaryListFeature>(initialState: createScreenState) {
-                DiaryListFeature()
+            AddContactView(store: StoreOf<AddContactFeature>(initialState: createScreenState) {
+                AddContactFeature()
             })
         case .graphScreen(let graphScreenState):
-            DiaryListView(store: StoreOf<DiaryListFeature>(initialState: graphScreenState) {
-                DiaryListFeature()
+            AddContactView(store: StoreOf<AddContactFeature>(initialState: graphScreenState) {
+                AddContactFeature()
             })
         case .detailScreen(let detailScreenState):
-            DiaryListView(store: StoreOf<DiaryListFeature>(initialState: detailScreenState) {
-                DiaryListFeature()
+            AddContactView(store: StoreOf<AddContactFeature>(initialState: detailScreenState) {
+                AddContactFeature()
+            })
+        }
+    }
+}
+
+// MARK: - Modal Presentation Route Definition
+
+private extension DiaryListView {
+    
+    func getModalDestination(_ state: DiaryListFeature.Destination.State) -> some View {
+        switch state {
+            
+        // TODO: 実装出来次第正しい画面に変更する
+        case .filterScreen(let filterScreenState):
+            AddContactView(store: StoreOf<AddContactFeature>(initialState: filterScreenState) {
+                AddContactFeature()
             })
         }
     }
