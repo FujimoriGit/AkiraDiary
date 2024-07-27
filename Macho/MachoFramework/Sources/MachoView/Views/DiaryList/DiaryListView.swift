@@ -29,12 +29,12 @@ struct DiaryListView: View {
     private let filterIconSize: CGFloat = 16
     private let graphIconSize: CGSize = .init(width: 39, height: 39)
     private let diaryItemMinHeightSize: CGFloat = 75
-    private let indicatorHeight: CGFloat = 100
     
     // MARK: font property
     
     private let navigationTitleFontSize: CGFloat = 20
     private let filterButtonFontSize: CGFloat = 15
+    private let emptyMessageFontSize: CGFloat = 20
     
     // MARK: padding property
     
@@ -42,6 +42,7 @@ struct DiaryListView: View {
     private let graphButtonPaddingTrailing: CGFloat = 8
     private let controlSectionPaddingBottom: CGFloat = 8
     private let controlSectionContentsPaddingBottom: CGFloat = 16
+    private let emptyMessagePaddingHorizontal: CGFloat = 16
     
     // MARK: radius property
     
@@ -77,9 +78,12 @@ private extension DiaryListView {
                         if !viewStore.isScrolling {
                             createControlSection(viewStore: viewStore)
                         }
-                        createListSection(viewStore: viewStore)
-                        IndicatorView(isShowing: viewStore.isBounced && viewStore.isLoadingDiaries)
-                            .frame(maxHeight: indicatorHeight)
+                        if viewStore.hasDiaryItems {
+                            createListSection(viewStore: viewStore)
+                        }
+                        else {
+                            createEmptyListView()
+                        }
                         Spacer()
                     }
                     if viewStore.isScrolling {
@@ -116,6 +120,15 @@ private extension DiaryListView {
             }
         }
         .scrollIndicators(.hidden)
+    }
+    
+    func createEmptyListView() -> some View {
+        Text("表示する日記がありません")
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding(.horizontal, emptyMessagePaddingHorizontal)
+            .font(.system(size: emptyMessageFontSize, weight: .bold))
+            .foregroundStyle(Color(asset: CustomColor.appPrimaryTextColor))
+            .multilineTextAlignment(.center)
     }
     
     func createControlHeaderView(viewStore: ViewStore<DiaryListFeature.State.ViewState, DiaryListFeature.Action>) -> some View {

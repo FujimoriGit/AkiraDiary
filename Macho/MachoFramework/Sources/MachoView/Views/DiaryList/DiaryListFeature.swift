@@ -40,10 +40,10 @@ struct DiaryListFeature: Reducer, Sendable {
             
             /// スクロール中かどうか
             var isScrolling = false
-            /// 日記リストのスクロールエリアのY軸のoffset
-            var isBounced = false
             /// 日記リストの読み込み中かどうか
             var isLoadingDiaries = false
+            /// 表示する日記リストがあるかどうか
+            var hasDiaryItems = false
         }
     }
     
@@ -183,10 +183,8 @@ private extension DiaryListFeature {
                 return .none
                 
             case .onAppearView:
-                // すでに日記リストがある場合は何もしない
-                guard state.diaries.isEmpty else { return .none }
                 state.viewState.isLoadingDiaries = true
-                return loadDiaryListItem(Date())
+                return loadDiaryListItem(date.now)
                 
                 // 日記項目のComponentのDelegateAction
             case .diaries(.element(let id, let delegateAction)):
@@ -217,10 +215,9 @@ private extension DiaryListFeature {
                     
                     // Stateの更新
                     state.viewState.isScrolling = state.trackableList.isScrolling
-                    state.viewState.isBounced = state.trackableList.isBouncedAtBottom
                     
                     // バウンスしていたかつ、ロード中でない場合は日記リストの追加取得を行う
-                    if state.viewState.isBounced,
+                    if state.trackableList.isBouncedAtBottom,
                        !state.viewState.isLoadingDiaries {
                         
                         print("start loading diary items.")
@@ -256,6 +253,7 @@ private extension DiaryListFeature {
                 // Stateの更新
                 state.diaries += items
                 state.viewState.isLoadingDiaries = false
+                state.viewState.hasDiaryItems = !items.isEmpty
                 
                 return .none
                 
@@ -270,6 +268,7 @@ private extension DiaryListFeature {
             case .deletedDiaryItem(let id):
                 print("delete item(\(id)).")
                 state.diaries.remove(id: id)
+                state.viewState.hasDiaryItems = !state.diaries.isEmpty
                 
                 return .none
             }
