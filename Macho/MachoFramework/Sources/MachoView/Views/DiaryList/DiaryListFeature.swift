@@ -251,14 +251,16 @@ private extension DiaryListFeature {
                 print("complete load diary items.")
                 
                 // Stateの更新
-                state.diaries += items
+                items.forEach { state.diaries.updateOrAppend($0) }
+                // 日記の作成日付で降順にソートする
+                state.diaries.sort { $0.date < $1.date }
                 state.viewState.isLoadingDiaries = false
                 state.viewState.hasDiaryItems = !items.isEmpty
                 
                 return .none
                 
             case .failedLoadDiaryItems:
-                // インジケーターを非表示にする
+                // ロード終了
                 state.viewState.isLoadingDiaries = false
                 // アラートを表示する
                 state.alert = AlertState.createAlertState(.failedLoadDiaryItemsAlert, firstButtonHandler: .failedLoadDiaryItems)

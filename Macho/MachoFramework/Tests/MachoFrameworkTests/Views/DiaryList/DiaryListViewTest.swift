@@ -50,7 +50,14 @@ final class DiaryListViewTests: XCTestCase {
     @MainActor
     func testScrollBouncedDiaryList() async {
         
-        let expectedAddedItem = DiaryListItemFeature.State(title: "test2", message: "test message", date: Date(), isWin: false)
+        let firstDate = Date()
+        guard let secondDate = Calendar.current.date(byAdding: .second, value: 1, to: firstDate),
+              let thirdDate = Calendar.current.date(byAdding: .second, value: 1, to: secondDate) else {
+            
+            XCTFail("fail setup test param.")
+            return
+        }
+        let expectedAddedItem = DiaryListItemFeature.State(title: "test2", message: "test message", date: thirdDate, isWin: false)
         
         // スクロール画面の表示サイズの高さが800px、スクロールできるサイズの高さが1000pxの状態
         let trackableListState = TrackableListFeature.State(offset: 0,
@@ -61,7 +68,8 @@ final class DiaryListViewTests: XCTestCase {
         
         let store = TestStore(
             initialState: DiaryListFeature.State(diaries: [
-                DiaryListItemFeature.State(title: "test1", message: "", date: Date(), isWin: true)
+                DiaryListItemFeature.State(title: "test1", message: "", date: firstDate, isWin: true),
+                DiaryListItemFeature.State(title: "test3", message: "test message", date: secondDate, isWin: false)
             ], trackableList: trackableListState, viewState: viewState), reducer: { DiaryListFeature() }) {
                 
                 $0.diaryListFetchApi = DiaryListItemClient(fetch: { _, _ in
@@ -87,7 +95,7 @@ final class DiaryListViewTests: XCTestCase {
             // 日記リストのロード処理終了
             $0.viewState.isLoadingDiaries = false
             // 日記リストの更新
-            $0.diaries.append(expectedAddedItem)
+            $0.diaries[2] = expectedAddedItem
         }
         
         // 上にスクロールして一番上の画面に戻る
@@ -168,10 +176,19 @@ final class DiaryListViewTests: XCTestCase {
     @MainActor
     func testOnAppearViewWithAlreadyHasItems() async {
         
-        let expectedItem = DiaryListItemFeature.State(title: "test2", message: "test message", date: Date(), isWin: true)
+        let firstDate = Date()
+        guard let secondDate = Calendar.current.date(byAdding: .second, value: 1, to: firstDate),
+              let thirdDate = Calendar.current.date(byAdding: .second, value: 1, to: secondDate) else {
+            
+            XCTFail("fail setup test param.")
+            return
+        }
+        
+        let expectedItem = DiaryListItemFeature.State(title: "test2", message: "test message", date: secondDate, isWin: true)
         
         let diariesState: IdentifiedArray<UUID, DiaryListItemFeature.State> = [
-            DiaryListItemFeature.State(title: "test1", message: "", date: Date(), isWin: true),
+            DiaryListItemFeature.State(title: "test1", message: "", date: firstDate, isWin: true),
+            DiaryListItemFeature.State(title: "test3", message: "", date: thirdDate, isWin: true)
          ]
                 
         let store = TestStore(initialState: DiaryListFeature.State(diaries: diariesState),
@@ -195,7 +212,7 @@ final class DiaryListViewTests: XCTestCase {
         await store.receive(.receiveLoadDiaryItems(items: [expectedItem])) {
             
             // 日記リスト更新
-            $0.diaries.append(expectedItem)
+            $0.diaries.insert(expectedItem, at: 1)
             // 日記リスト取得処理終了
             $0.viewState.isLoadingDiaries = false
             // 日記リストがあるかどうかのフラグ更新
