@@ -14,7 +14,7 @@ let package = Package(
             targets: ["MachoFramework"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", exact: "1.6.0"),
+        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", exact: "1.12.1"),
         .package(url: "https://github.com/realm/realm-swift.git", exact: "10.51.0"),
         .package(url: "https://github.com/SwiftGen/SwiftGenPlugin", exact: "6.6.2")
     ],
