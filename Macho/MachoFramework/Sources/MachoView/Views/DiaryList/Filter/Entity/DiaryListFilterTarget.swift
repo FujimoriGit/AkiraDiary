@@ -5,7 +5,7 @@
 //  Created by 佐藤汰一 on 2024/07/28.
 //
 
-enum DiaryListFilterTarget: CaseIterable {
+enum DiaryListFilterTarget: String, CaseIterable {
     
     /// 己に勝ったかどうか
     case achievement
@@ -31,7 +31,7 @@ enum DiaryListFilterTarget: CaseIterable {
         }
     }
     
-    var selectCases: [String] {
+    var selectableCases: [String] {
         
         switch self {
             

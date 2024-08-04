@@ -15,7 +15,7 @@ final class RealmAccessorTest: XCTestCase {
     
     override func setUp() async throws {
         
-        if await RealmAccessor().deleteAll() {
+        if await RealmAccessor().truncateDb() {
             
             print("Did init realmDB")
         }
@@ -27,7 +27,7 @@ final class RealmAccessorTest: XCTestCase {
     
     override func tearDown() async throws {
         
-        if await RealmAccessor().deleteAll() {
+        if await RealmAccessor().truncateDb() {
             
             print("Did end realm test case")
         }
@@ -39,7 +39,7 @@ final class RealmAccessorTest: XCTestCase {
         
         Task {
           
-            if await RealmAccessor().deleteAll() {
+            if await RealmAccessor().truncateDb() {
                 
                 print("Did end realm test case")
             }
@@ -108,6 +108,19 @@ final class RealmAccessorTest: XCTestCase {
         XCTAssertEqual(results.count, 1)
         XCTAssertEqual(results.first!.id , expectedData.id)
         XCTAssertEqual(results.first!.tagName, expectedData.tagName)
+    }
+    
+    func testDeleteAll() async throws {
+        
+        let realm = await RealmAccessor()
+        guard await realm.deleteAll(type: DiarySearchTagEntity.self) else {
+            
+            XCTFail()
+            return
+        }
+        
+        let results = await realm.read(type: DiarySearchTagEntity.self)
+        XCTAssertTrue(results.isEmpty)
     }
     
     func testObserveInsert() async throws {
