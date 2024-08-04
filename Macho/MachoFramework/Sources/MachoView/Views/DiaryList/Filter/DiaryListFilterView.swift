@@ -142,7 +142,7 @@ private extension DiaryListFilterView {
     
     func createSelectMenu(_ target: DiaryListFilterTarget) -> some View {
         Menu {
-            ForEach(target.selectCases, id: \.self) { selectCase in
+            ForEach(target.selectableCases, id: \.self) { selectCase in
                 Button(action: {
                     print("tap Title menu(target: \(target), select: \(selectCase)).")
                 }, label: {
