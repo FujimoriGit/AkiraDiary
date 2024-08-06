@@ -14,6 +14,7 @@ import XCTest
 final class DiaryListFilterViewTest: XCTestCase {
 
     // フィルター画面表示時のケース
+    @MainActor
     func testAppearView() async throws {
         
         let expectedReceiveFilters = IdentifiedArrayOf(uniqueElements: [DiaryListFilterItem(target: .achievement, value: "aaaa"),
@@ -22,10 +23,19 @@ final class DiaryListFilterViewTest: XCTestCase {
         let testStore = TestStore(initialState: DiaryListFilterFeature.State()) {
             DiaryListFilterFeature()
         } withDependencies: {
-            $0.diaryListFilterApi = DiaryListFilterClient(updateFilter: { _ in return true }) {
+            $0.diaryListFilterApi = DiaryListFilterClient(addFilter: { _ in
+                
+                return true
+            }, deleteFilters: { _ in
+                
+                return true
+            }, fetchFilterList: {
+                
                 return expectedReceiveFilters.elements
-            } getFilterListObserver: { return PassthroughSubject<[DiaryListFilterItem], Never>().eraseToAnyPublisher()
-            }
+            }, getFilterListObserver: {
+                
+                return PassthroughSubject<[DiaryListFilterItem], Never>().eraseToAnyPublisher()
+            })
         }
         
         await testStore.send(.onAppear)
@@ -33,9 +43,12 @@ final class DiaryListFilterViewTest: XCTestCase {
             
             $0.currentFilters = expectedReceiveFilters
         }
+        
+        await testStore.send(.onDisappear)
     }
     
     // ダイアログ外の領域タップのケース
+    @MainActor
     func testTappedOutsideArea() async throws {
         
         let isDismissInvoked = LockIsolated(false)
@@ -51,6 +64,7 @@ final class DiaryListFilterViewTest: XCTestCase {
     }
     
     // クローズボタン押下時のケース
+    @MainActor
     func testTappedCloseButton() async throws {
         
         let isDismissInvoked = LockIsolated(false)
@@ -66,6 +80,7 @@ final class DiaryListFilterViewTest: XCTestCase {
     }
     
     // フィルター種別の削除ボタン押下時のケース
+    @MainActor
     func testTappedFilterTypeDeleteButton() async throws {
         
         let expectedFilters = IdentifiedArrayOf(uniqueElements: [DiaryListFilterItem(target: .achievement, value: "aaaa")])
@@ -81,12 +96,27 @@ final class DiaryListFilterViewTest: XCTestCase {
             DiaryListFilterFeature()
         } withDependencies: {
             
-            $0.diaryListFilterApi = DiaryListFilterClient(updateFilter: { _ in return true },
-                                                          fetchFilterList: { fetchFilters.elements },
-                                                          getFilterListObserver: { testPublisher.eraseToAnyPublisher()})
+            $0.diaryListFilterApi = DiaryListFilterClient(addFilter: { _ in
+                
+                return true
+            }, deleteFilters: { _ in
+                
+                return true
+            }, fetchFilterList: {
+                
+                return fetchFilters.elements
+            }, getFilterListObserver: {
+                
+                return testPublisher.eraseToAnyPublisher()
+            })
         }
         
         await testStore.send(.onAppear)
+        await testStore.receive(.receiveDidChangeFilterItems(fetchFilters.map { $0 })) {
+            
+            $0.currentFilters = fetchFilters
+        }
+        
         await testStore.send(.tappedFilterTypeDeleteButton(.trainingType))
         
         testPublisher.send(expectedFilters.elements)
@@ -95,9 +125,12 @@ final class DiaryListFilterViewTest: XCTestCase {
             
             $0.currentFilters = expectedFilters
         }
+        
+        await testStore.send(.onDisappear)
     }
     
     // フィルター項目の削除ボタン押下時のケース
+    @MainActor
     func testTappedFilterItemDeleteButton() async throws {
         
         let expectedFilters = IdentifiedArrayOf(uniqueElements: [DiaryListFilterItem(target: .achievement, value: "aaaa"),
@@ -116,9 +149,19 @@ final class DiaryListFilterViewTest: XCTestCase {
             DiaryListFilterFeature()
         } withDependencies: {
             
-            $0.diaryListFilterApi = DiaryListFilterClient(updateFilter: { _ in return true },
-                                                          fetchFilterList: { fetchFilters.elements },
-                                                          getFilterListObserver: { testPublisher.eraseToAnyPublisher()})
+            $0.diaryListFilterApi = DiaryListFilterClient(addFilter: { _ in
+                
+                return true
+            }, deleteFilters: { _ in
+                
+                return true
+            }, fetchFilterList: {
+                
+                return fetchFilters.elements
+            }, getFilterListObserver: {
+                
+                return testPublisher.eraseToAnyPublisher()
+            })
         }
         
         await testStore.send(.onAppear)
@@ -135,9 +178,12 @@ final class DiaryListFilterViewTest: XCTestCase {
             
             $0.currentFilters = expectedFilters
         }
+        
+        await testStore.send(.onDisappear)
     }
     
     // フィルターメニュー項目のボタン押下時のケース(フィルターが追加される)
+    @MainActor
     func testTappedFilterMenuItemButton() async throws {
         
         let expectedFilters = IdentifiedArrayOf(uniqueElements: [DiaryListFilterItem(target: .achievement, value: "aaaa"),
@@ -156,9 +202,19 @@ final class DiaryListFilterViewTest: XCTestCase {
             DiaryListFilterFeature()
         } withDependencies: {
             
-            $0.diaryListFilterApi = DiaryListFilterClient(updateFilter: { _ in return true },
-                                                          fetchFilterList: { fetchFilters.elements },
-                                                          getFilterListObserver: { testPublisher.eraseToAnyPublisher()})
+            $0.diaryListFilterApi = DiaryListFilterClient(addFilter: { _ in
+                
+                return true
+            }, deleteFilters: { _ in
+                
+                return true
+            }, fetchFilterList: {
+                
+                return fetchFilters.elements
+            }, getFilterListObserver: {
+                
+                return testPublisher.eraseToAnyPublisher()
+            })
         }
         
         await testStore.send(.onAppear)
@@ -175,5 +231,7 @@ final class DiaryListFilterViewTest: XCTestCase {
             
             $0.currentFilters = expectedFilters
         }
+        
+        await testStore.send(.onDisappear)
     }
 }
