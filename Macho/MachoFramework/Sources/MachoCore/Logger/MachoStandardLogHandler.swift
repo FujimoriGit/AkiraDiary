@@ -51,13 +51,13 @@ private extension MachoStandardLogHandler {
         switch level {
 
         case .debug:
-            logger.debug("🟢 [debug] [\(subSystemName)] \(getCurrentTimeString()) \(message, privacy: .public)")
+            logger.debug("\(getCurrentTimeString()) 🟢 [debug] [\(subSystemName)] \(message, privacy: .public)")
         case .info:
-            logger.debug("🟣 [info] [\(subSystemName)] \(getCurrentTimeString()) \(message)")
+            logger.debug("\(getCurrentTimeString()) 🟣 [info] [\(subSystemName)] \(message)")
         case .error:
-            logger.debug("🟥 [error] [\(subSystemName)] \(getCurrentTimeString()) \(message)")
+            logger.debug("\(getCurrentTimeString()) 🟥 [error] [\(subSystemName)] \(message)")
         default:
-            logger.debug("🟢 [debug] [\(subSystemName)] \(getCurrentTimeString()) \(message)")
+            logger.debug("\(getCurrentTimeString()) 🟢 [debug] [\(subSystemName)] \(message)")
         }
     }
     
