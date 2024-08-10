@@ -35,11 +35,13 @@ struct DiaryListItemFeature: Reducer, Sendable {
             switch action {
                 
             case .tappedDiaryItem:
-                print("tappedDiaryItem")
+                logger.info("tappedDiaryItem")
+                
             case .deleteItemSwipeAction:
-                print("deleteItemSwipeAction")
+                logger.info("deleteItemSwipeAction")
+                
             case .editItemSwipeAction:
-                print("editItemSwipeAction")
+                logger.info("editItemSwipeAction")
             }
             return .none
         }
