@@ -158,11 +158,12 @@ private extension DiaryListFeature {
                     
                 case .confirmEditItem(let id):
                     // TODO: 編集画面への遷移を実装する
-                    print("show edit view(target_id=\(id).")
+                    logger.info("confirmEditItem(id=\(id)).")
                     state.path.append(.editScreen(AddContactFeature.State(contact: .init(id: uuid.callAsFunction(), name: ""))))
                     return .none
                     
                 case .confirmDeleteItem(let id):
+                    logger.info("confirmDeleteItem(id=\(id)).")
                     return .run { send in
                         
                         try await diaryListFetchClient.deleteItem(id)
@@ -183,27 +184,31 @@ private extension DiaryListFeature {
                 return .none
                 
             case .onAppearView:
+                logger.info("onAppearView")
                 state.viewState.isLoadingDiaries = true
                 return loadDiaryListItem(date.now)
                 
                 // 日記項目のComponentのDelegateAction
             case .diaries(.element(let id, let delegateAction)):
+                logger.info("diaries delegate action(id: \(id), action: \(delegateAction)).")
                 switch delegateAction {
                     
                 case .tappedDiaryItem:
                     // TODO: 日記詳細画面への遷移を実装する
-                    print("show detail view.")
+                    logger.debug("show detail view.")
                     state.path.append(.detailScreen(AddContactFeature.State(contact: .init(id: uuid.callAsFunction(), name: ""))))
                     return .none
                     
                 case .deleteItemSwipeAction:
                     // アラート表示
+                    logger.debug("show delete confirm alert.")
                     state.alert = AlertState.createAlertStateWithCancel(.deleteDiaryItemConfirmAlert,
                                                                         firstButtonHandler: .confirmDeleteItem(deleteItemId: id))
                     return .none
                     
                 case .editItemSwipeAction:
                     // アラート表示
+                    logger.debug("show edit confirm alert.")
                     state.alert = AlertState.createAlertStateWithCancel(.editDiaryItemConfirmAlert,
                                                                         firstButtonHandler: .confirmEditItem(targetId: id))
                     return .none
@@ -220,7 +225,7 @@ private extension DiaryListFeature {
                     if state.trackableList.isBouncedAtBottom,
                        !state.viewState.isLoadingDiaries {
                         
-                        print("start loading diary items.")
+                        logger.debug("start loading diary items with list scroll.")
                         // ロード中にStateを更新する
                         state.viewState.isLoadingDiaries = true
                         
@@ -233,22 +238,25 @@ private extension DiaryListFeature {
                 return .none
                 
             case .tappedFilterButton:
+                logger.info("tappedFilterButton")
                 // TODO: フィルター表示処理を実行
                 state.destination = Destination.State.filterScreen(.init(contact: .init(id: uuid.callAsFunction(), name: "")))
                 return .none
                 
             case .tappedGraphButton:
+                logger.info("tappedGraphButton")
                 // TODO: グラフ画面表示を実行
                 state.path.append(.graphScreen(AddContactFeature.State(contact: .init(id: uuid.callAsFunction(), name: ""))))
                 return .none
                 
             case .tappedCreateNewDiaryButton:
+                logger.info("tappedCreateNewDiaryButton")
                 // TODO: 日記作成画面表示を実行
                 state.path.append(.createScreen(AddContactFeature.State(contact: .init(id: uuid.callAsFunction(), name: ""))))
                 return .none
                 
             case .receiveLoadDiaryItems(let items):
-                print("complete load diary items.")
+                logger.info("receiveLoadDiaryItems(items: \(items))")
                 
                 // Stateの更新
                 items.forEach { state.diaries.updateOrAppend($0) }
@@ -260,6 +268,7 @@ private extension DiaryListFeature {
                 return .none
                 
             case .failedLoadDiaryItems:
+                logger.error("failedLoadDiaryItems")
                 // ロード終了
                 state.viewState.isLoadingDiaries = false
                 // アラートを表示する
@@ -268,7 +277,7 @@ private extension DiaryListFeature {
                 return .none
                 
             case .deletedDiaryItem(let id):
-                print("delete item(\(id)).")
+                logger.info("deletedDiaryItem(id: \(id))")
                 state.diaries.remove(id: id)
                 state.viewState.hasDiaryItems = !state.diaries.isEmpty
                 
@@ -335,8 +344,7 @@ extension DiaryListFeature {
     }
 }
 
-//// MARK: - Presentation Destination Definition
-//
+// MARK: - Presentation Destination Definition
 extension DiaryListFeature {
     
     @Reducer
@@ -380,7 +388,7 @@ private extension DiaryListFeature {
                            animation: .spring)
         } catch: { error, send in
             
-            print("Occured loadDiaryListItem error.")
+            logger.error("Occurred loadDiaryListItem error(\(error)).")
             return await send(.failedLoadDiaryItems)
         }
     }
