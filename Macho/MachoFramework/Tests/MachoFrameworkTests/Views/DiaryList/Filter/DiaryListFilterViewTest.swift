@@ -17,13 +17,21 @@ final class DiaryListFilterViewTest: XCTestCase {
     @MainActor
     func testAppearView() async throws {
         
-        let expectedReceiveFilters = IdentifiedArrayOf(uniqueElements: [DiaryListFilterItem(target: .achievement, value: "aaaa"),
-                                                                        DiaryListFilterItem(target: .trainingType, value: "bbbb")])
+        let achievementId = UUID()
+        let trainingType1Id = UUID()
+        
+        let expectedReceiveFilters = IdentifiedArrayOf(uniqueElements: [DiaryListFilterItem(id: achievementId, target: .achievement, value: "aaaa"),
+                                                                        DiaryListFilterItem(id: trainingType1Id, target: .trainingType, value: "bbbb")])
         
         let testStore = TestStore(initialState: DiaryListFilterFeature.State()) {
+            
             DiaryListFilterFeature()
         } withDependencies: {
+            
             $0.diaryListFilterApi = DiaryListFilterClient(addFilter: { _ in
+                
+                return true
+            }, updateFilter: { _ in
                 
                 return true
             }, deleteFilters: { _ in
@@ -83,11 +91,15 @@ final class DiaryListFilterViewTest: XCTestCase {
     @MainActor
     func testTappedFilterTypeDeleteButton() async throws {
         
-        let expectedFilters = IdentifiedArrayOf(uniqueElements: [DiaryListFilterItem(target: .achievement, value: "aaaa")])
+        let achievementId = UUID()
+        let trainingType1Id = UUID()
+        let trainingType2Id = UUID()
         
-        let fetchFilters = IdentifiedArrayOf(uniqueElements: [DiaryListFilterItem(target: .achievement, value: "aaaa"),
-                                                              DiaryListFilterItem(target: .trainingType, value: "bbbb"),
-                                                              DiaryListFilterItem(target: .trainingType, value: "cccc")])
+        let expectedFilters = IdentifiedArrayOf(uniqueElements: [DiaryListFilterItem(id: achievementId, target: .achievement, value: "aaaa")])
+        
+        let fetchFilters = IdentifiedArrayOf(uniqueElements: [DiaryListFilterItem(id: achievementId, target: .achievement, value: "aaaa"),
+                                                              DiaryListFilterItem(id: trainingType1Id, target: .trainingType, value: "bbbb"),
+                                                              DiaryListFilterItem(id: trainingType2Id, target: .trainingType, value: "cccc")])
         
         let testPublisher = PassthroughSubject<[DiaryListFilterItem], Never>()
         
@@ -99,8 +111,12 @@ final class DiaryListFilterViewTest: XCTestCase {
             $0.diaryListFilterApi = DiaryListFilterClient(addFilter: { _ in
                 
                 return true
+            }, updateFilter: { _ in
+                
+                return true
             }, deleteFilters: { _ in
                 
+                testPublisher.send(expectedFilters.elements)
                 return true
             }, fetchFilterList: {
                 
@@ -117,9 +133,7 @@ final class DiaryListFilterViewTest: XCTestCase {
             $0.currentFilters = fetchFilters
         }
         
-        await testStore.send(.tappedFilterTypeDeleteButton(.trainingType))
-        
-        testPublisher.send(expectedFilters.elements)
+        await testStore.send(.tappedFilterTypeDeleteButton(target: .trainingType))
         
         await testStore.receive(.receiveDidChangeFilterItems(expectedFilters.map { $0 })) {
             
@@ -133,15 +147,17 @@ final class DiaryListFilterViewTest: XCTestCase {
     @MainActor
     func testTappedFilterItemDeleteButton() async throws {
         
-        let expectedFilters = IdentifiedArrayOf(uniqueElements: [DiaryListFilterItem(target: .achievement, value: "aaaa"),
-                                                                 DiaryListFilterItem(target: .trainingType, value: "bbbb")])
+        let achievementId = UUID()
+        let trainingType1Id = UUID()
+        let trainingType2Id = UUID()
         
-        let fetchFilters = IdentifiedArrayOf(uniqueElements: [DiaryListFilterItem(target: .achievement, value: "aaaa"),
-                                                              DiaryListFilterItem(target: .trainingType, value: "bbbb"),
-                                                              DiaryListFilterItem(target: .trainingType, value: "cccc")])
+        let expectedFilters = IdentifiedArrayOf(uniqueElements: [DiaryListFilterItem(id: achievementId, target: .achievement, value: "aaaa"),
+                                                                 DiaryListFilterItem(id: trainingType1Id, target: .trainingType, value: "bbbb")])
         
-        let deleteItem = DiaryListFilterItem(target: .trainingType, value: "cccc")
-        
+        let fetchFilters = IdentifiedArrayOf(uniqueElements: [DiaryListFilterItem(id: achievementId, target: .achievement, value: "aaaa"),
+                                                              DiaryListFilterItem(id: trainingType1Id, target: .trainingType, value: "bbbb"),
+                                                              DiaryListFilterItem(id: trainingType2Id, target: .trainingType, value: "cccc")])
+                
         let testPublisher = PassthroughSubject<[DiaryListFilterItem], Never>()
         
         let testStore = TestStore(initialState: DiaryListFilterFeature.State()) {
@@ -152,8 +168,12 @@ final class DiaryListFilterViewTest: XCTestCase {
             $0.diaryListFilterApi = DiaryListFilterClient(addFilter: { _ in
                 
                 return true
+            }, updateFilter: { _ in
+                
+                return true
             }, deleteFilters: { _ in
                 
+                testPublisher.send(expectedFilters.elements)
                 return true
             }, fetchFilterList: {
                 
@@ -170,9 +190,7 @@ final class DiaryListFilterViewTest: XCTestCase {
             $0.currentFilters = fetchFilters
         }
         
-        await testStore.send(.tappedFilterItemDeleteButton(deleteItem))
-        
-        testPublisher.send(expectedFilters.elements)
+        await testStore.send(.tappedFilterItemDeleteButton(target: .trainingType, value: "cccc"))
         
         await testStore.receive(.receiveDidChangeFilterItems(expectedFilters.map { $0 })) {
             
@@ -186,14 +204,20 @@ final class DiaryListFilterViewTest: XCTestCase {
     @MainActor
     func testTappedFilterMenuItemButton() async throws {
         
-        let expectedFilters = IdentifiedArrayOf(uniqueElements: [DiaryListFilterItem(target: .achievement, value: "aaaa"),
-                                                                 DiaryListFilterItem(target: .trainingType, value: "bbbb"),
-                                                                 DiaryListFilterItem(target: .trainingType, value: "cccc")])
+        let achievementId = UUID()
+        let trainingType1Id = UUID()
+        let trainingType2Id = UUID()
         
-        let fetchFilters = IdentifiedArrayOf(uniqueElements: [DiaryListFilterItem(target: .achievement, value: "aaaa"),
-                                                              DiaryListFilterItem(target: .trainingType, value: "bbbb")])
+        let addedExpectedFilters = IdentifiedArrayOf(uniqueElements: [DiaryListFilterItem(id: achievementId, target: .achievement, value: "aaaa"),
+                                                                 DiaryListFilterItem(id: trainingType1Id, target: .trainingType, value: "bbbb"),
+                                                                 DiaryListFilterItem(id: trainingType2Id, target: .trainingType, value: "cccc")])
         
-        let addItem = DiaryListFilterItem(target: .trainingType, value: "cccc")
+        let updatedExpectedFilters = IdentifiedArrayOf(uniqueElements: [DiaryListFilterItem(id: achievementId, target: .achievement, value: "bbbb"),
+                                                                 DiaryListFilterItem(id: trainingType1Id, target: .trainingType, value: "bbbb"),
+                                                                 DiaryListFilterItem(id: trainingType2Id, target: .trainingType, value: "cccc")])
+        
+        let fetchFilters = IdentifiedArrayOf(uniqueElements: [DiaryListFilterItem(id: achievementId, target: .achievement, value: "aaaa"),
+                                                              DiaryListFilterItem(id: trainingType1Id, target: .trainingType, value: "bbbb")])
         
         let testPublisher = PassthroughSubject<[DiaryListFilterItem], Never>()
         
@@ -202,8 +226,17 @@ final class DiaryListFilterViewTest: XCTestCase {
             DiaryListFilterFeature()
         } withDependencies: {
             
-            $0.diaryListFilterApi = DiaryListFilterClient(addFilter: { _ in
+            $0.diaryListFilterApi = DiaryListFilterClient(addFilter: { filter in
                 
+                var addedFilter = fetchFilters.elements
+                addedFilter.append(filter)
+                testPublisher.send(addedFilter)
+                return true
+            }, updateFilter: { filter in
+                
+                var updatedFilter = addedExpectedFilters.elements
+                updatedFilter[0] = filter
+                testPublisher.send(updatedFilter)
                 return true
             }, deleteFilters: { _ in
                 
@@ -215,6 +248,8 @@ final class DiaryListFilterViewTest: XCTestCase {
                 
                 return testPublisher.eraseToAnyPublisher()
             })
+            
+            $0.uuid = UUIDGenerator { trainingType2Id }
         }
         
         await testStore.send(.onAppear)
@@ -223,13 +258,16 @@ final class DiaryListFilterViewTest: XCTestCase {
             $0.currentFilters = fetchFilters
         }
         
-        await testStore.send(.tappedFilterMenuItem(addItem))
-        
-        testPublisher.send(expectedFilters.elements)
-        
-        await testStore.receive(.receiveDidChangeFilterItems(expectedFilters.map { $0 })) {
+        await testStore.send(.tappedFilterMenuItem(target: .trainingType, value: "cccc"))
+        await testStore.receive(.receiveDidChangeFilterItems(addedExpectedFilters.map { $0 })) {
             
-            $0.currentFilters = expectedFilters
+            $0.currentFilters = addedExpectedFilters
+        }
+        
+        await testStore.send(.tappedFilterMenuItem(target: .achievement, value: "bbbb"))
+        await testStore.receive(.receiveDidChangeFilterItems(updatedExpectedFilters.map { $0 })) {
+            
+            $0.currentFilters = updatedExpectedFilters
         }
         
         await testStore.send(.onDisappear)

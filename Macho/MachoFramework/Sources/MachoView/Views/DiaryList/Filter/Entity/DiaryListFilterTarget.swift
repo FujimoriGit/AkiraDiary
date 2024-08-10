@@ -25,6 +25,7 @@ enum DiaryListFilterTarget: String, CaseIterable {
                 
             case .notAchieved:
                 return "達成していない"
+                
             case .achieved:
                 return "達成している"
             }
@@ -43,6 +44,7 @@ enum DiaryListFilterTarget: String, CaseIterable {
         }
     }
     
+    /// フィルター種別のタイトル
     var title: String {
         
         switch self {
@@ -52,6 +54,19 @@ enum DiaryListFilterTarget: String, CaseIterable {
             
         case .trainingType:
             return "種目"
+        }
+    }
+    
+    /// 複数選択可能なフィルターかどうか
+    var isMultiSelectFilter: Bool {
+        
+        switch self {
+            
+        case .achievement:
+            return false
+            
+        case .trainingType:
+            return true
         }
     }
 }
