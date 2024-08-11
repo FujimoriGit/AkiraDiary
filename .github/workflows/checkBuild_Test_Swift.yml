@@ -72,7 +72,7 @@ jobs:
           -workspace ./Macho/Macho.xcworkspace
           -scheme Macho
           -sdk iphonesimulator
-          -destination 'platform=iOS Simulator, id:6B6B062C-40CF-4C83-A78C-84C46922CB36'
+          -destination 'platform=iOS Simulator,id=6B6B062C-40CF-4C83-A78C-84C46922CB36'
           -configuration Debug
           -clonedSourcePackagesDirPath SourcePackages
           -scmProvider xcode
@@ -86,7 +86,7 @@ jobs:
           xcodebuild
           -sdk iphonesimulator
           -configuration Debug
-          -destination 'platform=iOS Simulator, id:6B6B062C-40CF-4C83-A78C-84C46922CB36'
+          -destination 'platform=iOS Simulator,id=6B6B062C-40CF-4C83-A78C-84C46922CB36'
           -workspace ./Macho/Macho.xcworkspace
           -scheme Macho
           -testPlan Macho
