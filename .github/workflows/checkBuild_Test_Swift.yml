@@ -75,6 +75,7 @@ jobs:
           -destination 'platform=iOS Simulator,id=6B6B062C-40CF-4C83-A78C-84C46922CB36'
           -configuration Debug
           -clonedSourcePackagesDirPath SourcePackages
+          -skipPackagePluginValidation
           -scmProvider xcode
           build |
           bundle exec xcpretty
