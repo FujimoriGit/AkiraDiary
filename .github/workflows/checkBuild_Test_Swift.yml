@@ -88,7 +88,6 @@ jobs:
           -sdk iphonesimulator
           -configuration Debug
           -destination 'platform=iOS Simulator,id=6B6B062C-40CF-4C83-A78C-84C46922CB36'
-          -workspace ./Macho/Macho.xcworkspace
           -scheme Macho
           -testPlan Macho
           -scmProvider xcode
