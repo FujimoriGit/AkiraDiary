@@ -12,6 +12,11 @@ import XCTest
 
 final class DiaryListViewTests: XCTestCase {
     
+    enum TestError: Error {
+        
+        case loadingError
+    }
+    
     // アラートの表示確認
     @MainActor
     func testAlert() async {
@@ -150,7 +155,7 @@ final class DiaryListViewTests: XCTestCase {
             
             $0.diaryListFetchApi = DiaryListItemClient(fetch: { _, _ in
                 
-                throw NSError()
+                throw TestError.loadingError
             }, deleteItem: { _ in })
             $0.date = DateGenerator({ Date() })
         }

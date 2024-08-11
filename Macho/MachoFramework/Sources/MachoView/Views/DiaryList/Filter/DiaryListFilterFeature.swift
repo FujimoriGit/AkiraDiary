@@ -15,8 +15,26 @@ struct DiaryListFilterFeature {
     
     struct State: Equatable, Sendable {
         
-        /// フィルターリスト
-        var currentFilters = IdentifiedArrayOf<DiaryListFilterItem>()
+        var viewState = ViewState()
+        var currentFilters: IdentifiedArrayOf<DiaryListFilterItem> {
+            
+            get { viewState.currentFilters }
+            set { viewState.currentFilters = newValue }
+        }
+        
+        var selectableFilterValues: [DiaryListFilterTarget: [String]] {
+            
+            get { viewState.selectableFilterValues }
+            set { viewState.selectableFilterValues = newValue }
+        }
+        
+        struct ViewState: Equatable, Sendable {
+            
+            /// フィルターリスト
+            var currentFilters = IdentifiedArrayOf<DiaryListFilterItem>()
+            /// 選択可能なフィルターの値
+            var selectableFilterValues: [DiaryListFilterTarget: [String]] = [:]
+        }
     }
     
     enum Action: Equatable {
@@ -42,6 +60,8 @@ struct DiaryListFilterFeature {
         
         /// フィルターの更新を検知
         case receiveDidChangeFilterItems([DiaryListFilterItem])
+        /// 選択可能なフィルターの値取得完了
+        case receiveFetchSelectableFilterValuesResponse([DiaryListFilterTarget: [String]])
     }
     
     @Dependency(\.diaryListFilterApi) var diaryListFilterApi
@@ -57,18 +77,18 @@ struct DiaryListFilterFeature {
             case .onAppear:
                 logger.info("onAppear")
                 return .concatenate(
+                    .run{ send in
+                        
+                        await send(.receiveFetchSelectableFilterValuesResponse(await fetchSelectableFilterValues()))
+                    },
                     .run { send in
                         
-                        // 現在設定されているフィルターの取得
                         let result = await diaryListFilterApi.fetchFilterList()
                         await send(.receiveDidChangeFilterItems(result))
                     },
                     .publisher {
                         
-                        // フィルターテーブルの変更監視開始
-                        return diaryListFilterApi.getFilterListObserver().map {
-                            
-                            .receiveDidChangeFilterItems($0) }
+                        return diaryListFilterApi.getFilterListObserver().map { .receiveDidChangeFilterItems($0) }
                     }.cancellable(id: FilterObserveCancellable())
                 )
                 
@@ -125,6 +145,11 @@ struct DiaryListFilterFeature {
                 logger.info("receiveDidChangeFilterItems(currentFilters: \(currentFilters))")
                 state.currentFilters = IdentifiedArray(uniqueElements: currentFilters)
                 return .none
+                
+            case .receiveFetchSelectableFilterValuesResponse(let selectableFilterValues):
+                logger.info("receiveFetchSelectableFilterValuesResponse(selectableFilterValues: \(selectableFilterValues))")
+                state.selectableFilterValues = selectableFilterValues
+                return .none
             }
         }
     }
@@ -135,8 +160,15 @@ private extension DiaryListFilterFeature {
     /// フィルターの追加もしくはすでに保存しているフィルターの更新を行う
     func addFilter(currentFilters: IdentifiedArrayOf<DiaryListFilterItem>, target: DiaryListFilterTarget, value: String) async {
         
-        let id = currentFilters.first { $0.target == target }?.id
-        if target.isMultiSelectFilter || id == nil {
+        let sameTargetId = currentFilters.first { $0.target == target }?.id
+        if sameTargetId == nil || target.isMultiSelectFilter {
+            
+            // すでに同じフィルターが登録されている場合は、フィルターの追加処理は行わない
+            if !currentFilters.contains(where: { $0.target == target && $0.value == value }) {
+                
+                logger.debug("already exits same filter(target: \(target), value: \(value)).")
+                return
+            }
             
             // 複数選択可能な場合または、まだ登録されていないフィルター種別の場合は、新規のフィルターとしてDBに保存する
             guard await diaryListFilterApi.addFilter(DiaryListFilterItem(id: uuid(), target: target, value: value)) else {
@@ -144,16 +176,35 @@ private extension DiaryListFilterFeature {
                 logger.error("did fail add filter(target: \(target), value: \(value)).")
                 return
             }
+            
+            logger.debug("added filter(target: \(target), value: \(value)).")
         }
         else {
             
             // それ以外の場合は、すでに登録されている同じフィルター種別の値を更新する
-            guard let id,
-                  await diaryListFilterApi.updateFilter(DiaryListFilterItem(id: id, target: target, value: value)) else {
+            guard let sameTargetId,
+                  await diaryListFilterApi.updateFilter(DiaryListFilterItem(id: sameTargetId, target: target, value: value)) else {
                 
                 logger.error("did fail update filter(target: \(target), value: \(value)).")
                 return
             }
+            
+            logger.debug("updated filter(target: \(target), value: \(value)).")
         }
+    }
+    
+    /// アプリに登録しているトレーニング種目を取得する
+    func fetchSelectableFilterValues() async -> [DiaryListFilterTarget: [String]] {
+        
+        var resultDic: [DiaryListFilterTarget: [String]] = [:]
+        
+        // トレーニング実績のフィルター値を追加
+        resultDic.updateValue(TrainingAchievement.allCases.map { $0.title }, forKey: .achievement)
+        
+        // トレーニング種目のフィルター値を追加
+        // TODO: 藤森氏の日記作成画面で作るトレーニング種目TBLから取得する想定
+        resultDic.updateValue(["腹筋", "ダンベルプレス"], forKey: .trainingType)
+        
+        return resultDic
     }
 }

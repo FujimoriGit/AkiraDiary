@@ -54,7 +54,7 @@ struct DiaryListFilterView: View {
     // MARK: - view body property
     
     var body: some View {
-        WithViewStore(store, observe: \.currentFilters) { viewStore in
+        WithViewStore(store, observe: \.viewState) { viewStore in
             ZStack {
                 GeometryReader { proxy in
                     Color(asset: CustomColor.dialogBackgroundColor)
@@ -77,7 +77,7 @@ struct DiaryListFilterView: View {
 
 private extension DiaryListFilterView {
     
-    func createDialogView(_ viewStore: ViewStore<IdentifiedArrayOf<DiaryListFilterItem>, DiaryListFilterFeature.Action>,
+    func createDialogView(_ viewStore: ViewStore<DiaryListFilterFeature.State.ViewState, DiaryListFilterFeature.Action>,
                           parentSize: CGSize) -> some View {
         ZStack(alignment: .topTrailing) {
             VStack(spacing: .zero) { // ダイアログエリア
@@ -101,7 +101,7 @@ private extension DiaryListFilterView {
                             Spacer()
                                 .frame(height: filterSectionPaddingBottom)
                         }
-                        .padding(.horizontal, dialogPadding)
+                                .padding(.horizontal, dialogPadding)
                     }
                 }
                 .frame(maxHeight: filterListMaxHeight)
@@ -124,19 +124,19 @@ private extension DiaryListFilterView {
         }
     }
     
-    func createSelectOnlyItemSectionWithMenu(_ viewStore: ViewStore<IdentifiedArrayOf<DiaryListFilterItem>, DiaryListFilterFeature.Action>,
+    func createSelectOnlyItemSectionWithMenu(_ viewStore: ViewStore<DiaryListFilterFeature.State.ViewState, DiaryListFilterFeature.Action>,
                                              target: DiaryListFilterTarget) -> some View {
         HStack(spacing: .zero) {
             createSelectMenu(viewStore, target: target)
             Spacer()
                 .frame(width: 8)
-            Text(viewStore.state.first { $0.target == target }?.value ?? "-")
+            Text(viewStore.state.currentFilters.first { $0.target == target }?.value ?? "-")
             Spacer()
             createClearFilterTargetButton(viewStore, target: target)
         }
     }
     
-    func createSelectMultiItemSectionWithMenu(_ viewStore: ViewStore<IdentifiedArrayOf<DiaryListFilterItem>, DiaryListFilterFeature.Action>,
+    func createSelectMultiItemSectionWithMenu(_ viewStore: ViewStore<DiaryListFilterFeature.State.ViewState, DiaryListFilterFeature.Action>,
                                               target: DiaryListFilterTarget) -> some View {
         VStack(spacing: .zero) {
             HStack(spacing: .zero) {
@@ -146,8 +146,7 @@ private extension DiaryListFilterView {
             }
             Spacer()
                 .frame(height: filterSectionPaddingBottom)
-            // TODO: トレーニング種別のフィルター表示どうやって全件表示するか要検討
-            ForEach(viewStore.state.filter { $0.target == target }) { filter in
+            ForEach(viewStore.state.currentFilters.filter { $0.target == target }) { filter in
                 HStack(spacing: .zero) {
                     Spacer()
                         .frame(width: filterListItemPaddingLeading)
@@ -158,16 +157,17 @@ private extension DiaryListFilterView {
                     Text(filter.value)
                         .font(.system(size: filterListItemTitleFontSize))
                     Spacer()
-                    createClearFilterTargetButton(viewStore, target: target, selectCase: "")
+                    createClearFilterTargetButton(viewStore, target: filter.target, selectCase: filter.value)
                 }
+                .padding(.vertical, 4)
             }
         }
     }
     
-    func createSelectMenu(_ viewStore: ViewStore<IdentifiedArrayOf<DiaryListFilterItem>, DiaryListFilterFeature.Action>,
+    func createSelectMenu(_ viewStore: ViewStore<DiaryListFilterFeature.State.ViewState, DiaryListFilterFeature.Action>,
                           target: DiaryListFilterTarget) -> some View {
         Menu {
-            ForEach(target.selectableCases, id: \.self) { selectCase in
+            ForEach(viewStore.state.selectableFilterValues[target] ?? [], id: \.self) { selectCase in
                 Button(action: {
                     viewStore.send(.tappedFilterMenuItem(target: target, value: selectCase))
                 }, label: {
@@ -182,7 +182,7 @@ private extension DiaryListFilterView {
         .frameButtonStyle()
     }
     
-    func createClearFilterTargetButton(_ viewStore: ViewStore<IdentifiedArrayOf<DiaryListFilterItem>, DiaryListFilterFeature.Action>,
+    func createClearFilterTargetButton(_ viewStore: ViewStore<DiaryListFilterFeature.State.ViewState, DiaryListFilterFeature.Action>,
                                        target: DiaryListFilterTarget,
                                        selectCase: String? = nil) -> some View {
         Button(action: {
@@ -208,8 +208,8 @@ private extension DiaryListFilterView {
     var currentFilters = [DiaryListFilterItem(id: UUID(), target: .achievement, value: "達成していない"),
                           DiaryListFilterItem(id: UUID(), target: .trainingType, value: "腹筋")]
     return DiaryListFilterView(store: Store(initialState: DiaryListFilterFeature.State(),
-                                     reducer: { DiaryListFilterFeature() },
-                                     withDependencies: {
+                                            reducer: { DiaryListFilterFeature() },
+                                            withDependencies: {
         $0.diaryListFilterApi = DiaryListFilterClient(addFilter: { filter in
             
             currentFilters = currentFilters + [filter]

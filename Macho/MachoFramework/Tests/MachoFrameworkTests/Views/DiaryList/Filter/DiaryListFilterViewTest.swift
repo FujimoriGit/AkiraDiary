@@ -22,6 +22,7 @@ final class DiaryListFilterViewTest: XCTestCase {
         
         let expectedReceiveFilters = IdentifiedArrayOf(uniqueElements: [DiaryListFilterItem(id: achievementId, target: .achievement, value: "aaaa"),
                                                                         DiaryListFilterItem(id: trainingType1Id, target: .trainingType, value: "bbbb")])
+        let expectedSelectableFilterValues: [DiaryListFilterTarget: [String]] = [.achievement: ["達成していない", "達成している"], .trainingType: ["腹筋", "ダンベルプレス"]]
         
         let testStore = TestStore(initialState: DiaryListFilterFeature.State()) {
             
@@ -47,6 +48,10 @@ final class DiaryListFilterViewTest: XCTestCase {
         }
         
         await testStore.send(.onAppear)
+        await testStore.receive(.receiveFetchSelectableFilterValuesResponse(expectedSelectableFilterValues)) {
+            
+            $0.selectableFilterValues = [.achievement: ["達成していない", "達成している"], .trainingType: ["腹筋", "ダンベルプレス"]]
+        }
         await testStore.receive(.receiveDidChangeFilterItems(expectedReceiveFilters.elements)) {
             
             $0.currentFilters = expectedReceiveFilters
@@ -101,6 +106,8 @@ final class DiaryListFilterViewTest: XCTestCase {
                                                               DiaryListFilterItem(id: trainingType1Id, target: .trainingType, value: "bbbb"),
                                                               DiaryListFilterItem(id: trainingType2Id, target: .trainingType, value: "cccc")])
         
+        let expectedSelectableFilterValues: [DiaryListFilterTarget: [String]] = [.achievement: ["達成していない", "達成している"], .trainingType: ["腹筋", "ダンベルプレス"]]
+        
         let testPublisher = PassthroughSubject<[DiaryListFilterItem], Never>()
         
         let testStore = TestStore(initialState: DiaryListFilterFeature.State()) {
@@ -128,6 +135,10 @@ final class DiaryListFilterViewTest: XCTestCase {
         }
         
         await testStore.send(.onAppear)
+        await testStore.receive(.receiveFetchSelectableFilterValuesResponse(expectedSelectableFilterValues)) {
+            
+            $0.selectableFilterValues = [.achievement: ["達成していない", "達成している"], .trainingType: ["腹筋", "ダンベルプレス"]]
+        }
         await testStore.receive(.receiveDidChangeFilterItems(fetchFilters.map { $0 })) {
             
             $0.currentFilters = fetchFilters
@@ -157,6 +168,8 @@ final class DiaryListFilterViewTest: XCTestCase {
         let fetchFilters = IdentifiedArrayOf(uniqueElements: [DiaryListFilterItem(id: achievementId, target: .achievement, value: "aaaa"),
                                                               DiaryListFilterItem(id: trainingType1Id, target: .trainingType, value: "bbbb"),
                                                               DiaryListFilterItem(id: trainingType2Id, target: .trainingType, value: "cccc")])
+        
+        let expectedSelectableFilterValues: [DiaryListFilterTarget: [String]] = [.achievement: ["達成していない", "達成している"], .trainingType: ["腹筋", "ダンベルプレス"]]
                 
         let testPublisher = PassthroughSubject<[DiaryListFilterItem], Never>()
         
@@ -185,6 +198,10 @@ final class DiaryListFilterViewTest: XCTestCase {
         }
         
         await testStore.send(.onAppear)
+        await testStore.receive(.receiveFetchSelectableFilterValuesResponse(expectedSelectableFilterValues)) {
+            
+            $0.selectableFilterValues = [.achievement: ["達成していない", "達成している"], .trainingType: ["腹筋", "ダンベルプレス"]]
+        }
         await testStore.receive(.receiveDidChangeFilterItems(fetchFilters.map { $0 })) {
             
             $0.currentFilters = fetchFilters
@@ -218,6 +235,8 @@ final class DiaryListFilterViewTest: XCTestCase {
         
         let fetchFilters = IdentifiedArrayOf(uniqueElements: [DiaryListFilterItem(id: achievementId, target: .achievement, value: "aaaa"),
                                                               DiaryListFilterItem(id: trainingType1Id, target: .trainingType, value: "bbbb")])
+        
+        let expectedSelectableFilterValues: [DiaryListFilterTarget: [String]] = [.achievement: ["達成していない", "達成している"], .trainingType: ["腹筋", "ダンベルプレス"]]
         
         let testPublisher = PassthroughSubject<[DiaryListFilterItem], Never>()
         
@@ -253,6 +272,10 @@ final class DiaryListFilterViewTest: XCTestCase {
         }
         
         await testStore.send(.onAppear)
+        await testStore.receive(.receiveFetchSelectableFilterValuesResponse(expectedSelectableFilterValues)) {
+            
+            $0.selectableFilterValues = [.achievement: ["達成していない", "達成している"], .trainingType: ["腹筋", "ダンベルプレス"]]
+        }
         await testStore.receive(.receiveDidChangeFilterItems(fetchFilters.map { $0 })) {
             
             $0.currentFilters = fetchFilters
@@ -263,6 +286,8 @@ final class DiaryListFilterViewTest: XCTestCase {
             
             $0.currentFilters = addedExpectedFilters
         }
+        
+        await testStore.send(.tappedFilterMenuItem(target: .trainingType, value: "cccc"))
         
         await testStore.send(.tappedFilterMenuItem(target: .achievement, value: "bbbb"))
         await testStore.receive(.receiveDidChangeFilterItems(updatedExpectedFilters.map { $0 })) {

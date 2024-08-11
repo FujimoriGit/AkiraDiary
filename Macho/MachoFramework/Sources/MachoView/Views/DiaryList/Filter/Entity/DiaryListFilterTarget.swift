@@ -12,38 +12,6 @@ enum DiaryListFilterTarget: String, CaseIterable {
     /// トレーニング種別
     case trainingType
     
-    enum Achievement: String, CaseIterable {
-        
-        /// 未達成
-        case notAchieved
-        /// 達成
-        case achieved
-        
-        var title: String {
-            
-            switch self {
-                
-            case .notAchieved:
-                return "達成していない"
-                
-            case .achieved:
-                return "達成している"
-            }
-        }
-    }
-    
-    var selectableCases: [String] {
-        
-        switch self {
-            
-        case .achievement:
-            return Achievement.allCases.map { $0.title }
-            
-        case .trainingType:
-            return ["腹筋", "ダンベルプレス"]
-        }
-    }
-    
     /// フィルター種別のタイトル
     var title: String {
         
@@ -67,6 +35,26 @@ enum DiaryListFilterTarget: String, CaseIterable {
             
         case .trainingType:
             return true
+        }
+    }
+}
+
+enum TrainingAchievement: String, CaseIterable {
+    
+    /// 未達成
+    case notAchieved
+    /// 達成
+    case achieved
+    
+    var title: String {
+        
+        switch self {
+            
+        case .notAchieved:
+            return "達成していない"
+            
+        case .achieved:
+            return "達成している"
         }
     }
 }
