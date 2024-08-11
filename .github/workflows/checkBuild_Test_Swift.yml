@@ -76,6 +76,7 @@ jobs:
           -configuration Debug
           -clonedSourcePackagesDirPath SourcePackages
           -skipPackagePluginValidation
+          -skipMacroValidation
           -scmProvider xcode
           build |
           bundle exec xcpretty
