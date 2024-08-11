@@ -59,6 +59,7 @@ struct DiaryListFilterFeature {
                 return .concatenate(
                     .run { send in
                         
+                        // 現在設定されているフィルターの取得
                         let result = await diaryListFilterApi.fetchFilterList()
                         await send(.receiveDidChangeFilterItems(result))
                     },
