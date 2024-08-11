@@ -55,7 +55,7 @@ struct DiaryListFilterFeature {
             switch action {
                 
             case .onAppear:
-                print("onAppear.")
+                logger.info("onAppear")
                 return .concatenate(
                     .run { send in
                         
@@ -72,52 +72,56 @@ struct DiaryListFilterFeature {
                 )
                 
             case .onDisappear:
-                print("onDisappear.")
+                logger.info("onDisappear")
                 // 監視解除
                 return .cancel(id: FilterObserveCancellable())
                 
             case .tappedOutsideArea:
-                print("tappedOutsideArea.")
+                logger.info("tappedOutsideArea")
                 return .run { send in
                     
                     await dismiss()
                 }
                 
             case .tappedCloseButton:
-                print("tappedCloseButton.")
+                logger.info("tappedCloseButton")
                 return .run { _ in
                     
                     await dismiss()
                 }
                 
             case .tappedFilterTypeDeleteButton(let type):
+                logger.info("tappedFilterTypeDeleteButton(type: \(type))")
                 return .run { [state] _ in
                     
                     guard await diaryListFilterApi.deleteFilters(state.currentFilters.filter { $0.target == type }) else {
                         
-                        print("did fail delete filter(target: \(type)).")
+                        logger.error("did fail delete filter(target: \(type)).")
                         return
                     }
                 }
                 
             case .tappedFilterItemDeleteButton(let target, let value):
+                logger.info("tappedFilterItemDeleteButton(target: \(target), value: \(value)).")
                 return .run { [state] _ in
                     
                     guard let deleteItem = state.currentFilters.first(where: { $0.target == target && $0.value == value }),
                           await diaryListFilterApi.deleteFilters([deleteItem]) else {
                         
-                        print("did fail delete filter(target: \(target), value: \(value)).")
+                        logger.error("did fail delete filter(target: \(target), value: \(value)).")
                         return
                     }
                 }
                 
             case .tappedFilterMenuItem(let target, let value):
+                logger.info("tappedFilterMenuItem(target: \(target), value: \(value))")
                 return .run { [state] _ in
                     
                     await addFilter(currentFilters: state.currentFilters, target: target, value: value)
                 }
                 
             case .receiveDidChangeFilterItems(let currentFilters):
+                logger.info("receiveDidChangeFilterItems(currentFilters: \(currentFilters))")
                 state.currentFilters = IdentifiedArray(uniqueElements: currentFilters)
                 return .none
             }
@@ -136,7 +140,7 @@ private extension DiaryListFilterFeature {
             // 複数選択可能な場合または、まだ登録されていないフィルター種別の場合は、新規のフィルターとしてDBに保存する
             guard await diaryListFilterApi.addFilter(DiaryListFilterItem(id: uuid(), target: target, value: value)) else {
                 
-                print("did fail add filter(target: \(target), value: \(value)).")
+                logger.error("did fail add filter(target: \(target), value: \(value)).")
                 return
             }
         }
@@ -146,7 +150,7 @@ private extension DiaryListFilterFeature {
             guard let id,
                   await diaryListFilterApi.updateFilter(DiaryListFilterItem(id: id, target: target, value: value)) else {
                 
-                print("did fail update filter(target: \(target), value: \(value)).")
+                logger.error("did fail update filter(target: \(target), value: \(value)).")
                 return
             }
         }
