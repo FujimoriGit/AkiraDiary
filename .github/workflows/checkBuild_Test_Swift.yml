@@ -78,7 +78,7 @@ jobs:
           -skipPackagePluginValidation
           -skipMacroValidation
           -scmProvider xcode
-          build |
+          clean build |
           bundle exec xcpretty
 
       # 単体テストの実行
