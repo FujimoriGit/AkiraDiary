@@ -20,7 +20,7 @@ struct DiaryListFilterView: View {
     private let filterMenuButtonWidth: CGFloat = 120
     private let listCircleIconSize: CGSize = .init(width: 10, height: 10)
     private let filterListItemHeight: CGFloat = 35
-    private let filterListMaxHeight: CGFloat = 165
+    private let filterListMaxHeight: CGFloat = 250
     
     // MARK: font property
     
