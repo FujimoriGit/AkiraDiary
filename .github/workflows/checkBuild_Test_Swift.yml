@@ -85,7 +85,6 @@ jobs:
         working-directory: ./Macho
         run: set -o pipefail &&
           xcodebuild
-          -sdk iphonesimulator
           -configuration Debug
           -destination 'platform=iOS Simulator,id=6B6B062C-40CF-4C83-A78C-84C46922CB36'
           -scheme Macho
@@ -94,5 +93,6 @@ jobs:
           -skipMacroValidation
           -scmProvider xcode
           -skip-testing:MachoUITests
+          -clonedSourcePackagesDirPath SourcePackages
           clean test |
           bundle exec xcpretty
