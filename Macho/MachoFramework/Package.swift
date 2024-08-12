@@ -44,7 +44,6 @@ let package = Package(
             name: "RealmHelper",
             dependencies: [
                 .product(name: "RealmSwift", package: "realm-swift"),
-                .product(name: "Realm", package: "realm-swift"),
                 "MachoCore"
             ]
         ),
