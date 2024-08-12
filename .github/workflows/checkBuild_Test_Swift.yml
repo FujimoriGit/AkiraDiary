@@ -94,5 +94,6 @@ jobs:
           -scmProvider xcode
           -skip-testing:MachoUITests
           -clonedSourcePackagesDirPath SourcePackages
+          -disableAutomaticPackageResolution
           clean test |
           bundle exec xcpretty
