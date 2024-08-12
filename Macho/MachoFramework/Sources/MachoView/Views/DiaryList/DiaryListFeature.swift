@@ -18,7 +18,7 @@ struct DiaryListFeature: Reducer, Sendable {
         // MARK: Presents States
         
         @PresentationState var alert: AlertState<Action.Alert>?
-        @PresentationState var destination: Destination.State?
+        @PresentationState var filterView: DiaryListFilterFeature.State?
         
         // MARK: Navigation States
         
@@ -56,7 +56,7 @@ struct DiaryListFeature: Reducer, Sendable {
         /// アラートの表示
         case alert(PresentationAction<Alert>)
         /// モーダル遷移による画面表示
-        case destination(PresentationAction<Destination.Action>)
+        case filterView(PresentationAction<DiaryListFilterFeature.Action>)
         
         // MARK: Navigation Action
         
@@ -133,10 +133,9 @@ struct DiaryListFeature: Reducer, Sendable {
             
             Path()
         }
-        .ifLet(\.$destination, action: \.destination) {
+        .ifLet(\.$filterView, action: \.filterView) {
             
-            // TODO: フィルター画面に置き換える
-            Destination()
+            DiaryListFilterFeature()
         }
         .ifLet(\.$alert, action: \.alert)
     }
@@ -177,7 +176,7 @@ private extension DiaryListFeature {
             case .alert:
                 return .none
                 
-            case .destination:
+            case .filterView:
                 return .none
                 
             case .path:
@@ -239,8 +238,7 @@ private extension DiaryListFeature {
                 
             case .tappedFilterButton:
                 logger.info("tappedFilterButton")
-                // TODO: フィルター表示処理を実行
-                state.destination = Destination.State.filterScreen(.init(contact: .init(id: uuid.callAsFunction(), name: "")))
+                state.filterView = DiaryListFilterFeature.State()
                 return .none
                 
             case .tappedGraphButton:
@@ -338,35 +336,6 @@ extension DiaryListFeature {
             Scope(state: \.detailScreen, action: \.detailScreen) {
                 
                 // TODO: 詳細画面に置き換える
-                AddContactFeature()
-            }
-        }
-    }
-}
-
-// MARK: - Presentation Destination Definition
-extension DiaryListFeature {
-    
-    @Reducer
-    struct Destination {
-        
-        enum State: Equatable {
-            
-            // フィルター画面
-            case filterScreen(AddContactFeature.State)
-        }
-        
-        enum Action: Equatable {
-            
-            // フィルター画面
-            case filterScreen(AddContactFeature.Action)
-        }
-        
-        var body: some ReducerOf<Self> {
-            
-            Scope(state: \.filterScreen, action: \.filterScreen) {
-                
-                // TODO: フィルター画面に置き換える
                 AddContactFeature()
             }
         }

@@ -11,7 +11,7 @@ import SwiftUI
 @MainActor
 struct DiaryListView: View {
     
-    // MARK: - tca store property
+    // MARK: - TCA store property
     
     private var store: StoreOf<DiaryListFeature>
     
@@ -63,7 +63,11 @@ struct DiaryListView: View {
                 }
         } destination: { getNavigationDestination($0) }
         .alert(store: store.scope(state: \.$alert, action: \.alert))
-        .sheet(store: store.scope(state: \.$destination, action: \.destination)) { getModalDestination($0.withState({ $0 })) }
+        .transaction { $0.disablesAnimations = false }
+        .fullScreenCover(store: store.scope(state: \.$filterView, action: \.filterView)) {
+            DiaryListFilterView(store: $0)
+        }
+        .transaction { $0.disablesAnimations = true }
     }
 }
 
@@ -209,22 +213,6 @@ private extension DiaryListView {
             })
         case .detailScreen(let detailScreenState):
             AddContactView(store: StoreOf<AddContactFeature>(initialState: detailScreenState) {
-                AddContactFeature()
-            })
-        }
-    }
-}
-
-// MARK: - Modal Presentation Route Definition
-
-private extension DiaryListView {
-    
-    func getModalDestination(_ state: DiaryListFeature.Destination.State) -> some View {
-        switch state {
-            
-        // TODO: 実装出来次第正しい画面に変更する
-        case .filterScreen(let filterScreenState):
-            AddContactView(store: StoreOf<AddContactFeature>(initialState: filterScreenState) {
                 AddContactFeature()
             })
         }
