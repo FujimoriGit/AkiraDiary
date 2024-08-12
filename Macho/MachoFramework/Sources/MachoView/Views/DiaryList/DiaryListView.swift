@@ -66,6 +66,7 @@ struct DiaryListView: View {
         .transaction { $0.disablesAnimations = false }
         .fullScreenCover(store: store.scope(state: \.$filterView, action: \.filterView)) {
             DiaryListFilterView(store: $0)
+                .presentationBackground(.clear)
         }
         .transaction { $0.disablesAnimations = true }
     }
