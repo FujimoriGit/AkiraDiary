@@ -164,7 +164,7 @@ private extension DiaryListFilterFeature {
         if sameTargetId == nil || target.isMultiSelectFilter {
             
             // すでに同じフィルターが登録されている場合は、フィルターの追加処理は行わない
-            if !currentFilters.contains(where: { $0.target == target && $0.value == value }) {
+            if currentFilters.contains(where: { $0.target == target && $0.value == value }) {
                 
                 logger.debug("already exits same filter(target: \(target), value: \(value)).")
                 return

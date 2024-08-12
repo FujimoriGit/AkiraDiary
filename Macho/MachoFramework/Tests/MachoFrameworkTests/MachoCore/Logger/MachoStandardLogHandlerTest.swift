@@ -13,10 +13,6 @@ final class MachoStandardLogHandlerTest: XCTestCase {
 
     func testLogHandler() throws {
         
-        LoggingSystem.bootstrap { _ in
-            MachoStandardLogHandler()
-        }
-        
         var logger1 = Logger(label: "first logger")
         logger1.logLevel = .error
         logger1[metadataKey: "only-on"] = "first"
