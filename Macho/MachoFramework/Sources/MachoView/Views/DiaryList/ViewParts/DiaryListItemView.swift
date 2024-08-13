@@ -138,10 +138,10 @@ private extension DiaryListItemView {
 #Preview {
     ScrollView {
         LazyVStack(spacing: .zero) {
-            DiaryListItemView(store: Store(initialState: DiaryListItemFeature.State(title: "2024/1/1", message: "Test Messag 1", date: Date(), isWin: false)) {
+            DiaryListItemView(store: Store(initialState: DiaryListItemFeature.State(title: "2024/1/1", message: "Test Messag 1", date: Date(), isWin: false, trainingList: ["腹筋", "ベンチプレス", "ダンベルプレス"])) {
                 DiaryListItemFeature()
             })
-            DiaryListItemView(store: Store(initialState: DiaryListItemFeature.State(title: "2024/1/2", message: "Test Messag 2", date: Date(), isWin: true)) {
+            DiaryListItemView(store: Store(initialState: DiaryListItemFeature.State(title: "2024/1/2", message: "Test Messag 2", date: Date(), isWin: true, trainingList: ["ベンチプレス"])) {
                 DiaryListItemFeature()
             })
         }

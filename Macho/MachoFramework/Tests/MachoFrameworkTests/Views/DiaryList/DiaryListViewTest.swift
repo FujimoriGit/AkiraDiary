@@ -22,7 +22,7 @@ final class DiaryListViewTests: XCTestCase {
     func testAlert() async {
         
         let diariesState: IdentifiedArray<UUID, DiaryListItemFeature.State> = [
-            DiaryListItemFeature.State(title: "test1", message: "", date: Date(), isWin: true),
+            DiaryListItemFeature.State(title: "test1", message: "", date: Date(), isWin: true, trainingList: []),
          ]
         
         let store = TestStore(
@@ -62,7 +62,7 @@ final class DiaryListViewTests: XCTestCase {
             XCTFail("fail setup test param.")
             return
         }
-        let expectedAddedItem = DiaryListItemFeature.State(title: "test2", message: "test message", date: thirdDate, isWin: false)
+        let expectedAddedItem = DiaryListItemFeature.State(title: "test2", message: "test message", date: thirdDate, isWin: false, trainingList: [])
         
         // スクロール画面の表示サイズの高さが800px、スクロールできるサイズの高さが1000pxの状態
         let trackableListState = TrackableListFeature.State(offset: 0,
@@ -73,8 +73,8 @@ final class DiaryListViewTests: XCTestCase {
         
         let store = TestStore(
             initialState: DiaryListFeature.State(diaries: [
-                DiaryListItemFeature.State(title: "test1", message: "", date: firstDate, isWin: true),
-                DiaryListItemFeature.State(title: "test3", message: "test message", date: secondDate, isWin: false)
+                DiaryListItemFeature.State(title: "test1", message: "", date: firstDate, isWin: true, trainingList: []),
+                DiaryListItemFeature.State(title: "test3", message: "test message", date: secondDate, isWin: false, trainingList: [])
             ], trackableList: trackableListState, viewState: viewState), reducer: { DiaryListFeature() }) {
                 
                 $0.diaryListFetchApi = DiaryListItemClient(fetch: { _, _ in
@@ -117,7 +117,8 @@ final class DiaryListViewTests: XCTestCase {
     @MainActor
     func testOnAppearView() async {
         
-        let expectedItem = DiaryListItemFeature.State(title: "test", message: "test message", date: Date(), isWin: true)
+        let expectedItem = DiaryListItemFeature.State(title: "test", message: "test message", date: Date(), isWin: false, trainingList: [])
+        let receivedFilters = [DiaryListFilterItem(id: UUID(), target: .achievement, value: "達成していない")]
         
         let store = TestStore(initialState: DiaryListFeature.State(), reducer: { DiaryListFeature() }) {
             
@@ -125,6 +126,7 @@ final class DiaryListViewTests: XCTestCase {
                 
                 return [expectedItem]
             }, deleteItem: { _ in })
+            $0.diaryListFilterApi = DiaryListFilterClient.getFetchOnlyClientForTest(receivedFilters)
             $0.date = DateGenerator({ Date() })
         }
         
@@ -133,6 +135,12 @@ final class DiaryListViewTests: XCTestCase {
             
             // 日記リスト取得処理開始
             $0.viewState.isLoadingDiaries = true
+        }
+        
+        // 日記リストのフィルター取得イベント受信
+        await store.receive(.receiveLoadDiaryListFilter(filters: receivedFilters)) {
+            
+            $0.currentFilters = receivedFilters
         }
         
         // 日記リスト取得イベント受信
@@ -151,12 +159,15 @@ final class DiaryListViewTests: XCTestCase {
     @MainActor
     func testOnAppearViewWithFailFetchItems() async {
         
+        let receivedFilters = [DiaryListFilterItem(id: UUID(), target: .achievement, value: "達成していない")]
+        
         let store = TestStore(initialState: DiaryListFeature.State(), reducer: { DiaryListFeature() }) {
             
             $0.diaryListFetchApi = DiaryListItemClient(fetch: { _, _ in
                 
                 throw TestError.loadingError
             }, deleteItem: { _ in })
+            $0.diaryListFilterApi = DiaryListFilterClient.getFetchOnlyClientForTest(receivedFilters)
             $0.date = DateGenerator({ Date() })
         }
         
@@ -165,6 +176,12 @@ final class DiaryListViewTests: XCTestCase {
             
             // 日記リスト取得処理開始
             $0.viewState.isLoadingDiaries = true
+        }
+        
+        // 日記リストのフィルター取得イベント受信
+        await store.receive(.receiveLoadDiaryListFilter(filters: receivedFilters)) {
+            
+            $0.currentFilters = receivedFilters
         }
         
         // 日記リスト取得失敗イベント受信
@@ -189,12 +206,15 @@ final class DiaryListViewTests: XCTestCase {
             return
         }
         
-        let expectedItem = DiaryListItemFeature.State(title: "test2", message: "test message", date: secondDate, isWin: true)
+        let expectedItem = DiaryListItemFeature.State(title: "test2", message: "test message", date: secondDate, isWin: false, trainingList: ["腹筋"])
         
         let diariesState: IdentifiedArray<UUID, DiaryListItemFeature.State> = [
-            DiaryListItemFeature.State(title: "test1", message: "", date: firstDate, isWin: true),
-            DiaryListItemFeature.State(title: "test3", message: "", date: thirdDate, isWin: true)
+            DiaryListItemFeature.State(title: "test1", message: "", date: firstDate, isWin: false, trainingList: ["腹筋"]),
+            DiaryListItemFeature.State(title: "test3", message: "", date: thirdDate, isWin: false, trainingList: ["腹筋"])
          ]
+        
+        let receivedFilters = [DiaryListFilterItem(id: UUID(), target: .achievement, value: "達成していない"),
+                               DiaryListFilterItem(id: UUID(), target: .trainingType, value: "腹筋")]
                 
         let store = TestStore(initialState: DiaryListFeature.State(diaries: diariesState),
                               reducer: { DiaryListFeature() }) {
@@ -203,6 +223,7 @@ final class DiaryListViewTests: XCTestCase {
                 
                 return [expectedItem]
             }, deleteItem: { _ in })
+            $0.diaryListFilterApi = DiaryListFilterClient.getFetchOnlyClientForTest(receivedFilters)
             $0.date = DateGenerator({ Date() })
         }
         
@@ -211,6 +232,12 @@ final class DiaryListViewTests: XCTestCase {
             
             // 日記リスト取得処理開始
             $0.viewState.isLoadingDiaries = true
+        }
+        
+        // 日記リストのフィルター取得イベント受信
+        await store.receive(.receiveLoadDiaryListFilter(filters: receivedFilters)) {
+            
+            $0.currentFilters = receivedFilters
         }
         
         // 日記リスト取得イベント受信
@@ -225,12 +252,60 @@ final class DiaryListViewTests: XCTestCase {
         }
     }
     
+    // フィルターにヒットする日記がないケース
+    @MainActor
+    func testOnAppearViewWithNoHitsFilter() async {
+                
+        let receivedItem = [DiaryListItemFeature.State(title: "test1", message: "test message", date: Date(), isWin: true, trainingList: []),
+                            DiaryListItemFeature.State(title: "test2", message: "test message", date: Date(), isWin: false, trainingList: ["プランク"]),
+                            DiaryListItemFeature.State(title: "test3", message: "test message", date: Date(), isWin: false, trainingList: ["ベンチプレス"])]
+        
+        let receivedFilters = [DiaryListFilterItem(id: UUID(), target: .achievement, value: "達成していない"),
+                               DiaryListFilterItem(id: UUID(), target: .trainingType, value: "腹筋"),
+                               DiaryListFilterItem(id: UUID(), target: .trainingType, value: "スクワット")]
+                
+        let store = TestStore(initialState: DiaryListFeature.State(),
+                              reducer: { DiaryListFeature() }) {
+            
+            $0.diaryListFetchApi = DiaryListItemClient(fetch: { _, _ in
+                
+                return receivedItem
+            }, deleteItem: { _ in })
+            $0.diaryListFilterApi = DiaryListFilterClient.getFetchOnlyClientForTest(receivedFilters)
+            $0.date = DateGenerator({ Date() })
+        }
+        
+        // 日記リスト画面表示時の動作
+        await store.send(.onAppearView) {
+            
+            // 日記リスト取得処理開始
+            $0.viewState.isLoadingDiaries = true
+        }
+        
+        // 日記リストのフィルター取得イベント受信
+        await store.receive(.receiveLoadDiaryListFilter(filters: receivedFilters)) {
+            
+            $0.currentFilters = receivedFilters
+        }
+        
+        // 日記リスト取得イベント受信
+        await store.receive(.receiveLoadDiaryItems(items: receivedItem)) {
+            
+            // 日記リスト更新
+            $0.diaries = []
+            // 日記リスト取得処理終了
+            $0.viewState.isLoadingDiaries = false
+            // 日記リストがあるかどうかのフラグ更新
+            $0.viewState.hasDiaryItems = false
+        }
+    }
+    
     // 日記リストをタップした時のケース
     @MainActor
     func testTappedDiaryItem() async throws {
                 
         let diariesState: IdentifiedArray<UUID, DiaryListItemFeature.State> = [
-            DiaryListItemFeature.State(title: "test1", message: "", date: Date(), isWin: true),
+            DiaryListItemFeature.State(title: "test1", message: "", date: Date(), isWin: true, trainingList: []),
          ]
         
         let store = TestStore(
@@ -255,8 +330,8 @@ final class DiaryListViewTests: XCTestCase {
     func testTappedDeleteItem() async {
         
         let diariesState: IdentifiedArray<UUID, DiaryListItemFeature.State> = [
-            DiaryListItemFeature.State(title: "test1", message: "", date: Date(), isWin: true),
-            DiaryListItemFeature.State(title: "test2", message: "test message", date: Date(), isWin: true)
+            DiaryListItemFeature.State(title: "test1", message: "", date: Date(), isWin: true, trainingList: []),
+            DiaryListItemFeature.State(title: "test2", message: "test message", date: Date(), isWin: true, trainingList: [])
          ]
         
         let viewState = DiaryListFeature.State.ViewState(hasDiaryItems: true)
@@ -317,7 +392,7 @@ final class DiaryListViewTests: XCTestCase {
     func testTappedEditItem() async throws {
         
         let diariesState: IdentifiedArray<UUID, DiaryListItemFeature.State> = [
-            DiaryListItemFeature.State(title: "test1", message: "", date: Date(), isWin: true),
+            DiaryListItemFeature.State(title: "test1", message: "", date: Date(), isWin: true, trainingList: []),
          ]
         
         let store = TestStore(
@@ -397,15 +472,12 @@ final class DiaryListViewTests: XCTestCase {
                 
             DiaryListFeature()
         }
-        
-        throw XCTSkip("ignore test. because don't complete target code.")
-        
-        // TODO: フィルター画面への遷移が未実装のため、実装後にテストの期待値を実装する
+                
         // グラフボタンを押下
-        await store.send(.tappedFilterButton) { _ in
+        await store.send(.tappedFilterButton) {
             
             // グラフ画面をナビゲーションスタックに追加
-//            $0.path.append(.graphScreen(.init()))
+            $0.filterView = DiaryListFilterFeature.State()
         }
     }
 }

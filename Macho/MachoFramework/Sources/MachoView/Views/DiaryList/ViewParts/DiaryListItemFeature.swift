@@ -13,10 +13,16 @@ struct DiaryListItemFeature: Reducer, Sendable {
     struct State: Equatable, Identifiable, Sendable {
         
         let id = UUID()
+        /// 日記のタイトル
         let title: String
+        /// 日記のメッセージ
         let message: String
+        /// 日記の作成日付
         let date: Date
+        /// 目標達成したかどうか
         let isWin: Bool
+        /// 日記に登録したトレーニング種別
+        let trainingList: [String]
     }
     
     enum Action: Sendable {

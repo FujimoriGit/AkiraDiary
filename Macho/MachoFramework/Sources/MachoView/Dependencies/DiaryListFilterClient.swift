@@ -7,6 +7,7 @@
 
 import Combine
 import ComposableArchitecture
+import Foundation
 import RealmHelper
 
 struct DiaryListFilterClient {
@@ -63,6 +64,43 @@ extension DiaryListFilterClient: DependencyKey {
         let executor =  DiaryListFilterEntity.executor
         executor.startObservation()
         return executor.getPublisher().map { convertFilterEntityToItem($0) }.eraseToAnyPublisher()
+    }
+    
+    static var testValue: DiaryListFilterClient = DiaryListFilterClient { _ in
+        
+        return true
+    } updateFilter: { _ in
+        
+        return true
+    } deleteFilters: { _ in
+        
+        return true
+    } fetchFilterList: {
+    
+        return [DiaryListFilterItem(id: UUID(), target: .achievement, value: "達成していない")]
+    } getFilterListObserver: {
+        
+        return PassthroughSubject<[DiaryListFilterItem], Never>().eraseToAnyPublisher()
+    }
+    
+    static func getFetchOnlyClientForTest(_ expected: [DiaryListFilterItem]) -> DiaryListFilterClient {
+        
+        return DiaryListFilterClient { _ in 
+            
+            return true
+        } updateFilter: { _ in
+            
+            return true
+        } deleteFilters: { _ in
+            
+            return true
+        } fetchFilterList: {
+            
+            return expected
+        } getFilterListObserver: {
+            
+            return PassthroughSubject<[DiaryListFilterItem], Never>().eraseToAnyPublisher()
+        }
     }
 }
 

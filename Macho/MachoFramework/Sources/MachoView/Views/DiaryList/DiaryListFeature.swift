@@ -35,6 +35,8 @@ struct DiaryListFeature: Reducer, Sendable {
         
         /// 日記リスト画面で監視したいプロパティを持つState
         var viewState = ViewState()
+        /// 日記リストに表示する日記のフィルター設定
+        var currentFilters: [DiaryListFilterItem] = []
         
         struct ViewState: Equatable {
             
@@ -88,6 +90,8 @@ struct DiaryListFeature: Reducer, Sendable {
         case failedLoadDiaryItems
         /// 指定した日記をRealmから削除する副作用を処理する
         case deletedDiaryItem(id: UUID)
+        /// 日記リストのフィルター取得に成功した時の副作用を処理する
+        case receiveLoadDiaryListFilter(filters: [DiaryListFilterItem])
         
         @CasePathable
         enum Alert: Equatable {
@@ -106,6 +110,7 @@ struct DiaryListFeature: Reducer, Sendable {
     // MARK: dependency property
     
     @Dependency(\.diaryListFetchApi) var diaryListFetchClient
+    @Dependency(\.diaryListFilterApi) var diaryListFilterApi
     @Dependency(\.date) var date
     @Dependency(\.uuid) var uuid
     
@@ -185,7 +190,14 @@ private extension DiaryListFeature {
             case .onAppearView:
                 logger.info("onAppearView")
                 state.viewState.isLoadingDiaries = true
-                return loadDiaryListItem(date.now)
+                return .concatenate(
+                    .run { send in
+                        
+                        let currentFilterList = await diaryListFilterApi.fetchFilterList()
+                        return await send(.receiveLoadDiaryListFilter(filters: currentFilterList))
+                    },
+                    loadDiaryListItem(date.now)
+                )
                 
                 // 日記項目のComponentのDelegateAction
             case .diaries(.element(let id, let delegateAction)):
@@ -259,9 +271,9 @@ private extension DiaryListFeature {
                 // Stateの更新
                 items.forEach { state.diaries.updateOrAppend($0) }
                 // 日記の作成日付で降順にソートする
-                state.diaries.sort { $0.date < $1.date }
+                state.diaries = sortWithFilteringDiaryList(state.diaries, filters: state.currentFilters)
                 state.viewState.isLoadingDiaries = false
-                state.viewState.hasDiaryItems = !items.isEmpty
+                state.viewState.hasDiaryItems = !state.diaries.isEmpty
                 
                 return .none
                 
@@ -278,6 +290,12 @@ private extension DiaryListFeature {
                 logger.info("deletedDiaryItem(id: \(id))")
                 state.diaries.remove(id: id)
                 state.viewState.hasDiaryItems = !state.diaries.isEmpty
+                
+                return .none
+                
+            case .receiveLoadDiaryListFilter(let filters):
+                logger.info("receiveLoadDiaryListFilter(filters: \(filters))")
+                state.currentFilters = filters
                 
                 return .none
             }
@@ -360,5 +378,18 @@ private extension DiaryListFeature {
             logger.error("Occurred loadDiaryListItem error(\(error)).")
             return await send(.failedLoadDiaryItems)
         }
+    }
+    
+    func sortWithFilteringDiaryList(_ diaryList: IdentifiedArrayOf<DiaryListItemFeature.State>,
+                                    filters: [DiaryListFilterItem]) -> IdentifiedArrayOf<DiaryListItemFeature.State> {
+        
+        // フィルタリング処理
+        var filteredList = diaryList.filter { item in
+            
+            return filters.isEmpty ? true : !filters.contains { !$0.isFilteringTarget(item) }
+        }
+        // 日記の作成日付で降順にソートする
+        filteredList.sort { $0.date < $1.date }
+        return filteredList
     }
 }

@@ -39,13 +39,13 @@ extension DiaryListItemClient: DependencyKey {
     /// デフォルトのPreview時のモック処理
     static var previewValue = Self { _, _ in
         
-        return [.init(title: "preview", message: "reload message", date: Date(), isWin: false)]
+        return [.init(title: "preview", message: "reload message", date: Date(), isWin: false, trainingList: [])]
     } deleteItem: { _ in }
     
     /// デフォルトのTest時のモック処理
     static var testValue = Self { _, _ in
         
-        return [.init(title: "test", message: "reload message", date: Date(timeIntervalSince1970: .zero), isWin: false)]
+        return [.init(title: "test", message: "reload message", date: Date(timeIntervalSince1970: .zero), isWin: false, trainingList: [""])]
     } deleteItem: { _ in }
 }
 

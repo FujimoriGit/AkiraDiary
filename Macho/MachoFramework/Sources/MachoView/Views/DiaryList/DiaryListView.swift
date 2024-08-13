@@ -5,6 +5,7 @@
 //  Created by 佐藤汰一 on 2024/01/07.
 //
 
+import Combine
 import ComposableArchitecture
 import SwiftUI
 
@@ -227,13 +228,16 @@ private extension DiaryListView {
     struct SampleView: View {
         
         private let state: DiaryListFeature.State
+        private let publisher = PassthroughSubject<[DiaryListFilterItem], Never>()
+        @State private var currentFilters = [DiaryListFilterItem(id: UUID(), target: .achievement, value: "達成していない"),
+                              DiaryListFilterItem(id: UUID(), target: .trainingType, value: "腹筋")]
         
         init() {
             
             var diaries: IdentifiedArrayOf<DiaryListItemFeature.State> = []
             
             for i in 0...10 {
-                diaries.append(DiaryListItemFeature.State(title: "\(i)", message: "", date: Date(), isWin: true))
+                diaries.append(DiaryListItemFeature.State(title: "\(i)", message: "", date: Date(), isWin: true, trainingList: ["腹筋", "ベンチプレス", "ダンベルプレス"]))
             }
             
             self.state = DiaryListFeature.State(diaries: diaries)
@@ -242,14 +246,39 @@ private extension DiaryListView {
         var body: some View {
             DiaryListView(store: Store(initialState: state) {
                 withDependencies {
+                    // 日記リスト取得のAPI DI
                     $0.diaryListFetchApi = DiaryListItemClient(fetch: { startDate, limitCount in
                         if Int.random(in: 0...10) <= 5 {
-                            return [.init(title: "fetch item", message: "sample", date: Date(), isWin: false)]
+                            return [.init(title: "fetch item", message: "sample", date: Date(), isWin: false, trainingList: ["腹筋", "ベンチプレス", "ダンベルプレス"])]
                         }
                         else {
                             throw NSError()
                         }
                     }, deleteItem: { _ in })
+                    // フィルター取得API DI
+                    $0.diaryListFilterApi = DiaryListFilterClient(addFilter: { filter in
+                        
+                        currentFilters = currentFilters + [filter]
+                        publisher.send(currentFilters)
+                        return true
+                    }, updateFilter: { filter in
+                        
+                        guard let index = currentFilters.firstIndex(where: { $0.target == filter.target }) else { return false }
+                        currentFilters[index] = filter
+                        publisher.send(currentFilters)
+                        return true
+                    }, deleteFilters: { targets in
+                        
+                        currentFilters = currentFilters.filter { !targets.contains($0) }
+                        publisher.send(currentFilters)
+                        return true
+                    }, fetchFilterList: {
+                        
+                        return currentFilters
+                    }, getFilterListObserver: {
+                        
+                        return publisher.eraseToAnyPublisher()
+                    })
                 } operation: {
                     DiaryListFeature()
                 }
