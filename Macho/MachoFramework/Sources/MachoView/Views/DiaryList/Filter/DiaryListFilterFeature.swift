@@ -6,6 +6,7 @@
 //
 
 import ComposableArchitecture
+import Foundation
 
 @Reducer
 struct DiaryListFilterFeature {
@@ -43,8 +44,6 @@ struct DiaryListFilterFeature {
         
         /// 画面表示
         case onAppear
-        /// 画面非表示
-        case onDisappear
         /// ダイアログ外の領域タップ
         case tappedOutsideArea
         /// 閉じるボタンタップ
@@ -88,28 +87,17 @@ struct DiaryListFilterFeature {
                     },
                     .publisher {
                         
-                        return diaryListFilterApi.getFilterListObserver().map { .receiveDidChangeFilterItems($0) }
+                        return diaryListFilterApi.getFilterListObserver().receive(on: DispatchQueue.main).map { .receiveDidChangeFilterItems($0) }
                     }.cancellable(id: FilterObserveCancellable())
                 )
                 
-            case .onDisappear:
-                logger.info("onDisappear")
-                // 監視解除
-                return .cancel(id: FilterObserveCancellable())
-                
             case .tappedOutsideArea:
                 logger.info("tappedOutsideArea")
-                return .run { send in
-                    
-                    await dismiss()
-                }
+                return callDismiss()
                 
             case .tappedCloseButton:
                 logger.info("tappedCloseButton")
-                return .run { _ in
-                    
-                    await dismiss()
-                }
+                return callDismiss()
                 
             case .tappedFilterTypeDeleteButton(let type):
                 logger.info("tappedFilterTypeDeleteButton(type: \(type))")
@@ -206,5 +194,14 @@ private extension DiaryListFilterFeature {
         resultDic.updateValue(["腹筋", "ダンベルプレス"], forKey: .trainingType)
         
         return resultDic
+    }
+    
+    /// フィルター画面終了時の終了時の処理
+    func callDismiss() -> Effect<DiaryListFilterFeature.Action> {
+        
+        return Effect.concatenate(
+            .cancel(id: FilterObserveCancellable()),
+            .run { _ in await self.dismiss() }
+        )
     }
 }

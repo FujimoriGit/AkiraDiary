@@ -181,6 +181,14 @@ private extension DiaryListFeature {
             case .alert:
                 return .none
                 
+            case .filterView(.presented(.tappedOutsideArea)):
+                state.filterView = nil
+                return .none
+                
+            case .filterView(.presented(.tappedCloseButton)):
+                state.filterView = nil
+                return .none
+                
             case .filterView:
                 return .none
                 

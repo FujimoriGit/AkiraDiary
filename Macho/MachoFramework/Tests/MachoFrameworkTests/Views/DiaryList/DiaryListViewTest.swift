@@ -473,11 +473,30 @@ final class DiaryListViewTests: XCTestCase {
             DiaryListFeature()
         }
                 
-        // グラフボタンを押下
+        // フィルターボタンを押下
         await store.send(.tappedFilterButton) {
             
-            // グラフ画面をナビゲーションスタックに追加
+            // フィルター画面を宛先に追加
             $0.filterView = DiaryListFilterFeature.State()
+        }
+        
+        // フィルター画面のダイアログ外の領域タップ
+        await store.send(.filterView(.presented(.tappedOutsideArea))) {
+            
+            $0.filterView = nil
+        }
+        
+        // フィルターボタンを押下
+        await store.send(.tappedFilterButton) {
+            
+            // フィルター画面を宛先に追加
+            $0.filterView = DiaryListFilterFeature.State()
+        }
+        
+        // フィルター画面の閉じるボタンタップ
+        await store.send(.filterView(.presented(.tappedCloseButton))) {
+            
+            $0.filterView = nil
         }
     }
 }
