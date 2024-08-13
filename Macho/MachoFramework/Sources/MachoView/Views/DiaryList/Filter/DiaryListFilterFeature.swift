@@ -171,7 +171,9 @@ private extension DiaryListFilterFeature {
             
             // それ以外の場合は、すでに登録されている同じフィルター種別の値を更新する
             guard let sameTargetId,
-                  await diaryListFilterApi.updateFilter(DiaryListFilterItem(id: sameTargetId, target: target, value: value)) else {
+                  await diaryListFilterApi.updateFilter(DiaryListFilterItem(id: sameTargetId,
+                                                                            target: target,
+                                                                            value: value)) else {
                 
                 logger.error("did fail update filter(target: \(target), value: \(value)).")
                 return

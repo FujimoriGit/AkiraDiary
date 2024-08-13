@@ -30,12 +30,3 @@ struct DiaryListFilterItem: Identifiable, Equatable {
         }
     }
 }
-
-extension Array where Element == DiaryListFilterItem {
-    
-    /// フィルター種別でグルーピングしたフィルター値の辞書型に変換
-    func convertToDicGroupByTarget() -> [DiaryListFilterTarget: [String]] {
-        
-        return Dictionary(grouping: self) { $0.target }.mapValues { $0.map { $0.value } }
-    }
-}

@@ -48,7 +48,7 @@ struct DiaryListView: View {
     
     // MARK: radius property
     
-    private let filetrButtonRadius: CGFloat = 8
+    private let filterButtonRadius: CGFloat = 8
     
     // MARK: - view property
     
@@ -63,13 +63,13 @@ struct DiaryListView: View {
                     }
                 }
         } destination: { getNavigationDestination($0) }
-        .alert(store: store.scope(state: \.$alert, action: \.alert))
-        .transaction { $0.disablesAnimations = false }
-        .fullScreenCover(store: store.scope(state: \.$filterView, action: \.filterView)) {
-            DiaryListFilterView(store: $0)
-                .presentationBackground(.clear)
-        }
-        .transaction { $0.disablesAnimations = true }
+            .alert(store: store.scope(state: \.$alert, action: \.alert))
+            .transaction { $0.disablesAnimations = false }
+            .fullScreenCover(store: store.scope(state: \.$filterView, action: \.filterView)) {
+                DiaryListFilterView(store: $0)
+                    .presentationBackground(.clear)
+            }
+            .transaction { $0.disablesAnimations = true }
     }
 }
 
@@ -170,7 +170,7 @@ private extension DiaryListView {
             .padding(.horizontal, 10)
             .padding(.vertical, 5)
             .clipped()
-            .background(Color.gray.clipShape(RoundedRectangle(cornerRadius: filetrButtonRadius)))
+            .background(Color.gray.clipShape(RoundedRectangle(cornerRadius: filterButtonRadius)))
         }
     }
     
@@ -197,26 +197,27 @@ private extension DiaryListView {
 
 private extension DiaryListView {
     
-    func getNavigationDestination(_ state: DiaryListFeature.Path.State) -> some View {
-        switch state {
+    func getNavigationDestination(_ store: Store<DiaryListFeature.Path.State, DiaryListFeature.Path.Action>) -> some View {
+        
+        switch store.withState({ $0 }) {
             
-        // TODO: 実装出来次第正しい画面に変更する
-        case .editScreen(let editScreenState):
-            AddContactView(store: StoreOf<AddContactFeature>(initialState: editScreenState) {
-                AddContactFeature()
-            })
-        case .createScreen(let createScreenState):
-            AddContactView(store: StoreOf<AddContactFeature>(initialState: createScreenState) {
-                AddContactFeature()
-            })
-        case .graphScreen(let graphScreenState):
-            AddContactView(store: StoreOf<AddContactFeature>(initialState: graphScreenState) {
-                AddContactFeature()
-            })
-        case .detailScreen(let detailScreenState):
-            AddContactView(store: StoreOf<AddContactFeature>(initialState: detailScreenState) {
-                AddContactFeature()
-            })
+            // TODO: 実装出来次第正しい画面に変更する
+        case .editScreen:
+            return IfLetStore(store.scope(state: \.editScreen, action: \.editScreen)) {
+                AddContactView(store: $0)
+            }
+        case .createScreen:
+            return IfLetStore(store.scope(state: \.createScreen, action: \.createScreen)) {
+                AddContactView(store: $0)
+            }
+        case .graphScreen:
+            return IfLetStore(store.scope(state: \.graphScreen, action: \.graphScreen)) {
+                AddContactView(store: $0)
+            }
+        case .detailScreen:
+            return IfLetStore(store.scope(state: \.detailScreen, action: \.detailScreen)) {
+                AddContactView(store: $0)
+            }
         }
     }
 }
@@ -230,7 +231,7 @@ private extension DiaryListView {
         private let state: DiaryListFeature.State
         private let publisher = PassthroughSubject<[DiaryListFilterItem], Never>()
         @State private var currentFilters = [DiaryListFilterItem(id: UUID(), target: .achievement, value: "達成していない"),
-                              DiaryListFilterItem(id: UUID(), target: .trainingType, value: "腹筋")]
+                                             DiaryListFilterItem(id: UUID(), target: .trainingType, value: "腹筋")]
         
         init() {
             
