@@ -16,7 +16,8 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", exact: "1.12.1"),
         .package(url: "https://github.com/realm/realm-swift.git", exact: "10.51.0"),
-        .package(url: "https://github.com/SwiftGen/SwiftGenPlugin", exact: "6.6.2")
+        .package(url: "https://github.com/SwiftGen/SwiftGenPlugin", exact: "6.6.2"),
+        .package(url: "https://github.com/apple/swift-log.git", exact: "1.6.1")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -32,7 +33,8 @@ let package = Package(
                     name: "ComposableArchitecture",
                     package: "swift-composable-architecture"
                 ),
-                "RealmHelper"
+                "RealmHelper",
+                "MachoCore"
             ],
             plugins: [
                 .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
@@ -41,8 +43,13 @@ let package = Package(
         .target(
             name: "RealmHelper",
             dependencies: [
-                .product(name: "RealmSwift", package: "realm-swift")
+                .product(name: "RealmSwift", package: "realm-swift"),
+                "MachoCore"
             ]
+        ),
+        .target(
+            name: "MachoCore",
+            dependencies: [.product(name: "Logging", package: "swift-log")]
         ),
         .testTarget(
             name: "MachoFrameworkTests",
@@ -50,7 +57,9 @@ let package = Package(
                 "MachoFramework",
                 "MachoView",
                 "RealmHelper",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
+                "MachoCore",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "Logging", package: "swift-log")
             ]),
     ]
 )

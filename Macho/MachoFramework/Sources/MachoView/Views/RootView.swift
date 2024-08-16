@@ -17,7 +17,7 @@ public struct RootView: View {
                 Text("Hello, World!")
                     .foregroundStyle(Color(asset: CustomColor.appPrimaryTextColor))
                 Button {
-                    print("tapped fill button")
+                    logger.debug("tapped fill button")
                 } label: {
                     HStack {
                         Spacer()
@@ -28,7 +28,7 @@ public struct RootView: View {
                 }
                 .fillButtonStyle(backgroundColor: .accentColor)
                 Button {
-                    print("tapped frame button")
+                    logger.info("tapped frame button")
                 } label: {
                     HStack {
                         Spacer()
