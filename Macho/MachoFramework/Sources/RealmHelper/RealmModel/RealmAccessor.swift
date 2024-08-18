@@ -182,7 +182,7 @@ fileprivate actor RealmActor {
                 updateHandler(self.toUnManagedObject(update))
                 
             case .error(let error):
-                print("Occured realm observe error: \(error), type: \(type)")
+                logger.error("Occurred realm observe error: \(error), type: \(type)")
             }
         }
     }
@@ -203,7 +203,7 @@ private extension RealmActor {
                     return
                 }
                 
-                print("Failed realm operation: \(error)")
+                logger.error("Failed realm operation: \(error)")
                 continuation.resume(returning: false)
             }
         }
