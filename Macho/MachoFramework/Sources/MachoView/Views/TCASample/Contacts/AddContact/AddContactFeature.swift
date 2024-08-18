@@ -20,11 +20,11 @@ struct AddContactFeature: Reducer {
         case delegate(Delegate)
         case saveButtonTapped
         case setName(String)
+    }
+    
+    enum Delegate: Equatable {
         
-        enum Delegate: Equatable {
-            
-            case saveContact(Contact)
-        }
+        case saveContact(Contact)
     }
     
     @Dependency(\.dismiss) var dismiss

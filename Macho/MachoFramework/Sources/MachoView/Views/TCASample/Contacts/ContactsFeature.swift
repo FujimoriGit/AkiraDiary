@@ -30,11 +30,11 @@ struct ContactsFeature: Reducer {
         case deleteButtonTapped(id: Contact.ID)
         case destination(PresentationAction<Destination.Action>)
         case path(StackAction<ContactDetailFeature.State, ContactDetailFeature.Action>)
+    }
+    
+    enum Alert: Equatable {
         
-        enum Alert: Equatable {
-            
-            case confirmDeletion(id: Contact.ID)
-        }
+        case confirmDeletion(id: Contact.ID)
     }
     
     @Dependency(\.uuid) var uuid
@@ -108,13 +108,13 @@ extension ContactsFeature {
         enum State: Equatable {
             
             case addContact(AddContactFeature.State)
-            case alert(AlertState<ContactsFeature.Action.Alert>)
+            case alert(AlertState<ContactsFeature.Alert>)
         }
         
         enum Action: Equatable {
             
             case addContact(AddContactFeature.Action)
-            case alert(ContactsFeature.Action.Alert)
+            case alert(ContactsFeature.Alert)
         }
         
         var body: some ReducerOf<Self> {
@@ -131,7 +131,7 @@ extension ContactsFeature {
     }
 }
 
-extension AlertState where Action == ContactsFeature.Action.Alert {
+extension AlertState where Action == ContactsFeature.Alert {
     
     static func deleteConfirmation(id: UUID) -> Self {
         
