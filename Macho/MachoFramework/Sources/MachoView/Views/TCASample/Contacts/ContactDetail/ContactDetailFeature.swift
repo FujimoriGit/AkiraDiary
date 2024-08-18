@@ -45,7 +45,7 @@ struct ContactDetailFeature: Reducer {
                 return .run { send in
                     
                     await send(.delegate(.confirmDeletion))
-                    await self.dismiss()
+                    await dismiss()
                 }
             case .alert:
                 return .none

@@ -83,7 +83,7 @@ struct ContactsFeature: Reducer {
             case .destination(.presented(.addContact(.saveButtonTapped))):
                 return .none
                 
-            case .destination(.presented(.addContact(.setName(_)))):
+            case .destination(.presented(.addContact(.setName))):
                 return .none
             }
         }
@@ -116,6 +116,7 @@ extension ContactsFeature {
             case addContact(AddContactFeature.Action)
             case alert(ContactsFeature.Action.Alert)
         }
+        
         var body: some ReducerOf<Self> {
             
             // 遷移する子ビューをScopeを使用して定義する.

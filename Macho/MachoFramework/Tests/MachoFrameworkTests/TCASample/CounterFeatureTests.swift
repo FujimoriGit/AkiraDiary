@@ -10,9 +10,9 @@
 import ComposableArchitecture
 import XCTest
 
-@MainActor
 final class CounterFeatureTests: XCTestCase {
     
+    @MainActor
     func testCounter() async {
         
         let store = TestStore(initialState: CounterFeature.State()) {
@@ -30,6 +30,7 @@ final class CounterFeatureTests: XCTestCase {
         }
     }
     
+    @MainActor
     func testTimer() async {
         
         let clock = TestClock()
@@ -61,6 +62,7 @@ final class CounterFeatureTests: XCTestCase {
         }
     }
     
+    @MainActor
     func testNumberFact() async {
         
         let store = TestStore(initialState: CounterFeature.State()) {

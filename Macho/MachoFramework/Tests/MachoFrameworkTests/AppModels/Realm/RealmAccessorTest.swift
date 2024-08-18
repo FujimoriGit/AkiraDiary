@@ -52,7 +52,7 @@ final class RealmAccessorTest: XCTestCase {
         
         let realm = await RealmAccessor()
         
-        guard let result = await realm.read(type: DiarySearchTagEntity.self, where: { $0.tagName == "testData1" }).first else {
+        guard let result: DiarySearchTagEntity = await realm.read(where: { $0.tagName == "testData1" }).first else {
             
             XCTFail("Fail read test Data")
             return
@@ -67,7 +67,7 @@ final class RealmAccessorTest: XCTestCase {
         
         let realm = await RealmAccessor()
         
-        let result = await realm.read(type: DiarySearchTagEntity.self)
+        let result: [DiarySearchTagEntity] = await realm.read()
         result.enumerated().forEach { index, resultEntity in
             
             assert(realmTestData[index].id == resultEntity.id)
@@ -83,7 +83,7 @@ final class RealmAccessorTest: XCTestCase {
         let updateValue = ["id": targetID, "tagName": expectedData.tagName] as [String : Any]
         await updateTestData(value: updateValue)
         
-        guard let result = await realm.read(type: DiarySearchTagEntity.self, where: { $0.id == expectedData.id }).first else {
+        guard let result: DiarySearchTagEntity = await realm.read(where: { $0.id == expectedData.id }).first else {
             
             XCTFail("Fail read")
             return
@@ -97,13 +97,13 @@ final class RealmAccessorTest: XCTestCase {
         
         let realm = await RealmAccessor()
         let filterId = realmTestData[0].id
-        guard await realm.delete(type: DiarySearchTagEntity.self, where: { $0.id == filterId }) else {
+        guard await realm.delete(where: { (tag: DiarySearchTagEntity) in tag.id == filterId }) else {
             
             XCTFail("Fail delete")
             return
         }
         
-        let results = await realm.read(type: DiarySearchTagEntity.self)
+        let results: [DiarySearchTagEntity] = await realm.read()
         let expectedData = realmTestData[1]
         XCTAssertEqual(results.count, 1)
         XCTAssertEqual(results.first!.id , expectedData.id)
@@ -249,7 +249,7 @@ private extension RealmAccessorTest {
     func deleteTestData(deleteTarget: UUID) async {
         
         let realm = await RealmAccessor()
-        guard await realm.delete(type: DiarySearchTagEntity.self, where: { $0.id == deleteTarget }) else {
+        guard await realm.delete(where: { (tag: DiarySearchTagEntity) in tag.id == deleteTarget }) else {
             
             XCTFail("Fail delete")
             return

@@ -26,8 +26,8 @@ struct ContactDetailView: View {
     }
 }
 
-
 struct ContactDetailPreviews: PreviewProvider {
+    
     static var previews: some View {
         NavigationStack {
             ContactDetailView(

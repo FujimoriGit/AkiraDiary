@@ -34,7 +34,7 @@ struct AddContactFeature: Reducer {
         switch action {
             
         case .cancelButtonTapped:
-            return .run { _ in await self.dismiss() }
+            return .run { _ in await dismiss() }
             
         case .delegate:
             return .none
@@ -43,7 +43,7 @@ struct AddContactFeature: Reducer {
             return .run { [contact = state.contact] send in
                 
                 await send(.delegate(.saveContact(contact)))
-                await self.dismiss()
+                await dismiss()
             }
             
         case let .setName(name):
