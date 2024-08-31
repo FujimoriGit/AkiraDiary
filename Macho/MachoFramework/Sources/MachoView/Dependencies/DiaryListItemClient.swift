@@ -27,11 +27,11 @@ struct DiaryListItemClient {
 extension DiaryListItemClient: DependencyKey {
     
     /// 日記リスト取得の本来の処理
-    static let liveValue = Self { fetchStartDate, limitCount in
+    static let liveValue = Self { _, _ in
         
         // TODO: 日記の情報を返す
         return []
-    } deleteItem: { uuid in
+    } deleteItem: { _ in
         
         // TODO: パラメータのUUIDから日記の情報をDBから削除する
     }
@@ -39,13 +39,25 @@ extension DiaryListItemClient: DependencyKey {
     /// デフォルトのPreview時のモック処理
     static var previewValue = Self { _, _ in
         
-        return [.init(title: "preview", message: "reload message", date: Date(), isWin: false, trainingList: [])]
+        return [
+            .init(title: "preview",
+                  message: "reload message",
+                  date: Date(),
+                  isWin: false,
+                  trainingList: [])
+        ]
     } deleteItem: { _ in }
     
     /// デフォルトのTest時のモック処理
     static var testValue = Self { _, _ in
         
-        return [.init(title: "test", message: "reload message", date: Date(timeIntervalSince1970: .zero), isWin: false, trainingList: [""])]
+        return [
+            .init(title: "test",
+                  message: "reload message",
+                  date: Date(timeIntervalSince1970: .zero),
+                  isWin: false,
+                  trainingList: [""])
+        ]
     } deleteItem: { _ in }
 }
 

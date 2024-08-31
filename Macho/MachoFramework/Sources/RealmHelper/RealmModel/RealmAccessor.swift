@@ -166,9 +166,9 @@ fileprivate actor RealmActor {
         
         guard let objects = self.realm?.objects(type.RealmObject.self) else { return false }
         
-        return await executeAsyncWrite { [unowned self] in
+        return await executeAsyncWrite { [realm] in
             
-            self.realm?.delete(objects)
+            realm?.delete(objects)
         }
     }
     

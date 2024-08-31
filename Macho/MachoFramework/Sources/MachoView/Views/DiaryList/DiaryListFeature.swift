@@ -130,19 +130,19 @@ struct DiaryListFeature: Reducer, Sendable {
         
         // Actionハンドラ追加
         createActionHandler()
-        .forEach(\.diaries, action: \.diaries) {
-            
-            DiaryListItemFeature()
-        }
-        .forEach(\.path, action: \.path) {
-            
-            Path()
-        }
-        .ifLet(\.$filterView, action: \.filterView) {
-            
-            DiaryListFilterFeature()
-        }
-        .ifLet(\.$alert, action: \.alert)
+            .forEach(\.diaries, action: \.diaries) {
+                
+                DiaryListItemFeature()
+            }
+            .forEach(\.path, action: \.path) {
+                
+                Path()
+            }
+            .ifLet(\.$filterView, action: \.filterView) {
+                
+                DiaryListFilterFeature()
+            }
+            .ifLet(\.$alert, action: \.alert)
     }
 }
 
@@ -159,9 +159,10 @@ private extension DiaryListFeature {
             case .alert(.presented(.confirmEditItem(targetId: let id))):
                 // TODO: 編集画面への遷移を実装する
                 logger.info("confirmEditItem(id=\(id)).")
-                state.path.append(.editScreen(AddContactFeature.State(contact: .init(id: uuid.callAsFunction(), name: ""))))
+                state.path.append(.editScreen(AddContactFeature.State(contact: .init(id: uuid.callAsFunction(),
+                                                                                     name: ""))))
                 return .none
-            
+                
             case .alert(.presented(.confirmDeleteItem(deleteItemId: let id))):
                 return deleteDiaryListItem(id)
                 
@@ -186,7 +187,7 @@ private extension DiaryListFeature {
                 state.viewState.isLoadingDiaries = true
                 return initialLoadDiaryListInfo()
                 
-            // 日記項目のComponentのDelegateAction
+                // 日記項目のComponentのDelegateAction
             case .diaries(.element(let id, let delegateAction)):
                 logger.info("diaries delegate action(id: \(id), action: \(delegateAction)).")
                 state = getUpdatedStateOnDiaryListItemDelegate(state: state,
@@ -352,7 +353,7 @@ private extension DiaryListFeature {
     /// - Parameter startDate: 日記取得の開始日付
     /// - Returns: 日記取得の副作用を返す
     func loadDiaryListItem(_ startDate: Date) -> Effect<DiaryListFeature.Action> {
-                
+        
         return .run { send in
             
             try await send(.receiveLoadDiaryItems(items: diaryListFetchClient.fetch(startDate, limitFetchDiary)),
@@ -416,13 +417,14 @@ private extension DiaryListFeature {
             
         case .deleteItemSwipeAction:
             // アラート表示
-            updateTargetState.alert = AlertState.createAlertStateWithCancel(.deleteDiaryItemConfirmAlert,
-                                                                firstButtonHandler: .confirmDeleteItem(deleteItemId: id))
+            updateTargetState.alert = .createAlertStateWithCancel(.deleteDiaryItemConfirmAlert,
+                                                                  firstButtonHandler: 
+                    .confirmDeleteItem(deleteItemId: id))
             
         case .editItemSwipeAction:
             // アラート表示
-            updateTargetState.alert = AlertState.createAlertStateWithCancel(.editDiaryItemConfirmAlert,
-                                                                firstButtonHandler: .confirmEditItem(targetId: id))
+            updateTargetState.alert = .createAlertStateWithCancel(.editDiaryItemConfirmAlert,
+                                                                  firstButtonHandler: .confirmEditItem(targetId: id))
         }
         
         return updateTargetState

@@ -1,3 +1,4 @@
+// swiftlint:disable:this file_name
 //
 //  DateFormat_Date+Extension.swift
 //  Macho
@@ -30,7 +31,7 @@ extension Date {
         
         fileprivate func getFormatString(omissionTens: Bool) -> String {
             
-            guard let time = time else {
+            guard let time else {
                 
                 return date.getFormatString(omissionTens: omissionTens)
             }

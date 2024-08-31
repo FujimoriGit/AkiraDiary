@@ -18,7 +18,7 @@ struct TrackableListFeature: Reducer, Sendable {
         var contentSize: CGSize = .zero
         
         /// スクロール検知のバッファ値
-        static private let bounceBufferValue: CGFloat = -15
+        private static let bounceBufferValue: CGFloat = -15
         
         /// スクロール中かどうか
         var isScrolling: Bool {
@@ -53,12 +53,12 @@ struct TrackableListFeature: Reducer, Sendable {
                 state.offset = offset
                 return .none
                 
-            case .onAppearScrollView(container: let container, content: let content):
+            case .onAppearScrollView(let container, let content):
                 state.containerSize = container
                 state.contentSize = content
                 return .none
                 
-            case .onChangeScrollViewContentSize(container: let container, content: let content):
+            case .onChangeScrollViewContentSize(let container, let content):
                 state.containerSize = container
                 state.contentSize = content
                 return .none
@@ -98,7 +98,8 @@ struct TrackableList<Content>: View where Content: View {
                         GeometryReader { inside in
                             Color.clear.onChange(of: inside.size) {
                                 viewStore.send(.onChangeScrollViewContentSize(container: outside.size,
-                                                                              content: inside.size), animation: .default)
+                                                                              content: inside.size),
+                                               animation: .default)
                             }
                         }
                     }
@@ -130,29 +131,31 @@ struct ScrollOffsetPreferenceKey: PreferenceKey {
     }
 }
 
+// MARK: - preview
+
 #Preview {
+    TrackablePreviewView()
+}
+
+struct TrackablePreviewView: View {
     
-    struct TrackablePreviewView: View {
-        
-        @State var list = [Int]()
-        @State var offset = CGFloat.zero
-        
-        var body: some View {
-            VStack(spacing: .zero) {
-                Button(action: {
-                    list.append((list.last ?? .zero) + 1)
-                }, label: {
-                    Text("Increment Button")
-                })
-                TrackableList(store: Store(initialState: TrackableListFeature.State(), reducer: { TrackableListFeature() })) {
-                    ForEach(list, id: \.self) { index in
-                        Text("index: \(index)")
-                    }
+    @State private var list = [Int]()
+    @State private var offset = CGFloat.zero
+    
+    var body: some View {
+        VStack(spacing: .zero) {
+            Button(action: {
+                list.append((list.last ?? .zero) + 1)
+            }, label: {
+                Text("Increment Button")
+            })
+            TrackableList(store: Store(initialState: TrackableListFeature.State(),
+                                       reducer: { TrackableListFeature() })) {
+                ForEach(list, id: \.self) { index in
+                    Text("index: \(index)")
                 }
-                Spacer()
             }
+            Spacer()
         }
     }
-    
-    return TrackablePreviewView()
 }

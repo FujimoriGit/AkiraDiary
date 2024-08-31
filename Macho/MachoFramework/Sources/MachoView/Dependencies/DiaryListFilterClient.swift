@@ -39,11 +39,13 @@ struct DiaryListFilterClient {
 
 extension DiaryListFilterClient: DependencyKey {
     
-    static var liveValue: DiaryListFilterClient = DiaryListFilterClient {
+    static var liveValue = DiaryListFilterClient {
         
-        return await RealmAccessor().insert(records: [DiaryListFilterEntity(id: $0.id,
-                                                                            filterTarget: $0.target.rawValue,
-                                                                            filterValue: $0.value)])
+        return await RealmAccessor().insert(records: [
+            DiaryListFilterEntity(id: $0.id,
+                                  filterTarget: $0.target.rawValue,
+                                  filterValue: $0.value)
+        ])
     } updateFilter: { filter in
         
         // filterValueを更新する辞書を生成
@@ -53,20 +55,22 @@ extension DiaryListFilterClient: DependencyKey {
         
         return await RealmAccessor().delete { (entity: DiaryListFilterEntity) in
             
-            return targets.contains(where: { $0.target.rawValue == entity.filterTarget && $0.value == entity.filterValue })
+            return targets.contains {
+                
+                return $0.target.rawValue == entity.filterTarget && $0.value == entity.filterValue
+            }
         }
-        
     } fetchFilterList: {
         
         return convertFilterEntityToItem(await RealmAccessor().read())
     } getFilterListObserver: {
         
-        let executor =  DiaryListFilterEntity.executor
+        let executor = DiaryListFilterEntity.executor
         executor.startObservation()
         return executor.getPublisher().map { convertFilterEntityToItem($0) }.eraseToAnyPublisher()
     }
     
-    static var testValue: DiaryListFilterClient = DiaryListFilterClient { _ in
+    static var testValue = DiaryListFilterClient { _ in
         
         return true
     } updateFilter: { _ in

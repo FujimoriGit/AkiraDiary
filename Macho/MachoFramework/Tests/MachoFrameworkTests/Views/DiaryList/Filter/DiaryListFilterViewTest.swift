@@ -51,7 +51,7 @@ final class DiaryListFilterViewTest: XCTestCase {
         }
         
         await testStore.send(.onAppear)
-        await testStore.receive(.receiveFetchSelectableFilterValuesResponse(expectedSelectableFilterValues)) {
+        await testStore.receive(.receiveFetchSelectableFilterRes(expectedSelectableFilterValues)) {
             
             $0.selectableFilterValues = [.achievement: ["達成していない", "達成している"], .trainingType: ["腹筋", "ダンベルプレス"]]
         }
@@ -110,7 +110,7 @@ final class DiaryListFilterViewTest: XCTestCase {
         }
         
         await testStore.send(.onAppear)
-        await testStore.receive(.receiveFetchSelectableFilterValuesResponse(expectedSelectableFilterValues)) {
+        await testStore.receive(.receiveFetchSelectableFilterRes(expectedSelectableFilterValues)) {
             
             $0.selectableFilterValues = [.achievement: ["達成していない", "達成している"], .trainingType: ["腹筋", "ダンベルプレス"]]
         }
@@ -177,7 +177,7 @@ final class DiaryListFilterViewTest: XCTestCase {
         }
         
         await testStore.send(.onAppear)
-        await testStore.receive(.receiveFetchSelectableFilterValuesResponse(expectedSelectableFilterValues)) {
+        await testStore.receive(.receiveFetchSelectableFilterRes(expectedSelectableFilterValues)) {
             
             $0.selectableFilterValues = [.achievement: ["達成していない", "達成している"], .trainingType: ["腹筋", "ダンベルプレス"]]
         }
@@ -255,7 +255,7 @@ final class DiaryListFilterViewTest: XCTestCase {
         }
         
         await testStore.send(.onAppear)
-        await testStore.receive(.receiveFetchSelectableFilterValuesResponse(expectedSelectableFilterValues)) {
+        await testStore.receive(.receiveFetchSelectableFilterRes(expectedSelectableFilterValues)) {
             
             $0.selectableFilterValues = [.achievement: ["達成していない", "達成している"], .trainingType: ["腹筋", "ダンベルプレス"]]
         }

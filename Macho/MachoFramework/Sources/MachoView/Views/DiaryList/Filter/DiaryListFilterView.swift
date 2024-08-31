@@ -64,6 +64,7 @@ struct DiaryListFilterView: View {
                         .onTapGesture {
                             viewStore.send(.tappedOutsideArea)
                         }
+                        .accessibilityAddTraits(.isButton)
                     createDialogView(viewStore, parentSize: proxy.size)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
@@ -210,9 +211,14 @@ private extension DiaryListFilterView {
 // MARK: - preview section
 
 #Preview {
+    // priview内でprivateが使用できないため、警告を無視する
+    // swiftlint:disable:next private_subject
     let publisher = PassthroughSubject<[DiaryListFilterItem], Never>()
-    var currentFilters = [DiaryListFilterItem(id: UUID(), target: .achievement, value: "達成していない"),
-                          DiaryListFilterItem(id: UUID(), target: .trainingType, value: "腹筋")]
+    var currentFilters = [
+        DiaryListFilterItem(id: UUID(), target: .achievement, value: "達成していない"),
+        DiaryListFilterItem(id: UUID(), target: .trainingType, value: "腹筋")
+    ]
+    
     return DiaryListFilterView(store: Store(initialState: DiaryListFilterFeature.State(),
                                             reducer: { DiaryListFilterFeature() },
                                             withDependencies: {

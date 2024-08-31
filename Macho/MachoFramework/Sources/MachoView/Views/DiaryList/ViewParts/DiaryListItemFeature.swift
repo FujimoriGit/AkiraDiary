@@ -13,6 +13,7 @@ struct DiaryListItemFeature: Reducer, Sendable {
     struct State: Equatable, Identifiable, Sendable {
         
         init(id: UUID = UUID(), title: String, message: String, date: Date, isWin: Bool, trainingList: [String]) {
+            
             self.id = id
             self.title = title
             self.message = message
@@ -46,7 +47,8 @@ struct DiaryListItemFeature: Reducer, Sendable {
     
     var body: some ReducerOf<Self> {
         
-        Reduce { state, action in
+        Reduce { _, action in
+            
             switch action {
                 
             case .tappedDiaryItem:
@@ -58,6 +60,7 @@ struct DiaryListItemFeature: Reducer, Sendable {
             case .editItemSwipeAction:
                 logger.info("editItemSwipeAction")
             }
+            
             return .none
         }
     }
