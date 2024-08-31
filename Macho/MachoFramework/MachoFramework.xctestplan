@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "9D6E531E-8F33-403D-8FA9-8874FCCD66EC",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "MachoFrameworkTests",
+        "name" : "MachoFrameworkTests"
+      }
+    }
+  ],
+  "version" : 1
+}
