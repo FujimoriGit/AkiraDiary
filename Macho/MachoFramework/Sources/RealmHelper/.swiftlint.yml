@@ -1,0 +1,7 @@
+opt_in_rules:
+  - attributes
+
+# Configurations
+attributes:
+  always_on_same_line:
+    - "@Persisted"

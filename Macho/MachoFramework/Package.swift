@@ -17,7 +17,8 @@ let package = Package(
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", exact: "1.12.1"),
         .package(url: "https://github.com/realm/realm-swift.git", exact: "10.51.0"),
         .package(url: "https://github.com/SwiftGen/SwiftGenPlugin", exact: "6.6.2"),
-        .package(url: "https://github.com/apple/swift-log.git", exact: "1.6.1")
+        .package(url: "https://github.com/apple/swift-log.git", exact: "1.6.1"),
+        .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins", exact: "0.56.1")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -37,7 +38,8 @@ let package = Package(
                 "MachoCore"
             ],
             plugins: [
-                .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
+                .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin"),
+                .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLintPlugins")
             ]
         ),
         .target(
@@ -45,6 +47,9 @@ let package = Package(
             dependencies: [
                 .product(name: "RealmSwift", package: "realm-swift"),
                 "MachoCore"
+            ],
+            plugins: [
+                .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLintPlugins")
             ]
         ),
         .target(

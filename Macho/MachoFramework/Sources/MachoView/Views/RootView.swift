@@ -9,7 +9,9 @@ import SwiftUI
 
 public struct RootView: View {
     
-    public init() {}
+    public init() {
+        // nop
+    }
     
     public var body: some View {
         ZStack {

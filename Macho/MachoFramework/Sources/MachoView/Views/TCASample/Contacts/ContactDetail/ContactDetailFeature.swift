@@ -12,7 +12,7 @@ struct ContactDetailFeature: Reducer {
     
     struct State: Equatable {
         
-        @PresentationState var alert: AlertState<Action.Alert>?
+        @PresentationState var alert: AlertState<Alert>?
         let contact: Contact
     }
     
@@ -21,16 +21,16 @@ struct ContactDetailFeature: Reducer {
         case alert(PresentationAction<Alert>)
         case delegate(Delegate)
         case deleteButtonTapped
+    }
+    
+    enum Alert {
         
-        enum Alert {
-            
-            case confirmDeletion
-        }
+        case confirmDeletion
+    }
+    
+    enum Delegate {
         
-        enum Delegate {
-            
-            case confirmDeletion
-        }
+        case confirmDeletion
     }
     
     @Dependency(\.dismiss) var dismiss
@@ -45,7 +45,7 @@ struct ContactDetailFeature: Reducer {
                 return .run { send in
                     
                     await send(.delegate(.confirmDeletion))
-                    await self.dismiss()
+                    await dismiss()
                 }
             case .alert:
                 return .none
@@ -61,7 +61,7 @@ struct ContactDetailFeature: Reducer {
     }
 }
 
-extension AlertState where Action == ContactDetailFeature.Action.Alert {
+extension AlertState where Action == ContactDetailFeature.Alert {
     
     static let confirmDeletion = Self {
         
