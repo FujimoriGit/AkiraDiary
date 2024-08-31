@@ -67,10 +67,6 @@ struct DiaryListView: View {
         }
         .alert(store: store.scope(state: \.$alert, action: \.alert))
         .transaction { $0.disablesAnimations = false }
-//        .fullScreenCover(store: $store.scope(state: \.destination, action: \.destination)) {
-//            getModalDestination($0)
-//                .presentationBackground(.clear)
-//        }
         .fullScreenCover(item: $store.scope(state: \.destination, action: \.destination)) {
             getModalDestination($0)
                 .presentationBackground(.clear)
