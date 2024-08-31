@@ -51,14 +51,14 @@ extension DiaryListFilterClient: DependencyKey {
         return await RealmAccessor().update(type: DiaryListFilterEntity.self, value: updateValue)
     } deleteFilters: { targets in
         
-        return await RealmAccessor().delete(type: DiaryListFilterEntity.self) { entity in
+        return await RealmAccessor().delete { (entity: DiaryListFilterEntity) in
             
             return targets.contains(where: { $0.target.rawValue == entity.filterTarget && $0.value == entity.filterValue })
         }
         
     } fetchFilterList: {
         
-        return convertFilterEntityToItem(await RealmAccessor().read(type: DiaryListFilterEntity.self))
+        return convertFilterEntityToItem(await RealmAccessor().read())
     } getFilterListObserver: {
         
         let executor =  DiaryListFilterEntity.executor

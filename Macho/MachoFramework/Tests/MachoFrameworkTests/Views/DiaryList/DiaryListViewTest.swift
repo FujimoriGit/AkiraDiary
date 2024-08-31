@@ -17,6 +17,11 @@ final class DiaryListViewTests: XCTestCase {
         case loadingError
     }
     
+    // 日記リストItemのインスタンス生成時に使用するUUID
+    private let firstUuid = UUID()
+    private let secondUuid = UUID()
+    private let thirdUuid = UUID()
+    
     // アラートの表示確認
     @MainActor
     func testAlert() async {
@@ -62,7 +67,14 @@ final class DiaryListViewTests: XCTestCase {
             XCTFail("fail setup test param.")
             return
         }
-        let expectedAddedItem = DiaryListItemFeature.State(title: "test2", message: "test message", date: thirdDate, isWin: false, trainingList: [])
+        
+        let expectedAddedItem = DiaryListItemFeature.State(id: thirdUuid,title: "test2", message: "test message", date: thirdDate, isWin: false, trainingList: [])
+        
+        let expectedLoadedDiaries = IdentifiedArray(uniqueElements: [
+            expectedAddedItem,
+            DiaryListItemFeature.State(id: secondUuid, title: "test3", message: "test message", date: secondDate, isWin: false, trainingList: []),
+            DiaryListItemFeature.State(id: firstUuid, title: "test1", message: "", date: firstDate, isWin: true, trainingList: [])
+        ])
         
         // スクロール画面の表示サイズの高さが800px、スクロールできるサイズの高さが1000pxの状態
         let trackableListState = TrackableListFeature.State(offset: 0,
@@ -73,8 +85,8 @@ final class DiaryListViewTests: XCTestCase {
         
         let store = TestStore(
             initialState: DiaryListFeature.State(diaries: [
-                DiaryListItemFeature.State(title: "test1", message: "", date: firstDate, isWin: true, trainingList: []),
-                DiaryListItemFeature.State(title: "test3", message: "test message", date: secondDate, isWin: false, trainingList: [])
+                DiaryListItemFeature.State(id: firstUuid, title: "test1", message: "", date: firstDate, isWin: true, trainingList: []),
+                DiaryListItemFeature.State(id: secondUuid, title: "test3", message: "test message", date: secondDate, isWin: false, trainingList: [])
             ], trackableList: trackableListState, viewState: viewState), reducer: { DiaryListFeature() }) {
                 
                 $0.diaryListFetchApi = DiaryListItemClient(fetch: { _, _ in
@@ -100,7 +112,7 @@ final class DiaryListViewTests: XCTestCase {
             // 日記リストのロード処理終了
             $0.viewState.isLoadingDiaries = false
             // 日記リストの更新
-            $0.diaries[2] = expectedAddedItem
+            $0.diaries = expectedLoadedDiaries
         }
         
         // 上にスクロールして一番上の画面に戻る
@@ -208,9 +220,15 @@ final class DiaryListViewTests: XCTestCase {
         
         let expectedItem = DiaryListItemFeature.State(title: "test2", message: "test message", date: secondDate, isWin: false, trainingList: ["腹筋"])
         
+        let expectedLoadedDiaries = IdentifiedArray(uniqueElements: [
+            DiaryListItemFeature.State(id: thirdUuid, title: "test3", message: "", date: thirdDate, isWin: false, trainingList: ["腹筋"]),
+            expectedItem,
+            DiaryListItemFeature.State(id: firstUuid, title: "test1", message: "", date: firstDate, isWin: false, trainingList: ["腹筋"])
+        ])
+        
         let diariesState: IdentifiedArray<UUID, DiaryListItemFeature.State> = [
-            DiaryListItemFeature.State(title: "test1", message: "", date: firstDate, isWin: false, trainingList: ["腹筋"]),
-            DiaryListItemFeature.State(title: "test3", message: "", date: thirdDate, isWin: false, trainingList: ["腹筋"])
+            DiaryListItemFeature.State(id: firstUuid, title: "test1", message: "", date: firstDate, isWin: false, trainingList: ["腹筋"]),
+            DiaryListItemFeature.State(id: thirdUuid, title: "test3", message: "", date: thirdDate, isWin: false, trainingList: ["腹筋"])
          ]
         
         let receivedFilters = [DiaryListFilterItem(id: UUID(), target: .achievement, value: "達成していない"),
@@ -244,7 +262,7 @@ final class DiaryListViewTests: XCTestCase {
         await store.receive(.receiveLoadDiaryItems(items: [expectedItem])) {
             
             // 日記リスト更新
-            $0.diaries.insert(expectedItem, at: 1)
+            $0.diaries = expectedLoadedDiaries
             // 日記リスト取得処理終了
             $0.viewState.isLoadingDiaries = false
             // 日記リストがあるかどうかのフラグ更新

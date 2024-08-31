@@ -62,14 +62,16 @@ struct DiaryListView: View {
                             .font(.system(size: navigationTitleFontSize))
                     }
                 }
-        } destination: { getNavigationDestination($0) }
-            .alert(store: store.scope(state: \.$alert, action: \.alert))
-            .transaction { $0.disablesAnimations = false }
-            .fullScreenCover(store: store.scope(state: \.$filterView, action: \.filterView)) {
-                DiaryListFilterView(store: $0)
-                    .presentationBackground(.clear)
-            }
-            .transaction { $0.disablesAnimations = true }
+        } destination: {
+            getNavigationDestination($0)
+        }
+        .alert(store: store.scope(state: \.$alert, action: \.alert))
+        .transaction { $0.disablesAnimations = false }
+        .fullScreenCover(store: store.scope(state: \.$filterView, action: \.filterView)) {
+            DiaryListFilterView(store: $0)
+                .presentationBackground(.clear)
+        }
+        .transaction { $0.disablesAnimations = true }
     }
 }
 
@@ -230,15 +232,21 @@ private extension DiaryListView {
         
         private let state: DiaryListFeature.State
         private let publisher = PassthroughSubject<[DiaryListFilterItem], Never>()
-        @State private var currentFilters = [DiaryListFilterItem(id: UUID(), target: .achievement, value: "達成していない"),
-                                             DiaryListFilterItem(id: UUID(), target: .trainingType, value: "腹筋")]
+        @State private var currentFilters = [
+            DiaryListFilterItem(id: UUID(),
+                                target: .achievement,
+                                value: "達成していない"),
+            DiaryListFilterItem(id: UUID(),
+                                target: .trainingType,
+                                value: "腹筋")
+        ]
         
         init() {
             
             var diaries: IdentifiedArrayOf<DiaryListItemFeature.State> = []
             
-            for i in 0...10 {
-                diaries.append(DiaryListItemFeature.State(title: "\(i)", message: "", date: Date(), isWin: true, trainingList: ["腹筋", "ベンチプレス", "ダンベルプレス"]))
+            for num in 0...10 {
+                diaries.append(DiaryListItemFeature.State(title: "\(num)", message: "", date: Date(), isWin: true, trainingList: ["腹筋", "ベンチプレス", "ダンベルプレス"]))
             }
             
             self.state = DiaryListFeature.State(diaries: diaries)
@@ -248,18 +256,18 @@ private extension DiaryListView {
             DiaryListView(store: Store(initialState: state) {
                 withDependencies {
                     // 日記リスト取得のAPI DI
-                    $0.diaryListFetchApi = DiaryListItemClient(fetch: { startDate, limitCount in
+                    $0.diaryListFetchApi = DiaryListItemClient(fetch: { _, _ in
                         if Int.random(in: 0...10) <= 5 {
                             return [.init(title: "fetch item", message: "sample", date: Date(), isWin: false, trainingList: ["腹筋", "ベンチプレス", "ダンベルプレス"])]
                         }
                         else {
-                            throw NSError()
+                            throw URLError(.badURL)
                         }
                     }, deleteItem: { _ in })
                     // フィルター取得API DI
                     $0.diaryListFilterApi = DiaryListFilterClient(addFilter: { filter in
                         
-                        currentFilters = currentFilters + [filter]
+                        currentFilters += [filter]
                         publisher.send(currentFilters)
                         return true
                     }, updateFilter: { filter in

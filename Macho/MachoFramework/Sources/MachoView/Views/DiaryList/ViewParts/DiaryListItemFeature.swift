@@ -12,7 +12,16 @@ struct DiaryListItemFeature: Reducer, Sendable {
     
     struct State: Equatable, Identifiable, Sendable {
         
-        let id = UUID()
+        init(id: UUID = UUID(), title: String, message: String, date: Date, isWin: Bool, trainingList: [String]) {
+            self.id = id
+            self.title = title
+            self.message = message
+            self.date = date
+            self.isWin = isWin
+            self.trainingList = trainingList
+        }
+        
+        let id: UUID
         /// 日記のタイトル
         let title: String
         /// 日記のメッセージ

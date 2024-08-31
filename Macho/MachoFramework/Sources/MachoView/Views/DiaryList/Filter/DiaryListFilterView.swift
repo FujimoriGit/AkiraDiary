@@ -218,7 +218,7 @@ private extension DiaryListFilterView {
                                             withDependencies: {
         $0.diaryListFilterApi = DiaryListFilterClient(addFilter: { filter in
             
-            currentFilters = currentFilters + [filter]
+            currentFilters += [filter]
             publisher.send(currentFilters)
             return true
         }, updateFilter: { filter in

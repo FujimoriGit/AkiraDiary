@@ -42,10 +42,8 @@ struct CounterFeature: Reducer {
     
     enum CancelID { case timer }
 
-
       @Dependency(\.continuousClock) var clock
       @Dependency(\.numberFact) var numberFact
-
 
     var body: some ReducerOf<Self> {
         
@@ -89,7 +87,7 @@ struct CounterFeature: Reducer {
                     
                     return .run { send in
                         
-                        for await _ in self.clock.timer(interval: .seconds(1)) {
+                        for await _ in clock.timer(interval: .seconds(1)) {
                             
                             await send(.timerTick)
                         }
