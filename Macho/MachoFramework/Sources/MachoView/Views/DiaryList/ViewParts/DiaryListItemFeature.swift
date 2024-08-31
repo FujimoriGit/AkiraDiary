@@ -8,8 +8,10 @@
 import ComposableArchitecture
 import Foundation
 
-struct DiaryListItemFeature: Reducer, Sendable {
+@Reducer
+struct DiaryListItemFeature: Sendable {
     
+    @ObservableState
     struct State: Equatable, Identifiable, Sendable {
         
         init(id: UUID = UUID(), title: String, message: String, date: Date, isWin: Bool, trainingList: [String]) {

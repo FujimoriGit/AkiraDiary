@@ -19,15 +19,13 @@ struct DiaryListFilterFeature {
         
         var viewState = ViewState()
         
-        @ObservationStateIgnored
-        var currentFilters: IdentifiedArrayOf<DiaryListFilterItem> {
+        @ObservationStateIgnored var currentFilters: IdentifiedArrayOf<DiaryListFilterItem> {
             
             get { viewState.currentFilters }
             set { viewState.currentFilters = newValue }
         }
         
-        @ObservationStateIgnored
-        var selectableFilterValues: [DiaryListFilterTarget: [String]] {
+        @ObservationStateIgnored var selectableFilterValues: [DiaryListFilterTarget: [String]] {
             
             get { viewState.selectableFilterValues }
             set { viewState.selectableFilterValues = newValue }

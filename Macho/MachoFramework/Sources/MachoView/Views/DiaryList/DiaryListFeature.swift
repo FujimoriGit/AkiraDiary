@@ -9,16 +9,17 @@ import ComposableArchitecture
 import Foundation
 
 @Reducer
-struct DiaryListFeature: Reducer, Sendable {
+struct DiaryListFeature: Sendable {
     
     // MARK: - State
     
+    @ObservableState
     struct State: Equatable, Sendable {
         
         // MARK: Presents States
         
-        @PresentationState var alert: AlertState<Action.Alert>?
-        @PresentationState var filterView: DiaryListFilterFeature.State?
+        @Presents var alert: AlertState<Action.Alert>?
+        @Presents var destination: Destination.State?
         
         // MARK: Navigation States
         
@@ -27,9 +28,9 @@ struct DiaryListFeature: Reducer, Sendable {
         // MARK: Component States
         
         /// 日記リストに表示する日記の項目の要素
-        var diaries = IdentifiedArrayOf<DiaryListItemFeature.State>()
+        @ObservationStateIgnored var diaries = IdentifiedArrayOf<DiaryListItemFeature.State>()
         /// スクロール位置追跡リストのコンポーネントState
-        var trackableList = TrackableListFeature.State()
+        @ObservationStateIgnored var trackableList = TrackableListFeature.State()
         
         // MARK: Observed State
         
@@ -66,7 +67,7 @@ struct DiaryListFeature: Reducer, Sendable {
         /// アラートの表示
         case alert(PresentationAction<Alert>)
         /// モーダル遷移による画面表示
-        case filterView(PresentationAction<DiaryListFilterFeature.Action>)
+        case destination(PresentationAction<Destination.Action>)
         
         // MARK: Navigation Action
         
@@ -138,19 +139,13 @@ struct DiaryListFeature: Reducer, Sendable {
         
         // Actionハンドラ追加
         createActionHandler()
-            .forEach(\.diaries, action: \.diaries) {
-                
-                DiaryListItemFeature()
-            }
-            .forEach(\.path, action: \.path) {
-                
-                Path()
-            }
-            .ifLet(\.$filterView, action: \.filterView) {
-                
-                DiaryListFilterFeature()
-            }
-            .ifLet(\.$alert, action: \.alert)
+        .forEach(\.diaries, action: \.diaries) {
+            
+            DiaryListItemFeature()
+        }
+        .forEach(\.path, action: \.path)
+        .ifLet(\.$destination, action: \.destination)
+        .ifLet(\.$alert, action: \.alert)
     }
 }
 
@@ -179,14 +174,15 @@ private extension DiaryListFeature {
             case .alert:
                 return .none
                 
-            case let .filterView(.presented(delegate)):
+            case let .destination(.presented(.filterScreen(delegate))):
                 if needDismissFilterView(delegate) {
-                    state.filterView = nil
+                    
+                    state.destination = nil
                 }
                 
                 return .none
                 
-            case .filterView:
+            case .destination:
                 return .none
                 
             case .path:
@@ -223,7 +219,7 @@ private extension DiaryListFeature {
                 
             case .tappedFilterButton:
                 logger.info("tappedFilterButton")
-                state.filterView = DiaryListFilterFeature.State()
+                state.destination = .filterScreen(.init())
                 return .none
                 
             case .tappedGraphButton:
@@ -277,55 +273,65 @@ private extension DiaryListFeature {
 
 extension DiaryListFeature {
     
-    @Reducer
-    struct Path: Equatable {
+    @Reducer(state: .equatable, action: .equatable)
+    enum Path: Equatable {
         
-        enum State: Equatable, Sendable {
+        // 日記編集画面
+        case editScreen(AddContactFeature)
+        // 日記作成画面
+        case createScreen(AddContactFeature)
+        // グラフ画面
+        case graphScreen(AddContactFeature)
+        // 詳細画面
+        case detailScreen(AddContactFeature)
+        
+        var id: Int {
             
-            // 日記編集画面
-            case editScreen(AddContactFeature.State)
-            // 日記作成画面
-            case createScreen(AddContactFeature.State)
-            // グラフ画面
-            case graphScreen(AddContactFeature.State)
-            // 詳細画面
-            case detailScreen(AddContactFeature.State)
+            switch self {
+                
+            case .editScreen:
+                return 0
+                
+            case .createScreen:
+                return 1
+                
+            case .graphScreen:
+                return 2
+                
+            case .detailScreen:
+                return 3
+            }
         }
         
-        enum Action: Equatable, Sendable {
+        static func == (lhs: DiaryListFeature.Path, rhs: DiaryListFeature.Path) -> Bool {
             
-            // 日記編集画面
-            case editScreen(AddContactFeature.Action)
-            // 日記作成画面
-            case createScreen(AddContactFeature.Action)
-            // グラフ画面
-            case graphScreen(AddContactFeature.Action)
-            // 詳細画面
-            case detailScreen(AddContactFeature.Action)
+            return lhs.id == rhs.id
+        }
+    }
+}
+
+// MARK: - Presentation Destination Definition
+
+extension DiaryListFeature {
+    
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination: Equatable {
+        
+        // フィルター画面
+        case filterScreen(DiaryListFilterFeature)
+        
+        var id: Int {
+            
+            switch self {
+                
+            case .filterScreen:
+                return 0
+            }
         }
         
-        var body: some ReducerOf<Self> {
+        static func == (lhs: DiaryListFeature.Destination, rhs: DiaryListFeature.Destination) -> Bool {
             
-            Scope(state: \.editScreen, action: \.editScreen) {
-                
-                // TODO: 編集画面に置き換える
-                AddContactFeature()
-            }
-            Scope(state: \.createScreen, action: \.createScreen) {
-                
-                // TODO: 作成画面に置き換える
-                AddContactFeature()
-            }
-            Scope(state: \.graphScreen, action: \.graphScreen) {
-                
-                // TODO: グラフ画面に置き換える
-                AddContactFeature()
-            }
-            Scope(state: \.detailScreen, action: \.detailScreen) {
-                
-                // TODO: 詳細画面に置き換える
-                AddContactFeature()
-            }
+            return lhs.id == rhs.id
         }
     }
 }
@@ -432,7 +438,8 @@ private extension DiaryListFeature {
             
         case .tappedDiaryItem:
             // TODO: 日記詳細画面への遷移を実装する
-            updateTargetState.path.append(.detailScreen(AddContactFeature.State(contact: .init(id: uuid.callAsFunction(), name: ""))))
+            updateTargetState.path.append(.detailScreen(.init(contact: .init(id: uuid.callAsFunction(),
+                                                                             name: ""))))
             
         case .deleteItemSwipeAction:
             // アラート表示
