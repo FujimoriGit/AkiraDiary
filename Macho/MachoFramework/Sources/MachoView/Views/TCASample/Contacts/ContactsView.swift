@@ -13,7 +13,6 @@ import SwiftUI
 struct ContactsView: View {
     
     let store: StoreOf<ContactsFeature>
-    let entity = DiarySearchTagEntity(id: UUID(), tagName: "")
     
     var body: some View {
         // Push遷移の場合、NavigationStackStoreでラップ.
