@@ -38,6 +38,14 @@ struct DiaryListFeature: Reducer, Sendable {
         /// 日記リストに表示する日記のフィルター設定
         var currentFilters: [DiaryListFilterItem] = []
         
+        // MARK: computed property
+        
+        var canReloadWithScroll: Bool {
+            
+            // バウンスしているかつ、ロード中でない場合は日記リストの追加取得が行える状態と判断する
+            return trackableList.isBouncedAtBottom && !viewState.isLoadingDiaries
+        }
+        
         struct ViewState: Equatable {
             
             /// スクロール中かどうか
@@ -150,8 +158,10 @@ struct DiaryListFeature: Reducer, Sendable {
 
 private extension DiaryListFeature {
     
+    // swiftlint:disable:next function_body_length
     func createActionHandler() -> some ReducerOf<Self> {
         
+        // swiftlint:disable:next closure_body_length
         Reduce { state, action in
             
             switch action {
@@ -199,17 +209,14 @@ private extension DiaryListFeature {
                 // Stateの更新
                 state.viewState.isScrolling = state.trackableList.isScrolling
                 
-                // バウンスしていないまたは、ロード中の場合は日記リストの追加取得を行わない
-                guard state.trackableList.isBouncedAtBottom,
-                      !state.viewState.isLoadingDiaries else { return .none }
+                guard state.canReloadWithScroll else { return .none }
                 
                 logger.debug("start loading diary items with list scroll.")
+                
                 // ロード中にStateを更新する
                 state.viewState.isLoadingDiaries = true
-                
-                let startDate = state.diaries.last?.date ?? date.now
                 // バウンスした際はデータをリロードする
-                return loadDiaryListItem(startDate)
+                return loadDiaryListItem(state.diaries.last?.date ?? date.now)
                 
             case .trackableList:
                 return .none
@@ -235,16 +242,8 @@ private extension DiaryListFeature {
                 
             case .receiveLoadDiaryItems(let items):
                 logger.info("receiveLoadDiaryItems(items: \(items))")
-                
-                // Stateの更新
-                items.forEach { state.diaries.updateOrAppend($0) }
-                // 日記の作成日付で降順にソートする
-                state.diaries = sortWithFilteringDiaryList(state.diaries, filters: state.currentFilters)
-                state.viewState.isLoadingDiaries = false
-                state.viewState.hasDiaryItems = !state.diaries.isEmpty
-                
-                logger.debug("did end update diaries(\(state.diaries))")
-                
+                // stateの更新
+                state = getUpdatedStateAfterReload(receive: items, state: state)
                 return .none
                 
             case .failedLoadDiaryItems:
@@ -363,6 +362,26 @@ private extension DiaryListFeature {
             logger.error("Occurred loadDiaryListItem error(\(error)).")
             return await send(.failedLoadDiaryItems)
         }
+    }
+    
+    /// 日記リストのリロード処理後の更新したStateを返す
+    /// - Parameters:
+    ///   - receive: 日記リストのリロードで取得したリスト
+    ///   - state: 更新前のState
+    func getUpdatedStateAfterReload(receive: [DiaryListItemFeature.State], state: State) -> State {
+        
+        var updatedState = state
+        // Stateの更新
+        receive.forEach { updatedState.diaries.updateOrAppend($0) }
+        // 日記の作成日付で降順にソートする
+        updatedState.diaries = sortWithFilteringDiaryList(updatedState.diaries, filters: updatedState.currentFilters)
+        // リロード中フラグを倒す
+        updatedState.viewState.isLoadingDiaries = false
+        // 表示中リスト有無のフラグ更新
+        updatedState.viewState.hasDiaryItems = !updatedState.diaries.isEmpty
+        
+        logger.debug("did end update diaries(\(state.diaries))")
+        return updatedState
     }
     
     func sortWithFilteringDiaryList(_ diaryList: IdentifiedArrayOf<DiaryListItemFeature.State>,

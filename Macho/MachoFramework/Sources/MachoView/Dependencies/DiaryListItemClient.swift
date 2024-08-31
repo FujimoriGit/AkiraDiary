@@ -46,7 +46,9 @@ extension DiaryListItemClient: DependencyKey {
                   isWin: false,
                   trainingList: [])
         ]
-    } deleteItem: { _ in }
+    } deleteItem: { _ in
+        // nop
+    }
     
     /// デフォルトのTest時のモック処理
     static var testValue = Self { _, _ in
@@ -58,7 +60,9 @@ extension DiaryListItemClient: DependencyKey {
                   isWin: false,
                   trainingList: [""])
         ]
-    } deleteItem: { _ in }
+    } deleteItem: { _ in
+        // nop
+    }
 }
 
 // MARK: 日記リスト取得のAPIを登録
