@@ -1,76 +1,63 @@
 //
 //  ContactsView.swift
 //  Macho
-//  
+//
 //  Created by Daiki Fujimori on 2023/11/04
-//  
+//
 //
 
 import ComposableArchitecture
-import RealmHelper
 import SwiftUI
 
 struct ContactsView: View {
     
-    let store: StoreOf<ContactsFeature>
-    let entity = DiarySearchTagEntity(id: UUID(), tagName: "")
+    @Bindable var store: StoreOf<ContactsFeature>
     
     var body: some View {
-        // Push遷移の場合、NavigationStackStoreでラップ.
-        NavigationStackStore(store.scope(state: \.path, action: { .path($0) })) {
-            WithViewStore(store, observe: \.contacts) { viewStore in
-                List {
-                    ForEach(viewStore.state) { contact in
-                        NavigationLink(state: ContactDetailFeature.State(contact: contact)) {
-                            HStack {
-                                Text(contact.name)
-                                Spacer()
-                                Button {
-                                    viewStore.send(.deleteButtonTapped(id: contact.id))
-                                } label: {
-                                    Image(systemName: "trash")
-                                        .accessibilityHidden(true)
-                                        .foregroundColor(.red)
-                                }
+        // Push遷移の場合、NavigationStackでラップ.
+        NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
+            List {
+                ForEach(store.contacts) { contact in
+                    NavigationLink(state: ContactDetailFeature.State(contact: contact)) {
+                        HStack {
+                            Text(contact.name)
+                            Spacer()
+                            Button {
+                                store.send(.deleteButtonTapped(id: contact.id))
+                            } label: {
+                                Image(systemName: "trash")
+                                    .foregroundColor(.red)
+                                    .accessibilityHidden(true)
                             }
                         }
-                        .buttonStyle(.borderless)
                     }
+                    .buttonStyle(.borderless)
                 }
-                .navigationTitle("Contacts")
-                .toolbar {
-                    ToolbarItem {
-                        Button {
-                            viewStore.send(.addButtonTapped)
-                        } label: {
-                            Image(systemName: "plus")
-                                .accessibilityHidden(true)
-                        }
+            }
+            .navigationTitle("Contacts")
+            .toolbar {
+                ToolbarItem {
+                    Button {
+                        store.send(.addButtonTapped)
+                    } label: {
+                        Image(systemName: "plus")
+                            .accessibilityHidden(true)
                     }
                 }
             }
-        } destination: { store in
-            
-            ContactDetailView(store: store)
+        } destination: {
+            ContactDetailView(store: $0)
         }
         // Modal遷移の場合、sheetのmodifierを使用.
-        .sheet(
-            store: store.scope(state: \.$destination, action: { .destination($0) }),
-            state: /ContactsFeature.Destination.State.addContact,
-            action: ContactsFeature.Destination.Action.addContact
-        ) { addContactStore in
+        .sheet(item: $store.scope(state: \.destination?.addContact, action: \.destination.addContact)) { store in
             
             NavigationStack {
                 // 次画面のインスタンス生成
-                AddContactView(store: addContactStore)
+                AddContactView(store: store)
             }
         }
         // Alert表示の場合、alertのmodifierを使用.
-        .alert(
-            store: store.scope(state: \.$destination, action: { .destination($0) }),
-            state: /ContactsFeature.Destination.State.alert,
-            action: ContactsFeature.Destination.Action.alert
-        )
+        .alert($store.scope(state: \.destination?.alert, action: \.destination.alert))
     }
 }
 

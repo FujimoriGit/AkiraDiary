@@ -8,11 +8,13 @@
 
 import ComposableArchitecture
 
-struct ContactDetailFeature: Reducer {
+@Reducer
+struct ContactDetailFeature {
     
+    @ObservableState
     struct State: Equatable {
         
-        @PresentationState var alert: AlertState<Alert>?
+        @Presents var alert: AlertState<Action.Alert>?
         let contact: Contact
     }
     
@@ -21,11 +23,11 @@ struct ContactDetailFeature: Reducer {
         case alert(PresentationAction<Alert>)
         case delegate(Delegate)
         case deleteButtonTapped
-    }
-    
-    enum Alert {
         
-        case confirmDeletion
+        enum Alert {
+            
+            case confirmDeletion
+        }
     }
     
     enum Delegate {
@@ -58,10 +60,11 @@ struct ContactDetailFeature: Reducer {
                 return .none
             }
         }
+        .ifLet(\.$alert, action: \.alert)
     }
 }
 
-extension AlertState where Action == ContactDetailFeature.Alert {
+extension AlertState where Action == ContactDetailFeature.Action.Alert {
     
     static let confirmDeletion = Self {
         

@@ -78,8 +78,8 @@ final class DiaryListViewTests: XCTestCase {
         
         // スクロール画面の表示サイズの高さが800px、スクロールできるサイズの高さが1000pxの状態
         let trackableListState = TrackableListFeature.State(offset: 0,
-                                                            containerSize: CGSize(width: 400, height: 800),
-                                                            contentSize: CGSize(width: 400, height: 1000))
+                                                            listSizeInfo: .init(containerSize: CGSize(width: 400, height: 800),
+                                                                                contentSize: CGSize(width: 400, height: 1000)))
         
         let viewState = DiaryListFeature.State.ViewState(hasDiaryItems: true)
         
