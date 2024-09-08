@@ -11,6 +11,8 @@ enum DiaryListFilterTarget: String, CaseIterable {
     case achievement
     /// トレーニング種別
     case trainingType
+    /// タグ
+    case tag
     
     /// 種別毎の番号
     var num: Int {
@@ -22,6 +24,9 @@ enum DiaryListFilterTarget: String, CaseIterable {
             
         case .trainingType:
             return 1
+            
+        case .tag:
+            return 2
         }
     }
     
@@ -35,6 +40,9 @@ enum DiaryListFilterTarget: String, CaseIterable {
             
         case .trainingType:
             return "種目"
+            
+        case .tag:
+            return "タグ"
         }
     }
     
@@ -47,6 +55,9 @@ enum DiaryListFilterTarget: String, CaseIterable {
             return false
             
         case .trainingType:
+            return true
+            
+        case .tag:
             return true
         }
     }

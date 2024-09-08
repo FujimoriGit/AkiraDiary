@@ -27,7 +27,7 @@ final class DiaryListViewTests: XCTestCase {
     func testAlert() async {
         
         let diariesState: IdentifiedArray<UUID, DiaryListItemFeature.State> = [
-            DiaryListItemFeature.State(title: "test1", message: "", date: Date(), isWin: true, trainingList: []),
+            DiaryListItemFeature.State(title: "test1", message: "", date: Date(), isWin: true, trainingList: [], tagList: []),
          ]
         
         let store = TestStore(
@@ -68,12 +68,12 @@ final class DiaryListViewTests: XCTestCase {
             return
         }
         
-        let expectedAddedItem = DiaryListItemFeature.State(id: thirdUuid,title: "test2", message: "test message", date: thirdDate, isWin: false, trainingList: [])
+        let expectedAddedItem = DiaryListItemFeature.State(id: thirdUuid,title: "test2", message: "test message", date: thirdDate, isWin: false, trainingList: [], tagList: [])
         
         let expectedLoadedDiaries = IdentifiedArray(uniqueElements: [
             expectedAddedItem,
-            DiaryListItemFeature.State(id: secondUuid, title: "test3", message: "test message", date: secondDate, isWin: false, trainingList: []),
-            DiaryListItemFeature.State(id: firstUuid, title: "test1", message: "", date: firstDate, isWin: true, trainingList: [])
+            DiaryListItemFeature.State(id: secondUuid, title: "test3", message: "test message", date: secondDate, isWin: false, trainingList: [], tagList: []),
+            DiaryListItemFeature.State(id: firstUuid, title: "test1", message: "", date: firstDate, isWin: true, trainingList: [], tagList: [])
         ])
         
         // スクロール画面の表示サイズの高さが800px、スクロールできるサイズの高さが1000pxの状態
@@ -85,8 +85,8 @@ final class DiaryListViewTests: XCTestCase {
         
         let store = TestStore(
             initialState: DiaryListFeature.State(diaries: [
-                DiaryListItemFeature.State(id: firstUuid, title: "test1", message: "", date: firstDate, isWin: true, trainingList: []),
-                DiaryListItemFeature.State(id: secondUuid, title: "test3", message: "test message", date: secondDate, isWin: false, trainingList: [])
+                DiaryListItemFeature.State(id: firstUuid, title: "test1", message: "", date: firstDate, isWin: true, trainingList: [], tagList: []),
+                DiaryListItemFeature.State(id: secondUuid, title: "test3", message: "test message", date: secondDate, isWin: false, trainingList: [], tagList: [])
             ], trackableList: trackableListState, viewState: viewState), reducer: { DiaryListFeature() }) {
                 
                 $0.diaryListFetchApi = DiaryListItemClient(fetch: { _, _ in
@@ -129,7 +129,7 @@ final class DiaryListViewTests: XCTestCase {
     @MainActor
     func testOnAppearView() async {
         
-        let expectedItem = DiaryListItemFeature.State(title: "test", message: "test message", date: Date(), isWin: false, trainingList: [])
+        let expectedItem = DiaryListItemFeature.State(title: "test", message: "test message", date: Date(), isWin: false, trainingList: [], tagList: [])
         let receivedFilters = [DiaryListFilterItem(target: .achievement, filterItemId: UUID(), value: "達成していない")]
         
         let store = TestStore(initialState: DiaryListFeature.State(), reducer: { DiaryListFeature() }) {
@@ -210,6 +210,9 @@ final class DiaryListViewTests: XCTestCase {
     @MainActor
     func testOnAppearViewWithAlreadyHasItems() async {
         
+        let achievementId = UUID(TrainingAchievement.notAchieved.rawValue)
+        let absTrainingId = UUID()
+        
         let firstDate = Date()
         guard let secondDate = Calendar.current.date(byAdding: .second, value: 1, to: firstDate),
               let thirdDate = Calendar.current.date(byAdding: .second, value: 1, to: secondDate) else {
@@ -218,21 +221,23 @@ final class DiaryListViewTests: XCTestCase {
             return
         }
         
-        let expectedItem = DiaryListItemFeature.State(title: "test2", message: "test message", date: secondDate, isWin: false, trainingList: ["腹筋"])
+        let expectedItem = DiaryListItemFeature.State(title: "test2", message: "test message", date: secondDate, isWin: false, trainingList: [absTrainingId], tagList: [])
         
         let expectedLoadedDiaries = IdentifiedArray(uniqueElements: [
-            DiaryListItemFeature.State(id: thirdUuid, title: "test3", message: "", date: thirdDate, isWin: false, trainingList: ["腹筋"]),
+            DiaryListItemFeature.State(id: thirdUuid, title: "test3", message: "", date: thirdDate, isWin: false, trainingList: [absTrainingId], tagList: []),
             expectedItem,
-            DiaryListItemFeature.State(id: firstUuid, title: "test1", message: "", date: firstDate, isWin: false, trainingList: ["腹筋"])
+            DiaryListItemFeature.State(id: firstUuid, title: "test1", message: "", date: firstDate, isWin: false, trainingList: [absTrainingId], tagList: [])
         ])
         
         let diariesState: IdentifiedArray<UUID, DiaryListItemFeature.State> = [
-            DiaryListItemFeature.State(id: firstUuid, title: "test1", message: "", date: firstDate, isWin: false, trainingList: ["腹筋"]),
-            DiaryListItemFeature.State(id: thirdUuid, title: "test3", message: "", date: thirdDate, isWin: false, trainingList: ["腹筋"])
+            DiaryListItemFeature.State(id: firstUuid, title: "test1", message: "", date: firstDate, isWin: false, trainingList: [absTrainingId], tagList: []),
+            DiaryListItemFeature.State(id: thirdUuid, title: "test3", message: "", date: thirdDate, isWin: false, trainingList: [absTrainingId], tagList: [])
          ]
         
-        let receivedFilters = [DiaryListFilterItem(target: .achievement, filterItemId: UUID(), value: "達成していない"),
-                               DiaryListFilterItem(target: .trainingType, filterItemId: UUID(), value: "腹筋")]
+        let receivedFilters = [
+            DiaryListFilterItem(target: .achievement, filterItemId: achievementId, value: "達成していない"),
+            DiaryListFilterItem(target: .trainingType, filterItemId: absTrainingId, value: "腹筋")
+        ]
                 
         let store = TestStore(initialState: DiaryListFeature.State(diaries: diariesState),
                               reducer: { DiaryListFeature() }) {
@@ -273,14 +278,24 @@ final class DiaryListViewTests: XCTestCase {
     // フィルターにヒットする日記がないケース
     @MainActor
     func testOnAppearViewWithNoHitsFilter() async {
-                
-        let receivedItem = [DiaryListItemFeature.State(title: "test1", message: "test message", date: Date(), isWin: true, trainingList: []),
-                            DiaryListItemFeature.State(title: "test2", message: "test message", date: Date(), isWin: false, trainingList: ["プランク"]),
-                            DiaryListItemFeature.State(title: "test3", message: "test message", date: Date(), isWin: false, trainingList: ["ベンチプレス"])]
         
-        let receivedFilters = [DiaryListFilterItem(target: .achievement, filterItemId: UUID(), value: "達成していない"),
-                               DiaryListFilterItem(target: .trainingType, filterItemId: UUID(), value: "腹筋"),
-                               DiaryListFilterItem(target: .trainingType, filterItemId: UUID(), value: "スクワット")]
+        let achievementId = UUID(TrainingAchievement.notAchieved.rawValue)
+        let absTrainingId = UUID()
+        let squatTrainingId = UUID()
+        let plunkTrainingId = UUID()
+        let benchPressTrainingId = UUID()
+        let tagId = UUID()
+                
+        let receivedItem = [DiaryListItemFeature.State(title: "test1", message: "test message", date: Date(), isWin: true, trainingList: [], tagList: []),
+                            DiaryListItemFeature.State(title: "test2", message: "test message", date: Date(), isWin: false, trainingList: [plunkTrainingId], tagList: []),
+                            DiaryListItemFeature.State(title: "test3", message: "test message", date: Date(), isWin: false, trainingList: [benchPressTrainingId], tagList: [])]
+        
+        let receivedFilters = [
+            DiaryListFilterItem(target: .achievement, filterItemId: achievementId, value: "達成していない"),
+            DiaryListFilterItem(target: .trainingType, filterItemId: absTrainingId, value: "腹筋"),
+            DiaryListFilterItem(target: .trainingType, filterItemId: squatTrainingId, value: "スクワット"),
+            DiaryListFilterItem(target: .tag, filterItemId: tagId, value: "元気")
+        ]
                 
         let store = TestStore(initialState: DiaryListFeature.State(),
                               reducer: { DiaryListFeature() }) {
@@ -323,7 +338,7 @@ final class DiaryListViewTests: XCTestCase {
     func testTappedDiaryItem() async throws {
                 
         let diariesState: IdentifiedArray<UUID, DiaryListItemFeature.State> = [
-            DiaryListItemFeature.State(title: "test1", message: "", date: Date(), isWin: true, trainingList: []),
+            DiaryListItemFeature.State(title: "test1", message: "", date: Date(), isWin: true, trainingList: [], tagList: []),
          ]
         
         let store = TestStore(
@@ -348,8 +363,8 @@ final class DiaryListViewTests: XCTestCase {
     func testTappedDeleteItem() async {
         
         let diariesState: IdentifiedArray<UUID, DiaryListItemFeature.State> = [
-            DiaryListItemFeature.State(title: "test1", message: "", date: Date(), isWin: true, trainingList: []),
-            DiaryListItemFeature.State(title: "test2", message: "test message", date: Date(), isWin: true, trainingList: [])
+            DiaryListItemFeature.State(title: "test1", message: "", date: Date(), isWin: true, trainingList: [], tagList: []),
+            DiaryListItemFeature.State(title: "test2", message: "test message", date: Date(), isWin: true, trainingList: [], tagList: [])
          ]
         
         let viewState = DiaryListFeature.State.ViewState(hasDiaryItems: true)
@@ -410,7 +425,7 @@ final class DiaryListViewTests: XCTestCase {
     func testTappedEditItem() async throws {
         
         let diariesState: IdentifiedArray<UUID, DiaryListItemFeature.State> = [
-            DiaryListItemFeature.State(title: "test1", message: "", date: Date(), isWin: true, trainingList: []),
+            DiaryListItemFeature.State(title: "test1", message: "", date: Date(), isWin: true, trainingList: [], tagList: []),
          ]
         
         let store = TestStore(

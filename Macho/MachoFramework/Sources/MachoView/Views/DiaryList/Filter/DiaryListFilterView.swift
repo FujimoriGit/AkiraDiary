@@ -115,7 +115,7 @@ private extension DiaryListFilterView {
                     case .achievement:
                         createSelectOnlyItemSectionWithMenu(target: target)
                         
-                    case .trainingType:
+                    case .trainingType, .tag:
                         createSelectMultiItemSectionWithMenu(target: target)
                     }
                     Spacer()
@@ -246,6 +246,13 @@ private extension DiaryListFilterView {
             return [
                 .init(id: UUID(), name: "腹筋"),
                 .init(id: UUID(), name: "ダンベルプレス")
+            ]
+        }
+        $0.trainingTagApi = TrainingTagClient {
+            
+            return [
+                .init(id: UUID(), tagName: "元気"),
+                .init(id: UUID(), tagName: "雨")
             ]
         }
     }))

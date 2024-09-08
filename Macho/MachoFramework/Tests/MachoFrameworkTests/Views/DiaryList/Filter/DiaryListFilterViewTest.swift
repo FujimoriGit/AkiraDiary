@@ -18,17 +18,26 @@ final class DiaryListFilterViewTest: XCTestCase {
     private static let achievementId = UUID(TrainingAchievement.achieved.rawValue)
     private static let absTrainingId = UUID()
     private static let dumbbellPressTrainingId = UUID()
+    private static let fineTagId = UUID()
+    private static let rainTagId = UUID()
     
     private static let expectedSelectableTrainingValues: [TrainingTypeEntity] = [
         TrainingTypeEntity(id: absTrainingId, name: "腹筋"),
         TrainingTypeEntity(id: dumbbellPressTrainingId, name: "ダンベルプレス")
     ]
     
+    private static let expectedSelectableTagValues: [TrainingTagEntity] = [
+        TrainingTagEntity(id: fineTagId, tagName: "元気"),
+        TrainingTagEntity(id: rainTagId, tagName: "雨")
+    ]
+    
     private static let expectedSelectableFilterValues: [DiaryListFilterItem] = [
         DiaryListFilterItem(target: .achievement, filterItemId: notAchievementId, value: "達成していない"),
         DiaryListFilterItem(target: .achievement, filterItemId: achievementId, value: "達成している"),
         DiaryListFilterItem(target: .trainingType, filterItemId: absTrainingId, value: "腹筋"),
-        DiaryListFilterItem(target: .trainingType, filterItemId: dumbbellPressTrainingId, value: "ダンベルプレス")
+        DiaryListFilterItem(target: .trainingType, filterItemId: dumbbellPressTrainingId, value: "ダンベルプレス"),
+        DiaryListFilterItem(target: .tag, filterItemId: fineTagId, value: "元気"),
+        DiaryListFilterItem(target: .tag, filterItemId: rainTagId, value: "雨")
     ]
 
     // フィルター画面表示時のケース
@@ -66,6 +75,10 @@ final class DiaryListFilterViewTest: XCTestCase {
             $0.trainingTypeApi = TrainingTypeClient {
                 
                 return Self.expectedSelectableTrainingValues
+            }
+            $0.trainingTagApi = TrainingTagClient {
+                
+                return Self.expectedSelectableTagValues
             }
             $0.dismiss = DismissEffect { isDismissInvoked.setValue(true) }
         }
@@ -127,6 +140,10 @@ final class DiaryListFilterViewTest: XCTestCase {
             $0.trainingTypeApi = TrainingTypeClient {
                 
                 return Self.expectedSelectableTrainingValues
+            }
+            $0.trainingTagApi = TrainingTagClient {
+                
+                return Self.expectedSelectableTagValues
             }
             $0.dismiss = DismissEffect { isDismissInvoked.setValue(true) }
         }
@@ -198,6 +215,10 @@ final class DiaryListFilterViewTest: XCTestCase {
             $0.trainingTypeApi = TrainingTypeClient {
                 
                 return Self.expectedSelectableTrainingValues
+            }
+            $0.trainingTagApi = TrainingTagClient {
+                
+                return Self.expectedSelectableTagValues
             }
             $0.dismiss = DismissEffect { isDismissInvoked.setValue(true) }
         }
@@ -281,6 +302,10 @@ final class DiaryListFilterViewTest: XCTestCase {
             $0.trainingTypeApi = TrainingTypeClient {
                 
                 return Self.expectedSelectableTrainingValues
+            }
+            $0.trainingTagApi = TrainingTagClient {
+                
+                return Self.expectedSelectableTagValues
             }
             $0.dismiss = DismissEffect { isDismissInvoked.setValue(true) }
         }

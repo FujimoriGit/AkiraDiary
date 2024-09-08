@@ -261,7 +261,8 @@ struct PreviewDiaryListView: View {
                                                       message: "",
                                                       date: Date(),
                                                       isWin: true,
-                                                      trainingList: ["腹筋", "ベンチプレス", "ダンベルプレス"]))
+                                                      trainingList: [],
+                                                      tagList: []))
         }
         
         self.state = DiaryListFeature.State(diaries: diaries)
@@ -278,7 +279,8 @@ struct PreviewDiaryListView: View {
                                   message: "sample",
                                   date: Date(),
                                   isWin: false,
-                                  trainingList: ["腹筋", "ベンチプレス", "ダンベルプレス"])
+                                  trainingList: [],
+                                  tagList: [])
                         ]
                     }
                     else {

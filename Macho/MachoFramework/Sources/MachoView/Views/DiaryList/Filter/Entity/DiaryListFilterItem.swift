@@ -30,7 +30,7 @@ struct DiaryListFilterItem: Identifiable, Equatable {
     var isMultiSelectFilter: Bool { target.isMultiSelectFilter }
     
     /// フィルターの条件にヒットしたかどうか
-    func isFilteringTarget(_ diaryItem: DiaryListItemFeature.State) -> Bool {
+    func isMatchFilter(_ diaryItem: DiaryListItemFeature.State) -> Bool {
         
         switch target {
             
@@ -39,7 +39,10 @@ struct DiaryListFilterItem: Identifiable, Equatable {
             return diaryItem.isWin == (achievement == .achieved)
             
         case .trainingType:
-            return diaryItem.trainingList.contains(value)
+            return diaryItem.trainingList.contains(filterItemId)
+            
+        case .tag:
+            return diaryItem.tagList.contains(filterItemId)
         }
     }
 }

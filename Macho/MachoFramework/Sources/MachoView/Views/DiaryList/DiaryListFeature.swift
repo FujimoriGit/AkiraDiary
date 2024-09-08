@@ -396,7 +396,7 @@ private extension DiaryListFeature {
         // フィルタリング処理
         var filteredList = diaryList.filter { item in
             
-            return filters.isEmpty ? true : !filters.contains { !$0.isFilteringTarget(item) }
+            return filters.isEmpty ? true : !filters.contains { !$0.isMatchFilter(item) }
         }
         // 日記の作成日付で降順にソートする
         filteredList.sort { $0.date > $1.date }

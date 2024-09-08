@@ -67,6 +67,7 @@ struct DiaryListFilterFeature {
     
     @Dependency(\.diaryListFilterApi) var diaryListFilterApi
     @Dependency(\.trainingTypeApi) var trainingTypeApi
+    @Dependency(\.trainingTagApi) var trainingTagApi
     @Dependency(\.dismiss) var dismiss
     
     var body: some ReducerOf<Self> {
@@ -221,7 +222,12 @@ private extension DiaryListFilterFeature {
             return DiaryListFilterItem(target: .trainingType, filterItemId: $0.id, value: $0.name)
         }
         
-        return trainingAchievementList + trainingTypeList
+        let trainingTagList = await trainingTagApi.fetchAll().map {
+            
+            return DiaryListFilterItem(target: .tag, filterItemId: $0.id, value: $0.tagName)
+        }
+        
+        return trainingAchievementList + trainingTypeList + trainingTagList
     }
     
     /// フィルター画面終了時の終了時の処理
