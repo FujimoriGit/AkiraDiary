@@ -12,6 +12,19 @@ enum DiaryListFilterTarget: String, CaseIterable {
     /// トレーニング種別
     case trainingType
     
+    /// 種別毎の番号
+    var num: Int {
+        
+        switch self {
+            
+        case .achievement:
+            return 0
+            
+        case .trainingType:
+            return 1
+        }
+    }
+    
     /// フィルター種別のタイトル
     var title: String {
         
@@ -39,7 +52,7 @@ enum DiaryListFilterTarget: String, CaseIterable {
     }
 }
 
-enum TrainingAchievement: String, CaseIterable {
+enum TrainingAchievement: Int, CaseIterable {
     
     /// 未達成
     case notAchieved

@@ -10,18 +10,21 @@ import RealmSwift
 
 public struct DiaryListFilterEntity: BaseRealmEntity {
     
-    public let id: UUID
+    public let id: String
     // フィルターの種別
     public let filterTarget: String
+    // フィルターのID
+    public let filterId: UUID
     // フィルターの項目
     public let filterValue: String
     
     public static let executor = RealmObserverExecutor<Self>()
     
-    public init(id: UUID, filterTarget: String, filterValue: String) {
+    public init(id: String, filterTarget: String, filterId: UUID, filterValue: String) {
         
         self.id = id
         self.filterTarget = filterTarget
+        self.filterId = filterId
         self.filterValue = filterValue
     }
     
@@ -29,28 +32,35 @@ public struct DiaryListFilterEntity: BaseRealmEntity {
         
         id = realmObject.id
         filterTarget = realmObject.filterTarget
+        filterId = realmObject.filterId
         filterValue = realmObject.filterValue
     }
     
     public func toRealmObject() -> DiaryListFilterRealmObject {
         
-        return DiaryListFilterRealmObject(id: id, filterTarget: filterTarget, filterValue: filterValue)
+        return DiaryListFilterRealmObject(id: id,
+                                          filterTarget: filterTarget,
+                                          filterId: filterId,
+                                          filterValue: filterValue)
     }
 }
 
 public class DiaryListFilterRealmObject: Object {
     
-    @Persisted(primaryKey: true) var id: UUID
+    @Persisted(primaryKey: true) var id: String
     // フィルターの種別
     @Persisted var filterTarget: String
+    // フィルターのID
+    @Persisted var filterId: UUID
     // フィルターの項目
     @Persisted var filterValue: String
     
-    convenience init(id: UUID, filterTarget: String, filterValue: String) {
+    convenience init(id: String, filterTarget: String, filterId: UUID, filterValue: String) {
         
         self.init()
         self.id = id
         self.filterTarget = filterTarget
+        self.filterId = filterId
         self.filterValue = filterValue
     }
 }

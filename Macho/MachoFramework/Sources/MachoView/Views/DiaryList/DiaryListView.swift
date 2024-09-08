@@ -244,11 +244,11 @@ struct PreviewDiaryListView: View {
     private let state: DiaryListFeature.State
     private let publisher = PassthroughSubject<[DiaryListFilterItem], Never>()
     @State private var currentFilters = [
-        DiaryListFilterItem(id: UUID(),
-                            target: .achievement,
+        DiaryListFilterItem(target: .achievement,
+                            filterItemId: UUID(),
                             value: "達成していない"),
-        DiaryListFilterItem(id: UUID(),
-                            target: .trainingType,
+        DiaryListFilterItem(target: .trainingType,
+                            filterItemId: UUID(),
                             value: "腹筋")
     ]
     

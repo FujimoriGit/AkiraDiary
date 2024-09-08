@@ -130,7 +130,7 @@ final class DiaryListViewTests: XCTestCase {
     func testOnAppearView() async {
         
         let expectedItem = DiaryListItemFeature.State(title: "test", message: "test message", date: Date(), isWin: false, trainingList: [])
-        let receivedFilters = [DiaryListFilterItem(id: UUID(), target: .achievement, value: "達成していない")]
+        let receivedFilters = [DiaryListFilterItem(target: .achievement, filterItemId: UUID(), value: "達成していない")]
         
         let store = TestStore(initialState: DiaryListFeature.State(), reducer: { DiaryListFeature() }) {
             
@@ -171,7 +171,7 @@ final class DiaryListViewTests: XCTestCase {
     @MainActor
     func testOnAppearViewWithFailFetchItems() async {
         
-        let receivedFilters = [DiaryListFilterItem(id: UUID(), target: .achievement, value: "達成していない")]
+        let receivedFilters = [DiaryListFilterItem(target: .achievement, filterItemId: UUID(), value: "達成していない")]
         
         let store = TestStore(initialState: DiaryListFeature.State(), reducer: { DiaryListFeature() }) {
             
@@ -231,8 +231,8 @@ final class DiaryListViewTests: XCTestCase {
             DiaryListItemFeature.State(id: thirdUuid, title: "test3", message: "", date: thirdDate, isWin: false, trainingList: ["腹筋"])
          ]
         
-        let receivedFilters = [DiaryListFilterItem(id: UUID(), target: .achievement, value: "達成していない"),
-                               DiaryListFilterItem(id: UUID(), target: .trainingType, value: "腹筋")]
+        let receivedFilters = [DiaryListFilterItem(target: .achievement, filterItemId: UUID(), value: "達成していない"),
+                               DiaryListFilterItem(target: .trainingType, filterItemId: UUID(), value: "腹筋")]
                 
         let store = TestStore(initialState: DiaryListFeature.State(diaries: diariesState),
                               reducer: { DiaryListFeature() }) {
@@ -278,9 +278,9 @@ final class DiaryListViewTests: XCTestCase {
                             DiaryListItemFeature.State(title: "test2", message: "test message", date: Date(), isWin: false, trainingList: ["プランク"]),
                             DiaryListItemFeature.State(title: "test3", message: "test message", date: Date(), isWin: false, trainingList: ["ベンチプレス"])]
         
-        let receivedFilters = [DiaryListFilterItem(id: UUID(), target: .achievement, value: "達成していない"),
-                               DiaryListFilterItem(id: UUID(), target: .trainingType, value: "腹筋"),
-                               DiaryListFilterItem(id: UUID(), target: .trainingType, value: "スクワット")]
+        let receivedFilters = [DiaryListFilterItem(target: .achievement, filterItemId: UUID(), value: "達成していない"),
+                               DiaryListFilterItem(target: .trainingType, filterItemId: UUID(), value: "腹筋"),
+                               DiaryListFilterItem(target: .trainingType, filterItemId: UUID(), value: "スクワット")]
                 
         let store = TestStore(initialState: DiaryListFeature.State(),
                               reducer: { DiaryListFeature() }) {
