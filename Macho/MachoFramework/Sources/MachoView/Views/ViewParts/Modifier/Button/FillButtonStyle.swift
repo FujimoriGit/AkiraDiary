@@ -69,9 +69,11 @@ extension Menu {
                          pressedBackgroundColor: Color = Color(asset: CustomColor.focusButtonBackgroundColor),
                          cornerRadius: CGFloat = 4) -> some View {
         
-        self.buttonStyle(FillButtonStyle(foregroundColor: foregroundColor,
-                                         backgroundColor: backgroundColor,
-                                         pressedBackgroundColor: pressedBackgroundColor,
-                                         cornerRadius: cornerRadius))
+        let pressedColor = pressedBackgroundColor ?? backgroundColor.opacity(0.5)
+        
+        return buttonStyle(FillButtonStyle(foregroundColor: foregroundColor,
+                                           backgroundColor: backgroundColor,
+                                           pressedBackgroundColor: pressedColor,
+                                           cornerRadius: cornerRadius))
     }
 }

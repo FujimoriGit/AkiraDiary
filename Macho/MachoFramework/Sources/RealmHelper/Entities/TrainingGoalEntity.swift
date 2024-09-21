@@ -22,12 +22,17 @@ public struct TrainingGoalEntity: BaseRealmEntity {
     /// 終了時間
     public let endTime: Date?
     /// トレーニング達成成否
-    public let isSuccess: Bool?
+    public let isSuccess: Bool
     
     public static let executor = RealmObserverExecutor<Self>()
     
-    public init(id: UUID, goalType: TrainingTypeEntity, numberOfSets: Int,
-                setCount: Int, startTime: Date?, endTime: Date?, isSuccess: Bool?) {
+    public init(id: UUID,
+                goalType: TrainingTypeEntity,
+                numberOfSets: Int,
+                setCount: Int,
+                startTime: Date?,
+                endTime: Date?,
+                isSuccess: Bool) {
         
         self.id = id
         self.goalType = goalType
@@ -65,10 +70,15 @@ public class TrainingGoalRealmObject: Object {
     @Persisted var setCount: Int
     @Persisted var startTime: Date?
     @Persisted var endTime: Date?
-    @Persisted var isSuccess: Bool?
+    @Persisted var isSuccess: Bool
     
-    convenience init(id: UUID, goalType: TrainingTypeRealmObject, numberOfSets: Int,
-                     setCount: Int, startTime: Date?, endTime: Date?, isSuccess: Bool?) {
+    convenience init(id: UUID,
+                     goalType: TrainingTypeRealmObject,
+                     numberOfSets: Int,
+                     setCount: Int,
+                     startTime: Date?,
+                     endTime: Date?,
+                     isSuccess: Bool) {
         
         self.init()
         

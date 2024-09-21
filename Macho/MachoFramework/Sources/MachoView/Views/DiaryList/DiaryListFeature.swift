@@ -146,6 +146,7 @@ struct DiaryListFeature: Reducer, Sendable {
 
 private extension DiaryListFeature {
     
+    // swiftlint:disable cyclomatic_complexity
     func createActionHandler() -> some ReducerOf<Self> {
         
         Reduce { state, action in
@@ -285,6 +286,7 @@ private extension DiaryListFeature {
             }
         }
     }
+    // swiftlint:enable cyclomatic_complexity
 }
 
 // MARK: - Path Destination Definition

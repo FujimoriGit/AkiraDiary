@@ -10,8 +10,8 @@ import XCTest
 
 final class RealmAccessorTest: XCTestCase {
     
-    private let realmTestData = [DiarySearchTagEntity(id: UUID(), tagName: "testData1"),
-                                 DiarySearchTagEntity(id: UUID(), tagName: "testData2")]
+    private let realmTestData = [TrainingTagEntity(id: UUID(), tagName: "testData1"),
+                                 TrainingTagEntity(id: UUID(), tagName: "testData2")]
     
     override func setUp() async throws {
         
@@ -52,7 +52,7 @@ final class RealmAccessorTest: XCTestCase {
         
         let realm = await RealmAccessor()
         
-        guard let result: DiarySearchTagEntity = await realm.read(where: { $0.tagName == "testData1" }).first else {
+        guard let result: TrainingTagEntity = await realm.read(where: { $0.tagName == "testData1" }).first else {
             
             XCTFail("Fail read test Data")
             return
@@ -67,7 +67,7 @@ final class RealmAccessorTest: XCTestCase {
         
         let realm = await RealmAccessor()
         
-        let result: [DiarySearchTagEntity] = await realm.read()
+        let result: [TrainingTagEntity] = await realm.read()
         result.enumerated().forEach { index, resultEntity in
             
             assert(realmTestData[index].id == resultEntity.id)
@@ -78,12 +78,12 @@ final class RealmAccessorTest: XCTestCase {
         
         let realm = await RealmAccessor()
         let targetID = realmTestData.first!.id
-        let expectedData = DiarySearchTagEntity(id: targetID, tagName: "testData3")
+        let expectedData = TrainingTagEntity(id: targetID, tagName: "testData3")
         
         let updateValue = ["id": targetID, "tagName": expectedData.tagName] as [String : Any]
         await updateTestData(value: updateValue)
         
-        guard let result: DiarySearchTagEntity = await realm.read(where: { $0.id == expectedData.id }).first else {
+        guard let result: TrainingTagEntity = await realm.read(where: { $0.id == expectedData.id }).first else {
             
             XCTFail("Fail read")
             return
@@ -97,13 +97,14 @@ final class RealmAccessorTest: XCTestCase {
         
         let realm = await RealmAccessor()
         let filterId = realmTestData[0].id
-        guard await realm.delete(where: { (tag: DiarySearchTagEntity) in tag.id == filterId }) else {
+        
+        guard await realm.delete(where: { (tag: TrainingTagEntity) in tag.id == filterId }) else {
             
             XCTFail("Fail delete")
             return
         }
         
-        let results: [DiarySearchTagEntity] = await realm.read()
+        let results: [TrainingTagEntity] = await realm.read()
         let expectedData = realmTestData[1]
         XCTAssertEqual(results.count, 1)
         XCTAssertEqual(results.first!.id , expectedData.id)
@@ -128,10 +129,10 @@ final class RealmAccessorTest: XCTestCase {
         let expectation = self.expectation(description: "observeRealm")
         expectation.expectedFulfillmentCount = 1
         
-        let expectedData = DiarySearchTagEntity(id: UUID(), tagName: "testData3")
+        let expectedData = TrainingTagEntity(id: UUID(), tagName: "testData3")
         
-        var results = [DiarySearchTagEntity]()
-        let cancellable = DiarySearchTagEntity.executor.getPublisher()
+        var results = [TrainingTagEntity]()
+        let cancellable = TrainingTagEntity.executor.getPublisher()
             .sink { result in
                 
                 print("current result: \(result)")
@@ -143,14 +144,14 @@ final class RealmAccessorTest: XCTestCase {
                 }
             }
         
-        DiarySearchTagEntity.executor.startObservation()
+        TrainingTagEntity.executor.startObservation()
         await insertTestData(data: [expectedData])
         
         // fulfillを待つ
         await fulfillment(of: [expectation], timeout: 10)
         cancellable.cancel()
         
-        // Assertiton開始
+        // Assertion開始
         guard let target = results.filter({ $0.id == expectedData.id }).first else {
             
             XCTFail("Fail observe, expectedId: \(expectedData.id)")
@@ -166,10 +167,10 @@ final class RealmAccessorTest: XCTestCase {
         let expectation = self.expectation(description: "observeRealm")
         expectation.expectedFulfillmentCount = 1
         
-        let expectedData = DiarySearchTagEntity(id: UUID(), tagName: "testData99")
+        let expectedData = TrainingTagEntity(id: UUID(), tagName: "testData99")
         
-        var results = [DiarySearchTagEntity]()
-        let cancellable = DiarySearchTagEntity.executor.getPublisher()
+        var results = [TrainingTagEntity]()
+        let cancellable = TrainingTagEntity.executor.getPublisher()
             .sink { result in
                 
                 print("current result: \(result)")
@@ -181,9 +182,9 @@ final class RealmAccessorTest: XCTestCase {
                 }
             }
         
-        DiarySearchTagEntity.executor.startObservation()
+        TrainingTagEntity.executor.startObservation()
         
-        await insertTestData(data: [DiarySearchTagEntity(id: expectedData.id, tagName: "testData3")])
+        await insertTestData(data: [TrainingTagEntity(id: expectedData.id, tagName: "testData3")])
         let updateValue = ["id": expectedData.id, "tagName": expectedData.tagName] as [String : Any]
         await updateTestData(value: updateValue)
         
@@ -209,8 +210,8 @@ final class RealmAccessorTest: XCTestCase {
         
         let deleteTarget = realmTestData[0]
         
-        var results = [DiarySearchTagEntity]()
-        let cancellable = DiarySearchTagEntity.executor.getPublisher()
+        var results = [TrainingTagEntity]()
+        let cancellable = TrainingTagEntity.executor.getPublisher()
             .sink { result in
                 
                 print("current result: \(result)")
@@ -222,7 +223,7 @@ final class RealmAccessorTest: XCTestCase {
                 }
             }
         
-        DiarySearchTagEntity.executor.startObservation()
+        TrainingTagEntity.executor.startObservation()
         await deleteTestData(deleteTarget: deleteTarget.id)
         
         // fulfillを待つ
@@ -239,7 +240,7 @@ final class RealmAccessorTest: XCTestCase {
 
 private extension RealmAccessorTest {
     
-    func insertTestData(data: [DiarySearchTagEntity] = []) async {
+    func insertTestData(data: [TrainingTagEntity] = []) async {
         
         let realm = await RealmAccessor()
         guard await realm.insert(records: data.isEmpty ? realmTestData : data) else {
@@ -252,7 +253,7 @@ private extension RealmAccessorTest {
     func updateTestData(value: [String: Any]) async {
         
         let realm = await RealmAccessor()
-        guard await realm.update(type: DiarySearchTagEntity.self, value: value) else {
+        guard await realm.update(type: TrainingTagEntity.self, value: value) else {
            
             XCTFail("Fail update")
             return
@@ -262,7 +263,10 @@ private extension RealmAccessorTest {
     func deleteTestData(deleteTarget: UUID) async {
         
         let realm = await RealmAccessor()
-        guard await realm.delete(where: { (tag: DiarySearchTagEntity) in tag.id == deleteTarget }) else {
+        guard await realm.delete(where: { (entity: TrainingTagEntity) in
+            
+            return entity.id == deleteTarget
+        }) else {
             
             XCTFail("Fail delete")
             return
