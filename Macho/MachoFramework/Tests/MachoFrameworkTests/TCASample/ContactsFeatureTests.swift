@@ -10,9 +10,9 @@ import ComposableArchitecture
 import XCTest
 @testable import MachoView
 
-@MainActor
 final class ContactsFeatureTests: XCTestCase {
     
+    @MainActor
     func testDeleteContact() async {
         
         let store = TestStore(
