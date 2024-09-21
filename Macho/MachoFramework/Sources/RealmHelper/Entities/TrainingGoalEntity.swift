@@ -6,8 +6,8 @@
 //  
 //
 
-import RealmSwift
 import Foundation
+import RealmSwift
 
 public struct TrainingGoalEntity: BaseRealmEntity {
     

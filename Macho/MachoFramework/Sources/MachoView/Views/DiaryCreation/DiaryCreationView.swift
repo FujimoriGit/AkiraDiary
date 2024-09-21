@@ -158,7 +158,8 @@ private extension DiaryCreationView {
         .frame(width: calculatedWidth - (lineWidth * 2))
     }
     
-    func tagsArea(viewStore: ViewStore<DiaryCreationFeature.State, DiaryCreationFeature.Action>, calculatedWidth: CGFloat) -> some View {
+    func tagsArea(viewStore: ViewStore<DiaryCreationFeature.State, DiaryCreationFeature.Action>,
+                  calculatedWidth: CGFloat) -> some View {
         
         VStack(spacing: tagButtonsBothPadding) {
             addingButton(title: "Tags", maxWidth: calculatedWidth) {
@@ -174,7 +175,8 @@ private extension DiaryCreationView {
         .frame(maxWidth: calculatedWidth, alignment: .leading)
     }
     
-    func goalsArea(viewStore: ViewStore<DiaryCreationFeature.State, DiaryCreationFeature.Action>, calculatedWidth: CGFloat) -> some View {
+    func goalsArea(viewStore: ViewStore<DiaryCreationFeature.State, DiaryCreationFeature.Action>,
+                   calculatedWidth: CGFloat) -> some View {
         
         VStack(spacing: tagButtonsBothPadding) {
             addingButton(title: "Goals", maxWidth: calculatedWidth) {

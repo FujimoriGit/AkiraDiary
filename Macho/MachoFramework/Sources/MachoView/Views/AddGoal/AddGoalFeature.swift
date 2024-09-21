@@ -38,7 +38,7 @@ struct AddGoalFeature: Reducer {
         switch action {
             
         case .cancelButtonTapped:
-            return .run { _ in await self.dismiss() }
+            return .run { _ in await dismiss() }
             
         case .delegate:
             return .none
@@ -47,7 +47,7 @@ struct AddGoalFeature: Reducer {
             return .run { [tag = state.goal] send in
                 
                 await send(.delegate(.saveTag(tag)))
-                await self.dismiss()
+                await dismiss()
             }
             
         case .setGoalName(let goalName):
@@ -62,7 +62,7 @@ struct AddGoalFeature: Reducer {
             
         case .setCount(let setCount):
             state.goal.setCount = setCount
-            state.isEnableSaveButton = setCount  > 0 && !state.goal.goalName.isEmpty && state.goal.numberOfSets > 0
+            state.isEnableSaveButton = setCount > 0 && !state.goal.goalName.isEmpty && state.goal.numberOfSets > 0
             return .none
         }
     }

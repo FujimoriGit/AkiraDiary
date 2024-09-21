@@ -36,7 +36,7 @@ struct AddTagFeature: Reducer {
         switch action {
             
         case .cancelButtonTapped:
-            return .run { _ in await self.dismiss() }
+            return .run { _ in await dismiss() }
             
         case .delegate:
             return .none
@@ -45,7 +45,7 @@ struct AddTagFeature: Reducer {
             return .run { [tag = state.tag] send in
                 
                 await send(.delegate(.saveTag(tag)))
-                await self.dismiss()
+                await dismiss()
             }
             
         case .setTagName(let tagName):
@@ -55,4 +55,3 @@ struct AddTagFeature: Reducer {
         }
     }
 }
-

@@ -22,12 +22,12 @@ struct ContactDetailView: View {
             }
             .navigationBarTitle(Text(viewStore.contact.name))
         }
-        .alert(store: self.store.scope(state: \.$alert, action: { .alert($0) }))
+        .alert(store: store.scope(state: \.$alert, action: { .alert($0) }))
     }
 }
 
-
 struct ContactDetailPreviews: PreviewProvider {
+    
     static var previews: some View {
         NavigationStack {
             ContactDetailView(

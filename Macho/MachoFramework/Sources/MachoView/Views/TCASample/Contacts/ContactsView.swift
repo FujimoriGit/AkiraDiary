@@ -28,6 +28,7 @@ struct ContactsView: View {
                                     viewStore.send(.deleteButtonTapped(id: contact.id))
                                 } label: {
                                     Image(systemName: "trash")
+                                        .accessibilityHidden(true)
                                         .foregroundColor(.red)
                                 }
                             }
@@ -42,6 +43,7 @@ struct ContactsView: View {
                             viewStore.send(.addButtonTapped)
                         } label: {
                             Image(systemName: "plus")
+                                .accessibilityHidden(true)
                         }
                     }
                 }
@@ -76,12 +78,14 @@ struct ContactsView_Previews: PreviewProvider {
     static var previews: some View {
         ContactsView(
             store: Store(initialState: ContactsFeature.State(
-                contacts: [Contact(id: UUID(), name: "Blob"),
-                           Contact(id: UUID(), name: "Blob Jr"),
-                           Contact(id: UUID(), name: "Blob Sr"),])) {
+                contacts: [
+                    Contact(id: UUID(), name: "Blob"),
+                    Contact(id: UUID(), name: "Blob Jr"),
+                    Contact(id: UUID(), name: "Blob Sr")
+                ])) {
                                
-                               ContactsFeature()
-                           }
+                ContactsFeature()
+            }
         )
     }
 }

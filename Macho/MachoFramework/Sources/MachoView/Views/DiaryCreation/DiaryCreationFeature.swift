@@ -7,8 +7,8 @@
 //
 
 import ComposableArchitecture
-import SwiftUI
 import RealmHelper
+import SwiftUI
 
 struct Tag: Equatable, Identifiable {
     
@@ -84,7 +84,7 @@ struct DiaryCreationFeature: Reducer {
                     await send(.fetched(tags: tags, goals: goals))
                 }
                 
-            case .fetched(tags: let tags, goals: let goals):
+            case .fetched(let tags, let goals):
                 state.tags = tags
                 state.goals = goals
                 return .none
@@ -169,13 +169,13 @@ struct DiaryCreationFeature: Reducer {
                 state.goals.append(goal)
                 return .none
                 
-            case .destination(.presented(.addGoal(.setGoalName(_)))):
+            case .destination(.presented(.addGoal(.setGoalName))):
                 return .none
                 
-            case .destination(.presented(.addGoal(.setNumberOfSets(_)))):
+            case .destination(.presented(.addGoal(.setNumberOfSets))):
                 return .none
                 
-            case .destination(.presented(.addGoal(.setCount(_)))):
+            case .destination(.presented(.addGoal(.setCount))):
                 return .none
             }
         }

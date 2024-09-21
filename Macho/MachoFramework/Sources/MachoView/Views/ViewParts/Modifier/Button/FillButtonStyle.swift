@@ -52,8 +52,8 @@ extension Button {
         let pressedColor = pressedBackgroundColor ?? backgroundColor.opacity(0.5)
         
         return buttonStyle(FillButtonStyle(foregroundColor: foregroundColor,
-                                         backgroundColor: backgroundColor,
-                                         pressedBackgroundColor: pressedColor,
-                                         cornerRadius: cornerRadius))
+                                           backgroundColor: backgroundColor,
+                                           pressedBackgroundColor: pressedColor,
+                                           cornerRadius: cornerRadius))
     }
 }

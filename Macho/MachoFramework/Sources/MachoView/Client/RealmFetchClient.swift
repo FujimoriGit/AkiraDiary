@@ -19,30 +19,53 @@ struct RealmFetchClient {
 
 extension RealmFetchClient: DependencyKey {
     
-    static let liveValue = Self(fetchTrainingTag: { entityType in
-        
-        let entities = await RealmAccessor().read(type: entityType.self)
-        
-        return entities
-        
-    }, fetchTrainingGoal: { entityType in
-        
-        let entities = await RealmAccessor().read(type: entityType.self)
-        
-        return entities
-    })
+    static let liveValue = Self(fetchTrainingTag: { _ in await RealmAccessor().read() },
+                                fetchTrainingGoal: { _ in await RealmAccessor().read() })
     
     static let previewValue = Self(fetchTrainingTag: { _ in
         
-        let tagNames = ["もりもり", "トレーニング", "Swift", "iOS開発", "SwiftUI", "UIKit", "WWDC", "Python",
-                       "JavaScript", "PHP", "Ruby", "Flutter", "Dart", "Android", "iPhone", "あきら", "たいち"]
+        let tagNames = [
+            "もりもり",
+            "トレーニング",
+            "Swift",
+            "iOS開発",
+            "SwiftUI",
+            "UIKit",
+            "WWDC",
+            "Python",
+            "JavaScript",
+            "PHP",
+            "Ruby",
+            "Flutter",
+            "Dart",
+            "Android",
+            "iPhone",
+            "あきら",
+            "たいち"
+        ]
         
         return tagNames.map { TrainingTagEntity(id: UUID(), tagName: $0) }
-        
     }, fetchTrainingGoal: { _ in
         
-        let goalNames = ["クランチ", "懸垂", "ランニング", "スクワット", "腕立て", "UIKit", "WWDC", "Python",
-                         "JavaScript", "PHP", "Ruby", "Flutter", "Dart", "Android", "iPhone", "あきら", "たいち"]
+        let goalNames = [
+            "クランチ",
+            "懸垂",
+            "ランニング",
+            "スクワット",
+            "腕立て",
+            "UIKit",
+            "WWDC",
+            "Python",
+            "JavaScript",
+            "PHP",
+            "Ruby",
+            "Flutter",
+            "Dart",
+            "Android",
+            "iPhone",
+            "あきら",
+            "たいち"
+        ]
         
         return goalNames.map { TrainingGoalEntity(id: UUID(),
                                                   goalName: $0,

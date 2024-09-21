@@ -41,7 +41,9 @@ struct AddTagPreviews: PreviewProvider {
     
     static var previews: some View {
         NavigationStack {
-            AddTagView(store: Store(initialState: AddTagFeature.State(tag: Tag(id: UUID(), tagName: "", isSelected: true))) {
+            AddTagView(store: Store(initialState: AddTagFeature.State(tag: Tag(id: UUID(),
+                                                                               tagName: "",
+                                                                               isSelected: true))) {
                 
                 AddTagFeature()
             })

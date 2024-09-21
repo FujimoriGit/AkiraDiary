@@ -15,24 +15,22 @@ struct FlowLayout: Layout {
     var alignment: Alignment = .center
     var spacing: CGFloat?
     
-    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout Void) -> CGSize {
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache _: inout Void) -> CGSize {
         
         let result = FlowResult(
             in: proposal.replacingUnspecifiedDimensions().width,
             subviews: subviews,
-            alignment: alignment,
             spacing: spacing
         )
         
         return result.bounds
     }
     
-    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout Void) {
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache _: inout Void) {
         
         let result = FlowResult(
             in: proposal.replacingUnspecifiedDimensions().width,
             subviews: subviews,
-            alignment: alignment,
             spacing: spacing
         )
         
@@ -62,7 +60,7 @@ struct FlowLayout: Layout {
             var frame: CGRect
         }
         
-        init(in maxPossibleWidth: Double, subviews: Subviews, alignment: Alignment, spacing: CGFloat?) {
+        init(in maxPossibleWidth: Double, subviews: Subviews, spacing: CGFloat?) {
             
             var itemsInRow = 0
             var remainingWidth = maxPossibleWidth.isFinite ? maxPossibleWidth : .greatestFiniteMagnitude
@@ -75,14 +73,14 @@ struct FlowLayout: Layout {
                 if index != 0 && widthInRow(index: index, idealWidth: idealSize.width) > remainingWidth {
                     
                     // Finish the current row without this subview.
-                    finalizeRow(index: max(index - 1, 0), idealSize: idealSize)
+                    finalizeRow(index: max(index - 1, 0))
                 }
                 addToRow(index: index, idealSize: idealSize)
                 
                 if index == subviews.count - 1 {
                     
                     // Finish this row; it's either full or we're on the last view anyway.
-                    finalizeRow(index: index, idealSize: idealSize)
+                    finalizeRow(index: index)
                 }
             }
             
@@ -110,7 +108,7 @@ struct FlowLayout: Layout {
                 itemsInRow += 1
             }
             
-            func finalizeRow(index: Int, idealSize: CGSize) {
+            func finalizeRow(index: Int) {
                 
                 let rowWidth = maxPossibleWidth - remainingWidth
                 rows.append(
