@@ -170,7 +170,7 @@ private extension DiaryListFilterView {
     func createSelectMenu(target: DiaryListFilterTarget) -> some View {
         let selectableTargetFilters = store.selectableFilterValues.filter { $0.target == target }
         Menu {
-            ForEach(selectableTargetFilters) { selectCase in
+            ForEach(selectableTargetFilters, id: \.value.hashValue) { selectCase in
                 Button(action: {
                     store.send(.tappedFilterMenuItem(filter: selectCase))
                 }, label: {

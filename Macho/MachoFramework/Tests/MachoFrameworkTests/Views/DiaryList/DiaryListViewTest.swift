@@ -165,6 +165,9 @@ final class DiaryListViewTests: XCTestCase {
             // 日記リストがあるかどうかのフラグ更新
             $0.viewState.hasDiaryItems = true
         }
+        
+        // 画面非表示
+        await store.send(.onDisappearView)
     }
     
     // 日記リスト初回画面表示時に日記リスト取得失敗した時のケース
@@ -204,6 +207,9 @@ final class DiaryListViewTests: XCTestCase {
             // 日記リスト取得失敗アラート表示
             $0.alert = AlertState.createAlertState(.failedLoadDiaryItemsAlert, firstButtonHandler: .failedLoadDiaryItems)
         }
+        
+        // 画面非表示
+        await store.send(.onDisappearView)
     }
     
     // 日記リストを保持している状態で画面表示時した時のケース
@@ -273,6 +279,9 @@ final class DiaryListViewTests: XCTestCase {
             // 日記リストがあるかどうかのフラグ更新
             $0.viewState.hasDiaryItems = true
         }
+        
+        // 画面非表示
+        await store.send(.onDisappearView)
     }
     
     // フィルターにヒットする日記がないケース
@@ -331,6 +340,9 @@ final class DiaryListViewTests: XCTestCase {
             // 日記リストがあるかどうかのフラグ更新
             $0.viewState.hasDiaryItems = false
         }
+        
+        // 画面非表示
+        await store.send(.onDisappearView)
     }
     
     // 日記リストをタップした時のケース

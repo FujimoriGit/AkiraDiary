@@ -14,8 +14,8 @@ import XCTest
 
 final class DiaryListFilterViewTest: XCTestCase {
     
-    private static let notAchievementId = UUID(TrainingAchievement.notAchieved.rawValue)
-    private static let achievementId = UUID(TrainingAchievement.achieved.rawValue)
+    private static let notAchievementId = UUID(DiaryListFilterTarget.achievement.num)
+    private static let achievementId = UUID(DiaryListFilterTarget.achievement.num)
     private static let absTrainingId = UUID()
     private static let dumbbellPressTrainingId = UUID()
     private static let fineTagId = UUID()

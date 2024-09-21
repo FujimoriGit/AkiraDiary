@@ -213,7 +213,9 @@ private extension DiaryListFilterFeature {
         // トレーニング実績のフィルター値を追加
         let trainingAchievementList = TrainingAchievement.allCases.map {
             
-            return DiaryListFilterItem(target: .achievement, filterItemId: UUID($0.rawValue), value: $0.title)
+            return DiaryListFilterItem(target: .achievement,
+                                       filterItemId: $0.targetId,
+                                       value: $0.title)
         }
         
         // トレーニング種目のフィルター値を追加

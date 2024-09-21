@@ -5,6 +5,8 @@
 //  Created by 佐藤汰一 on 2024/07/28.
 //
 
+import Foundation
+
 enum DiaryListFilterTarget: String, CaseIterable {
     
     /// 己に勝ったかどうか
@@ -63,7 +65,9 @@ enum DiaryListFilterTarget: String, CaseIterable {
     }
 }
 
-enum TrainingAchievement: Int, CaseIterable {
+enum TrainingAchievement: Int, CaseIterable, SingleSelectableFilter {
+    
+    var targetId: UUID { return UUID(DiaryListFilterTarget.achievement.num) }
     
     /// 未達成
     case notAchieved
