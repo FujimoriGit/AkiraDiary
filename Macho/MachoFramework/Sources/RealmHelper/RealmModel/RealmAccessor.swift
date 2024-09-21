@@ -13,6 +13,7 @@ public struct RealmAccessor {
     private let realm: RealmActor
     
     // MARK: - RealmAccessor initialize method
+    
     public init() async {
         
         realm = await RealmActor.getSingleton()
@@ -90,6 +91,7 @@ fileprivate actor RealmActor {
     private var realm: Realm?
     
     // MARK: - RealmActor initialize method
+    
     private init() async {
         
         realm = try? await Realm(actor: self)
@@ -209,6 +211,7 @@ fileprivate actor RealmActor {
 }
 
 // MARK: - RealmActor private methods
+
 private extension RealmActor {
     
     func executeAsyncWrite(_ operation: @escaping () -> Void) async -> Bool {
