@@ -9,6 +9,7 @@ import ComposableArchitecture
 import XCTest
 
 @testable import MachoView
+import Combine
 
 final class DiaryListViewTests: XCTestCase {
     
@@ -229,6 +230,11 @@ final class DiaryListViewTests: XCTestCase {
         
         let expectedItem = DiaryListItemFeature.State(title: "test2", message: "test message", date: secondDate, isWin: false, trainingList: [absTrainingId], tagList: [])
         
+        let expectedFilteredDiaries = IdentifiedArray(uniqueElements: [
+            DiaryListItemFeature.State(id: thirdUuid, title: "test3", message: "", date: thirdDate, isWin: false, trainingList: [absTrainingId], tagList: []),
+            DiaryListItemFeature.State(id: firstUuid, title: "test1", message: "", date: firstDate, isWin: false, trainingList: [absTrainingId], tagList: [])
+        ])
+        
         let expectedLoadedDiaries = IdentifiedArray(uniqueElements: [
             DiaryListItemFeature.State(id: thirdUuid, title: "test3", message: "", date: thirdDate, isWin: false, trainingList: [absTrainingId], tagList: []),
             expectedItem,
@@ -267,6 +273,7 @@ final class DiaryListViewTests: XCTestCase {
         await store.receive(.receiveLoadDiaryListFilter(filters: receivedFilters)) {
             
             $0.currentFilters = receivedFilters
+            $0.diaries = expectedFilteredDiaries
         }
         
         // 日記リスト取得イベント受信
@@ -512,10 +519,45 @@ final class DiaryListViewTests: XCTestCase {
     @MainActor
     func testTappedFilterButton() async throws {
         
-        let store = TestStore(
-            initialState: DiaryListFeature.State()) {
+        let expectedItem = DiaryListItemFeature.State(title: "test", message: "test message", date: Date(), isWin: false, trainingList: [], tagList: [])
+        let receivedFilters = [DiaryListFilterItem(target: .achievement, filterItemId: UUID(), value: "達成していない")]
+        let changeFilters = [DiaryListFilterItem(target: .trainingType, filterItemId: UUID(), value: "腹筋")]
+        let expectedDiariesAfterChangeFilter: IdentifiedArrayOf<DiaryListItemFeature.State> = []
+        let filterPublisher = PassthroughSubject<[DiaryListFilterItem], Never>()
+        
+        let store = TestStore(initialState: DiaryListFeature.State(), reducer: { DiaryListFeature() }) {
+            
+            $0.diaryListFetchApi = DiaryListItemClient(fetch: { _, _ in
                 
-            DiaryListFeature()
+                return [expectedItem]
+            }, deleteItem: { _ in })
+            $0.diaryListFilterApi = DiaryListFilterClient.getFetchOnlyClientForTest(receivedFilters,
+                                                                                    observer: filterPublisher.eraseToAnyPublisher())
+            $0.date = DateGenerator({ Date() })
+        }
+        
+        // 日記リスト画面表示時の動作
+        await store.send(.onAppearView) {
+            
+            // 日記リスト取得処理開始
+            $0.viewState.isLoadingDiaries = true
+        }
+        
+        // 日記リストのフィルター取得イベント受信
+        await store.receive(.receiveLoadDiaryListFilter(filters: receivedFilters)) {
+            
+            $0.currentFilters = receivedFilters
+        }
+        
+        // 日記リスト取得イベント受信
+        await store.receive(.receiveLoadDiaryItems(items: [expectedItem])) {
+            
+            // 日記リスト更新
+            $0.diaries = [expectedItem]
+            // 日記リスト取得処理終了
+            $0.viewState.isLoadingDiaries = false
+            // 日記リストがあるかどうかのフラグ更新
+            $0.viewState.hasDiaryItems = true
         }
                 
         // フィルターボタンを押下
@@ -538,10 +580,23 @@ final class DiaryListViewTests: XCTestCase {
             $0.destination = .filterScreen(DiaryListFilterFeature.State())
         }
         
+        // フィルター更新
+        filterPublisher.send(changeFilters)
+        
+        // 日記リストのフィルター取得イベント受信
+        await store.receive(.receiveLoadDiaryListFilter(filters: changeFilters)) {
+            
+            $0.currentFilters = changeFilters
+            $0.diaries = expectedDiariesAfterChangeFilter
+        }
+        
         // フィルター画面の閉じるボタンタップ
         await store.send(.destination(.presented(.filterScreen(.tappedCloseButton)))) {
             
             $0.destination = nil
         }
+        
+        // 画面非表示
+        await store.send(.onDisappearView)
     }
 }

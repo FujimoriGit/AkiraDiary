@@ -88,7 +88,8 @@ extension DiaryListFilterClient: DependencyKey {
         return PassthroughSubject<[DiaryListFilterItem], Never>().eraseToAnyPublisher()
     }
     
-    static func getFetchOnlyClientForTest(_ expected: [DiaryListFilterItem]) -> DiaryListFilterClient {
+    static func getFetchOnlyClientForTest(_ expected: [DiaryListFilterItem],
+                                          observer: AnyPublisher<[DiaryListFilterItem], Never> = PassthroughSubject<[DiaryListFilterItem], Never>().eraseToAnyPublisher()) -> DiaryListFilterClient {
         
         return DiaryListFilterClient { _ in 
             
@@ -104,7 +105,7 @@ extension DiaryListFilterClient: DependencyKey {
             return expected
         } getFilterListObserver: {
             
-            return PassthroughSubject<[DiaryListFilterItem], Never>().eraseToAnyPublisher()
+            return observer
         }
     }
 }
