@@ -13,6 +13,7 @@ public struct RealmAccessor {
     private let realm: RealmActor
     
     // MARK: - RealmAccessor initialize method
+    
     public init() async {
         
         realm = await RealmActor.getSingleton()
@@ -90,6 +91,7 @@ fileprivate actor RealmActor {
     private var realm: Realm?
     
     // MARK: - RealmActor initialize method
+    
     private init() async {
         
         realm = try? await Realm(actor: self)
@@ -144,6 +146,7 @@ fileprivate actor RealmActor {
     }
     
     /// RealmDBに保存しているデータを非同期で削除
+    /// - Parameter records: 削除したいレコードの配列
     /// - Parameter filterHandler: 削除するレコードの条件
     /// - Returns: 削除が成功したかどうか
     func delete<T>(where filterHandler: @escaping (T) -> Bool) async -> Bool where T: BaseRealmEntity {
@@ -208,6 +211,7 @@ fileprivate actor RealmActor {
 }
 
 // MARK: - RealmActor private methods
+
 private extension RealmActor {
     
     func executeAsyncWrite(_ operation: @escaping () -> Void) async -> Bool {
