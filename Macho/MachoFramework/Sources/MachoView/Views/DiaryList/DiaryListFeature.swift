@@ -105,11 +105,11 @@ struct DiaryListFeature: Reducer, Sendable {
     
     // MARK: dependency property
     
-    @Dependency(\.diaryListFetchApi) var diaryListFetchCliant
+    @Dependency(\.diaryListFetchApi) var diaryListFetchClient
     @Dependency(\.date) var date
     @Dependency(\.uuid) var uuid
     
-    // MARK: other proeprty
+    // MARK: other property
     
     // 日記リスト取得処理の取得制限個数
     private let limitFetchDiary = 20
@@ -166,7 +166,7 @@ private extension DiaryListFeature {
                     logger.info("confirmDeleteItem(id=\(id)).")
                     return .run { send in
                         
-                        try await diaryListFetchCliant.deleteItem(id)
+                        try await diaryListFetchClient.deleteItem(id)
                         await send(.deletedDiaryItem(id: id), animation: .spring)
                     }
                     
@@ -384,7 +384,7 @@ private extension DiaryListFeature {
                 
         return .run { send in
             
-            try await send(.receiveLoadDiaryItems(items: diaryListFetchCliant.fetch(startDate, limitFetchDiary)),
+            try await send(.receiveLoadDiaryItems(items: diaryListFetchClient.fetch(startDate, limitFetchDiary)),
                            animation: .spring)
         } catch: { error, send in
             

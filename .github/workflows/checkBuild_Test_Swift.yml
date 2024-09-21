@@ -5,93 +5,94 @@ name: CheckBuild_Test_Swift
 
 on:
   push:
-    branches: 
-      - 'BR_develop**'
-      - 'BR_topic/**'
+    branches:
+      - "BR_develop**"
+      - "BR_topic/**"
     paths-ignore:
-      - 'doc/*'
-      - 'wiki/**'
+      - "doc/*"
+      - "wiki/**"
       - README.md
   pull_request:
-    branches: 
-      - 'BR_develop**'
-      - 'BR_topic/**'
+    branches:
+      - "BR_develop**"
+      - "BR_topic/**"
     paths-ignore:
-      - 'doc/*'
-      - 'wiki/**'
+      - "doc/*"
+      - "wiki/**"
       - README.md
 
 env:
-# チェックアウト
+  # チェックアウト
   DEVELOPER_DIR: /Applications/Xcode_15.0.app
 
 jobs:
   build:
-
-     # 実行環境はmacosに設定
+    # 実行環境はmacosに設定
     runs-on: macos-13
 
     steps:
-    # チェックアウト(リポジトリからソースコードを取得)
-    - uses: actions/checkout@v3
+      # チェックアウト(リポジトリからソースコードを取得)
+      - uses: actions/checkout@v3
 
-    # Xcodeの一覧出力
-    - name: Show Xcode list
-      run: ls /Applications | grep 'Xcode'
+      # Xcodeの一覧出力
+      - name: Show Xcode list
+        run: ls /Applications | grep 'Xcode'
 
-    # Xcodeのバージョン出力
-    - name: Show Xcode version
-      run: xcodebuild -version
+      # Xcodeのバージョン出力
+      - name: Show Xcode version
+        run: xcodebuild -version
 
-    # Rudy製ライブラリのキャッシュ
-    - name: Cache Gems
-      uses: actions/cache@v2
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-gems-
+      # Rudy製ライブラリのキャッシュ
+      - name: Cache Gems
+        uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
 
-    # Rudy製ライブラリのインストール
-    - name: Install Bundled Gems
-      run: |
-        bundle config path vendor/bundle
-        bundle install --jobs 4 --retry 3
+      # Rudy製ライブラリのインストール
+      - name: Install Bundled Gems
+        run: |
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3
 
-    # SPMのライブラリのキャッシュ
-    - name: Cache Swift Packages
-      uses: actions/cache@v2
-      with:
-        path: SourcePackages
-        key: ${{ runner.os }}-spm-${{ hashFiles('*.xcodeproj/project.xcworkspace/ xcshareddata/swiftpm/Package.resolved') }}
-        restore-keys: ${{ runner.os }}-spm-
+      # SPMのライブラリのキャッシュ
+      - name: Cache Swift Packages
+        uses: actions/cache@v2
+        with:
+          path: SourcePackages
+          key: ${{ runner.os }}-spm-${{ hashFiles('*.xcodeproj/project.xcworkspace/ xcshareddata/swiftpm/Package.resolved') }}
+          restore-keys: ${{ runner.os }}-spm-
 
-    # ビルド
-    - name: Xcode build
-      run: set -o pipefail &&
-        xcodebuild
-        -workspace ./Macho/Macho.xcworkspace
-        -scheme Macho
-        -sdk iphonesimulator
-        -configuration Debug
-        -resolvePackageDependencies
-        -clonedSourcePackagesDirPath SourcePackages
-        -scmProvider xcode
-        build |
-        bundle exec xcpretty
-    
-    # 単体テストの実行
-    - name: Xcode test
-      working-directory: ./Macho
-      run: set -o pipefail &&
-        xcodebuild
-        -sdk iphonesimulator
-        -configuration Debug
-        -destination 'platform=iOS Simulator'
-        -scheme Macho
-        -testPlan Macho
-        -resolvePackageDependencies
-        -scmProvider xcode
-        -skip-testing:MachoUITests
-        clean test |
-        bundle exec xcpretty
+      # ビルド
+      - name: Xcode build
+        run: set -o pipefail &&
+          xcodebuild
+          -workspace ./Macho/Macho.xcworkspace
+          -scheme Macho
+          -destination 'platform=iOS Simulator,id=6B6B062C-40CF-4C83-A78C-84C46922CB36'
+          -configuration Debug
+          -clonedSourcePackagesDirPath SourcePackages
+          -skipPackagePluginValidation
+          -skipMacroValidation
+          -scmProvider xcode
+          clean build |
+          bundle exec xcpretty
+
+      # 単体テストの実行
+      - name: Xcode test
+        working-directory: ./Macho
+        run: set -o pipefail &&
+          xcodebuild
+          -configuration Debug
+          -destination 'platform=iOS Simulator,id=6B6B062C-40CF-4C83-A78C-84C46922CB36'
+          -scheme Macho
+          -testPlan Macho
+          -skipPackagePluginValidation
+          -skipMacroValidation
+          -scmProvider xcode
+          -skip-testing:MachoUITests
+          -clonedSourcePackagesDirPath SourcePackages
+          clean test |
+          bundle exec xcpretty

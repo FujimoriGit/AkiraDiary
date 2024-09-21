@@ -27,7 +27,7 @@ struct DiaryListItemClient {
 extension DiaryListItemClient: DependencyKey {
     
     /// 日記リスト取得の本来の処理
-    static let liveValue = Self { fetchStartDate, limitCount  in
+    static let liveValue = Self { fetchStartDate, limitCount in
         
         // TODO: 日記の情報を返す
         return []

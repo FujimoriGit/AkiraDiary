@@ -8,6 +8,7 @@
 import ComposableArchitecture
 import SwiftUI
 
+@MainActor
 struct DiaryListView: View {
     
     // MARK: - tca store property
