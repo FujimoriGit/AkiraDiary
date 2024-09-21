@@ -59,11 +59,16 @@ public struct RealmAccessor {
         return await self.realm.delete(where: filterHandler)
     }
     
+    public func deleteAll<T>(type: T.Type) async -> Bool where T: BaseRealmEntity {
+        
+        return await self.realm.deleteAll(type: type)
+    }
+    
     /// RealmDBに保存しているすべてのデータを削除
     /// - Returns: 削除に成功した場合はtrue、失敗した場合はfalseを返す
-    public func deleteAll() async -> Bool {
+    public func truncateDb() async -> Bool {
         
-        return await self.realm.deleteAll()
+        return await self.realm.truncateDb()
     }
     
     /// 指定した型に対応するRealmオブジェクトテーブルの変更を監視するPublisherを返す
@@ -140,6 +145,8 @@ fileprivate actor RealmActor {
     
     /// RealmDBに保存しているデータを非同期で削除
     /// - Parameter records: 削除したいレコードの配列
+    /// - Parameter filterHandler: 削除するレコードの条件
+    /// - Returns: 削除が成功したかどうか
     func delete<T>(where filterHandler: @escaping (T) -> Bool) async -> Bool where T: BaseRealmEntity {
         
         guard let targetRecords = realm?.objects(T.RealmObject.self).filter({
@@ -153,8 +160,21 @@ fileprivate actor RealmActor {
         }
     }
     
+    /// 指定のテーブルのデータを全て削除
+    /// - Parameter type: 削除するデータの型
+    /// - Returns: 削除が成功したかどうか
+    func deleteAll<T>(type: T.Type) async -> Bool where T: BaseRealmEntity {
+        
+        guard let objects = self.realm?.objects(type.RealmObject.self) else { return false }
+        
+        return await executeAsyncWrite { [unowned self] in
+            
+            self.realm?.delete(objects)
+        }
+    }
+    
     /// RealmDBに保存しているすべてのデータを削除
-    func deleteAll() async -> Bool {
+    func truncateDb() async -> Bool {
         
         return await executeAsyncWrite { [realm = self.realm] in
             
