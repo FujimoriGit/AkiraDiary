@@ -8,7 +8,7 @@
 import Combine
 import RealmSwift
 
-public struct RealmAccessor {
+public struct RealmAccessor: RealmAccessible {
     
     private let realm: RealmActor
     
