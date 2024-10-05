@@ -11,18 +11,16 @@ import SwiftUI
 
 struct ContactDetailView: View {
     
-    let store: StoreOf<ContactDetailFeature>
+    @Bindable var store: StoreOf<ContactDetailFeature>
     
     var body: some View {
-        WithViewStore(self.store, observe: { $0 }) { viewStore in
-            Form {
-                Button("Delete") {
-                    viewStore.send(.deleteButtonTapped)
-                }
+        Form {
+            Button("Delete") {
+                store.send(.deleteButtonTapped)
             }
-            .navigationBarTitle(Text(viewStore.contact.name))
         }
-        .alert(store: self.store.scope(state: \.$alert, action: { .alert($0) }))
+        .navigationBarTitle(Text(store.contact.name))
+        .alert($store.scope(state: \.alert, action: \.alert))
     }
 }
 

@@ -53,7 +53,7 @@ extension Date {
         /// yyyy/MM/dd(ex. 2000:01:01)
         case basic
         /// yyyy年MM月dd日(ex. 2000年01月01日)
-        case jp
+        case jpGregorian
         
         fileprivate func getFormatString(omissionTens: Bool) -> String {
             
@@ -62,7 +62,7 @@ extension Date {
             case .basic:
                 return omissionTens ? "yyyy/M/d" : "yyyy/MM/dd"
                 
-            case .jp:
+            case .jpGregorian:
                 return omissionTens ? "yyyy年M月d日" : "yyyy年MM月dd日"
             }
         }

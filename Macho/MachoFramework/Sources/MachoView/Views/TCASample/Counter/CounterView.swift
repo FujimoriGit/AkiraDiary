@@ -13,58 +13,55 @@ struct CounterView: View {
     
     // MARK: - Store
     
-    let store: StoreOf<CounterFeature>
+    @Bindable var store: StoreOf<CounterFeature>
     
     // MARK: - body
     
     var body: some View {
-        // Stateを監視するため、WithViewStoreでラップする.
-        WithViewStore(store, observe: { $0 }) { viewStore in
-            VStack {
-                Text("\(viewStore.count)")
-                    .font(.largeTitle)
-                    .padding()
-                    .background(Color.black.opacity(0.1))
-                    .cornerRadius(10)
-                HStack {
-                    Button("-") {
-                        // アクションをsend
-                        viewStore.send(.decrementButtonTapped)
-                    }
-                    .font(.largeTitle)
-                    .padding()
-                    .background(Color.black.opacity(0.1))
-                    .cornerRadius(10)
+        VStack {
+            Text("\(store.count)")
+                .font(.largeTitle)
+                .padding()
+                .background(Color.black.opacity(0.1))
+                .cornerRadius(10)
+            HStack {
+                Button("-") {
+                    // アクションをsend
+                    store.send(.decrementButtonTapped)
+                }
+                .font(.largeTitle)
+                .padding()
+                .background(Color.black.opacity(0.1))
+                .cornerRadius(10)
+                
+                Button("+") {
+                    // アクションをsend
+                    store.send(.incrementButtonTapped)
+                }
+                .font(.largeTitle)
+                .padding()
+                .background(Color.black.opacity(0.1))
+                .cornerRadius(10)
+                
+                Button("Fact") {
+                    // アクションをsend
+                    store.send(.factButtonTapped)
+                }
+                .font(.largeTitle)
+                .padding()
+                .background(Color.black.opacity(0.1))
+                .cornerRadius(10)
+                
+                if store.isLoading {
                     
-                    Button("+") {
-                        // アクションをsend
-                        viewStore.send(.incrementButtonTapped)
-                    }
-                    .font(.largeTitle)
-                    .padding()
-                    .background(Color.black.opacity(0.1))
-                    .cornerRadius(10)
+                  ProgressView()
+                }
+                else if let fact = store.fact {
                     
-                    Button("Fact") {
-                        // アクションをsend
-                        viewStore.send(.factButtonTapped)
-                    }
+                  Text(fact)
                     .font(.largeTitle)
+                    .multilineTextAlignment(.center)
                     .padding()
-                    .background(Color.black.opacity(0.1))
-                    .cornerRadius(10)
-                    
-                    if viewStore.isLoading {
-                        
-                      ProgressView()
-                    }
-                    else if let fact = viewStore.fact {
-                        
-                      Text(fact)
-                        .font(.largeTitle)
-                        .multilineTextAlignment(.center)
-                        .padding()
-                    }
                 }
             }
         }

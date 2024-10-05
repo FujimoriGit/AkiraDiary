@@ -14,16 +14,18 @@ struct DiaryListFilterFeature {
     // フィルターテーブル監視のCancellable
     struct FilterObserveCancellable: Hashable {}
     
+    @ObservableState
     struct State: Equatable, Sendable {
         
         var viewState = ViewState()
-        var currentFilters: IdentifiedArrayOf<DiaryListFilterItem> {
+        
+        @ObservationStateIgnored var currentFilters: IdentifiedArrayOf<DiaryListFilterItem> {
             
             get { viewState.currentFilters }
             set { viewState.currentFilters = newValue }
         }
         
-        var selectableFilterValues: [DiaryListFilterTarget: [String]] {
+        @ObservationStateIgnored var selectableFilterValues: [DiaryListFilterTarget: [String]] {
             
             get { viewState.selectableFilterValues }
             set { viewState.selectableFilterValues = newValue }
