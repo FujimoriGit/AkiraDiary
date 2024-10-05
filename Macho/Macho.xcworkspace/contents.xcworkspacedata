@@ -7,4 +7,7 @@
    <FileRef
       location = "group:Macho.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:MachoFramework/MachoFramework.xctestplan">
+   </FileRef>
 </Workspace>

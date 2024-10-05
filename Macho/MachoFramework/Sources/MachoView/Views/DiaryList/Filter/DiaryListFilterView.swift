@@ -44,7 +44,7 @@ struct DiaryListFilterView: View {
     
     // MARK: private property
     
-    private let store: StoreOf<DiaryListFilterFeature>
+    @Bindable private var store: StoreOf<DiaryListFilterFeature>
     
     // MARK: initialize method
     
@@ -56,22 +56,20 @@ struct DiaryListFilterView: View {
     // MARK: - view body property
     
     var body: some View {
-        WithViewStore(store, observe: \.viewState) { viewStore in
-            ZStack {
-                GeometryReader { proxy in
-                    Color(asset: CustomColor.dialogBackgroundColor)
-                        .ignoresSafeArea()
-                        .onTapGesture {
-                            viewStore.send(.tappedOutsideArea)
-                        }
-                        .accessibilityAddTraits(.isButton)
-                    createDialogView(viewStore, parentSize: proxy.size)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                }
+        ZStack {
+            GeometryReader { proxy in
+                Color(asset: CustomColor.dialogBackgroundColor)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        store.send(.tappedOutsideArea)
+                    }
+                    .accessibilityAddTraits(.isButton)
+                createDialogView(parentSize: proxy.size)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .onAppear {
-                viewStore.send(.onAppear)
-            }
+        }
+        .onAppear {
+            store.send(.onAppear)
         }
     }
 }
@@ -80,8 +78,7 @@ struct DiaryListFilterView: View {
 
 private extension DiaryListFilterView {
     
-    func createDialogView(_ viewStore: ViewStore<DiaryListFilterFeature.State.ViewState, DiaryListFilterFeature.Action>,
-                          parentSize: CGSize) -> some View {
+    func createDialogView(parentSize: CGSize) -> some View {
         ZStack(alignment: .topTrailing) {
             VStack(spacing: .zero) { // ダイアログエリア
                 Text("日記リストのフィルター設定")
@@ -89,14 +86,14 @@ private extension DiaryListFilterView {
                                   weight: .bold))
                 Spacer()
                     .frame(height: dialogTitlePaddingBottom)
-                createScrollArea(viewStore)
+                createScrollArea()
             }
             .padding(.vertical, dialogPadding)
             .frame(width: parentSize.width - dialogPadding)
             .background(Color(asset: CustomColor.appPrimaryBackgroundColor))
             .borderModifier(cornerRadius: dialogCornerRadius)
             Button(action: { // 閉じるボタン
-                viewStore.send(.tappedCloseButton)
+                store.send(.tappedCloseButton)
             }, label: {
                 Image(systemName: "xmark.circle")
                     .resizable()
@@ -108,7 +105,7 @@ private extension DiaryListFilterView {
         }
     }
     
-    func createScrollArea(_ viewStore: ViewStore<DiaryListFilterFeature.State.ViewState, DiaryListFilterFeature.Action>) -> some View {
+    func createScrollArea() -> some View {
         ScrollView {
             VStack(spacing: .zero) {
                 ForEach(DiaryListFilterTarget.allCases,
@@ -116,10 +113,10 @@ private extension DiaryListFilterView {
                     switch target {
                         
                     case .achievement:
-                        createSelectOnlyItemSectionWithMenu(viewStore, target: target)
+                        createSelectOnlyItemSectionWithMenu(target: target)
                         
                     case .trainingType:
-                        createSelectMultiItemSectionWithMenu(viewStore, target: target)
+                        createSelectMultiItemSectionWithMenu(target: target)
                     }
                     Spacer()
                         .frame(height: filterSectionPaddingBottom)
@@ -131,29 +128,27 @@ private extension DiaryListFilterView {
         .scrollBounceBehavior(.basedOnSize)
     }
     
-    func createSelectOnlyItemSectionWithMenu(_ viewStore: ViewStore<DiaryListFilterFeature.State.ViewState, DiaryListFilterFeature.Action>,
-                                             target: DiaryListFilterTarget) -> some View {
+    func createSelectOnlyItemSectionWithMenu(target: DiaryListFilterTarget) -> some View {
         HStack(spacing: .zero) {
-            createSelectMenu(viewStore, target: target)
+            createSelectMenu(target: target)
             Spacer()
-                .frame(width: filterSelectMenuPaddingTrailing)
-            Text(viewStore.state.currentFilters.first { $0.target == target }?.value ?? "-")
+                .frame(width: 8)
+            Text(store.state.currentFilters.first { $0.target == target }?.value ?? "-")
             Spacer()
-            createClearFilterTargetButton(viewStore, target: target)
+            createClearFilterTargetButton(target: target)
         }
     }
     
-    func createSelectMultiItemSectionWithMenu(_ viewStore: ViewStore<DiaryListFilterFeature.State.ViewState, DiaryListFilterFeature.Action>,
-                                              target: DiaryListFilterTarget) -> some View {
+    func createSelectMultiItemSectionWithMenu(target: DiaryListFilterTarget) -> some View {
         VStack(spacing: .zero) {
             HStack(spacing: .zero) {
-                createSelectMenu(viewStore, target: target)
+                createSelectMenu(target: target)
                 Spacer()
-                createClearFilterTargetButton(viewStore, target: target)
+                createClearFilterTargetButton(target: target)
             }
             Spacer()
                 .frame(height: filterSectionPaddingBottom)
-            ForEach(viewStore.state.currentFilters.filter { $0.target == target }) { filter in
+            ForEach(store.state.currentFilters.filter { $0.target == target }) { filter in
                 HStack(spacing: .zero) {
                     Spacer()
                         .frame(width: filterListItemPaddingLeading)
@@ -164,19 +159,18 @@ private extension DiaryListFilterView {
                     Text(filter.value)
                         .font(.system(size: filterListItemTitleFontSize))
                     Spacer()
-                    createClearFilterTargetButton(viewStore, target: filter.target, selectCase: filter.value)
+                    createClearFilterTargetButton(target: filter.target, selectCase: filter.value)
                 }
                 .padding(.vertical, filterItemPaddingVertical)
             }
         }
     }
     
-    func createSelectMenu(_ viewStore: ViewStore<DiaryListFilterFeature.State.ViewState, DiaryListFilterFeature.Action>,
-                          target: DiaryListFilterTarget) -> some View {
+    func createSelectMenu(target: DiaryListFilterTarget) -> some View {
         Menu {
-            ForEach(viewStore.state.selectableFilterValues[target] ?? [], id: \.self) { selectCase in
+            ForEach(store.state.selectableFilterValues[target] ?? [], id: \.self) { selectCase in
                 Button(action: {
-                    viewStore.send(.tappedFilterMenuItem(target: target, value: selectCase))
+                    store.send(.tappedFilterMenuItem(target: target, value: selectCase))
                 }, label: {
                     Text(selectCase)
                 })
@@ -189,15 +183,14 @@ private extension DiaryListFilterView {
         .frameButtonStyle()
     }
     
-    func createClearFilterTargetButton(_ viewStore: ViewStore<DiaryListFilterFeature.State.ViewState, DiaryListFilterFeature.Action>,
-                                       target: DiaryListFilterTarget,
+    func createClearFilterTargetButton(target: DiaryListFilterTarget,
                                        selectCase: String? = nil) -> some View {
         Button(action: {
             guard let selectCase else {
-                viewStore.send(.tappedFilterTypeDeleteButton(target: target))
+                store.send(.tappedFilterTypeDeleteButton(target: target))
                 return
             }
-            viewStore.send(.tappedFilterItemDeleteButton(target: target, value: selectCase))
+            store.send(.tappedFilterItemDeleteButton(target: target, value: selectCase))
         }, label: {
             Image(systemName: "minus.circle.fill")
                 .resizable()

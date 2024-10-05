@@ -14,7 +14,7 @@ struct DiaryListView: View {
     
     // MARK: - TCA store property
     
-    private var store: StoreOf<DiaryListFeature>
+    @Bindable private var store: StoreOf<DiaryListFeature>
     
     // MARK: - initialize method
     
@@ -53,7 +53,7 @@ struct DiaryListView: View {
     // MARK: - view property
     
     var body: some View {
-        NavigationStackStore(store.scope(state: \.path, action: \.path)) {
+        NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
             createMainView()
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
@@ -67,8 +67,8 @@ struct DiaryListView: View {
         }
         .alert(store: store.scope(state: \.$alert, action: \.alert))
         .transaction { $0.disablesAnimations = false }
-        .fullScreenCover(store: store.scope(state: \.$filterView, action: \.filterView)) {
-            DiaryListFilterView(store: $0)
+        .fullScreenCover(item: $store.scope(state: \.destination, action: \.destination)) {
+            getModalDestination($0)
                 .presentationBackground(.clear)
         }
         .transaction { $0.disablesAnimations = true }
@@ -81,37 +81,35 @@ private extension DiaryListView {
     
     func createMainView() -> some View {
         GeometryReader { geometry in
-            WithViewStore(store, observe: \.viewState) { viewStore in
-                ZStack(alignment: .top) {
-                    VStack(spacing: .zero) {
-                        if !viewStore.isScrolling {
-                            createControlSection(viewStore: viewStore)
-                        }
-                        if viewStore.hasDiaryItems {
-                            createListSection(viewStore: viewStore)
-                        }
-                        else {
-                            createEmptyListView()
-                        }
-                        Spacer()
+            ZStack(alignment: .top) {
+                VStack(spacing: .zero) {
+                    if !store.viewState.isScrolling {
+                        createControlSection()
                     }
-                    if viewStore.isScrolling {
-                        createControlHeaderView(viewStore: viewStore)
+                    if store.viewState.hasDiaryItems {
+                        createListSection()
                     }
+                    else {
+                        createEmptyListView()
+                    }
+                    Spacer()
                 }
-                .toolbar(viewStore.isScrolling ? .hidden : .visible, for: .navigationBar)
-                .onAppear {
-                    viewStore.send(.onAppearView)
+                if store.viewState.isScrolling {
+                    createControlHeaderView()
                 }
+            }
+            .toolbar(store.viewState.isScrolling ? .hidden : .visible, for: .navigationBar)
+            .onAppear {
+                store.send(.onAppearView)
             }
             .frame(width: geometry.size.width,
                    height: geometry.size.height)
         }
     }
     
-    func createControlSection(viewStore: ViewStore<DiaryListFeature.State.ViewState, DiaryListFeature.Action>) -> some View {
+    func createControlSection() -> some View {
         VStack {
-            createControlHeaderView(viewStore: viewStore)
+            createControlHeaderView()
             Spacer()
                 .frame(height: controlSectionContentsPaddingBottom)
             Divider()
@@ -120,7 +118,7 @@ private extension DiaryListView {
         .background(Color(asset: CustomColor.appPrimaryBackgroundColor))
     }
     
-    func createListSection(viewStore: ViewStore<DiaryListFeature.State.ViewState, DiaryListFeature.Action>) -> some View {
+    func createListSection() -> some View {
         TrackableList(store: store.scope(state: \.trackableList, action: \.trackableList)) {
             ForEachStore(store.scope(state: \.diaries,
                                      action: \.diaries)) { store in
@@ -140,19 +138,19 @@ private extension DiaryListView {
             .multilineTextAlignment(.center)
     }
     
-    func createControlHeaderView(viewStore: ViewStore<DiaryListFeature.State.ViewState, DiaryListFeature.Action>) -> some View {
+    func createControlHeaderView() -> some View {
         HStack(spacing: .zero) {
             createFilterButton {
-                viewStore.send(.tappedFilterButton)
+                store.send(.tappedFilterButton)
             }
             Spacer()
             createGraphButton {
-                viewStore.send(.tappedGraphButton)
+                store.send(.tappedGraphButton)
             }
             Spacer()
                 .frame(width: graphButtonPaddingTrailing)
             createNewDiaryButton {
-                viewStore.send(.tappedCreateNewDiaryButton)
+                store.send(.tappedCreateNewDiaryButton)
             }
         }
         .padding(.horizontal, controlSectionPaddingHorizontal)
@@ -199,27 +197,38 @@ private extension DiaryListView {
 
 private extension DiaryListView {
     
-    func getNavigationDestination(_ store: Store<DiaryListFeature.Path.State, DiaryListFeature.Path.Action>) -> some View {
+    func getNavigationDestination(_ store: Store<DiaryListFeature.Path.State,
+                                  DiaryListFeature.Path.Action>) -> some View {
         
-        switch store.withState({ $0 }) {
+        switch store.case {
             
-            // TODO: 実装出来次第正しい画面に変更する
-        case .editScreen:
-            return IfLetStore(store.scope(state: \.editScreen, action: \.editScreen)) {
-                AddContactView(store: $0)
-            }
-        case .createScreen:
-            return IfLetStore(store.scope(state: \.createScreen, action: \.createScreen)) {
-                AddContactView(store: $0)
-            }
-        case .graphScreen:
-            return IfLetStore(store.scope(state: \.graphScreen, action: \.graphScreen)) {
-                AddContactView(store: $0)
-            }
-        case .detailScreen:
-            return IfLetStore(store.scope(state: \.detailScreen, action: \.detailScreen)) {
-                AddContactView(store: $0)
-            }
+        // TODO: 実装出来次第正しい画面に変更する
+        case .editScreen(let editScreenStore):
+            AddContactView(store: editScreenStore)
+            
+        case .createScreen(let createScreenStore):
+            AddContactView(store: createScreenStore)
+            
+        case .graphScreen(let graphScreenStore):
+            AddContactView(store: graphScreenStore)
+            
+        case .detailScreen(let detailScreenStore):
+            AddContactView(store: detailScreenStore)
+        }
+    }
+}
+
+// MARK: - Modal Presentation Route Definition
+
+private extension DiaryListView {
+    
+    func getModalDestination(_ store: Store<DiaryListFeature.Destination.State,
+                             DiaryListFeature.Destination.Action>) -> some View {
+        
+        switch store.case {
+            
+        case .filterScreen(let filterScreenStore):
+            DiaryListFilterView(store: filterScreenStore)
         }
     }
 }

@@ -146,6 +146,7 @@ fileprivate actor RealmActor {
     }
     
     /// RealmDBに保存しているデータを非同期で削除
+    /// - Parameter records: 削除したいレコードの配列
     /// - Parameter filterHandler: 削除するレコードの条件
     /// - Returns: 削除が成功したかどうか
     func delete<T>(where filterHandler: @escaping (T) -> Bool) async -> Bool where T: BaseRealmEntity {

@@ -78,8 +78,8 @@ final class DiaryListViewTests: XCTestCase {
         
         // スクロール画面の表示サイズの高さが800px、スクロールできるサイズの高さが1000pxの状態
         let trackableListState = TrackableListFeature.State(offset: 0,
-                                                            containerSize: CGSize(width: 400, height: 800),
-                                                            contentSize: CGSize(width: 400, height: 1000))
+                                                            listSizeInfo: .init(containerSize: CGSize(width: 400, height: 800),
+                                                                                contentSize: CGSize(width: 400, height: 1000)))
         
         let viewState = DiaryListFeature.State.ViewState(hasDiaryItems: true)
         
@@ -495,26 +495,26 @@ final class DiaryListViewTests: XCTestCase {
         await store.send(.tappedFilterButton) {
             
             // フィルター画面を宛先に追加
-            $0.filterView = DiaryListFilterFeature.State()
+            $0.destination = .filterScreen(DiaryListFilterFeature.State())
         }
         
         // フィルター画面のダイアログ外の領域タップ
-        await store.send(.filterView(.presented(.tappedOutsideArea))) {
+        await store.send(.destination(.presented(.filterScreen(.tappedOutsideArea)))) {
             
-            $0.filterView = nil
+            $0.destination = nil
         }
         
         // フィルターボタンを押下
         await store.send(.tappedFilterButton) {
             
             // フィルター画面を宛先に追加
-            $0.filterView = DiaryListFilterFeature.State()
+            $0.destination = .filterScreen(DiaryListFilterFeature.State())
         }
         
         // フィルター画面の閉じるボタンタップ
-        await store.send(.filterView(.presented(.tappedCloseButton))) {
+        await store.send(.destination(.presented(.filterScreen(.tappedCloseButton)))) {
             
-            $0.filterView = nil
+            $0.destination = nil
         }
     }
 }
