@@ -44,7 +44,8 @@ extension DiaryListItemClient: DependencyKey {
                   message: "reload message",
                   date: Date(),
                   isWin: false,
-                  trainingList: [])
+                  trainingList: [],
+                  tagList: [])
         ]
     } deleteItem: { _ in
         // nop
@@ -58,7 +59,8 @@ extension DiaryListItemClient: DependencyKey {
                   message: "reload message",
                   date: Date(timeIntervalSince1970: .zero),
                   isWin: false,
-                  trainingList: [""])
+                  trainingList: [],
+                  tagList: [])
         ]
     } deleteItem: { _ in
         // nop

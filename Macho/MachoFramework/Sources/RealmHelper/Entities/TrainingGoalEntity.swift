@@ -12,7 +12,7 @@ public struct TrainingGoalEntity: BaseRealmEntity {
     
     public let id: UUID
     /// 目標種目
-    public let goalType: TrainingTypeEntity
+    public let goalType: TrainingTypeEntity?
     /// 1セットの回数
     public let numberOfSets: Int
     /// セット数
@@ -41,7 +41,15 @@ public struct TrainingGoalEntity: BaseRealmEntity {
     public init(realmObject: TrainingGoalRealmObject) {
         
         id = realmObject.id
-        goalType = TrainingTypeEntity(realmObject: realmObject.goalType)
+        
+        if let goalType = realmObject.goalType {
+            
+            self.goalType = TrainingTypeEntity(realmObject: goalType)
+        }
+        else {
+            
+            self.goalType = nil
+        }
         numberOfSets = realmObject.numberOfSets
         setCount = realmObject.setCount
         startTime = realmObject.startTime
@@ -51,7 +59,7 @@ public struct TrainingGoalEntity: BaseRealmEntity {
     
     public func toRealmObject() -> TrainingGoalRealmObject {
         
-        return TrainingGoalRealmObject(id: id, goalType: goalType.toRealmObject(), numberOfSets: numberOfSets,
+        return TrainingGoalRealmObject(id: id, goalType: goalType?.toRealmObject(), numberOfSets: numberOfSets,
                                        setCount: setCount, startTime: startTime, endTime: endTime,
                                        isSuccess: isSuccess)
     }
@@ -60,14 +68,14 @@ public struct TrainingGoalEntity: BaseRealmEntity {
 public class TrainingGoalRealmObject: Object {
     
     @Persisted(primaryKey: true) var id: UUID
-    @Persisted var goalType: TrainingTypeRealmObject
+    @Persisted var goalType: TrainingTypeRealmObject?
     @Persisted var numberOfSets: Int
     @Persisted var setCount: Int
     @Persisted var startTime: Date?
     @Persisted var endTime: Date?
     @Persisted var isSuccess: Bool?
     
-    convenience init(id: UUID, goalType: TrainingTypeRealmObject, numberOfSets: Int,
+    convenience init(id: UUID, goalType: TrainingTypeRealmObject?, numberOfSets: Int,
                      setCount: Int, startTime: Date?, endTime: Date?, isSuccess: Bool?) {
         
         self.init()

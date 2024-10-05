@@ -25,7 +25,7 @@ struct DiaryListFilterFeature {
             set { viewState.currentFilters = newValue }
         }
         
-        @ObservationStateIgnored var selectableFilterValues: [DiaryListFilterTarget: [String]] {
+        @ObservationStateIgnored var selectableFilterValues: [DiaryListFilterItem] {
             
             get { viewState.selectableFilterValues }
             set { viewState.selectableFilterValues = newValue }
@@ -36,7 +36,7 @@ struct DiaryListFilterFeature {
             /// フィルターリスト
             var currentFilters = IdentifiedArrayOf<DiaryListFilterItem>()
             /// 選択可能なフィルターの値
-            var selectableFilterValues: [DiaryListFilterTarget: [String]] = [:]
+            var selectableFilterValues: [DiaryListFilterItem] = []
         }
     }
     
@@ -53,21 +53,22 @@ struct DiaryListFilterFeature {
         /// フィルター種別の削除ボタンタップ
         case tappedFilterTypeDeleteButton(target: DiaryListFilterTarget)
         /// フィルター種別の項目削除ボタンタップ
-        case tappedFilterItemDeleteButton(target: DiaryListFilterTarget, value: String)
+        case tappedFilterItemDeleteButton(filter: DiaryListFilterItem)
         /// フィルターメニューの項目タップ
-        case tappedFilterMenuItem(target: DiaryListFilterTarget, value: String)
+        case tappedFilterMenuItem(filter: DiaryListFilterItem)
         
         // MARK: Effect Action
         
         /// フィルターの更新を検知
         case receiveDidChangeFilterItems([DiaryListFilterItem])
         /// 選択可能なフィルターの値取得完了
-        case receiveFetchSelectableFilterRes([DiaryListFilterTarget: [String]])
+        case receiveFetchSelectableFilterRes([DiaryListFilterItem])
     }
     
     @Dependency(\.diaryListFilterApi) var diaryListFilterApi
+    @Dependency(\.trainingTypeApi) var trainingTypeApi
+    @Dependency(\.trainingTagApi) var trainingTagApi
     @Dependency(\.dismiss) var dismiss
-    @Dependency(\.uuid) var uuid
     
     var body: some ReducerOf<Self> {
         
@@ -91,17 +92,17 @@ struct DiaryListFilterFeature {
                 logger.info("tappedFilterTypeDeleteButton(type: \(type))")
                 return deleteFilterType(currentFilters: state.currentFilters, type: type)
                 
-            case .tappedFilterItemDeleteButton(let target, let value):
-                logger.info("tappedFilterItemDeleteButton(target: \(target), value: \(value)).")
+            case .tappedFilterItemDeleteButton(let filter):
+                logger.info("tappedFilterItemDeleteButton(filter: \(filter)).")
                 return deleteFilterItem(currentFilters: state.currentFilters,
-                                        type: target,
-                                        value: value)
+                                        type: filter.target,
+                                        value: filter.value)
                 
-            case .tappedFilterMenuItem(let target, let value):
-                logger.info("tappedFilterMenuItem(target: \(target), value: \(value))")
+            case .tappedFilterMenuItem(let filter):
+                logger.info("tappedFilterMenuItem(filter: \(filter))")
                 return .run { [state] _ in
                     
-                    await addFilter(currentFilters: state.currentFilters, target: target, value: value)
+                    await addFilter(currentFilters: state.currentFilters, targetFilter: filter)
                 }
                 
             case .receiveDidChangeFilterItems(let currentFilters):
@@ -110,7 +111,7 @@ struct DiaryListFilterFeature {
                 return .none
                 
             case .receiveFetchSelectableFilterRes(let selectableFilterValues):
-                logger.info("receiveFetchSelectableFilterValuesResponse(selectableFilterValues: \(selectableFilterValues))")
+                logger.info("receiveFetchSelectableFilterRes(selectableFilterValues: \(selectableFilterValues))")
                 state.selectableFilterValues = selectableFilterValues
                 return .none
             }
@@ -171,60 +172,64 @@ private extension DiaryListFilterFeature {
     
     /// フィルターの追加もしくはすでに保存しているフィルターの更新を行う
     func addFilter(currentFilters: IdentifiedArrayOf<DiaryListFilterItem>,
-                   target: DiaryListFilterTarget,
-                   value: String) async {
+                   targetFilter: DiaryListFilterItem) async {
         
-        let sameTargetId = currentFilters.first { $0.target == target }?.id
-        if sameTargetId == nil || target.isMultiSelectFilter {
+        // すでに同じフィルターが登録されている場合は、フィルターの追加処理は行わない
+        if currentFilters.contains(where: { $0 == targetFilter }) {
             
-            // すでに同じフィルターが登録されている場合は、フィルターの追加処理は行わない
-            if currentFilters.contains(where: { $0.target == target && $0.value == value }) {
-                
-                logger.debug("already exits same filter(target: \(target), value: \(value)).")
-                return
-            }
+            logger.debug("already exits same filter(\(targetFilter)).")
+            return
+        }
+        
+        let hasSameTarget = currentFilters.contains { $0.target == targetFilter.target }
+        if !hasSameTarget || targetFilter.isMultiSelectFilter {
             
             // 複数選択可能な場合または、まだ登録されていないフィルター種別の場合は、
             // 新規のフィルターとしてDBに保存する
-            guard await diaryListFilterApi.addFilter(DiaryListFilterItem(id: uuid(),
-                                                                         target: target,
-                                                                         value: value)) else {
+            guard await diaryListFilterApi.addFilter(targetFilter) else {
                 
-                logger.error("did fail add filter(target: \(target), value: \(value)).")
+                logger.error("did fail add filter(\(targetFilter)).")
                 return
             }
             
-            logger.debug("added filter(target: \(target), value: \(value)).")
+            logger.debug("added filter(\(targetFilter)).")
         }
         else {
             
             // それ以外の場合は、すでに登録されている同じフィルター種別の値を更新する
-            guard let sameTargetId,
-                  await diaryListFilterApi.updateFilter(DiaryListFilterItem(id: sameTargetId,
-                                                                            target: target,
-                                                                            value: value)) else {
+            guard await diaryListFilterApi.updateFilter(targetFilter) else {
                 
-                logger.error("did fail update filter(target: \(target), value: \(value)).")
+                logger.error("did fail update filter(\(targetFilter)).")
                 return
             }
             
-            logger.debug("updated filter(target: \(target), value: \(value)).")
+            logger.debug("updated filter(\(targetFilter)).")
         }
     }
     
     /// アプリに登録しているトレーニング種目を取得する
-    func fetchSelectableFilterValues() async -> [DiaryListFilterTarget: [String]] {
-        
-        var resultDic: [DiaryListFilterTarget: [String]] = [:]
-        
+    func fetchSelectableFilterValues() async -> [DiaryListFilterItem] {
+                
         // トレーニング実績のフィルター値を追加
-        resultDic.updateValue(TrainingAchievement.allCases.map(\.title), forKey: .achievement)
+        let trainingAchievementList = TrainingAchievement.allCases.map {
+            
+            return DiaryListFilterItem(target: .achievement,
+                                       filterItemId: $0.targetId,
+                                       value: $0.title)
+        }
         
         // トレーニング種目のフィルター値を追加
-        // TODO: 藤森氏の日記作成画面で作るトレーニング種目TBLから取得する想定
-        resultDic.updateValue(["腹筋", "ダンベルプレス"], forKey: .trainingType)
+        let trainingTypeList = await trainingTypeApi.fetchAllType().map {
+            
+            return DiaryListFilterItem(target: .trainingType, filterItemId: $0.id, value: $0.name)
+        }
         
-        return resultDic
+        let trainingTagList = await trainingTagApi.fetchAll().map {
+            
+            return DiaryListFilterItem(target: .tag, filterItemId: $0.id, value: $0.tagName)
+        }
+        
+        return trainingAchievementList + trainingTypeList + trainingTagList
     }
     
     /// フィルター画面終了時の終了時の処理
