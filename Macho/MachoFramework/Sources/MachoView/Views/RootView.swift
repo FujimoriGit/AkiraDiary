@@ -15,7 +15,7 @@ public struct RootView: View {
     }
     
     public var body: some View {
-        DiaryListView(store: Store(initialState: DiaryListFeature.State()) { DiaryListFeature()})
+        DiaryListView(store: Store(initialState: DiaryListFeature.State()) { DiaryListFeature() })
     }
 }
 

@@ -14,11 +14,10 @@ struct TrackableListFeature: Reducer, Sendable {
     struct State: Equatable {
         
         var offset: CGFloat = .zero
-        var containerSize: CGSize = .zero
-        var contentSize: CGSize = .zero
+        var listSizeInfo = TrackableListSizeInfo()
         
         /// スクロール検知のバッファ値
-        static private let bounceBufferValue: CGFloat = -15
+        private static let bounceBufferValue: CGFloat = -15
         
         /// スクロール中かどうか
         var isScrolling: Bool {
@@ -29,7 +28,7 @@ struct TrackableListFeature: Reducer, Sendable {
         /// 下部でバウンスしているかどうか
         var isBouncedAtBottom: Bool {
             
-            return isScrolling && 0 < abs(offset) + containerSize.height - contentSize.height
+            return isScrolling && 0 < abs(offset) + listSizeInfo.containerSize.height - listSizeInfo.contentSize.height
         }
     }
     
@@ -38,9 +37,9 @@ struct TrackableListFeature: Reducer, Sendable {
         /// スクロールした際のAction
         case onScroll(offset: CGFloat)
         /// スクロール画面が表示された際のAction
-        case onAppearScrollView(container: CGSize, content: CGSize)
+        case onAppearScrollView(size: TrackableListSizeInfo)
         /// スクロール画面のコンテンツの大きさに変更があった際のAction
-        case onChangeScrollViewContentSize(container: CGSize, content: CGSize)
+        case onChangeScrollViewContentSize(size: TrackableListSizeInfo)
     }
     
     var body: some ReducerOf<Self> {
@@ -53,18 +52,24 @@ struct TrackableListFeature: Reducer, Sendable {
                 state.offset = offset
                 return .none
                 
-            case .onAppearScrollView(container: let container, content: let content):
-                state.containerSize = container
-                state.contentSize = content
+            case .onAppearScrollView(let size):
+                state.listSizeInfo = size
                 return .none
                 
-            case .onChangeScrollViewContentSize(container: let container, content: let content):
-                state.containerSize = container
-                state.contentSize = content
+            case .onChangeScrollViewContentSize(let size):
+                state.listSizeInfo = size
                 return .none
             }
         }
     }
+}
+
+struct TrackableListSizeInfo: Equatable {
+    
+    /// スクロール画面のサイズ
+    var containerSize: CGSize = .zero
+    /// スクロールコンテンツのサイズ
+    var contentSize: CGSize = .zero
 }
 
 struct TrackableList<Content>: View where Content: View {
@@ -97,16 +102,19 @@ struct TrackableList<Content>: View where Content: View {
                     .background {
                         GeometryReader { inside in
                             Color.clear.onChange(of: inside.size) {
-                                viewStore.send(.onChangeScrollViewContentSize(container: outside.size,
-                                                                              content: inside.size), animation: .default)
+                                viewStore.send(
+                                    .onChangeScrollViewContentSize(size: .init(containerSize: outside.size,
+                                                                               contentSize: inside.size)),
+                                    animation: .default)
                             }
                         }
                     }
                     .background {
                         GeometryReader { inside in
                             Color.clear.onAppear {
-                                viewStore.send(.onAppearScrollView(container: outside.size,
-                                                                   content: inside.size))
+                                viewStore.send(
+                                    .onAppearScrollView(size: .init(containerSize: outside.size,
+                                                                    contentSize: inside.size)))
                             }
                         }
                     }
@@ -130,29 +138,31 @@ struct ScrollOffsetPreferenceKey: PreferenceKey {
     }
 }
 
+// MARK: - preview
+
 #Preview {
+    TrackablePreviewView()
+}
+
+struct TrackablePreviewView: View {
     
-    struct TrackablePreviewView: View {
-        
-        @State var list = [Int]()
-        @State var offset = CGFloat.zero
-        
-        var body: some View {
-            VStack(spacing: .zero) {
-                Button(action: {
-                    list.append((list.last ?? .zero) + 1)
-                }, label: {
-                    Text("Increment Button")
-                })
-                TrackableList(store: Store(initialState: TrackableListFeature.State(), reducer: { TrackableListFeature() })) {
-                    ForEach(list, id: \.self) { index in
-                        Text("index: \(index)")
-                    }
+    @State private var list = [Int]()
+    @State private var offset = CGFloat.zero
+    
+    var body: some View {
+        VStack(spacing: .zero) {
+            Button(action: {
+                list.append((list.last ?? .zero) + 1)
+            }, label: {
+                Text("Increment Button")
+            })
+            TrackableList(store: Store(initialState: TrackableListFeature.State(),
+                                       reducer: { TrackableListFeature() })) {
+                ForEach(list, id: \.self) { index in
+                    Text("index: \(index)")
                 }
-                Spacer()
             }
+            Spacer()
         }
     }
-    
-    return TrackablePreviewView()
 }
