@@ -35,6 +35,8 @@ struct DiaryListFilterView: View {
     private let dialogPadding: CGFloat = 16
     private let filterListItemPaddingLeading: CGFloat = 20
     private let listCircleIconPaddingTrailing: CGFloat = 8
+    private let filterItemPaddingVertical: CGFloat = 4
+    private let filterSelectMenuPaddingTrailing: CGFloat = 8
     
     // MARK: radius property
     
@@ -62,6 +64,7 @@ struct DiaryListFilterView: View {
                         .onTapGesture {
                             viewStore.send(.tappedOutsideArea)
                         }
+                        .accessibilityAddTraits(.isButton)
                     createDialogView(viewStore, parentSize: proxy.size)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
@@ -86,26 +89,7 @@ private extension DiaryListFilterView {
                                   weight: .bold))
                 Spacer()
                     .frame(height: dialogTitlePaddingBottom)
-                ScrollView {
-                    VStack(spacing: .zero) {
-                        ForEach(DiaryListFilterTarget.allCases,
-                                id: \.hashValue) { target in
-                            switch target {
-                                
-                            case .achievement:
-                                createSelectOnlyItemSectionWithMenu(viewStore, target: target)
-                                
-                            case .trainingType:
-                                createSelectMultiItemSectionWithMenu(viewStore, target: target)
-                            }
-                            Spacer()
-                                .frame(height: filterSectionPaddingBottom)
-                        }
-                                .padding(.horizontal, dialogPadding)
-                    }
-                }
-                .frame(maxHeight: filterListMaxHeight)
-                .scrollBounceBehavior(.basedOnSize)
+                createScrollArea(viewStore)
             }
             .padding(.vertical, dialogPadding)
             .frame(width: parentSize.width - dialogPadding)
@@ -124,12 +108,35 @@ private extension DiaryListFilterView {
         }
     }
     
+    func createScrollArea(_ viewStore: ViewStore<DiaryListFilterFeature.State.ViewState, DiaryListFilterFeature.Action>) -> some View {
+        ScrollView {
+            VStack(spacing: .zero) {
+                ForEach(DiaryListFilterTarget.allCases,
+                        id: \.hashValue) { target in
+                    switch target {
+                        
+                    case .achievement:
+                        createSelectOnlyItemSectionWithMenu(viewStore, target: target)
+                        
+                    case .trainingType:
+                        createSelectMultiItemSectionWithMenu(viewStore, target: target)
+                    }
+                    Spacer()
+                        .frame(height: filterSectionPaddingBottom)
+                }
+                        .padding(.horizontal, dialogPadding)
+            }
+        }
+        .frame(maxHeight: filterListMaxHeight)
+        .scrollBounceBehavior(.basedOnSize)
+    }
+    
     func createSelectOnlyItemSectionWithMenu(_ viewStore: ViewStore<DiaryListFilterFeature.State.ViewState, DiaryListFilterFeature.Action>,
                                              target: DiaryListFilterTarget) -> some View {
         HStack(spacing: .zero) {
             createSelectMenu(viewStore, target: target)
             Spacer()
-                .frame(width: 8)
+                .frame(width: filterSelectMenuPaddingTrailing)
             Text(viewStore.state.currentFilters.first { $0.target == target }?.value ?? "-")
             Spacer()
             createClearFilterTargetButton(viewStore, target: target)
@@ -159,7 +166,7 @@ private extension DiaryListFilterView {
                     Spacer()
                     createClearFilterTargetButton(viewStore, target: filter.target, selectCase: filter.value)
                 }
-                .padding(.vertical, 4)
+                .padding(.vertical, filterItemPaddingVertical)
             }
         }
     }
@@ -204,15 +211,20 @@ private extension DiaryListFilterView {
 // MARK: - preview section
 
 #Preview {
+    // priview内でprivateが使用できないため、警告を無視する
+    // swiftlint:disable:next private_subject
     let publisher = PassthroughSubject<[DiaryListFilterItem], Never>()
-    var currentFilters = [DiaryListFilterItem(id: UUID(), target: .achievement, value: "達成していない"),
-                          DiaryListFilterItem(id: UUID(), target: .trainingType, value: "腹筋")]
+    var currentFilters = [
+        DiaryListFilterItem(id: UUID(), target: .achievement, value: "達成していない"),
+        DiaryListFilterItem(id: UUID(), target: .trainingType, value: "腹筋")
+    ]
+    
     return DiaryListFilterView(store: Store(initialState: DiaryListFilterFeature.State(),
                                             reducer: { DiaryListFilterFeature() },
                                             withDependencies: {
         $0.diaryListFilterApi = DiaryListFilterClient(addFilter: { filter in
             
-            currentFilters = currentFilters + [filter]
+            currentFilters += [filter]
             publisher.send(currentFilters)
             return true
         }, updateFilter: { filter in

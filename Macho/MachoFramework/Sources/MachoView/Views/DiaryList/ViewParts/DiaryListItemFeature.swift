@@ -12,11 +12,27 @@ struct DiaryListItemFeature: Reducer, Sendable {
     
     struct State: Equatable, Identifiable, Sendable {
         
-        let id = UUID()
+        init(id: UUID = UUID(), title: String, message: String, date: Date, isWin: Bool, trainingList: [String]) {
+            
+            self.id = id
+            self.title = title
+            self.message = message
+            self.date = date
+            self.isWin = isWin
+            self.trainingList = trainingList
+        }
+        
+        let id: UUID
+        /// 日記のタイトル
         let title: String
+        /// 日記のメッセージ
         let message: String
+        /// 日記の作成日付
         let date: Date
+        /// 目標達成したかどうか
         let isWin: Bool
+        /// 日記に登録したトレーニング種別
+        let trainingList: [String]
     }
     
     enum Action: Sendable {
@@ -31,7 +47,8 @@ struct DiaryListItemFeature: Reducer, Sendable {
     
     var body: some ReducerOf<Self> {
         
-        Reduce { state, action in
+        Reduce { _, action in
+            
             switch action {
                 
             case .tappedDiaryItem:
@@ -43,6 +60,7 @@ struct DiaryListItemFeature: Reducer, Sendable {
             case .editItemSwipeAction:
                 logger.info("editItemSwipeAction")
             }
+            
             return .none
         }
     }

@@ -46,6 +46,12 @@ enum TrainingAchievement: String, CaseIterable {
     /// 達成
     case achieved
     
+    init?(value: String) {
+        
+        guard let achievement = Self.allCases.first(where: { value == $0.title }) else { return nil }
+        self = achievement
+    }
+    
     var title: String {
         
         switch self {
