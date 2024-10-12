@@ -11,6 +11,7 @@ import RealmSwift
 public struct RealmAccessor: RealmAccessible {
         
     // MARK: - RealmAccessor initialize method
+    
     public init() {
         // nop
     }

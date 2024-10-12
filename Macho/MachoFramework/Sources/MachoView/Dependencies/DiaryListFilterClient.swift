@@ -11,7 +11,7 @@ import Foundation
 import RealmHelper
 
 struct DiaryListFilterClient {
-    
+        
     /// 日記リストのフィルター追加
     /// - Parameters:
     ///  - filter: 追加するフィルター
@@ -39,32 +39,7 @@ struct DiaryListFilterClient {
 
 extension DiaryListFilterClient: DependencyKey {
     
-    static var liveValue = DiaryListFilterClient {
-        
-        return await RealmAccessor().insert(records: [
-            DiaryListFilterEntity(id: $0.id,
-                                  filterTarget: $0.target.rawValue,
-                                  filterId: $0.filterItemId,
-                                  filterValue: $0.value)
-        ])
-    } updateFilter: { filter in
-        
-        // filterValueを更新する辞書を生成
-        let updateValue = ["id": filter.id, "filterValue": filter.value]
-        return await RealmAccessor().update(type: DiaryListFilterEntity.self, value: updateValue)
-    } deleteFilters: { targets in
-        
-        return await RealmAccessor().delete { (entity: DiaryListFilterEntity) in
-            
-            return targets.contains {
-                
-                return $0.target.rawValue == entity.filterTarget && $0.value == entity.filterValue
-            }
-        }
-    } fetchFilterList: {
-        
-        return convertFilterEntityToItem(await RealmAccessor().read())
-    } getFilterListObserver: {
+    static var liveValue = createCustomValue(RealmAccessor()) {
         
         let executor = DiaryListFilterEntity.executor
         executor.startObservation()
@@ -88,29 +63,69 @@ extension DiaryListFilterClient: DependencyKey {
         return PassthroughSubject<[DiaryListFilterItem], Never>().eraseToAnyPublisher()
     }
     
-    static func getFetchOnlyClientForTest(_ expected: [DiaryListFilterItem],
-                                          observer: AnyPublisher<[DiaryListFilterItem], Never> = PassthroughSubject<[DiaryListFilterItem], Never>().eraseToAnyPublisher()) -> DiaryListFilterClient {
+    static func createCustomValue(_ realm: RealmAccessible,
+                                  observer: (() -> AnyPublisher<[DiaryListFilterItem], Never>)? = nil)
+    -> DiaryListFilterClient {
         
-        return DiaryListFilterClient { _ in 
+        return DiaryListFilterClient {
             
-            return true
-        } updateFilter: { _ in
+            return await insertFilter(realm, filter: $0)
+        } updateFilter: {
             
-            return true
-        } deleteFilters: { _ in
+            return await updateFilterValue(realm, filter: $0)
+        } deleteFilters: {
             
-            return true
+            return await deleteFilters(realm, targets: $0)
         } fetchFilterList: {
             
-            return expected
+            return await fetchFilters(realm)
         } getFilterListObserver: {
             
-            return observer
+            return observer?() ?? PassthroughSubject<[DiaryListFilterItem], Never>().eraseToAnyPublisher()
         }
     }
 }
 
 private extension DiaryListFilterClient {
+    
+    // 指定のフィルターの保存
+    static func insertFilter(_ realm: RealmAccessible = RealmAccessor(), filter: DiaryListFilterItem) async -> Bool {
+        
+        return await realm.insert(records: [
+            DiaryListFilterEntity(id: filter.id,
+                                  filterTarget: filter.target.rawValue,
+                                  filterId: filter.filterItemId,
+                                  filterValue: filter.value)
+        ])
+    }
+    
+    // 指定のフィルターの更新
+    static func updateFilterValue(_ realm: RealmAccessible = RealmAccessor(),
+                                  filter: DiaryListFilterItem) async -> Bool {
+        
+        // filterValueを更新する辞書を生成
+        let updateValue = ["id": filter.id, "filterValue": filter.value]
+        return await realm.update(type: DiaryListFilterEntity.self, value: updateValue)
+    }
+    
+    // 指定のフィルターの削除
+    static func deleteFilters(_ realm: RealmAccessible = RealmAccessor(),
+                              targets: [DiaryListFilterItem]) async -> Bool {
+        
+        return await realm.delete { (entity: DiaryListFilterEntity) in
+            
+            return targets.contains {
+                
+                return $0.target.rawValue == entity.filterTarget && $0.value == entity.filterValue
+            }
+        }
+    }
+    
+    // 現在登録しているフィルターの取得
+    static func fetchFilters(_ realm: RealmAccessible = RealmAccessor()) async -> [DiaryListFilterItem] {
+        
+        return convertFilterEntityToItem(await realm.read(where: nil))
+    }
     
     static func convertFilterEntityToItem(_ entities: [DiaryListFilterEntity]) -> [DiaryListFilterItem] {
         

@@ -6,6 +6,7 @@
 //
 
 import ComposableArchitecture
+import RealmHelper
 import XCTest
 
 @testable import MachoView
@@ -17,6 +18,14 @@ final class DiaryListViewTests: XCTestCase {
         
         case loadingError
     }
+    
+    // フィルターID
+    private static let achievementId = UUID(DiaryListFilterTarget.achievement.num)
+    private static let absTrainingId = UUID()
+    private static let squatTrainingId = UUID()
+    private static let plunkTrainingId = UUID()
+    private static let benchPressTrainingId = UUID()
+    private static let tagId = UUID()
     
     // 日記リストItemのインスタンス生成時に使用するUUID
     private let firstUuid = UUID()
@@ -131,7 +140,7 @@ final class DiaryListViewTests: XCTestCase {
     func testOnAppearView() async {
         
         let expectedItem = DiaryListItemFeature.State(title: "test", message: "test message", date: Date(), isWin: false, trainingList: [], tagList: [])
-        let receivedFilters = [DiaryListFilterItem(target: .achievement, filterItemId: UUID(), value: "達成していない")]
+        let receivedFilters = [DiaryListFilterItem(target: .achievement, filterItemId: Self.achievementId, value: "達成していない")]
         
         let store = TestStore(initialState: DiaryListFeature.State(), reducer: { DiaryListFeature() }) {
             
@@ -139,7 +148,7 @@ final class DiaryListViewTests: XCTestCase {
                 
                 return [expectedItem]
             }, deleteItem: { _ in })
-            $0.diaryListFilterApi = DiaryListFilterClient.getFetchOnlyClientForTest(receivedFilters)
+            $0.diaryListFilterApi = .createCustomValue(getFilterMockRealm(receivedFilters))
             $0.date = DateGenerator({ Date() })
         }
         
@@ -175,7 +184,7 @@ final class DiaryListViewTests: XCTestCase {
     @MainActor
     func testOnAppearViewWithFailFetchItems() async {
         
-        let receivedFilters = [DiaryListFilterItem(target: .achievement, filterItemId: UUID(), value: "達成していない")]
+        let receivedFilters = [DiaryListFilterItem(target: .achievement, filterItemId: Self.achievementId, value: "達成していない")]
         
         let store = TestStore(initialState: DiaryListFeature.State(), reducer: { DiaryListFeature() }) {
             
@@ -183,7 +192,7 @@ final class DiaryListViewTests: XCTestCase {
                 
                 throw TestError.loadingError
             }, deleteItem: { _ in })
-            $0.diaryListFilterApi = DiaryListFilterClient.getFetchOnlyClientForTest(receivedFilters)
+            $0.diaryListFilterApi = .createCustomValue(getFilterMockRealm(receivedFilters))
             $0.date = DateGenerator({ Date() })
         }
         
@@ -217,9 +226,6 @@ final class DiaryListViewTests: XCTestCase {
     @MainActor
     func testOnAppearViewWithAlreadyHasItems() async {
         
-        let achievementId = UUID(TrainingAchievement.notAchieved.rawValue)
-        let absTrainingId = UUID()
-        
         let firstDate = Date()
         guard let secondDate = Calendar.current.date(byAdding: .second, value: 1, to: firstDate),
               let thirdDate = Calendar.current.date(byAdding: .second, value: 1, to: secondDate) else {
@@ -228,27 +234,27 @@ final class DiaryListViewTests: XCTestCase {
             return
         }
         
-        let expectedItem = DiaryListItemFeature.State(title: "test2", message: "test message", date: secondDate, isWin: false, trainingList: [absTrainingId], tagList: [])
+        let expectedItem = DiaryListItemFeature.State(title: "test2", message: "test message", date: secondDate, isWin: false, trainingList: [Self.absTrainingId], tagList: [])
         
         let expectedFilteredDiaries = IdentifiedArray(uniqueElements: [
-            DiaryListItemFeature.State(id: thirdUuid, title: "test3", message: "", date: thirdDate, isWin: false, trainingList: [absTrainingId], tagList: []),
-            DiaryListItemFeature.State(id: firstUuid, title: "test1", message: "", date: firstDate, isWin: false, trainingList: [absTrainingId], tagList: [])
+            DiaryListItemFeature.State(id: thirdUuid, title: "test3", message: "", date: thirdDate, isWin: false, trainingList: [Self.absTrainingId], tagList: []),
+            DiaryListItemFeature.State(id: firstUuid, title: "test1", message: "", date: firstDate, isWin: false, trainingList: [Self.absTrainingId], tagList: [])
         ])
         
         let expectedLoadedDiaries = IdentifiedArray(uniqueElements: [
-            DiaryListItemFeature.State(id: thirdUuid, title: "test3", message: "", date: thirdDate, isWin: false, trainingList: [absTrainingId], tagList: []),
+            DiaryListItemFeature.State(id: thirdUuid, title: "test3", message: "", date: thirdDate, isWin: false, trainingList: [Self.absTrainingId], tagList: []),
             expectedItem,
-            DiaryListItemFeature.State(id: firstUuid, title: "test1", message: "", date: firstDate, isWin: false, trainingList: [absTrainingId], tagList: [])
+            DiaryListItemFeature.State(id: firstUuid, title: "test1", message: "", date: firstDate, isWin: false, trainingList: [Self.absTrainingId], tagList: [])
         ])
         
         let diariesState: IdentifiedArray<UUID, DiaryListItemFeature.State> = [
-            DiaryListItemFeature.State(id: firstUuid, title: "test1", message: "", date: firstDate, isWin: false, trainingList: [absTrainingId], tagList: []),
-            DiaryListItemFeature.State(id: thirdUuid, title: "test3", message: "", date: thirdDate, isWin: false, trainingList: [absTrainingId], tagList: [])
+            DiaryListItemFeature.State(id: firstUuid, title: "test1", message: "", date: firstDate, isWin: false, trainingList: [Self.absTrainingId], tagList: []),
+            DiaryListItemFeature.State(id: thirdUuid, title: "test3", message: "", date: thirdDate, isWin: false, trainingList: [Self.absTrainingId], tagList: [])
          ]
         
         let receivedFilters = [
-            DiaryListFilterItem(target: .achievement, filterItemId: achievementId, value: "達成していない"),
-            DiaryListFilterItem(target: .trainingType, filterItemId: absTrainingId, value: "腹筋")
+            DiaryListFilterItem(target: .achievement, filterItemId: Self.achievementId, value: "達成していない"),
+            DiaryListFilterItem(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋")
         ]
                 
         let store = TestStore(initialState: DiaryListFeature.State(diaries: diariesState),
@@ -258,7 +264,7 @@ final class DiaryListViewTests: XCTestCase {
                 
                 return [expectedItem]
             }, deleteItem: { _ in })
-            $0.diaryListFilterApi = DiaryListFilterClient.getFetchOnlyClientForTest(receivedFilters)
+            $0.diaryListFilterApi = .createCustomValue(getFilterMockRealm(receivedFilters))
             $0.date = DateGenerator({ Date() })
         }
         
@@ -294,23 +300,16 @@ final class DiaryListViewTests: XCTestCase {
     // フィルターにヒットする日記がないケース
     @MainActor
     func testOnAppearViewWithNoHitsFilter() async {
-        
-        let achievementId = UUID(TrainingAchievement.notAchieved.rawValue)
-        let absTrainingId = UUID()
-        let squatTrainingId = UUID()
-        let plunkTrainingId = UUID()
-        let benchPressTrainingId = UUID()
-        let tagId = UUID()
                 
         let receivedItem = [DiaryListItemFeature.State(title: "test1", message: "test message", date: Date(), isWin: true, trainingList: [], tagList: []),
-                            DiaryListItemFeature.State(title: "test2", message: "test message", date: Date(), isWin: false, trainingList: [plunkTrainingId], tagList: []),
-                            DiaryListItemFeature.State(title: "test3", message: "test message", date: Date(), isWin: false, trainingList: [benchPressTrainingId], tagList: [])]
+                            DiaryListItemFeature.State(title: "test2", message: "test message", date: Date(), isWin: false, trainingList: [Self.plunkTrainingId], tagList: []),
+                            DiaryListItemFeature.State(title: "test3", message: "test message", date: Date(), isWin: false, trainingList: [Self.benchPressTrainingId], tagList: [])]
         
         let receivedFilters = [
-            DiaryListFilterItem(target: .achievement, filterItemId: achievementId, value: "達成していない"),
-            DiaryListFilterItem(target: .trainingType, filterItemId: absTrainingId, value: "腹筋"),
-            DiaryListFilterItem(target: .trainingType, filterItemId: squatTrainingId, value: "スクワット"),
-            DiaryListFilterItem(target: .tag, filterItemId: tagId, value: "元気")
+            DiaryListFilterItem(target: .achievement, filterItemId: Self.achievementId, value: "達成していない"),
+            DiaryListFilterItem(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋"),
+            DiaryListFilterItem(target: .trainingType, filterItemId: Self.squatTrainingId, value: "スクワット"),
+            DiaryListFilterItem(target: .tag, filterItemId: Self.tagId, value: "元気")
         ]
                 
         let store = TestStore(initialState: DiaryListFeature.State(),
@@ -320,7 +319,7 @@ final class DiaryListViewTests: XCTestCase {
                 
                 return receivedItem
             }, deleteItem: { _ in })
-            $0.diaryListFilterApi = DiaryListFilterClient.getFetchOnlyClientForTest(receivedFilters)
+            $0.diaryListFilterApi = .createCustomValue(getFilterMockRealm(receivedFilters))
             $0.date = DateGenerator({ Date() })
         }
         
@@ -520,7 +519,7 @@ final class DiaryListViewTests: XCTestCase {
     func testTappedFilterButton() async throws {
         
         let expectedItem = DiaryListItemFeature.State(title: "test", message: "test message", date: Date(), isWin: false, trainingList: [], tagList: [])
-        let receivedFilters = [DiaryListFilterItem(target: .achievement, filterItemId: UUID(), value: "達成していない")]
+        let receivedFilters = [DiaryListFilterItem(target: .achievement, filterItemId: Self.achievementId, value: "達成していない")]
         let changeFilters = [DiaryListFilterItem(target: .trainingType, filterItemId: UUID(), value: "腹筋")]
         let expectedDiariesAfterChangeFilter: IdentifiedArrayOf<DiaryListItemFeature.State> = []
         let filterPublisher = PassthroughSubject<[DiaryListFilterItem], Never>()
@@ -531,8 +530,10 @@ final class DiaryListViewTests: XCTestCase {
                 
                 return [expectedItem]
             }, deleteItem: { _ in })
-            $0.diaryListFilterApi = DiaryListFilterClient.getFetchOnlyClientForTest(receivedFilters,
-                                                                                    observer: filterPublisher.eraseToAnyPublisher())
+            $0.diaryListFilterApi = .createCustomValue(getFilterMockRealm(receivedFilters)) {
+                
+                return filterPublisher.eraseToAnyPublisher()
+            }
             $0.date = DateGenerator({ Date() })
         }
         
@@ -598,5 +599,20 @@ final class DiaryListViewTests: XCTestCase {
         
         // 画面非表示
         await store.send(.onDisappearView)
+    }
+}
+
+private extension DiaryListViewTests {
+    
+    func getFilterMockRealm(_ expectedReceiveFilter: [DiaryListFilterItem]) -> RealmAccessorMock<DiaryListFilterEntity> {
+        
+        // filterApiのモックRealm設定
+        return RealmAccessorMock(fetchEntity: expectedReceiveFilter.map {
+            
+            DiaryListFilterEntity(id: $0.id,
+                                  filterTarget: $0.target.rawValue,
+                                  filterId: $0.filterItemId,
+                                  filterValue: $0.value)
+        })
     }
 }
