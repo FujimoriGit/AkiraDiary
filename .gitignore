@@ -43,3 +43,5 @@ fastlane/test_output
 
 iOSInjectionProject/
 xcschememanagement.plist
+
+Package.resolved
