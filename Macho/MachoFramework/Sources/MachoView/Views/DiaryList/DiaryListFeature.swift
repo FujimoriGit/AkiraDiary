@@ -102,8 +102,6 @@ struct DiaryListFeature: Sendable {
         
         /// 日記リストの取得に成功したときの副作用を処理する
         case receiveLoadDiaryItems(items: [DiaryListItemFeature.State])
-        /// 日記リストの取得に失敗したときの副作用を処理する
-        case failedLoadDiaryItems
         /// 指定した日記をRealmから削除する副作用を処理する
         case deletedDiaryItem(id: UUID)
         /// 日記リストのフィルター取得に成功した時の副作用を処理する
@@ -112,8 +110,6 @@ struct DiaryListFeature: Sendable {
         @CasePathable
         enum Alert: Equatable {
             
-            /// 日記リストの取得失敗時のアラート
-            case failedLoadDiaryItems
             /// 日記の編集を行うかどうかの確認アラート
             case confirmEditItem(targetId: UUID)
             /// 日記削除を行うかどうかの確認アラート
@@ -253,16 +249,6 @@ private extension DiaryListFeature {
                 state = getUpdatedStateAfterReloadDiary(receive: items, state: state)
                 return .none
                 
-            case .failedLoadDiaryItems:
-                logger.error("failedLoadDiaryItems")
-                // ロード終了
-                state.viewState.isLoadingDiaries = false
-                // アラートを表示する
-                state.alert = AlertState.createAlertState(.failedLoadDiaryItemsAlert,
-                                                          firstButtonHandler: .failedLoadDiaryItems)
-                
-                return .none
-                
             case .deletedDiaryItem(let id):
                 logger.info("deletedDiaryItem(id: \(id))")
                 state.diaries.remove(id: id)
@@ -384,12 +370,10 @@ private extension DiaryListFeature {
         
         return .run { send in
             
-            try await send(.receiveLoadDiaryItems(items: diaryListFetchClient.fetch(startDate, limitFetchDiary)),
-                           animation: .spring)
-        } catch: { error, send in
-            
-            logger.error("Occurred loadDiaryListItem error(\(error)).")
-            return await send(.failedLoadDiaryItems)
+            let diaryItems = await diaryListFetchClient.fetch(startDate,
+                                                              limitFetchDiary).map { DiaryListItemFeature.State($0) }
+            await send(.receiveLoadDiaryItems(items: diaryItems),
+                       animation: .spring)
         }
     }
     
