@@ -67,7 +67,7 @@ jobs:
         run: set -o pipefail &&
           xcodebuild
           -configuration Debug
-          -destination 'platform=iOS Simulator,id=6B6B062C-40CF-4C83-A78C-84C46922CB36'
+          -destination 'platform=iOS Simulator,id=BDB8918F-5FB6-4343-B666-EA87BA2CD4D3'
           -scheme Macho
           -testPlan Macho
           -skipPackagePluginValidation
