@@ -43,6 +43,11 @@ final class DiaryListFilterViewTest: XCTestCase {
         DiaryListFilterItem(target: .tag, filterItemId: rainTagId, value: "雨")
     ]
     
+    // DBからのタグ取得をモックしたRealm
+    private static let tagMockRealm = RealmAccessorMock(fetchEntity: expectedSelectableTagValues)
+    // DBからのトレーニング種別取得をモックしたRealm
+    private static let trainingTypeMockRealm = RealmAccessorMock(fetchEntity: expectedSelectableTrainingValues)
+    
     // フィルター画面表示時のケース
     @MainActor
     func testAppearView() async throws {
@@ -74,14 +79,8 @@ final class DiaryListFilterViewTest: XCTestCase {
         } withDependencies: {
             
             $0.diaryListFilterApi = .createCustomValue(mockRealm)
-            $0.trainingTypeApi = TrainingTypeClient {
-                
-                return Self.expectedSelectableTrainingValues
-            }
-            $0.trainingTagApi = TrainingTagClient {
-                
-                return Self.expectedSelectableTagValues
-            }
+            $0.trainingTypeApi = .createCustomValue(Self.trainingTypeMockRealm)
+            $0.trainingTagApi = .createCustomValue(Self.tagMockRealm)
             $0.dismiss = DismissEffect { isDismissInvoked.setValue(true) }
         }
         
@@ -144,14 +143,8 @@ final class DiaryListFilterViewTest: XCTestCase {
         } withDependencies: {
             
             $0.diaryListFilterApi = .createCustomValue(mockRealm) { testPublisher.eraseToAnyPublisher() }
-            $0.trainingTypeApi = TrainingTypeClient {
-                
-                return Self.expectedSelectableTrainingValues
-            }
-            $0.trainingTagApi = TrainingTagClient {
-                
-                return Self.expectedSelectableTagValues
-            }
+            $0.trainingTypeApi = .createCustomValue(Self.trainingTypeMockRealm)
+            $0.trainingTagApi = .createCustomValue(Self.tagMockRealm)
             $0.dismiss = DismissEffect { isDismissInvoked.setValue(true) }
         }
         
@@ -224,14 +217,8 @@ final class DiaryListFilterViewTest: XCTestCase {
         } withDependencies: {
             
             $0.diaryListFilterApi = .createCustomValue(mockRealm) { testPublisher.eraseToAnyPublisher() }
-            $0.trainingTypeApi = TrainingTypeClient {
-                
-                return Self.expectedSelectableTrainingValues
-            }
-            $0.trainingTagApi = TrainingTagClient {
-                
-                return Self.expectedSelectableTagValues
-            }
+            $0.trainingTypeApi = .createCustomValue(Self.trainingTypeMockRealm)
+            $0.trainingTagApi = .createCustomValue(Self.tagMockRealm)
             $0.dismiss = DismissEffect { isDismissInvoked.setValue(true) }
         }
         
@@ -310,14 +297,8 @@ final class DiaryListFilterViewTest: XCTestCase {
         } withDependencies: {
             
             $0.diaryListFilterApi = .createCustomValue(mockRealm) { testPublisher.eraseToAnyPublisher() }
-            $0.trainingTypeApi = TrainingTypeClient {
-                
-                return Self.expectedSelectableTrainingValues
-            }
-            $0.trainingTagApi = TrainingTagClient {
-                
-                return Self.expectedSelectableTagValues
-            }
+            $0.trainingTypeApi = .createCustomValue(Self.trainingTypeMockRealm)
+            $0.trainingTagApi = .createCustomValue(Self.tagMockRealm)
             $0.dismiss = DismissEffect { isDismissInvoked.setValue(true) }
         }
         
