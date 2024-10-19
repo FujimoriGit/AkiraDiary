@@ -51,12 +51,23 @@ jobs:
           bundle install --jobs 4 --retry 3
 
       # SPMのライブラリのキャッシュ
-      - name: Cache Swift Packages
+      - name: Cache packages
         uses: actions/cache@v4
+        id: packages-cache
         with:
-          path: SourcePackages
-          key: ${{ runner.os }}-spm-${{ hashFiles('*.xcodeproj/project.xcworkspace/ xcshareddata/swiftpm/Package.resolved') }}
-          restore-keys: ${{ runner.os }}-spm-
+          path: |
+            packages_cache/artifacts
+            packages_cache/checkouts
+            packages_cache/workspace_state.json
+          key: ${{ runner.os }}-packages-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-packages-
+      
+      # ビルド（実験的に書いてます）
+      - name: Build
+        run: fastlane build
+        env:
+          HAS_PACKAGES_CACHE_HIT: ${{ steps.packages-cache.outputs.cache-hit == 'true' }}
 
       # 単体テストの実行
       - name: Xcode test
