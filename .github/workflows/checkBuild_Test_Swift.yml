@@ -37,7 +37,7 @@ jobs:
 
       # Rudy製ライブラリのキャッシュ
       - name: Cache Gems
-        uses: actions/cache@v4.1.1
+        uses: actions/cache@v3.3.3
         with:
           path: vendor/bundle
           key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
@@ -52,7 +52,7 @@ jobs:
 
       # SPMのライブラリのキャッシュ
       - name: Cache Swift Packages
-        uses: actions/cache@v4.1.1
+        uses: actions/cache@v3.3.3
         with:
           path: SourcePackages
           key: ${{ runner.os }}-spm-${{ hashFiles('*.xcodeproj/project.xcworkspace/ xcshareddata/swiftpm/Package.resolved') }}
