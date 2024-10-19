@@ -15,13 +15,11 @@ on:
 
 env:
   # チェックアウト
-  #  TODO: 16に更新
   DEVELOPER_DIR: /Applications/Xcode_16.0.app
 
 jobs:
   build:
     # 実行環境はmacosに設定
-    # TODO: latestに更新
     runs-on: macos-latest
 
     steps:
@@ -47,7 +45,6 @@ jobs:
             ${{ runner.os }}-gems-
 
       # Rudy製ライブラリのインストール
-      # TODO: キャッシュをほんとに使えてる？？ -> 確認
       - name: Install Bundled Gems
         run: |
           bundle config path vendor/bundle
