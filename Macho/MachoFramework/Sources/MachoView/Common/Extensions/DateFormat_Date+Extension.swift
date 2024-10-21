@@ -26,24 +26,39 @@ extension Date {
     
     struct Format {
         
-        private let date: DateFormat
+        private let date: DateFormat?
         private let time: TimeFormat?
         
         fileprivate func getFormatString(omissionTens: Bool) -> String {
             
-            guard let time else {
+            if let date, let time {
+                
+                return date.getFormatString(omissionTens: omissionTens)
+                + " "
+                + time.getFormatString(omissionTens: omissionTens)
+            }
+            else if let date {
                 
                 return date.getFormatString(omissionTens: omissionTens)
             }
+            else if let time {
+                
+                return time.getFormatString(omissionTens: omissionTens)
+            }
             
-            return date.getFormatString(omissionTens: omissionTens)
-            + " "
-            + time.getFormatString(omissionTens: omissionTens)
+            assertionFailure("\(#file) \(#function) Invalid parameters.")
+            return ""
         }
         
         init(date: DateFormat = .basic, time: TimeFormat? = nil) {
             
             self.date = date
+            self.time = time
+        }
+        
+        init(time: TimeFormat) {
+            
+            self.date = nil
             self.time = time
         }
     }
