@@ -64,7 +64,7 @@ jobs:
           xcodebuild
           -workspace ./Macho/Macho.xcworkspace
           -scheme Macho
-          -destination 'platform=iOS Simulator,OS:18.1,name:iPhone 16 Pro'
+          -destination 'platform=iOS Simulator, OS=18.1, name=iPhone 16 Pro'
           -configuration Debug
           -clonedSourcePackagesDirPath SourcePackages
           -skipPackagePluginValidation
@@ -79,7 +79,7 @@ jobs:
         run: set -o pipefail &&
           xcodebuild
           -configuration Debug
-          -destination 'platform=iOS Simulator,OS:18.1,name:iPhone 16 Pro'
+          -destination 'platform=iOS Simulator, OS=18.1, name=iPhone 16 Pro'
           -scheme Macho
           -testPlan Macho
           -skipPackagePluginValidation
