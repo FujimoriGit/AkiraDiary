@@ -12,15 +12,12 @@ on:
       - "doc/*"
       - "wiki/**"
       - README.md
-  issue_comment:                                     
-    types: [created, edited, deleted]
 
 env:
   # チェックアウト
   DEVELOPER_DIR: /Applications/Xcode_16.0.app
 
 jobs:
-  if: ${{ github.event.issue.pull_request && github.event.comment.body == 'test this please' || !(github.event.issue.pull_request) }}
   build:
     # 実行環境はmacosに設定
     runs-on: macos-latest
