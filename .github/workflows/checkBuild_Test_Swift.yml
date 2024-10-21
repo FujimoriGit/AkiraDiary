@@ -37,7 +37,7 @@ jobs:
 
       # Rudy製ライブラリのキャッシュ
       - name: Cache Gems
-        uses: actions/cache@v2
+        uses: actions/cache@v4.1.1
         with:
           path: vendor/bundle
           key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
@@ -52,11 +52,26 @@ jobs:
 
       # SPMのライブラリのキャッシュ
       - name: Cache Swift Packages
-        uses: actions/cache@v2
+        uses: actions/cache@v4.1.1
         with:
           path: SourcePackages
           key: ${{ runner.os }}-spm-${{ hashFiles('*.xcodeproj/project.xcworkspace/ xcshareddata/swiftpm/Package.resolved') }}
           restore-keys: ${{ runner.os }}-spm-
+
+      # ビルド
+      - name: Xcode build
+        run: set -o pipefail &&
+          xcodebuild
+          -workspace ./Macho/Macho.xcworkspace
+          -scheme Macho
+          -destination 'platform=iOS Simulator,id=BDB8918F-5FB6-4343-B666-EA87BA2CD4D3'
+          -configuration Debug
+          -clonedSourcePackagesDirPath SourcePackages
+          -skipPackagePluginValidation
+          -skipMacroValidation
+          -scmProvider xcode
+          clean build |
+          bundle exec xcpretty
 
       # 単体テストの実行
       - name: Xcode test
