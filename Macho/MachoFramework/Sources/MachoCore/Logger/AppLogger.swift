@@ -9,9 +9,11 @@ import Logging
 
 public struct AppLogger {
     
+    public static let shared = AppLogger(label: "Macho")
+    
     private var logger: Logger
     
-    public init(label: String) {
+    init(label: String) {
         
         LoggingSystem.bootstrap { label in
             MachoStandardLogHandler(label)
