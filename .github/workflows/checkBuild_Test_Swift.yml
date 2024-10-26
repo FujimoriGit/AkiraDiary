@@ -30,15 +30,6 @@ jobs:
       - uses: actions/checkout@v4.2.2
 
       # ======= test =======
-      - name: Get ruby version
-        id: ruby
-        run: echo "::set-output name=version::$(cat .ruby-version)"
-
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1.197.0
-        with:
-          ruby-version: ${{ steps.ruby.outputs.version }}
-
       - name: Update dependencies
         run: bundle update
       # ======= test =======
