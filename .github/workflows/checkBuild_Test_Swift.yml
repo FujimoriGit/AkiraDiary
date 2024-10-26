@@ -29,15 +29,33 @@ jobs:
       # チェックアウト(リポジトリからソースコードを取得)
       - uses: actions/checkout@v4.2.2
 
+      # ======= test =======
+      - name: Get ruby version
+        id: ruby
+        run: echo "::set-output name=version::$(cat .ruby-version)"
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ steps.ruby.outputs.version }}
+
+      - name: Update dependencies
+        run: bundle update
+      # ======= test =======
+
       # Xcodeの一覧出力
       - name: Show Xcode list
         run: ls /Applications | grep 'Xcode'
 
       # Xcodeのバージョン出力
+      - name: Select Xcode version
+        run: sudo xcode-select -s ${{ env.DEVELOPER_DIR }}
+
       - name: Show Xcode version
-        run: | 
-          sudo xcode-select -s ${{ env.DEVELOPER_DIR }}
-          xcodebuild -version
+        run: xcodebuild -version
+
+      - name: Build
+        run: xcodebuild -sdk iphonesimulator -configuration Debug build 
 
       # Rudy製ライブラリのキャッシュ
       - name: Cache Gems
