@@ -29,13 +29,6 @@ jobs:
       # チェックアウト(リポジトリからソースコードを取得)
       - uses: actions/checkout@v4.2.2
 
-      # ======= test =======
-      # - name: Update dependencies
-      #   run: bundle update
-      - name: Show Gems Version
-        run: gem -v
-      # ======= test =======
-
       # Xcodeの一覧出力
       - name: Show Xcode list
         run: ls /Applications | grep 'Xcode'
@@ -44,7 +37,7 @@ jobs:
       - name: Select Xcode version
         run: sudo xcode-select -s '${{ env.DEVELOPER_DIR }}/Contents/Developer'
       
-        # Xcodeのバージョン出力
+      # Xcodeのバージョン出力
       - name: Show Xcode version
         run: xcodebuild -version
 
