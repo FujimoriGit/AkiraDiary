@@ -11,19 +11,21 @@ public struct AppLogger {
     
     public static let shared = AppLogger(label: "Macho")
     
-    private var logger: Logger
+    private let logger: Logger
     
-    init(label: String) {
+    private init(label: String) {
         
         LoggingSystem.bootstrap { label in
             MachoStandardLogHandler(label)
         }
         
-        logger = Logger(label: label)
+        var logger = Logger(label: label)
         
         #if DEBUG
         logger.logLevel = .debug
         #endif
+        
+        self.logger = logger
     }
     
     public func debug(file: String = #file,
