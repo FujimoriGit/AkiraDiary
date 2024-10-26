@@ -27,7 +27,7 @@ jobs:
 
     steps:
       # チェックアウト(リポジトリからソースコードを取得)
-      - uses: actions/checkout@v4.2.1
+      - uses: actions/checkout@v4.2.2
 
       # Xcodeの一覧出力
       - name: Show Xcode list
