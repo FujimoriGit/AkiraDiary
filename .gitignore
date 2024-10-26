@@ -29,17 +29,17 @@ playground.xcworkspace
 
 .build/
 
-Pods/
+# Pods/
 
-Carthage/Build/
+# Carthage/Build/
 
-Dependencies/
-.accio/
+# Dependencies/
+# .accio/
 
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots/**/*.png
-fastlane/test_output
+# fastlane/report.xml
+# fastlane/Preview.html
+# fastlane/screenshots/**/*.png
+# fastlane/test_output
 
 iOSInjectionProject/
 xcschememanagement.plist
