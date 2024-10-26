@@ -12,7 +12,7 @@ struct DiaryListItemView: View {
     
     // MARK: tca store property
     
-    private let store: StoreOf<DiaryListItemFeature>
+    @Bindable private var store: StoreOf<DiaryListItemFeature>
     
     // MARK: initialize method
     
@@ -41,25 +41,24 @@ struct DiaryListItemView: View {
     // MARK: view property
     
     var body: some View {
-        WithViewStore(store, observe: { $0 }) { viewStore in
-            Button(action: {
-                viewStore.send(.tappedDiaryItem)
-            }, label: {
-                createDiaryItemContent(viewStore: viewStore)
-            })
-            .foregroundStyle(Color(asset: CustomColor.appPrimaryTextColor))
-            .background(Color(asset: CustomColor.appPrimaryBackgroundColor))
-            .addSwipeAction {
-                SwipeAction(tint: Color(asset: CustomColor.deleteSwipeBackgroundColor),
-                            icon: Image(systemName: "trash.fill")) {
-                    viewStore.send(.deleteItemSwipeAction)
-                }
-                SwipeAction(tint: Color(asset: CustomColor.editSwipeBackgroundColor),
-                            icon: Image(systemName: "pencil")) {
-                    viewStore.send(.editItemSwipeAction)
-                }
+        Button(action: {
+            store.send(.tappedDiaryItem)
+        }, label: {
+            createDiaryItemContent()
+        })
+        .foregroundStyle(Color(asset: CustomColor.appPrimaryTextColor))
+        .background(Color(asset: CustomColor.appPrimaryBackgroundColor))
+        .addSwipeAction {
+            SwipeAction(tint: Color(asset: CustomColor.deleteSwipeBackgroundColor),
+                        icon: Image(systemName: "trash.fill")) {
+                store.send(.deleteItemSwipeAction)
+            }
+            SwipeAction(tint: Color(asset: CustomColor.editSwipeBackgroundColor),
+                        icon: Image(systemName: "pencil")) {
+                store.send(.editItemSwipeAction)
             }
         }
+        .accessibilityHidden(true)
     }
 }
 
@@ -67,19 +66,19 @@ struct DiaryListItemView: View {
 
 private extension DiaryListItemView {
     
-    func createDiaryItemContent(viewStore: ViewStore<DiaryListItemFeature.State, DiaryListItemFeature.Action>) -> some View {
+    func createDiaryItemContent() -> some View {
         VStack {
             HStack(spacing: .zero) {
-                createWinLoseIcon(isWin: viewStore.isWin)
+                createWinLoseIcon(isWin: store.isWin)
                 Spacer()
                     .frame(width: winLoseLabelTrailingPadding)
                 VStack(spacing: .zero) {
-                    createTopContents(title: viewStore.title,
-                                      date: viewStore.date.toString(.init(date: .jp),
-                                                                    isOmissionTens: true))
+                    createTopContents(title: store.title,
+                                      date: store.date.toString(.init(date: .jpGregorian),
+                                                                isOmissionTens: true))
                     Spacer()
                         .frame(height: titlePaddingBottom)
-                    createMessageContent(message: viewStore.message)
+                    createMessageContent(message: store.message)
                 }
             }
             .padding(.top, baseTopPadding)
@@ -138,10 +137,20 @@ private extension DiaryListItemView {
 #Preview {
     ScrollView {
         LazyVStack(spacing: .zero) {
-            DiaryListItemView(store: Store(initialState: DiaryListItemFeature.State(title: "2024/1/1", message: "Test Messag 1", date: Date(), isWin: false)) {
+            DiaryListItemView(store: Store(initialState: DiaryListItemFeature.State(title: "2024/1/1",
+                                                                                    message: "Test Messag 1",
+                                                                                    date: Date(),
+                                                                                    isWin: false,
+                                                                                    trainingList: [
+                                                                                        "腹筋", "ベンチプレス", "ダンベルプレス"
+                                                                                    ])) {
                 DiaryListItemFeature()
             })
-            DiaryListItemView(store: Store(initialState: DiaryListItemFeature.State(title: "2024/1/2", message: "Test Messag 2", date: Date(), isWin: true)) {
+            DiaryListItemView(store: Store(initialState: DiaryListItemFeature.State(title: "2024/1/2",
+                                                                                    message: "Test Messag 2",
+                                                                                    date: Date(),
+                                                                                    isWin: true,
+                                                                                    trainingList: ["ベンチプレス"])) {
                 DiaryListItemFeature()
             })
         }

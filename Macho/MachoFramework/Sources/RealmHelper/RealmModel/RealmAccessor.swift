@@ -8,14 +8,11 @@
 import Combine
 import RealmSwift
 
-public struct RealmAccessor {
-    
-    private let realm: RealmActor
-    
-    // MARK: - RealmAccessor initialize method
-    public init() async {
+public struct RealmAccessor: RealmAccessible {
         
-        realm = await RealmActor.getSingleton()
+    // MARK: - RealmAccessor initialize method
+    public init() {
+        // nop
     }
     
     // MARK: - RealmAccessor public methods
@@ -26,7 +23,7 @@ public struct RealmAccessor {
     /// - Returns: 引数で指定した条件にマッチしたEntityの配列を返す
     public func read<T>(where filterHandler: ((T) -> Bool)? = nil) async -> [T] where T: BaseRealmEntity {
         
-        let result: [T] = await self.realm.read()
+        let result: [T] = await RealmActor.getSingleton().read()
         guard let filterHandler else { return result }
         
         return result.filter(filterHandler)
@@ -38,7 +35,7 @@ public struct RealmAccessor {
     /// 重複したレコードが存在する場合は更新する
     public func insert<T>(records: [T]) async -> Bool where T: BaseRealmEntity {
         
-        return await self.realm.insert(records: records)
+        return await RealmActor.getSingleton().insert(records: records)
     }
     
     /// RealmDBに指定したレコードのカラムを更新する
@@ -49,26 +46,26 @@ public struct RealmAccessor {
     /// 重複したレコードが存在する場合は更新する
     public func update<T>(type: T.Type, value: [String: Any]) async -> Bool where T: BaseRealmEntity {
         
-        return await self.realm.update(type: type, value: value)
+        return await RealmActor.getSingleton().update(type: type, value: value)
     }
     
     /// RealmDBに保存しているデータの削除
     /// - Returns: 削除に成功した場合はtrue、失敗した場合はfalseを返す
     public func delete<T>(where filterHandler: @escaping (T) -> Bool) async -> Bool where T: BaseRealmEntity {
         
-        return await self.realm.delete(where: filterHandler)
+        return await RealmActor.getSingleton().delete(where: filterHandler)
     }
     
     public func deleteAll<T>(type: T.Type) async -> Bool where T: BaseRealmEntity {
         
-        return await self.realm.deleteAll(type: type)
+        return await RealmActor.getSingleton().deleteAll(type: type)
     }
     
     /// RealmDBに保存しているすべてのデータを削除
     /// - Returns: 削除に成功した場合はtrue、失敗した場合はfalseを返す
     public func truncateDb() async -> Bool {
         
-        return await self.realm.truncateDb()
+        return await RealmActor.getSingleton().truncateDb()
     }
     
     /// 指定した型に対応するRealmオブジェクトテーブルの変更を監視するPublisherを返す
@@ -77,7 +74,7 @@ public struct RealmAccessor {
     public func observeDidChangeRealmObject<T>(subject: PassthroughSubject<[T], Never>)
     async -> NotificationToken? where T: BaseRealmEntity {
         
-        return await realm.readObjectsForObserve(type: T.self) { updateSnapshot in
+        return await RealmActor.getSingleton().readObjectsForObserve(type: T.self) { updateSnapshot in
             
             subject.send(updateSnapshot)
         }
@@ -90,6 +87,7 @@ fileprivate actor RealmActor {
     private var realm: Realm?
     
     // MARK: - RealmActor initialize method
+    
     private init() async {
         
         realm = try? await Realm(actor: self)
@@ -167,9 +165,9 @@ fileprivate actor RealmActor {
         
         guard let objects = self.realm?.objects(type.RealmObject.self) else { return false }
         
-        return await executeAsyncWrite { [unowned self] in
+        return await executeAsyncWrite { [realm] in
             
-            self.realm?.delete(objects)
+            realm?.delete(objects)
         }
     }
     
@@ -209,6 +207,7 @@ fileprivate actor RealmActor {
 }
 
 // MARK: - RealmActor private methods
+
 private extension RealmActor {
     
     func executeAsyncWrite(_ operation: @escaping () -> Void) async -> Bool {

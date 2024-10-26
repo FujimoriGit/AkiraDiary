@@ -120,7 +120,7 @@ final class RealmAccessorTest: XCTestCase {
             return
         }
         
-        let results = await realm.read(type: DiarySearchTagEntity.self)
+        let results: [DiarySearchTagEntity] = await realm.read()
         XCTAssertTrue(results.isEmpty)
     }
     

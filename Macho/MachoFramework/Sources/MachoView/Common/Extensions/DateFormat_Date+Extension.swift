@@ -1,3 +1,4 @@
+// swiftlint:disable:this file_name
 //
 //  DateFormat_Date+Extension.swift
 //  Macho
@@ -30,7 +31,7 @@ extension Date {
         
         fileprivate func getFormatString(omissionTens: Bool) -> String {
             
-            guard let time = time else {
+            guard let time else {
                 
                 return date.getFormatString(omissionTens: omissionTens)
             }
@@ -52,7 +53,7 @@ extension Date {
         /// yyyy/MM/dd(ex. 2000:01:01)
         case basic
         /// yyyy年MM月dd日(ex. 2000年01月01日)
-        case jp
+        case jpGregorian
         
         fileprivate func getFormatString(omissionTens: Bool) -> String {
             
@@ -61,7 +62,7 @@ extension Date {
             case .basic:
                 return omissionTens ? "yyyy/M/d" : "yyyy/MM/dd"
                 
-            case .jp:
+            case .jpGregorian:
                 return omissionTens ? "yyyy年M月d日" : "yyyy年MM月dd日"
             }
         }
@@ -70,28 +71,28 @@ extension Date {
     enum TimeFormat {
         
         /// hh:mm:ss(ex. 00:01:01)
-        case short_basic
+        case shortBasic
         /// hh時mm分ss秒(ex. 00時00分00秒)
-        case short_jp
+        case shortJp
         /// hh:mm:SS.sss(ex. 00:01:01.000)
-        case large_basic
+        case largeBasic
         /// hh時mm分SS.sss秒(ex. 00時00分00.000秒)
-        case large_jp
+        case largeJp
         
         fileprivate func getFormatString(omissionTens: Bool = false) -> String {
             
             switch self {
                 
-            case .short_basic:
+            case .shortBasic:
                 return omissionTens ? "h:m:S" : "hh:mm:SS"
                 
-            case .short_jp:
+            case .shortJp:
                 return omissionTens ? "h時m分S秒" : "hh時mm分SS秒"
                 
-            case .large_basic:
+            case .largeBasic:
                 return omissionTens ? "h:m:S.sss" : "hh:mm:SS.sss"
                 
-            case .large_jp:
+            case .largeJp:
                 return omissionTens ? "h時m分S.sss秒" : "hh時mm分SS.sss秒"
             }
         }

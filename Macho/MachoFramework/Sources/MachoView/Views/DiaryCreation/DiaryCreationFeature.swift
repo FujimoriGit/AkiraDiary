@@ -78,7 +78,7 @@ struct DiaryCreationFeature: Reducer {
                     
                     let goals = try await realmFetch.fetchTrainingGoal(TrainingGoalEntity.self).map {
                         
-                        Goal(id: $0.id, goalName: $0.goalName, numberOfSets: $0.numberOfSets, setCount: $0.setCount)
+                        Goal(id: $0.id, goalName: $0.goalType.name, numberOfSets: $0.numberOfSets, setCount: $0.setCount)
                     }
                     
                     await send(.fetched(tags: tags, goals: goals))

@@ -3,7 +3,6 @@
 //
 //  
 //  Created by Daiki Fujimori on 2024/05/03
-//  
 //
 
 import ComposableArchitecture
@@ -68,9 +67,11 @@ extension RealmFetchClient: DependencyKey {
         ]
         
         return goalNames.map { TrainingGoalEntity(id: UUID(),
-                                                  goalName: $0,
+                                                  goalType: TrainingTypeEntity(id: UUID(), name: $0),
                                                   numberOfSets: Int.random(in: 8...15),
-                                                  setCount: Int.random(in: 2...5))
+                                                  setCount: Int.random(in: 2...5),
+                                                  startTime: nil,
+                                                  endTime: nil)
         }
     })
 }

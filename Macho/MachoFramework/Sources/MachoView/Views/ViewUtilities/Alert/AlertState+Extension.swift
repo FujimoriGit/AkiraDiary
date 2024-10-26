@@ -23,7 +23,7 @@ extension AlertState {
                                  firstButtonRole: ButtonStateRole? = nil,
                                  secondButtonRole: ButtonStateRole? = nil) -> Self {
         
-        return AlertState (title: {
+        return AlertState(title: {
             
             TextState(type.title)
         }, actions: {
@@ -31,7 +31,7 @@ extension AlertState {
             ButtonState(role: firstButtonRole,
                         action: firstButtonHandler,
                         label: { TextState(type.firstButtonTitle) })
-            if let secondButtonHandler = secondButtonHandler,
+            if let secondButtonHandler,
                let secondButtonTitle = type.secondButtonTitle {
                 
                 ButtonState(role: secondButtonRole,
@@ -40,10 +40,9 @@ extension AlertState {
             }
         }, message: type.message == nil ? nil : {
             
-            TextState(type.message!)
+            TextState(type.message ?? "")
         })
     }
-    
     
     /// キャンセルボタンが付いたAlertTypeに基づいたAlertStateの生成
     /// - Parameters:
@@ -56,15 +55,18 @@ extension AlertState {
                                            firstButtonHandler: Action,
                                            firstButtonRole: ButtonStateRole? = nil) -> Self {
         
-        return AlertState (title: {
+        return AlertState(title: {
+            
             TextState(type.title)
         }, actions: {
+            
             Self.createCancelButton()
             ButtonState(role: firstButtonRole,
                         action: firstButtonHandler,
                         label: { TextState(type.firstButtonTitle) })
         }, message: type.message == nil ? nil : {
-            TextState(type.message!)
+            
+            TextState(type.message ?? "")
         })
     }
 }

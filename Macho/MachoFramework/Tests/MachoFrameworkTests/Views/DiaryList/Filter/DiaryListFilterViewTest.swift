@@ -17,6 +17,8 @@ final class DiaryListFilterViewTest: XCTestCase {
     @MainActor
     func testAppearView() async throws {
         
+        let isDismissInvoked = LockIsolated(false)
+        
         let achievementId = UUID()
         let trainingType1Id = UUID()
         
@@ -45,10 +47,11 @@ final class DiaryListFilterViewTest: XCTestCase {
                 
                 return PassthroughSubject<[DiaryListFilterItem], Never>().eraseToAnyPublisher()
             })
+            $0.dismiss = DismissEffect { isDismissInvoked.setValue(true) }
         }
         
         await testStore.send(.onAppear)
-        await testStore.receive(.receiveFetchSelectableFilterValuesResponse(expectedSelectableFilterValues)) {
+        await testStore.receive(.receiveFetchSelectableFilterRes(expectedSelectableFilterValues)) {
             
             $0.selectableFilterValues = [.achievement: ["達成していない", "達成している"], .trainingType: ["腹筋", "ダンベルプレス"]]
         }
@@ -57,44 +60,15 @@ final class DiaryListFilterViewTest: XCTestCase {
             $0.currentFilters = expectedReceiveFilters
         }
         
-        await testStore.send(.onDisappear)
-    }
-    
-    // ダイアログ外の領域タップのケース
-    @MainActor
-    func testTappedOutsideArea() async throws {
-        
-        let isDismissInvoked = LockIsolated(false)
-        
-        let testStore = TestStore(initialState: DiaryListFilterFeature.State()) {
-            DiaryListFilterFeature()
-        } withDependencies: {
-            $0.dismiss = DismissEffect { isDismissInvoked.setValue(true) }
-        }
-        
         await testStore.send(.tappedOutsideArea)
-        XCTAssertTrue(isDismissInvoked.value)
-    }
-    
-    // クローズボタン押下時のケース
-    @MainActor
-    func testTappedCloseButton() async throws {
-        
-        let isDismissInvoked = LockIsolated(false)
-        
-        let testStore = TestStore(initialState: DiaryListFilterFeature.State()) {
-            DiaryListFilterFeature()
-        } withDependencies: {
-            $0.dismiss = DismissEffect { isDismissInvoked.setValue(true) }
-        }
-        
-        await testStore.send(.tappedCloseButton)
         XCTAssertTrue(isDismissInvoked.value)
     }
     
     // フィルター種別の削除ボタン押下時のケース
     @MainActor
     func testTappedFilterTypeDeleteButton() async throws {
+        
+        let isDismissInvoked = LockIsolated(false)
         
         let achievementId = UUID()
         let trainingType1Id = UUID()
@@ -132,10 +106,11 @@ final class DiaryListFilterViewTest: XCTestCase {
                 
                 return testPublisher.eraseToAnyPublisher()
             })
+            $0.dismiss = DismissEffect { isDismissInvoked.setValue(true) }
         }
         
         await testStore.send(.onAppear)
-        await testStore.receive(.receiveFetchSelectableFilterValuesResponse(expectedSelectableFilterValues)) {
+        await testStore.receive(.receiveFetchSelectableFilterRes(expectedSelectableFilterValues)) {
             
             $0.selectableFilterValues = [.achievement: ["達成していない", "達成している"], .trainingType: ["腹筋", "ダンベルプレス"]]
         }
@@ -151,12 +126,15 @@ final class DiaryListFilterViewTest: XCTestCase {
             $0.currentFilters = expectedFilters
         }
         
-        await testStore.send(.onDisappear)
+        await testStore.send(.tappedOutsideArea)
+        XCTAssertTrue(isDismissInvoked.value)
     }
     
     // フィルター項目の削除ボタン押下時のケース
     @MainActor
     func testTappedFilterItemDeleteButton() async throws {
+        
+        let isDismissInvoked = LockIsolated(false)
         
         let achievementId = UUID()
         let trainingType1Id = UUID()
@@ -195,10 +173,11 @@ final class DiaryListFilterViewTest: XCTestCase {
                 
                 return testPublisher.eraseToAnyPublisher()
             })
+            $0.dismiss = DismissEffect { isDismissInvoked.setValue(true) }
         }
         
         await testStore.send(.onAppear)
-        await testStore.receive(.receiveFetchSelectableFilterValuesResponse(expectedSelectableFilterValues)) {
+        await testStore.receive(.receiveFetchSelectableFilterRes(expectedSelectableFilterValues)) {
             
             $0.selectableFilterValues = [.achievement: ["達成していない", "達成している"], .trainingType: ["腹筋", "ダンベルプレス"]]
         }
@@ -214,12 +193,15 @@ final class DiaryListFilterViewTest: XCTestCase {
             $0.currentFilters = expectedFilters
         }
         
-        await testStore.send(.onDisappear)
+        await testStore.send(.tappedOutsideArea)
+        XCTAssertTrue(isDismissInvoked.value)
     }
     
     // フィルターメニュー項目のボタン押下時のケース(フィルターが追加される)
     @MainActor
     func testTappedFilterMenuItemButton() async throws {
+        
+        let isDismissInvoked = LockIsolated(false)
         
         let achievementId = UUID()
         let trainingType1Id = UUID()
@@ -269,10 +251,11 @@ final class DiaryListFilterViewTest: XCTestCase {
             })
             
             $0.uuid = UUIDGenerator { trainingType2Id }
+            $0.dismiss = DismissEffect { isDismissInvoked.setValue(true) }
         }
         
         await testStore.send(.onAppear)
-        await testStore.receive(.receiveFetchSelectableFilterValuesResponse(expectedSelectableFilterValues)) {
+        await testStore.receive(.receiveFetchSelectableFilterRes(expectedSelectableFilterValues)) {
             
             $0.selectableFilterValues = [.achievement: ["達成していない", "達成している"], .trainingType: ["腹筋", "ダンベルプレス"]]
         }
@@ -295,6 +278,7 @@ final class DiaryListFilterViewTest: XCTestCase {
             $0.currentFilters = updatedExpectedFilters
         }
         
-        await testStore.send(.onDisappear)
+        await testStore.send(.tappedCloseButton)
+        XCTAssertTrue(isDismissInvoked.value)
     }
 }

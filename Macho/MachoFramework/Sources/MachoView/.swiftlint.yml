@@ -12,3 +12,6 @@ attributes:
 nesting:
   type_level:
     warning: 2
+cyclomatic_complexity:
+  # Reducerのブロックはどうしてもswitchのcase数が増えてしまうので、switchのcaseに関しては複雑性をカウントしないようにする
+  ignores_case_statements: true

@@ -5,15 +5,16 @@
 //  Created by 佐藤汰一 on 2024/01/07.
 //
 
+import Combine
 import ComposableArchitecture
 import SwiftUI
 
 @MainActor
 struct DiaryListView: View {
     
-    // MARK: - tca store property
+    // MARK: - TCA store property
     
-    private var store: StoreOf<DiaryListFeature>
+    @Bindable private var store: StoreOf<DiaryListFeature>
     
     // MARK: - initialize method
     
@@ -47,12 +48,12 @@ struct DiaryListView: View {
     
     // MARK: radius property
     
-    private let filetrButtonRadius: CGFloat = 8
+    private let filterButtonRadius: CGFloat = 8
     
     // MARK: - view property
     
     var body: some View {
-        NavigationStackStore(store.scope(state: \.path, action: \.path)) {
+        NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
             createMainView()
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
@@ -61,9 +62,16 @@ struct DiaryListView: View {
                             .font(.system(size: navigationTitleFontSize))
                     }
                 }
-        } destination: { getNavigationDestination($0) }
+        } destination: {
+            getNavigationDestination($0)
+        }
         .alert(store: store.scope(state: \.$alert, action: \.alert))
-        .sheet(store: store.scope(state: \.$destination, action: \.destination)) { getModalDestination($0.withState({ $0 })) }
+        .transaction { $0.disablesAnimations = false }
+        .fullScreenCover(item: $store.scope(state: \.destination, action: \.destination)) {
+            getModalDestination($0)
+                .presentationBackground(.clear)
+        }
+        .transaction { $0.disablesAnimations = true }
     }
 }
 
@@ -73,37 +81,35 @@ private extension DiaryListView {
     
     func createMainView() -> some View {
         GeometryReader { geometry in
-            WithViewStore(store, observe: \.viewState) { viewStore in
-                ZStack(alignment: .top) {
-                    VStack(spacing: .zero) {
-                        if !viewStore.isScrolling {
-                            createControlSection(viewStore: viewStore)
-                        }
-                        if viewStore.hasDiaryItems {
-                            createListSection(viewStore: viewStore)
-                        }
-                        else {
-                            createEmptyListView()
-                        }
-                        Spacer()
+            ZStack(alignment: .top) {
+                VStack(spacing: .zero) {
+                    if !store.viewState.isScrolling {
+                        createControlSection()
                     }
-                    if viewStore.isScrolling {
-                        createControlHeaderView(viewStore: viewStore)
+                    if store.viewState.hasDiaryItems {
+                        createListSection()
                     }
+                    else {
+                        createEmptyListView()
+                    }
+                    Spacer()
                 }
-                .toolbar(viewStore.isScrolling ? .hidden : .visible, for: .navigationBar)
-                .onAppear {
-                    viewStore.send(.onAppearView)
+                if store.viewState.isScrolling {
+                    createControlHeaderView()
                 }
+            }
+            .toolbar(store.viewState.isScrolling ? .hidden : .visible, for: .navigationBar)
+            .onAppear {
+                store.send(.onAppearView)
             }
             .frame(width: geometry.size.width,
                    height: geometry.size.height)
         }
     }
     
-    func createControlSection(viewStore: ViewStore<DiaryListFeature.State.ViewState, DiaryListFeature.Action>) -> some View {
+    func createControlSection() -> some View {
         VStack {
-            createControlHeaderView(viewStore: viewStore)
+            createControlHeaderView()
             Spacer()
                 .frame(height: controlSectionContentsPaddingBottom)
             Divider()
@@ -112,7 +118,7 @@ private extension DiaryListView {
         .background(Color(asset: CustomColor.appPrimaryBackgroundColor))
     }
     
-    func createListSection(viewStore: ViewStore<DiaryListFeature.State.ViewState, DiaryListFeature.Action>) -> some View {
+    func createListSection() -> some View {
         TrackableList(store: store.scope(state: \.trackableList, action: \.trackableList)) {
             ForEachStore(store.scope(state: \.diaries,
                                      action: \.diaries)) { store in
@@ -132,19 +138,19 @@ private extension DiaryListView {
             .multilineTextAlignment(.center)
     }
     
-    func createControlHeaderView(viewStore: ViewStore<DiaryListFeature.State.ViewState, DiaryListFeature.Action>) -> some View {
+    func createControlHeaderView() -> some View {
         HStack(spacing: .zero) {
             createFilterButton {
-                viewStore.send(.tappedFilterButton)
+                store.send(.tappedFilterButton)
             }
             Spacer()
             createGraphButton {
-                viewStore.send(.tappedGraphButton)
+                store.send(.tappedGraphButton)
             }
             Spacer()
                 .frame(width: graphButtonPaddingTrailing)
             createNewDiaryButton {
-                viewStore.send(.tappedCreateNewDiaryButton)
+                store.send(.tappedCreateNewDiaryButton)
             }
         }
         .padding(.horizontal, controlSectionPaddingHorizontal)
@@ -152,7 +158,7 @@ private extension DiaryListView {
     }
     
     func createFilterButton(_ action: @escaping () -> Void) -> some View {
-        Button(action: action){
+        Button(action: action) {
             HStack {
                 Text("filter")
                     .font(.system(size: filterButtonFontSize, weight: .regular))
@@ -164,7 +170,7 @@ private extension DiaryListView {
             .padding(.horizontal, 10)
             .padding(.vertical, 5)
             .clipped()
-            .background(Color.gray.clipShape(RoundedRectangle(cornerRadius: filetrButtonRadius)))
+            .background(Color.gray.clipShape(RoundedRectangle(cornerRadius: filterButtonRadius)))
         }
     }
     
@@ -191,26 +197,23 @@ private extension DiaryListView {
 
 private extension DiaryListView {
     
-    func getNavigationDestination(_ state: DiaryListFeature.Path.State) -> some View {
-        switch state {
+    func getNavigationDestination(_ store: Store<DiaryListFeature.Path.State,
+                                  DiaryListFeature.Path.Action>) -> some View {
+        
+        switch store.case {
             
         // TODO: 実装出来次第正しい画面に変更する
-        case .editScreen(let editScreenState):
-            AddContactView(store: StoreOf<AddContactFeature>(initialState: editScreenState) {
-                AddContactFeature()
-            })
-        case .createScreen(let createScreenState):
-            AddContactView(store: StoreOf<AddContactFeature>(initialState: createScreenState) {
-                AddContactFeature()
-            })
-        case .graphScreen(let graphScreenState):
-            AddContactView(store: StoreOf<AddContactFeature>(initialState: graphScreenState) {
-                AddContactFeature()
-            })
-        case .detailScreen(let detailScreenState):
-            AddContactView(store: StoreOf<AddContactFeature>(initialState: detailScreenState) {
-                AddContactFeature()
-            })
+        case .editScreen(let editScreenStore):
+            AddContactView(store: editScreenStore)
+            
+        case .createScreen(let createScreenStore):
+            AddContactView(store: createScreenStore)
+            
+        case .graphScreen(let graphScreenStore):
+            AddContactView(store: graphScreenStore)
+            
+        case .detailScreen(let detailScreenStore):
+            AddContactView(store: detailScreenStore)
         }
     }
 }
@@ -219,14 +222,13 @@ private extension DiaryListView {
 
 private extension DiaryListView {
     
-    func getModalDestination(_ state: DiaryListFeature.Destination.State) -> some View {
-        switch state {
+    func getModalDestination(_ store: Store<DiaryListFeature.Destination.State,
+                             DiaryListFeature.Destination.Action>) -> some View {
+        
+        switch store.case {
             
-        // TODO: 実装出来次第正しい画面に変更する
-        case .filterScreen(let filterScreenState):
-            AddContactView(store: StoreOf<AddContactFeature>(initialState: filterScreenState) {
-                AddContactFeature()
-            })
+        case .filterScreen(let filterScreenStore):
+            DiaryListFilterView(store: filterScreenStore)
         }
     }
 }
@@ -234,39 +236,83 @@ private extension DiaryListView {
 // MARK: - preview
 
 #Preview {
+    PreviewDiaryListView()
+}
+
+struct PreviewDiaryListView: View {
     
-    struct SampleView: View {
+    private let state: DiaryListFeature.State
+    private let publisher = PassthroughSubject<[DiaryListFilterItem], Never>()
+    @State private var currentFilters = [
+        DiaryListFilterItem(id: UUID(),
+                            target: .achievement,
+                            value: "達成していない"),
+        DiaryListFilterItem(id: UUID(),
+                            target: .trainingType,
+                            value: "腹筋")
+    ]
+    
+    init() {
         
-        private let state: DiaryListFeature.State
+        var diaries: IdentifiedArrayOf<DiaryListItemFeature.State> = []
         
-        init() {
-            
-            var diaries: IdentifiedArrayOf<DiaryListItemFeature.State> = []
-            
-            for i in 0...10 {
-                diaries.append(DiaryListItemFeature.State(title: "\(i)", message: "", date: Date(), isWin: true))
-            }
-            
-            self.state = DiaryListFeature.State(diaries: diaries)
+        for num in 0...10 {
+            diaries.append(DiaryListItemFeature.State(title: "\(num)",
+                                                      message: "",
+                                                      date: Date(),
+                                                      isWin: true,
+                                                      trainingList: ["腹筋", "ベンチプレス", "ダンベルプレス"]))
         }
         
-        var body: some View {
-            DiaryListView(store: Store(initialState: state) {
-                withDependencies {
-                    $0.diaryListFetchApi = DiaryListItemClient(fetch: { startDate, limitCount in
-                        if Int.random(in: 0...10) <= 5 {
-                            return [.init(title: "fetch item", message: "sample", date: Date(), isWin: false)]
-                        }
-                        else {
-                            throw NSError()
-                        }
-                    }, deleteItem: { _ in })
-                } operation: {
-                    DiaryListFeature()
-                }
-            })
-        }
+        self.state = DiaryListFeature.State(diaries: diaries)
     }
     
-    return SampleView()
+    var body: some View {
+        DiaryListView(store: Store(initialState: state) {
+            withDependencies {
+                // 日記リスト取得のAPI DI
+                $0.diaryListFetchApi = DiaryListItemClient(fetch: { _, _ in
+                    if Int.random(in: 0...10) <= 5 {
+                        return [
+                            .init(title: "fetch item",
+                                  message: "sample",
+                                  date: Date(),
+                                  isWin: false,
+                                  trainingList: ["腹筋", "ベンチプレス", "ダンベルプレス"])
+                        ]
+                    }
+                    else {
+                        throw URLError(.badURL)
+                    }
+                }, deleteItem: { _ in })
+                // フィルター取得API DI
+                $0.diaryListFilterApi = DiaryListFilterClient(addFilter: { filter in
+                    
+                    currentFilters += [filter]
+                    publisher.send(currentFilters)
+                    return true
+                }, updateFilter: { filter in
+                    
+                    guard let index = currentFilters.firstIndex(where: { $0.target == filter.target })
+                    else { return false }
+                    currentFilters[index] = filter
+                    publisher.send(currentFilters)
+                    return true
+                }, deleteFilters: { targets in
+                    
+                    currentFilters = currentFilters.filter { !targets.contains($0) }
+                    publisher.send(currentFilters)
+                    return true
+                }, fetchFilterList: {
+                    
+                    return currentFilters
+                }, getFilterListObserver: {
+                    
+                    return publisher.eraseToAnyPublisher()
+                })
+            } operation: {
+                DiaryListFeature()
+            }
+        })
+    }
 }

@@ -1,18 +1,18 @@
 //
 //  CounterFeature.swift
 //  Macho
-//  
+//
 //  Created by Daiki Fujimori on 2023/10/28
-//  
 //
 
 import ComposableArchitecture
-import Foundation
 
-struct CounterFeature: Reducer {
+@Reducer
+struct CounterFeature {
     
     // MARK: State
     
+    @ObservableState
     struct State: Equatable {
         
         var count = 0
@@ -44,7 +44,7 @@ struct CounterFeature: Reducer {
     
     @Dependency(\.continuousClock) var clock
     @Dependency(\.numberFact) var numberFact
-
+    
     var body: some ReducerOf<Self> {
         
         Reduce { state, action in

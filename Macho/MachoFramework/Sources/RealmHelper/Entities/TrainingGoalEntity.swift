@@ -21,8 +21,6 @@ public struct TrainingGoalEntity: BaseRealmEntity {
     public let startTime: Date?
     /// 終了時間
     public let endTime: Date?
-    /// トレーニング達成成否
-    public let isSuccess: Bool
     
     public static let executor = RealmObserverExecutor<Self>()
     
@@ -31,8 +29,7 @@ public struct TrainingGoalEntity: BaseRealmEntity {
                 numberOfSets: Int,
                 setCount: Int,
                 startTime: Date?,
-                endTime: Date?,
-                isSuccess: Bool) {
+                endTime: Date?) {
         
         self.id = id
         self.goalType = goalType
@@ -40,7 +37,6 @@ public struct TrainingGoalEntity: BaseRealmEntity {
         self.setCount = setCount
         self.startTime = startTime
         self.endTime = endTime
-        self.isSuccess = isSuccess
     }
     
     public init(realmObject: TrainingGoalRealmObject) {
@@ -51,14 +47,12 @@ public struct TrainingGoalEntity: BaseRealmEntity {
         setCount = realmObject.setCount
         startTime = realmObject.startTime
         endTime = realmObject.endTime
-        isSuccess = realmObject.isSuccess
     }
     
     public func toRealmObject() -> TrainingGoalRealmObject {
         
         return TrainingGoalRealmObject(id: id, goalType: goalType.toRealmObject(), numberOfSets: numberOfSets,
-                                       setCount: setCount, startTime: startTime, endTime: endTime,
-                                       isSuccess: isSuccess)
+                                       setCount: setCount, startTime: startTime, endTime: endTime)
     }
 }
 
@@ -70,15 +64,13 @@ public class TrainingGoalRealmObject: Object {
     @Persisted var setCount: Int
     @Persisted var startTime: Date?
     @Persisted var endTime: Date?
-    @Persisted var isSuccess: Bool
     
     convenience init(id: UUID,
                      goalType: TrainingTypeRealmObject,
                      numberOfSets: Int,
                      setCount: Int,
                      startTime: Date?,
-                     endTime: Date?,
-                     isSuccess: Bool) {
+                     endTime: Date?) {
         
         self.init()
         
@@ -88,6 +80,5 @@ public class TrainingGoalRealmObject: Object {
         self.setCount = setCount
         self.startTime = startTime
         self.endTime = endTime
-        self.isSuccess = isSuccess
     }
 }

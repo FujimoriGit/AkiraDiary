@@ -18,7 +18,7 @@ extension View {
                         cornerRadius: CGFloat = .zero,
                         @ActionBuilder _ actions: () -> [SwipeAction]) -> some View {
         
-        SwipeActionView(direction: direction, actions: actions()) {
+        SwipeActionView(direction: direction, cornerRadius: cornerRadius, actions: actions()) {
             self
         }
     }
@@ -29,7 +29,7 @@ struct SwipeActionView<Content>: View where Content: View {
     /// スワイプの方向
     var direction: SwipeDirection = .trailing
     /// スワイプ対象のセルの角丸設定
-    var cornerRadius: CGFloat = .zero
+    var cornerRadius: CGFloat
     /// スワイプ時に表示するボタンのリスト
     var actions: [SwipeAction]
     /// スワイプアクションを追加する対象のView
@@ -37,8 +37,19 @@ struct SwipeActionView<Content>: View where Content: View {
     /// ViewのID
     private let viewId = UUID()
     
+    init(direction: SwipeDirection,
+         cornerRadius: CGFloat,
+         actions: [SwipeAction],
+         @ViewBuilder content: () -> Content) {
+        
+        self.direction = direction
+        self.cornerRadius = cornerRadius
+        self.actions = actions
+        self.content = content()
+    }
+    
     var body: some View {
-        ScrollViewReader{ proxy in
+        ScrollViewReader { proxy in
             ScrollView(.horizontal) {
                 LazyHStack(spacing: .zero) {
                     content
@@ -154,77 +165,80 @@ struct ActionBuilder {
     }
 }
 
+// MARK: - preview
+
 #Preview {
     
-    struct SwipeSampleView: View {
-        
-        @State var colors: [Color] = [.red, .blue, .yellow, .brown]
-        
-        var body: some View {
-            Button(action: {
-                withAnimation {
-                    colors = [.red, .blue, .yellow, .brown]
-                }
-            }, label: {
-                Text("Clear")
-                    .frame(height: 100)
-                    .frame(maxWidth: .infinity)
-                    .foregroundStyle(.white)
-                    .background(.black)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .padding(.horizontal, 12)
-                    .font(.system(size: 24, weight: .bold))
-            })
-            ScrollView {
-                ForEach(colors, id: \.self) { color in
-                    CardView(color: color)
-                        .addSwipeAction(direction: .trailing,
-                                        cornerRadius: 8) {
-                            SwipeAction(tint: .blue,
-                                        icon: Image(systemName: "star.fill")) {
-                                print("Edit.")
-                            }
-                            SwipeAction(tint: Color(asset: CustomColor.deleteSwipeBackgroundColor),
-                                        icon: Image(systemName: "trash.fill")) {
-                                print("delete.")
-                                withAnimation {
-                                    colors.removeAll { $0 == color }
-                                }
+    return SwipeSampleView()
+}
+
+struct SwipeSampleView: View {
+    
+    @State private var colors: [Color] = [.red, .blue, .yellow, .brown]
+    
+    var body: some View {
+        Button(action: {
+            withAnimation {
+                colors = [.red, .blue, .yellow, .brown]
+            }
+        }, label: {
+            Text("Clear")
+                .frame(height: 100)
+                .frame(maxWidth: .infinity)
+                .foregroundStyle(.white)
+                .background(.black)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .padding(.horizontal, 12)
+                .font(.system(size: 24, weight: .bold))
+        })
+        ScrollView {
+            ForEach(colors, id: \.self) { color in
+                CardView(color: color)
+                    .addSwipeAction(direction: .trailing,
+                                    cornerRadius: 8) {
+                        SwipeAction(tint: .blue,
+                                    icon: Image(systemName: "star.fill")) {
+                            print("Edit.")
+                        }
+                        SwipeAction(tint: Color(asset: CustomColor.deleteSwipeBackgroundColor),
+                                    icon: Image(systemName: "trash.fill")) {
+                            print("delete.")
+                            withAnimation {
+                                colors.removeAll { $0 == color }
                             }
                         }
-                }
-                .padding(.horizontal, 10)
+                    }
+                                    .accessibilityHidden(true)
             }
+            .padding(.horizontal, 10)
         }
     }
+}
+
+struct CardView: View {
     
-    struct CardView: View {
-        
-        let color: Color
-        
-        var body: some View {
-            HStack(spacing: .zero) {
-                Circle()
-                    .frame(width: 50, height: 50)
-                    .foregroundStyle(.black)
-                Spacer()
-                    .frame(width: 10)
-                VStack(alignment: .leading) {
-                    Rectangle()
-                        .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 10)
-                        .foregroundStyle(.black.opacity(0.4))
-                    Rectangle()
-                        .frame(width: 200, height: 10)
-                        .foregroundStyle(.black.opacity(0.4))
-                }
-                Spacer()
+    let color: Color
+    
+    var body: some View {
+        HStack(spacing: .zero) {
+            Circle()
+                .frame(width: 50, height: 50)
+                .foregroundStyle(.black)
+            Spacer()
+                .frame(width: 10)
+            VStack(alignment: .leading) {
+                Rectangle()
+                    .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 10)
+                    .foregroundStyle(.black.opacity(0.4))
+                Rectangle()
+                    .frame(width: 200, height: 10)
+                    .foregroundStyle(.black.opacity(0.4))
             }
-            .padding(18)
-            .foregroundStyle(.white)
-            .background(color)
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+            Spacer()
         }
+        .padding(18)
+        .foregroundStyle(.white)
+        .background(color)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
     }
-    
-    return SwipeSampleView()
 }

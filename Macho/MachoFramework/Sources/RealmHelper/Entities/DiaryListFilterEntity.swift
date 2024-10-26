@@ -49,6 +49,7 @@ public class DiaryListFilterRealmObject: Object {
     convenience init(id: UUID, filterTarget: String, filterValue: String) {
         
         self.init()
+        self.id = id
         self.filterTarget = filterTarget
         self.filterValue = filterValue
     }
