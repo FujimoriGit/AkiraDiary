@@ -34,9 +34,8 @@ jobs:
         run: ls /Applications | grep 'Xcode'
 
       # Xcodeのバージョン出力
-      # TODO: Xcodeのバージョン指定
       - name: Show Xcode version
-        run: xcodebuild -version
+        run: sudo xcode-select -s '/Applications/Xcode_16.0.app/Contents/Developer'
 
       # Rudy製ライブラリのキャッシュ
       - name: Cache Gems
