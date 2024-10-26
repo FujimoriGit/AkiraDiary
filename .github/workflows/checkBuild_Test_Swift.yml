@@ -21,7 +21,7 @@ env:
 
 jobs:
   build:
-    if: ${{ github.event.issue.pull_request && github.event.comment.body == 'test-this-please' }}
+    if: ${{ github.event.issue.pull_request && github.event.comment.body == 'test-this-please' || !github.event.issue.pull_request }}
     # 実行環境はmacosに設定
     runs-on: macos-latest
 
