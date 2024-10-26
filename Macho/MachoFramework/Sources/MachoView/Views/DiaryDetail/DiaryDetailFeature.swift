@@ -5,11 +5,17 @@
 //  Created by 佐藤汰一 on 2024/10/19.
 //
 
+import Combine
 import ComposableArchitecture
 import RealmHelper
 
 @Reducer
 struct DiaryDetailFeature {
+    
+    // MARK: - Cancellable definition
+    
+    // フィルターテーブル監視のCancellable
+    struct DiaryObserveCancellable: Hashable {}
     
     // MARK: - State
         
@@ -21,18 +27,34 @@ struct DiaryDetailFeature {
             return lhs.diary.id == rhs.diary.id
         }
         
-        var diary: DiaryEntity
+        // MARK: path
         
+        var path = StackState<Path.State>()
+        
+        // MARK: view state
+        
+        var diary: DiaryEntity
+        /// メッセージをさらに表示しているかどうか
+        var isShownMoreMessage = false
+        /// 日記のタイトル
         var title: String { diary.title }
+        /// 日記のメッセージ
         var message: String { diary.mainText }
+        /// 日記のタグ
         var tags: [TrainingTagEntity] { diary.tags }
+        /// 日記に設定したトレーニングの総合結果
         var totalResult: TotalTrainingResult { TotalTrainingResult(diary) }
-        var trainings: [TrainingTypeResult]
+        /// 日記に設定したトレーニング種目毎の結果
+        var trainings: [TrainingTypeResult] { diary.goals.map { TrainingTypeResult(goal: $0) } }
     }
     
     // MARK: - Action
     
     enum Action {
+        
+        // MARK: Navigation Action
+        
+        case path(StackActionOf<Path>)
         
         // MARK: Event Action
         
@@ -61,23 +83,74 @@ struct DiaryDetailFeature {
         
         Reduce { state, action in
             
+            logger.info("Did receive action: \(action)")
+            
             switch action {
                 
-            case .onAppear:
+            case .path:
                 return .none
                 
+            case .onAppear:
+                return addObserveDiaryData(state)
+                
             case .onDisappear:
-                return .none
+                return .cancel(id: DiaryObserveCancellable())
                 
             case .tappedEditButton:
                 return .none
                 
             case .tappedShowMoreMessageButton:
+                state.isShownMoreMessage.toggle()
                 return .none
                 
             case .didReceivedDiary(let diary):
+                state.diary = diary
                 return .none
             }
         }
+        .forEach(\.path, action: \.path)
+    }
+}
+
+// MARK: Navigation Path Definition
+
+extension DiaryDetailFeature {
+    
+    @Reducer(state: .equatable, action: .equatable)
+    enum Path: Equatable {
+        
+        // TODO: 編集画面ができたら変更する
+        case editDiaryView(AddContactFeature)
+        
+        var id: Int {
+            
+            switch self {
+                
+            case .editDiaryView:
+                return 0
+            }
+        }
+        
+        static func == (lhs: DiaryDetailFeature.Path, rhs: DiaryDetailFeature.Path) -> Bool {
+            
+            return lhs.id == rhs.id
+        }
+    }
+}
+
+// MARK: - private method
+
+private extension DiaryDetailFeature {
+    
+    func addObserveDiaryData(_ state: State) -> EffectOf<Self> {
+        
+        // TODO: dependencyから取得したDiaryEntityのPublisherを使用するようにする
+        return .publisher {
+            PassthroughSubject<[DiaryEntity], Never>()
+                .compactMap { $0.first { $0.id == state.diary.id } }
+                .map { Action.didReceivedDiary($0) }
+                .eraseToAnyPublisher()
+        }
+        .cancellable(id: DiaryObserveCancellable())
     }
 }
