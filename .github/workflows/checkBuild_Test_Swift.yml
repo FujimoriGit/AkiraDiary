@@ -17,7 +17,7 @@ on:
 
 env:
   # チェックアウト
-  DEVELOPER_DIR: /Applications/Xcode_16.0.app
+  DEVELOPER_DIR: /Applications/Xcode_16.app
 
 jobs:
   build:
@@ -30,23 +30,21 @@ jobs:
       - uses: actions/checkout@v4.2.2
 
       # ======= test =======
-      - name: Update dependencies
-        run: bundle update
+      # - name: Update dependencies
+      #   run: bundle update
       # ======= test =======
 
       # Xcodeの一覧出力
       - name: Show Xcode list
         run: ls /Applications | grep 'Xcode'
 
-      # Xcodeのバージョン出力
+      # Xcodeのバージョン選択
       - name: Select Xcode version
         run: sudo xcode-select -s ${{ env.DEVELOPER_DIR }}
-
+      
+        # Xcodeのバージョン出力
       - name: Show Xcode version
         run: xcodebuild -version
-
-      - name: Build
-        run: xcodebuild -sdk iphonesimulator -configuration Debug build 
 
       # Rudy製ライブラリのキャッシュ
       - name: Cache Gems
