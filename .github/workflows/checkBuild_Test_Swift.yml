@@ -17,7 +17,7 @@ on:
 
 env:
   # チェックアウト
-  DEVELOPER_DIR: /Applications/Xcode_16.app
+  DEVELOPER_DIR: /Applications/Xcode_16.1.app
 
 jobs:
   build:
@@ -40,7 +40,7 @@ jobs:
 
       # Xcodeのバージョン選択
       - name: Select Xcode version
-        run: sudo xcode-select -s ${{ env.DEVELOPER_DIR }}
+        run: sudo xcode-select -s '${{ env.DEVELOPER_DIR }}/Contents/Developer'
       
         # Xcodeのバージョン出力
       - name: Show Xcode version
