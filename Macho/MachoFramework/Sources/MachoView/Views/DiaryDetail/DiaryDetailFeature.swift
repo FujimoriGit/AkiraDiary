@@ -7,6 +7,7 @@
 
 import Combine
 import ComposableArchitecture
+import Foundation
 import RealmHelper
 
 @Reducer
@@ -75,7 +76,7 @@ struct DiaryDetailFeature {
     
     // MARK: - Dependency
     
-    @Dependency var diaryListItemApi: DiaryListItemClient
+    @Dependency(\.diaryListFetchApi) var diaryListItemApi
     
     // MARK: - Reducer
     
@@ -97,6 +98,8 @@ struct DiaryDetailFeature {
                 return .cancel(id: DiaryObserveCancellable())
                 
             case .tappedEditButton:
+                // TODO: 編集画面ができたら正しいStateを設定する
+                state.path.append(.editDiaryView(.init(contact: .init(id: UUID(), name: "sample"))))
                 return .none
                 
             case .tappedShowMoreMessageButton:
