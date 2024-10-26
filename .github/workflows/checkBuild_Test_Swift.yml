@@ -32,6 +32,8 @@ jobs:
       # ======= test =======
       # - name: Update dependencies
       #   run: bundle update
+      - name: Show Gems Version
+        run: gem -v
       # ======= test =======
 
       # Xcodeの一覧出力
