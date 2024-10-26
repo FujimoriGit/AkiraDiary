@@ -23,7 +23,13 @@ struct DiaryDetailView: View {
             ZStack {
                 
             }
-            .navigationTitle("")
+            .toolbar {
+                ToolbarItem(placement: .navigation) {
+                    
+                }
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("Detail")
         } destination: { store in
             
         }
