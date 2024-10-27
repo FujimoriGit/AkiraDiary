@@ -25,12 +25,23 @@ struct DiaryDetailView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .navigation) {
-                    
+                    NavigationPopButton {
+                        
+                    }
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("Detail")
         } destination: { store in
+            
+        }
+    }
+}
+
+private extension DiaryDetailView {
+    
+    func createContentsArea() -> some View {
+        ScrollView {
             
         }
     }
@@ -50,5 +61,6 @@ struct DiaryDetailView: View {
                                          mainText: "preview sample message",
                                          goals: [goal1],
                                          tags: [tag1])
-    DiaryDetailView(store: Store(initialState: DiaryDetailFeature.State(diary: initialDiaryEntity), reducer: { DiaryDetailFeature() }))
+    DiaryDetailView(store: Store(initialState: DiaryDetailFeature.State(diary: initialDiaryEntity),
+                                 reducer: { DiaryDetailFeature() }))
 }
