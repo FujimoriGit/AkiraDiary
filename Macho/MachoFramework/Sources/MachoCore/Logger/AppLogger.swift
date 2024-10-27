@@ -9,19 +9,23 @@ import Logging
 
 public struct AppLogger {
     
-    private var logger: Logger
+    public static let shared = AppLogger(label: "Macho")
     
-    public init(label: String) {
+    private let logger: Logger
+    
+    private init(label: String) {
         
         LoggingSystem.bootstrap { label in
             MachoStandardLogHandler(label)
         }
         
-        logger = Logger(label: label)
+        var logger = Logger(label: label)
         
         #if DEBUG
         logger.logLevel = .debug
         #endif
+        
+        self.logger = logger
     }
     
     public func debug(file: String = #file,
