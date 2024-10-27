@@ -10,6 +10,6 @@ import RealmHelper
 
 typealias DiaryData = DiaryEntity
 typealias DiaryListFilterData = DiaryListFilterEntity
-typealias TrainingGoalData = TrainingGoalEntity
+typealias TrainingContentData = TrainingContentEntity
 typealias TrainingTagData = TrainingTagEntity
 typealias TrainingTypeData = TrainingTypeEntity

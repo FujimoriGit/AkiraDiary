@@ -50,7 +50,7 @@ final class RealmAccessorTest: XCTestCase {
 
     func testReadWithFilter() async throws {
         
-        let realm = await RealmAccessor()
+        let realm = RealmAccessor()
         
         guard let result: TrainingTagEntity = await realm.read(where: { $0.tagName == "testData1" }).first else {
             
@@ -65,7 +65,7 @@ final class RealmAccessorTest: XCTestCase {
     
     func testReadAll() async throws {
         
-        let realm = await RealmAccessor()
+        let realm = RealmAccessor()
         
         let result: [TrainingTagEntity] = await realm.read()
         result.enumerated().forEach { index, resultEntity in
@@ -76,7 +76,7 @@ final class RealmAccessorTest: XCTestCase {
     
     func testUpdate() async throws {
         
-        let realm = await RealmAccessor()
+        let realm = RealmAccessor()
         let targetID = realmTestData.first!.id
         let expectedData = TrainingTagEntity(id: targetID, tagName: "testData3")
         
@@ -95,7 +95,7 @@ final class RealmAccessorTest: XCTestCase {
     
     func testDelete() async throws {
         
-        let realm = await RealmAccessor()
+        let realm = RealmAccessor()
         let filterId = realmTestData[0].id
         guard await realm.delete(where: { (tag: TrainingTagEntity) in tag.id == filterId }) else {
             
@@ -112,7 +112,7 @@ final class RealmAccessorTest: XCTestCase {
     
     func testDeleteAll() async throws {
         
-        let realm = await RealmAccessor()
+        let realm = RealmAccessor()
         guard await realm.deleteAll(type: TrainingTagEntity.self) else {
             
             XCTFail()
@@ -241,7 +241,7 @@ private extension RealmAccessorTest {
     
     func insertTestData(data: [TrainingTagEntity] = []) async {
         
-        let realm = await RealmAccessor()
+        let realm = RealmAccessor()
         guard await realm.insert(records: data.isEmpty ? realmTestData : data) else {
             
             XCTFail("Fail insert test Data")
@@ -251,7 +251,7 @@ private extension RealmAccessorTest {
     
     func updateTestData(value: [String: Any]) async {
         
-        let realm = await RealmAccessor()
+        let realm = RealmAccessor()
         guard await realm.update(type: TrainingTagEntity.self, value: value) else {
            
             XCTFail("Fail update")
@@ -261,7 +261,7 @@ private extension RealmAccessorTest {
     
     func deleteTestData(deleteTarget: UUID) async {
         
-        let realm = await RealmAccessor()
+        let realm = RealmAccessor()
         guard await realm.delete(where: { (tag: TrainingTagEntity) in tag.id == deleteTarget }) else {
             
             XCTFail("Fail delete")
