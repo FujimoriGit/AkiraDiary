@@ -37,8 +37,8 @@ struct DiaryListItemFeature: Sendable {
             title = entity.title
             message = entity.mainText
             date = entity.date
-            isWin = entity.goals.isEmpty ? false : !entity.goals.contains { !($0.isSuccess ?? false) }
-            trainingList = entity.goals.compactMap { $0.goalType?.id }
+            isWin = entity.goals.isEmpty ? false : !entity.goals.contains { !($0.isAchieved) }
+            trainingList = entity.goals.compactMap { $0.trainingType?.id }
             tagList = entity.tags.map(\.id)
         }
         

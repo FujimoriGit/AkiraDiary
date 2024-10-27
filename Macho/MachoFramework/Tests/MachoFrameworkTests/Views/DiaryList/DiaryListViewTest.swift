@@ -557,7 +557,16 @@ private extension DiaryListViewTests {
         
         return RealmAccessorMock(fetchEntity: expectedReceiveDiary.map { diary in
             
-            let goals = diary.trainingList.map { TrainingGoalEntity(id: $0, goalType: .init(id: $0, name: "sample"), numberOfSets: 1, setCount: 1, startTime: nil, endTime: nil, isSuccess: diary.isWin) }
+            let goals = diary.trainingList.map {
+                TrainingContentEntity(id: $0,
+                                      trainingType: .init(id: $0, name: "sample"),
+                                      goalNumberOfSets: 1,
+                                      goalSetCount: 1,
+                                      actualNumberOfSets: diary.isWin ? 2 : 0,
+                                      actualSetCount: 1,
+                                      startTime: nil,
+                                      endTime: nil)
+            }
             let tags = diary.tagList.map { TrainingTagEntity(id: $0, tagName: $0.description) }
             return DiaryEntity(id: diary.id,
                                date: diary.date,
