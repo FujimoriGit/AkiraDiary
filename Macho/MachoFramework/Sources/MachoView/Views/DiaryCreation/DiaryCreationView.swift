@@ -3,7 +3,6 @@
 //  Macho
 //  
 //  Created by Daiki Fujimori on 2024/01/07
-//  
 //
 
 import ComposableArchitecture
@@ -13,15 +12,22 @@ struct DiaryCreationView: View {
     
     // MARK: - Store
     
-    let store: StoreOf<DiaryCreationFeature>
+    @Bindable private var store: StoreOf<DiaryCreationFeature>
     @State private var animationsRunning = false
+    
+    // MARK: - initialize
+    
+    init(store: StoreOf<DiaryCreationFeature>) {
+        
+        self.store = store
+    }
     
     // MARK: - private property
     
     private let horizontalPadding: CGFloat = 16
     private let textSize: CGFloat = 16
     private let lineWidth: CGFloat = 1
-    private let textEditorPdding = EdgeInsets(top: 3, leading: 5, bottom: 3, trailing: 8)
+    private let textEditorPadding = EdgeInsets(top: 3, leading: 5, bottom: 3, trailing: 8)
     private let placeholderPadding = EdgeInsets(top: 12, leading: 8, bottom: 8, trailing: 8)
     private let placeholderToTagsPadding: CGFloat = 12
     private let placeholderHeight: CGFloat = 200
@@ -45,45 +51,32 @@ struct DiaryCreationView: View {
     
     var body: some View {
         NavigationStack {
-            WithViewStore(store, observe: { $0 }) { viewStore in
-                GeometryReader { geometry in
-                    
-                    // 計算を一回のみにする
-                    let calculatedWidth = ViewUtil.calcWidth(size: geometry.size, horizontalPadding: horizontalPadding)
-                    
-                    createView(viewStore: viewStore, calculatedWidth: calculatedWidth)
-                        .frame(maxWidth: geometry.size.width, minHeight: geometry.size.height)
+            GeometryReader { geometry in
+                // 計算を一回のみにする
+                let calculatedWidth = ViewUtil.calcWidth(size: geometry.size, horizontalPadding: horizontalPadding)
+                
+                createView(calculatedWidth: calculatedWidth)
+                    .frame(maxWidth: geometry.size.width, minHeight: geometry.size.height)
+            }
+            .navigationTitle("Create Diary")
+            .navigationBarTitleDisplayMode(.inline)
+            .sheet(item: $store.scope(state: \.destination?.addGoal, action: \.destination.addGoal)) { addGoalStore in
+                
+                NavigationStack {
+                    // 次画面のインスタンス生成
+                    AddGoalView(store: addGoalStore)
                 }
-                .navigationTitle("Create Diary")
-                .navigationBarTitleDisplayMode(.inline)
-                .sheet(
-                    store: store.scope(state: \.$destination, action: { .destination($0) }),
-                    state: /DiaryCreationFeature.Destination.State.addGoal,
-                    action: DiaryCreationFeature.Destination.Action.addGoal
-                ) { addGoalStore in
-                    
-                    NavigationStack {
-                        
-                        // 次画面のインスタンス生成
-                        AddGoalView(store: addGoalStore)
-                    }
+            }
+            .sheet(item: $store.scope(state: \.destination?.addTag, action: \.destination.addTag)) { addTagStore in
+                
+                NavigationStack {
+                    // 次画面のインスタンス生成
+                    AddTagView(store: addTagStore)
                 }
-                .sheet(
-                    store: store.scope(state: \.$destination, action: { .destination($0) }),
-                    state: /DiaryCreationFeature.Destination.State.addTag,
-                    action: DiaryCreationFeature.Destination.Action.addTag
-                ) { addTagStore in
-                    
-                    NavigationStack {
-                        
-                        // 次画面のインスタンス生成
-                        AddTagView(store: addTagStore)
-                    }
-                }
-                .onAppear {
-                    
-                    viewStore.send(.onAppear)
-                }
+            }
+            .onAppear {
+                
+                store.send(.onAppear)
             }
         }
     }
@@ -93,61 +86,55 @@ struct DiaryCreationView: View {
 
 private extension DiaryCreationView {
     
-    func createView(viewStore: ViewStore<DiaryCreationFeature.State, DiaryCreationFeature.Action>,
-                    calculatedWidth: CGFloat) -> some View {
+    func createView(calculatedWidth: CGFloat) -> some View {
         
         VStack {
             ScrollView {
+                titleTextField(calculatedWidth: calculatedWidth)
                 
-                titleTextField(text: viewStore.binding(get: { $0.titleText },
-                                                       send: DiaryCreationFeature.Action.titleTextChange),
-                               calculatedWidth: calculatedWidth)
-                
-                messageTextField(text: viewStore.binding(get: { $0.messageText },
-                                                         send: DiaryCreationFeature.Action.messageTextChange),
-                                 calculatedWidth: calculatedWidth)
+                messageTextField(calculatedWidth: calculatedWidth)
                 
                 Spacer()
                     .frame(height: placeholderToTagsPadding)
                 
-                tagsArea(viewStore: viewStore, calculatedWidth: calculatedWidth)
+                tagsArea(calculatedWidth: calculatedWidth)
                 
                 Spacer()
                     .frame(height: tagButtonsBothPadding)
                 
-                goalsArea(viewStore: viewStore, calculatedWidth: calculatedWidth)
+                goalsArea(calculatedWidth: calculatedWidth)
             }
             .scrollIndicators(.hidden)
             
-            startButton(animationsRunning: viewStore.animationsRunning, calculatedWidth: calculatedWidth) {
+            startButton(animationsRunning: store.animationsRunning, calculatedWidth: calculatedWidth) {
                 
-                viewStore.send(.trainingStartButtonTapped)
+                store.send(.trainingStartButtonTapped)
             }
             .padding(.bottom, startButtonBottomPadding)
         }
     }
     
-    func titleTextField(text: Binding<String>, calculatedWidth: CGFloat) -> some View {
+    func titleTextField(calculatedWidth: CGFloat) -> some View {
         VStack(alignment: .leading) {
             Text("title")
-            TextField("\(formatter.string(from: Date()))", text: text)
+            TextField("\(formatter.string(from: Date()))", text: $store.titleText.sending(\.titleTextChange))
                 .padding(8)
                 .overlay(RoundedRectangle(cornerRadius: textEditorCornerRadius)
-                    .stroke(Color(uiColor: .systemGray2) , lineWidth: lineWidth))
+                    .stroke(Color(uiColor: .systemGray2), lineWidth: lineWidth))
         }
         .frame(width: calculatedWidth - (lineWidth * 2))
     }
     
-    func messageTextField(text: Binding<String>, calculatedWidth: CGFloat) -> some View {
+    func messageTextField(calculatedWidth: CGFloat) -> some View {
         VStack(alignment: .leading) {
             Text("message")
-            ZStack(alignment: .topLeading)  {
-                TextEditor(text: text)
-                    .padding(textEditorPdding)
+            ZStack(alignment: .topLeading) {
+                TextEditor(text: $store.messageText.sending(\.messageTextChange))
+                    .padding(textEditorPadding)
                     .overlay(RoundedRectangle(cornerRadius: textEditorCornerRadius)
                         .stroke(Color(uiColor: .systemGray2), lineWidth: lineWidth))
                     .frame(height: placeholderHeight)
-                if text.wrappedValue.isEmpty {
+                if store.messageText.isEmpty {
                     Text("Placeholder")
                         .foregroundColor(Color(uiColor: .placeholderText))
                         .padding(placeholderPadding)
@@ -158,35 +145,33 @@ private extension DiaryCreationView {
         .frame(width: calculatedWidth - (lineWidth * 2))
     }
     
-    func tagsArea(viewStore: ViewStore<DiaryCreationFeature.State, DiaryCreationFeature.Action>,
-                  calculatedWidth: CGFloat) -> some View {
+    func tagsArea(calculatedWidth: CGFloat) -> some View {
         
         VStack(spacing: tagButtonsBothPadding) {
             addingButton(title: "Tags", maxWidth: calculatedWidth) {
                 
-                viewStore.send(.tappedAddingTagButton)
+                store.send(.tappedAddingTagButton)
             }
             
-            tags(viewStore.tags) { tag in
+            tags(store.tags) { tag in
                 
-                viewStore.send(.tappedTag(tag))
+                store.send(.tappedTag(tag))
             }
         }
         .frame(maxWidth: calculatedWidth, alignment: .leading)
     }
     
-    func goalsArea(viewStore: ViewStore<DiaryCreationFeature.State, DiaryCreationFeature.Action>,
-                   calculatedWidth: CGFloat) -> some View {
+    func goalsArea(calculatedWidth: CGFloat) -> some View {
         
         VStack(spacing: tagButtonsBothPadding) {
             addingButton(title: "Goals", maxWidth: calculatedWidth) {
                 
-                viewStore.send(.tappedAddingGoalButton)
+                store.send(.tappedAddingGoalButton)
             }
             
-            goals(viewStore.goals) { goal in
+            goals(store.goals) { goal in
                 
-                viewStore.send(.tappedGoal(goal))
+                store.send(.tappedGoal(goal))
             }
         }
         .frame(maxWidth: calculatedWidth, alignment: .leading)
@@ -268,7 +253,7 @@ private extension DiaryCreationView {
                 Image(systemName: "figure.run.square.stack")
                     .font(.system(size: 24))
                     .symbolEffect(.bounce, value: animationsRunning)
-                Text("Traning Start!")
+                Text("Training Start!")
                     .font(.system(size: textSize, weight: .bold))
             }
             .frame(maxWidth: calculatedWidth, minHeight: startButtonHeight)

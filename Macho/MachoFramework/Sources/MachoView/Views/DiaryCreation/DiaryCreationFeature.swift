@@ -3,7 +3,6 @@
 //  Macho
 //  
 //  Created by Daiki Fujimori on 2024/01/07
-//  
 //
 
 import ComposableArchitecture
@@ -26,10 +25,12 @@ struct Goal: Equatable, Identifiable {
     var isSelected = false
 }
 
-struct DiaryCreationFeature: Reducer {
+@Reducer
+struct DiaryCreationFeature: Sendable {
     
     // MARK: State
     
+    @ObservableState
     struct State: Equatable {
         
         var titleText = ""
@@ -39,12 +40,12 @@ struct DiaryCreationFeature: Reducer {
         var isEnableStartButton = false
         var animationsRunning = false
         
-        @PresentationState var destination: Destination.State?
+        @Presents var destination: Destination.State?
     }
     
     // MARK: - Action
     
-    enum Action: Equatable {
+    enum Action: Sendable, Equatable {
         
         case onAppear
         case fetched(tags: [Tag], goals: [Goal])
@@ -136,11 +137,14 @@ struct DiaryCreationFeature: Reducer {
             case .destination(.presented(.addTag(.saveButtonTapped))):
                 return .none
                 
-            case .destination(.presented(.addTag(.setTagName(_)))):
+            case .destination(.presented(.addTag(.setTagName))):
                 return .none
                 
             case .tappedAddingGoalButton:
-                state.destination = .addGoal(AddGoalFeature.State(goal: Goal(id: UUID(), goalName: "", numberOfSets: 0, setCount: 0)))
+                state.destination = .addGoal(AddGoalFeature.State(goal: Goal(id: UUID(),
+                                                                             goalName: "",
+                                                                             numberOfSets: 0,
+                                                                             setCount: 0)))
                 return .none
                 
             case .tappedGoal(let goal):
@@ -179,40 +183,33 @@ struct DiaryCreationFeature: Reducer {
                 return .none
             }
         }
-        .ifLet(\.$destination, action: /Action.destination) {
-            
-            Destination()
-        }
+        .ifLet(\.$destination, action: \.destination)
     }
 }
 
 extension DiaryCreationFeature {
     
-    struct Destination: Reducer {
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination: Equatable {
         
-        enum State: Equatable {
+        case addTag(AddTagFeature)
+        case addGoal(AddGoalFeature)
+        
+        var id: Int {
             
-            case addTag(AddTagFeature.State)
-            case addGoal(AddGoalFeature.State)
+            switch self {
+                
+            case .addTag:
+                return 0
+                
+            case .addGoal:
+                return 1
+            }
         }
         
-        enum Action: Equatable {
+        static func == (lhs: DiaryCreationFeature.Destination, rhs: DiaryCreationFeature.Destination) -> Bool {
             
-            case addTag(AddTagFeature.Action)
-            case addGoal(AddGoalFeature.Action)
-        }
-        
-        var body: some ReducerOf<Self> {
-            
-            Scope(state: /State.addTag, action: /Action.addTag) {
-                
-                AddTagFeature()
-            }
-            
-            Scope(state: /State.addGoal, action: /Action.addGoal) {
-                
-                AddGoalFeature()
-            }
+            return lhs.id == rhs.id
         }
     }
 }
