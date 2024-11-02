@@ -90,7 +90,16 @@ fileprivate actor RealmActor {
     
     private init() async {
         
-        realm = try? await Realm(actor: self)
+        logger.debug("realm file: \(String(describing: Realm.Configuration.defaultConfiguration.fileURL))")
+        do {
+            
+            realm = try await Realm(actor: self)
+        }
+        catch {
+            
+            logger.error("Failed initialize realm instance: \(error)")
+            realm = nil
+        }
     }
     
     static func getSingleton() async -> RealmActor {
@@ -212,9 +221,11 @@ private extension RealmActor {
     
     func executeAsyncWrite(_ operation: @escaping () -> Void) async -> Bool {
         
+        guard let realm else { return false }
+        
         return await withCheckedContinuation { continuation in
             
-            realm?.writeAsync(operation) { error in
+            realm.writeAsync(operation) { error in
                 
                 guard let error else {
                     
