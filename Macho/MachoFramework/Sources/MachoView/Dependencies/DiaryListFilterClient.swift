@@ -44,6 +44,7 @@ extension DiaryListFilterClient: DependencyKey {
         return await RealmAccessor().insert(records: [
             DiaryListFilterEntity(id: $0.id,
                                   filterTarget: $0.target.rawValue,
+                                  filterId: $0.filterItemId,
                                   filterValue: $0.value)
         ])
     } updateFilter: { filter in
@@ -81,13 +82,14 @@ extension DiaryListFilterClient: DependencyKey {
         return true
     } fetchFilterList: {
     
-        return [DiaryListFilterItem(id: UUID(), target: .achievement, value: "達成していない")]
+        return [DiaryListFilterItem(target: .achievement, filterItemId: UUID(), value: "達成していない")]
     } getFilterListObserver: {
         
         return PassthroughSubject<[DiaryListFilterItem], Never>().eraseToAnyPublisher()
     }
     
-    static func getFetchOnlyClientForTest(_ expected: [DiaryListFilterItem]) -> DiaryListFilterClient {
+    static func getFetchOnlyClientForTest(_ expected: [DiaryListFilterItem],
+                                          observer: AnyPublisher<[DiaryListFilterItem], Never> = PassthroughSubject<[DiaryListFilterItem], Never>().eraseToAnyPublisher()) -> DiaryListFilterClient {
         
         return DiaryListFilterClient { _ in 
             
@@ -103,7 +105,7 @@ extension DiaryListFilterClient: DependencyKey {
             return expected
         } getFilterListObserver: {
             
-            return PassthroughSubject<[DiaryListFilterItem], Never>().eraseToAnyPublisher()
+            return observer
         }
     }
 }
@@ -115,7 +117,7 @@ private extension DiaryListFilterClient {
         return entities.compactMap {
             
             guard let target = DiaryListFilterTarget(rawValue: $0.filterTarget) else { return nil }
-            return DiaryListFilterItem(id: $0.id, target: target, value: $0.filterValue)
+            return DiaryListFilterItem(target: target, filterItemId: $0.filterId, value: $0.filterValue)
         }
     }
 }
