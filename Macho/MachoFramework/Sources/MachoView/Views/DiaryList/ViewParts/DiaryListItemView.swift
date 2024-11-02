@@ -90,10 +90,8 @@ private extension DiaryListItemView {
     }
     
     func createWinLoseIcon(isWin: Bool) -> some View {
-        Text(isWin ? "Win" : "Lose")
-            .font(.system(size: winLoseLabelFontSize,
-                          weight: .heavy))
-            .foregroundStyle(isWin ? Color(asset: CustomColor.winColor) : Color(asset: CustomColor.loseColor))
+        AchieveIconView(isAchieved: isWin,
+                        size: winLoseLabelFontSize)
     }
     
     func createTopContents(title: String, date: String) -> some View {
