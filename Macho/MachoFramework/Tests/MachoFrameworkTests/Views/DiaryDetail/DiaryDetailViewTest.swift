@@ -15,6 +15,11 @@ import XCTest
 final class DiaryDetailViewTest: XCTestCase {
     
     /// 画面表示時の変更監視処理の確認
+    ///
+    /// # 確認する仕様
+    /// - 画面表示時に日記の変更監視を開始すること
+    /// - 表示している日記の内容が更新されたら画面の内容が更新されること
+    /// - ナビゲーションの戻るボタンを押下したら監視を終了して画面が閉じること
     @MainActor
     func testOnAppearView() async throws {
         
@@ -47,6 +52,9 @@ final class DiaryDetailViewTest: XCTestCase {
     }
     
     /// 編集ボタンタップ時の確認
+    ///
+    /// # 確認する仕様
+    /// - 編集ボタンを押下したら編集画面にナビゲーション遷移すること
     @MainActor
     func testOnTappedEdit() async throws {
         
@@ -66,6 +74,12 @@ final class DiaryDetailViewTest: XCTestCase {
     }
     
     /// さらに表示ボタンタップ時の確認
+    ///
+    /// # 確認する仕様
+    /// - 画面に表示していない日記の変更があっても画面の内容は変更されないこと
+    /// - さらに表示するボタンを押下すると本文のテキストが全文表示されること
+    /// - 本文を省略するボタンを押下すると本文のテキストが省略されること
+    /// - 画面が非表示になると日記の監視が終了すること
     @MainActor
     func testOnTappedShowMoreMessage() async throws {
         
