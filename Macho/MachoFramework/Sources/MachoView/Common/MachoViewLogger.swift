@@ -7,4 +7,4 @@
 
 import MachoCore
 
-let logger = AppLogger(label: "MachoView")
+let logger = AppLogger.shared

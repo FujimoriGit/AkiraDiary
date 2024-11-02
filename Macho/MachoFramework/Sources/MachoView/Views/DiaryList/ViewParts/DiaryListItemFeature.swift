@@ -14,7 +14,13 @@ struct DiaryListItemFeature: Sendable {
     @ObservableState
     struct State: Equatable, Identifiable, Sendable {
         
-        init(id: UUID = UUID(), title: String, message: String, date: Date, isWin: Bool, trainingList: [String]) {
+        init(id: UUID = UUID(),
+             title: String,
+             message: String,
+             date: Date,
+             isWin: Bool,
+             trainingList: [UUID],
+             tagList: [UUID]) {
             
             self.id = id
             self.title = title
@@ -22,6 +28,18 @@ struct DiaryListItemFeature: Sendable {
             self.date = date
             self.isWin = isWin
             self.trainingList = trainingList
+            self.tagList = tagList
+        }
+        
+        init(_ entity: DiaryData) {
+            
+            id = entity.id
+            title = entity.title
+            message = entity.mainText
+            date = entity.date
+            isWin = entity.goals.isEmpty ? false : !entity.goals.contains { !($0.isAchieved) }
+            trainingList = entity.goals.compactMap { $0.trainingType?.id }
+            tagList = entity.tags.map(\.id)
         }
         
         let id: UUID
@@ -33,8 +51,10 @@ struct DiaryListItemFeature: Sendable {
         let date: Date
         /// 目標達成したかどうか
         let isWin: Bool
-        /// 日記に登録したトレーニング種別
-        let trainingList: [String]
+        /// 日記に登録したトレーニング種別のID
+        let trainingList: [UUID]
+        /// 日記に登録したタグのID
+        let tagList: [UUID]
     }
     
     enum Action: Sendable {

@@ -8,7 +8,6 @@
 import Combine
 import ComposableArchitecture
 import Foundation
-import RealmHelper
 
 @Reducer
 struct DiaryDetailFeature {
@@ -23,18 +22,13 @@ struct DiaryDetailFeature {
     @ObservableState
     struct State: Equatable {
         
-        static func == (lhs: DiaryDetailFeature.State, rhs: DiaryDetailFeature.State) -> Bool {
-            
-            return lhs.diary.id == rhs.diary.id
-        }
-        
         // MARK: path
         
         var path = StackState<Path.State>()
         
         // MARK: view state
         
-        var diary: DiaryEntity
+        var diary: DiaryData
         /// メッセージをさらに表示しているかどうか
         var isShownMoreMessage = false
         /// 日記のタイトル
@@ -42,11 +36,11 @@ struct DiaryDetailFeature {
         /// 日記のメッセージ
         var message: String { diary.mainText }
         /// 日記のタグ
-        var tags: [TrainingTagEntity] { diary.tags }
+        var tags: [TrainingTagData] { diary.tags }
         /// 日記に設定したトレーニングの総合結果
         var totalResult: TotalTrainingResult { TotalTrainingResult(diary) }
         /// 日記に設定したトレーニング種目毎の結果
-        var trainings: [TrainingTypeResult] { diary.goals.map { TrainingTypeResult(goal: $0) } }
+        var trainings: [TrainingTypeResult] { diary.goals.map { TrainingTypeResult($0) } }
     }
     
     // MARK: - Action
@@ -65,18 +59,21 @@ struct DiaryDetailFeature {
         case onDisappear
         /// 編集ボタン押下時
         case tappedEditButton
+        /// 戻るボタン押下時
+        case tappedBackNavigationButton
         /// さらに表示ボタン押下時
         case tappedShowMoreMessageButton
         
         // MARK: Effect Action
         
         /// 日記の取得副作用
-        case didReceivedDiary(DiaryEntity)
+        case didReceivedDiary(DiaryData)
     }
     
     // MARK: - Dependency
     
     @Dependency(\.diaryListFetchApi) var diaryListItemApi
+    @Dependency(\.dismiss) var dismiss
     
     // MARK: - Reducer
     
@@ -99,8 +96,17 @@ struct DiaryDetailFeature {
                 
             case .tappedEditButton:
                 // TODO: 編集画面ができたら正しいStateを設定する
-                state.path.append(.editDiaryView(.init(contact: .init(id: UUID(), name: "sample"))))
+                state.path.append(.editDiaryView(.init(contact: .init(id: .init(.zero), name: "sample"))))
                 return .none
+                
+            case .tappedBackNavigationButton:
+                return .concatenate(
+                    .cancel(id: DiaryObserveCancellable()),
+                    .run { _ in
+                        
+                        await dismiss()
+                    }
+                )
                 
             case .tappedShowMoreMessageButton:
                 state.isShownMoreMessage.toggle()
@@ -147,9 +153,8 @@ private extension DiaryDetailFeature {
     
     func addObserveDiaryData(_ state: State) -> EffectOf<Self> {
         
-        // TODO: dependencyから取得したDiaryEntityのPublisherを使用するようにする
         return .publisher {
-            PassthroughSubject<[DiaryEntity], Never>()
+            diaryListItemApi.observeDiaryList()
                 .compactMap { $0.first { $0.id == state.diary.id } }
                 .map { Action.didReceivedDiary($0) }
                 .eraseToAnyPublisher()

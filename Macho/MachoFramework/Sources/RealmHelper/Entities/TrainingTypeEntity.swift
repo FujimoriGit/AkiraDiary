@@ -5,11 +5,10 @@
 //  Created by Daiki Fujimori on 2024/08/16
 //  
 
-
 import Foundation
 import RealmSwift
 
-public struct TrainingTypeEntity: BaseRealmEntity {
+public struct TrainingTypeEntity: BaseRealmEntity, Equatable {
     
     public let id: UUID
     public let name: String

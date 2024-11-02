@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import RealmHelper
 
 struct TotalTrainingResult {
     
@@ -39,7 +38,7 @@ struct TotalTrainingResult {
         return getDisplayDateText(Date(timeIntervalSince1970: endDate.timeIntervalSince(startDate)))
     }
     
-    init(_ diary: DiaryEntity) {
+    init(_ diary: DiaryData) {
         
         trainingCount = diary.goals.count
         startDate = diary.goals.compactMap(\.startTime).min { $0 < $1 }
