@@ -8,7 +8,7 @@
 import Foundation
 import RealmSwift
 
-public struct DiaryEntity: BaseRealmEntity {
+public struct DiaryEntity: BaseRealmEntity, Equatable {
     
     public let id: UUID
     /// 日付

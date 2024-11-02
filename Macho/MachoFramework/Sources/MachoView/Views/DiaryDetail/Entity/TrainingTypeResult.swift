@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import RealmHelper
 
 struct TrainingTypeResult {
     
@@ -29,12 +28,12 @@ struct TrainingTypeResult {
         return false
     }
     
-    init(goal: TrainingGoalEntity) {
+    init(_ content: TrainingContentData) {
         
-        trainingName = goal.goalType.name
-        goalSet = goal.setCount
-        goalNumberOfSets = goal.numberOfSets
-        actualSet = goal.setCount
-        actualNumberOfSets = goal.numberOfSets
+        trainingName = content.trainingType?.name ?? "-"
+        goalSet = content.goalSetCount
+        goalNumberOfSets = content.goalNumberOfSets
+        actualSet = content.actualSetCount ?? 0
+        actualNumberOfSets = content.actualNumberOfSets ?? 0
     }
 }
