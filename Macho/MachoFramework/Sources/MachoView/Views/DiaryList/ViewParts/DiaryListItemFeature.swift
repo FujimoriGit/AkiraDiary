@@ -31,6 +31,17 @@ struct DiaryListItemFeature: Sendable {
             self.tagList = tagList
         }
         
+        init(_ entity: DiaryData) {
+            
+            id = entity.id
+            title = entity.title
+            message = entity.mainText
+            date = entity.date
+            isWin = entity.goals.isEmpty ? false : !entity.goals.contains { !($0.isAchieved) }
+            trainingList = entity.goals.compactMap { $0.trainingType?.id }
+            tagList = entity.tags.map(\.id)
+        }
+        
         let id: UUID
         /// 日記のタイトル
         let title: String

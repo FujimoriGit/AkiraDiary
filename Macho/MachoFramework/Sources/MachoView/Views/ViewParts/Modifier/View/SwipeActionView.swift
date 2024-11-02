@@ -119,7 +119,7 @@ private extension SwipeActionView {
             }
     }
     
-    func scrollOffset(_ proxy: GeometryProxy) -> CGFloat {
+    nonisolated func scrollOffset(_ proxy: GeometryProxy) -> CGFloat {
         
         let minX = proxy.frame(in: .scrollView(axis: .horizontal)).minX
         return direction == .trailing ? (minX > 0 ? -minX : 0) : (minX < 0 ? -minX : 0)
