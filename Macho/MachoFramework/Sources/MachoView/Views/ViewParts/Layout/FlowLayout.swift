@@ -1,9 +1,8 @@
 //
 //  FlowLayout.swift
+//  MachoFramework
 //
-//
-//  Created by Daiki Fujimori on 2024/04/06
-//
+//  Created by Daiki Fujimori on 2024/11/02
 //
 
 import SwiftUI
