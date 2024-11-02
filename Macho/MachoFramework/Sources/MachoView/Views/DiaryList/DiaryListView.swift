@@ -244,11 +244,11 @@ struct PreviewDiaryListView: View {
     private let state: DiaryListFeature.State
     private let publisher = PassthroughSubject<[DiaryListFilterItem], Never>()
     @State private var currentFilters = [
-        DiaryListFilterItem(id: UUID(),
-                            target: .achievement,
+        DiaryListFilterItem(target: .achievement,
+                            filterItemId: UUID(),
                             value: "達成していない"),
-        DiaryListFilterItem(id: UUID(),
-                            target: .trainingType,
+        DiaryListFilterItem(target: .trainingType,
+                            filterItemId: UUID(),
                             value: "腹筋")
     ]
     
@@ -261,7 +261,8 @@ struct PreviewDiaryListView: View {
                                                       message: "",
                                                       date: Date(),
                                                       isWin: true,
-                                                      trainingList: ["腹筋", "ベンチプレス", "ダンベルプレス"]))
+                                                      trainingList: [],
+                                                      tagList: []))
         }
         
         self.state = DiaryListFeature.State(diaries: diaries)
@@ -271,20 +272,23 @@ struct PreviewDiaryListView: View {
         DiaryListView(store: Store(initialState: state) {
             withDependencies {
                 // 日記リスト取得のAPI DI
-                $0.diaryListFetchApi = DiaryListItemClient(fetch: { _, _ in
-                    if Int.random(in: 0...10) <= 5 {
-                        return [
-                            .init(title: "fetch item",
-                                  message: "sample",
-                                  date: Date(),
-                                  isWin: false,
-                                  trainingList: ["腹筋", "ベンチプレス", "ダンベルプレス"])
-                        ]
+                $0.diaryListFetchApi = DiaryClient(fetch: { _, _ in
+                    
+                    return [
+                        .init(id: UUID(),
+                              date: Date(),
+                              title: "sample title",
+                              mainText: "sample message",
+                              goals: [],
+                              tags: [])
+                    ]
+                }, deleteItem: { id async throws(DiaryClient.Error) in
+                    
+                    if Int.random(in: 0..<10) < 4 {
+                        
+                        throw DiaryClient.Error.failedDeletingItem(target: id)
                     }
-                    else {
-                        throw URLError(.badURL)
-                    }
-                }, deleteItem: { _ in })
+                })
                 // フィルター取得API DI
                 $0.diaryListFilterApi = DiaryListFilterClient(addFilter: { filter in
                     

@@ -11,6 +11,11 @@ import Foundation
 @Reducer
 struct DiaryListFeature: Sendable {
     
+    // MARK: - Cancellable
+    
+    // フィルターテーブル監視のCancellable
+    struct FilterObserveCancellable: Hashable {}
+    
     // MARK: - State
     
     @ObservableState
@@ -84,6 +89,8 @@ struct DiaryListFeature: Sendable {
         
         /// 画面表示時のアクション
         case onAppearView
+        /// 画面非表示時のアクション
+        case onDisappearView
         /// フィルターボタン押下時のアクション
         case tappedFilterButton
         /// グラフボタン押下時のアクション
@@ -95,8 +102,6 @@ struct DiaryListFeature: Sendable {
         
         /// 日記リストの取得に成功したときの副作用を処理する
         case receiveLoadDiaryItems(items: [DiaryListItemFeature.State])
-        /// 日記リストの取得に失敗したときの副作用を処理する
-        case failedLoadDiaryItems
         /// 指定した日記をRealmから削除する副作用を処理する
         case deletedDiaryItem(id: UUID)
         /// 日記リストのフィルター取得に成功した時の副作用を処理する
@@ -105,8 +110,6 @@ struct DiaryListFeature: Sendable {
         @CasePathable
         enum Alert: Equatable {
             
-            /// 日記リストの取得失敗時のアラート
-            case failedLoadDiaryItems
             /// 日記の編集を行うかどうかの確認アラート
             case confirmEditItem(targetId: UUID)
             /// 日記削除を行うかどうかの確認アラート
@@ -193,6 +196,10 @@ private extension DiaryListFeature {
                 state.viewState.isLoadingDiaries = true
                 return initialLoadDiaryListInfo()
                 
+            case .onDisappearView:
+                logger.info("onDisappearView")
+                return .cancel(id: FilterObserveCancellable())
+                
                 // 日記項目のComponentのDelegateAction
             case .diaries(.element(let id, let delegateAction)):
                 logger.info("diaries delegate action(id: \(id), action: \(delegateAction)).")
@@ -239,17 +246,7 @@ private extension DiaryListFeature {
             case .receiveLoadDiaryItems(let items):
                 logger.info("receiveLoadDiaryItems(items: \(items))")
                 // stateの更新
-                state = getUpdatedStateAfterReload(receive: items, state: state)
-                return .none
-                
-            case .failedLoadDiaryItems:
-                logger.error("failedLoadDiaryItems")
-                // ロード終了
-                state.viewState.isLoadingDiaries = false
-                // アラートを表示する
-                state.alert = AlertState.createAlertState(.failedLoadDiaryItemsAlert,
-                                                          firstButtonHandler: .failedLoadDiaryItems)
-                
+                state = getUpdatedStateAfterReloadDiary(receive: items, state: state)
                 return .none
                 
             case .deletedDiaryItem(let id):
@@ -261,7 +258,13 @@ private extension DiaryListFeature {
                 
             case .receiveLoadDiaryListFilter(let filters):
                 logger.info("receiveLoadDiaryListFilter(filters: \(filters))")
+                
+                // 現在のフィルターを更新
                 state.currentFilters = filters
+                // 日記リストが存在しない場合は何もしない
+                if state.diaries.isEmpty { return .none }
+                // 日記リストのフィルター反映
+                state = getUpdatedStateAfterReloadFilter(receive: filters, state: state)
                 
                 return .none
             }
@@ -351,7 +354,13 @@ private extension DiaryListFeature {
                 let currentFilterList = await diaryListFilterApi.fetchFilterList()
                 return await send(.receiveLoadDiaryListFilter(filters: currentFilterList))
             },
-            loadDiaryListItem(date.now)
+            loadDiaryListItem(date.now),
+            .publisher {
+                
+                return diaryListFilterApi.getFilterListObserver()
+                    .receive(on: DispatchQueue.main)
+                    .map { .receiveLoadDiaryListFilter(filters: $0) }
+            }.cancellable(id: FilterObserveCancellable())
         )
     }
     
@@ -362,12 +371,10 @@ private extension DiaryListFeature {
         
         return .run { send in
             
-            try await send(.receiveLoadDiaryItems(items: diaryListFetchClient.fetch(startDate, limitFetchDiary)),
-                           animation: .spring)
-        } catch: { error, send in
-            
-            logger.error("Occurred loadDiaryListItem error(\(error)).")
-            return await send(.failedLoadDiaryItems)
+            let diaryItems = await diaryListFetchClient.fetch(startDate,
+                                                              limitFetchDiary).map { DiaryListItemFeature.State($0) }
+            await send(.receiveLoadDiaryItems(items: diaryItems),
+                       animation: .spring)
         }
     }
     
@@ -375,13 +382,13 @@ private extension DiaryListFeature {
     /// - Parameters:
     ///   - receive: 日記リストのリロードで取得したリスト
     ///   - state: 更新前のState
-    func getUpdatedStateAfterReload(receive: [DiaryListItemFeature.State], state: State) -> State {
+    func getUpdatedStateAfterReloadDiary(receive diaries: [DiaryListItemFeature.State], state: State) -> State {
         
         var updatedState = state
         // Stateの更新
-        receive.forEach { updatedState.diaries.updateOrAppend($0) }
-        // 日記の作成日付で降順にソートする
-        updatedState.diaries = sortWithFilteringDiaryList(updatedState.diaries, filters: updatedState.currentFilters)
+        diaries.forEach { updatedState.diaries.updateOrAppend($0) }
+        // フィルターの反映
+        updatedState = getUpdatedStateAfterReloadFilter(receive: state.currentFilters, state: updatedState)
         // リロード中フラグを倒す
         updatedState.viewState.isLoadingDiaries = false
         // 表示中リスト有無のフラグ更新
@@ -391,13 +398,27 @@ private extension DiaryListFeature {
         return updatedState
     }
     
+    /// 日記リストのフィルター更新を反映した日記リストのStateを返す
+    /// - Parameters:
+    ///   - filters: 更新後のフィルター
+    ///   - state: 更新前のフィルター
+    func getUpdatedStateAfterReloadFilter(receive filters: [DiaryListFilterItem], state: State) -> State {
+        
+        var updatedState = state
+        // 日記の作成日付で降順にソートする
+        updatedState.diaries = sortWithFilteringDiaryList(updatedState.diaries, filters: filters)
+        
+        logger.debug("did end update diaries(\(state.diaries))")
+        return updatedState
+    }
+            
     func sortWithFilteringDiaryList(_ diaryList: IdentifiedArrayOf<DiaryListItemFeature.State>,
                                     filters: [DiaryListFilterItem]) -> IdentifiedArrayOf<DiaryListItemFeature.State> {
         
         // フィルタリング処理
         var filteredList = diaryList.filter { item in
             
-            return filters.isEmpty ? true : !filters.contains { !$0.isFilteringTarget(item) }
+            return filters.isEmpty ? true : !filters.contains { !$0.isMatchFilter(item) }
         }
         // 日記の作成日付で降順にソートする
         filteredList.sort { $0.date > $1.date }

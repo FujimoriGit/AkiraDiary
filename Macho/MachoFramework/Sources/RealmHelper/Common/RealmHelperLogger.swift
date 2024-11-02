@@ -7,4 +7,4 @@
 
 import MachoCore
 
-let logger = AppLogger(label: "RealmHelper")
+let logger = AppLogger.shared

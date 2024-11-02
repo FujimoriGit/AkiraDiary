@@ -5,12 +5,32 @@
 //  Created by 佐藤汰一 on 2024/07/28.
 //
 
+import Foundation
+
 enum DiaryListFilterTarget: String, CaseIterable {
     
     /// 己に勝ったかどうか
     case achievement
     /// トレーニング種別
     case trainingType
+    /// タグ
+    case tag
+    
+    /// 種別毎の番号
+    var num: Int {
+        
+        switch self {
+            
+        case .achievement:
+            return 0
+            
+        case .trainingType:
+            return 1
+            
+        case .tag:
+            return 2
+        }
+    }
     
     /// フィルター種別のタイトル
     var title: String {
@@ -22,6 +42,9 @@ enum DiaryListFilterTarget: String, CaseIterable {
             
         case .trainingType:
             return "種目"
+            
+        case .tag:
+            return "タグ"
         }
     }
     
@@ -35,11 +58,16 @@ enum DiaryListFilterTarget: String, CaseIterable {
             
         case .trainingType:
             return true
+            
+        case .tag:
+            return true
         }
     }
 }
 
-enum TrainingAchievement: String, CaseIterable {
+enum TrainingAchievement: Int, CaseIterable, SingleSelectableFilter {
+    
+    var targetId: UUID { return UUID(DiaryListFilterTarget.achievement.num) }
     
     /// 未達成
     case notAchieved

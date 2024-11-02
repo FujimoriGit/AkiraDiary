@@ -18,14 +18,18 @@ public struct DiaryEntity: BaseRealmEntity {
     /// 日記本文
     public let mainText: String
     /// 目標種目リスト
-    public let goals: [TrainingGoalEntity]
+    public let goals: [TrainingContentEntity]
     /// タグリスト
     public let tags: [TrainingTagEntity]
     
     public static let executor = RealmObserverExecutor<Self>()
     
-    public init(id: UUID, date: Date, title: String, mainText: String,
-                goals: [TrainingGoalEntity], tags: [TrainingTagEntity]) {
+    public init(id: UUID,
+                date: Date,
+                title: String,
+                mainText: String,
+                goals: [TrainingContentEntity],
+                tags: [TrainingTagEntity]) {
         
         self.id = id
         self.date = date
@@ -41,13 +45,13 @@ public struct DiaryEntity: BaseRealmEntity {
         date = realmObject.date
         title = realmObject.title
         mainText = realmObject.mainText
-        goals = realmObject.goals.map { TrainingGoalEntity(realmObject: $0) }
+        goals = realmObject.goals.map { TrainingContentEntity(realmObject: $0) }
         tags = realmObject.tags.map { TrainingTagEntity(realmObject: $0) }
     }
     
     public func toRealmObject() -> DiaryRealmObject {
         
-        let goalObjects = goals.reduce(List<TrainingGoalRealmObject>()) {
+        let goalObjects = goals.reduce(List<TrainingContentRealmObject>()) {
             
             $0.append($1.toRealmObject())
             return $0
@@ -59,8 +63,12 @@ public struct DiaryEntity: BaseRealmEntity {
             return $0
         }
         
-        return DiaryRealmObject(id: id, date: date, title: title, mainText: mainText,
-                                goals: goalObjects, tags: tagObjects)
+        return DiaryRealmObject(id: id,
+                                date: date,
+                                title: title,
+                                mainText: mainText,
+                                goals: goalObjects,
+                                tags: tagObjects)
     }
 }
 
@@ -74,12 +82,16 @@ public class DiaryRealmObject: Object {
     /// 日記本文
     @Persisted var mainText: String
     /// 目標種目リスト
-    @Persisted var goals: List<TrainingGoalRealmObject>
+    @Persisted var goals: List<TrainingContentRealmObject>
     /// タグリスト
     @Persisted var tags: List<TrainingTagRealmObject>
     
-    convenience init(id: UUID, date: Date, title: String, mainText: String,
-                     goals: List<TrainingGoalRealmObject>, tags: List<TrainingTagRealmObject>) {
+    convenience init(id: UUID,
+                     date: Date,
+                     title: String,
+                     mainText: String,
+                     goals: List<TrainingContentRealmObject>,
+                     tags: List<TrainingTagRealmObject>) {
         
         self.init()
         
