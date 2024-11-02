@@ -115,7 +115,7 @@ private extension DiaryListFilterView {
                     case .achievement:
                         createSelectOnlyItemSectionWithMenu(target: target)
                         
-                    case .trainingType:
+                    case .trainingType, .tag:
                         createSelectMultiItemSectionWithMenu(target: target)
                     }
                     Spacer()
@@ -159,20 +159,22 @@ private extension DiaryListFilterView {
                     Text(filter.value)
                         .font(.system(size: filterListItemTitleFontSize))
                     Spacer()
-                    createClearFilterTargetButton(target: filter.target, selectCase: filter.value)
+                    createClearFilterTargetButton(target: filter.target, selectCase: filter)
                 }
                 .padding(.vertical, filterItemPaddingVertical)
             }
         }
     }
     
+    @ViewBuilder
     func createSelectMenu(target: DiaryListFilterTarget) -> some View {
+        let selectableTargetFilters = store.selectableFilterValues.filter { $0.target == target }
         Menu {
-            ForEach(store.state.selectableFilterValues[target] ?? [], id: \.self) { selectCase in
+            ForEach(selectableTargetFilters, id: \.value.hashValue) { selectCase in
                 Button(action: {
-                    store.send(.tappedFilterMenuItem(target: target, value: selectCase))
+                    store.send(.tappedFilterMenuItem(filter: selectCase))
                 }, label: {
-                    Text(selectCase)
+                    Text(selectCase.value)
                 })
             }
         } label: {
@@ -180,17 +182,19 @@ private extension DiaryListFilterView {
                 .font(.system(size: filterMenuButtonFontSize))
                 .frame(width: filterMenuButtonWidth, height: filterMenuButtonHeight)
         }
-        .frameButtonStyle()
+        .frameButtonStyle(foregroundColor: selectableTargetFilters.isEmpty ?
+                          Color(asset: CustomColor.disableButtonForegroundColor) :
+                            Color(asset: CustomColor.frameButtonForegroundColor))
     }
     
     func createClearFilterTargetButton(target: DiaryListFilterTarget,
-                                       selectCase: String? = nil) -> some View {
+                                       selectCase: DiaryListFilterItem? = nil) -> some View {
         Button(action: {
             guard let selectCase else {
                 store.send(.tappedFilterTypeDeleteButton(target: target))
                 return
             }
-            store.send(.tappedFilterItemDeleteButton(target: target, value: selectCase))
+            store.send(.tappedFilterItemDeleteButton(filter: selectCase))
         }, label: {
             Image(systemName: "minus.circle.fill")
                 .resizable()
@@ -208,8 +212,7 @@ private extension DiaryListFilterView {
     // swiftlint:disable:next private_subject
     let publisher = PassthroughSubject<[DiaryListFilterItem], Never>()
     var currentFilters = [
-        DiaryListFilterItem(id: UUID(), target: .achievement, value: "達成していない"),
-        DiaryListFilterItem(id: UUID(), target: .trainingType, value: "腹筋")
+        DiaryListFilterItem(target: .achievement, filterItemId: UUID(), value: "達成していない")
     ]
     
     return DiaryListFilterView(store: Store(initialState: DiaryListFilterFeature.State(),
@@ -238,5 +241,19 @@ private extension DiaryListFilterView {
             
             return publisher.eraseToAnyPublisher()
         })
+        $0.trainingTypeApi = TrainingTypeClient {
+            
+            return [
+                .init(id: UUID(), name: "腹筋"),
+                .init(id: UUID(), name: "ダンベルプレス")
+            ]
+        }
+        $0.trainingTagApi = TrainingTagClient {
+            
+            return [
+                .init(id: UUID(), tagName: "元気"),
+                .init(id: UUID(), tagName: "雨")
+            ]
+        }
     }))
 }
