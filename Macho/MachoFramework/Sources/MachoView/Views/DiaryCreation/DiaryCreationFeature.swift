@@ -28,6 +28,9 @@ struct Goal: Equatable, Identifiable {
 @Reducer
 struct DiaryCreationFeature: Sendable {
     
+    struct TrainingTagsSubscriber: Hashable {}
+    struct TrainingGoalsSubscriber: Hashable {}
+    
     // MARK: State
     
     @ObservableState
@@ -48,7 +51,10 @@ struct DiaryCreationFeature: Sendable {
     enum Action: Sendable, Equatable {
         
         case onAppear
-        case fetched(tags: [Tag], goals: [Goal])
+        case didChangeTags
+        case didChangeGoals
+        case fetchedTags([Tag])
+        case fetchedGoals([Goal])
         case titleTextChange(String)
         case messageTextChange(String)
         case trainingStartButtonTapped
@@ -59,9 +65,10 @@ struct DiaryCreationFeature: Sendable {
         case tappedGoal(Goal)
     }
     
-    // MARK: - body
+    @Dependency(\.trainingTagApi) var trainingTagApi
+    @Dependency(\.trainingGoalApi) var trainingGoalApi
     
-    @Dependency(\.realmFetch) var realmFetch
+    // MARK: - body
     
     var body: some ReducerOf<Self> {
         
@@ -70,23 +77,35 @@ struct DiaryCreationFeature: Sendable {
             switch action {
                 
             case .onAppear:
-                return .run { send in
-                    
-                    let tags = try await realmFetch.fetchTrainingTag(TrainingTagEntity.self).map {
+                logger.info("onAppear")
+                return .concatenate(
+                    .publisher {
                         
-                        Tag(id: $0.id, tagName: $0.tagName)
-                    }
-                    
-                    let goals = try await realmFetch.fetchTrainingGoal(TrainingGoalEntity.self).map {
+                        return trainingTagApi.getTrainingTagPublisher()
+                            .receive(on: DispatchQueue.main)
+                            .map { _ in .didChangeTags }
+                    }.cancellable(id: TrainingTagsSubscriber()),
+                    .publisher {
                         
-                        Goal(id: $0.id, goalName: $0.goalType.name, numberOfSets: $0.numberOfSets, setCount: $0.setCount)
-                    }
-                    
-                    await send(.fetched(tags: tags, goals: goals))
-                }
+                        return trainingGoalApi.getTrainingGoalPublisher()
+                            .receive(on: DispatchQueue.main)
+                            .map { _ in .didChangeGoals }
+                    }.cancellable(id: TrainingGoalsSubscriber()),
+                    fetchTags(),
+                    fetchGoals()
+                )
                 
-            case .fetched(let tags, let goals):
+            case .didChangeTags:
+                return fetchTags()
+                
+            case .didChangeGoals:
+                return fetchGoals()
+                
+            case .fetchedTags(let tags):
                 state.tags = tags
+                return .none
+                
+            case .fetchedGoals(let goals):
                 state.goals = goals
                 return .none
                 
@@ -106,11 +125,7 @@ struct DiaryCreationFeature: Sendable {
                 return .none
                 
             case .tappedAddingTagButton:
-                state.destination = .addTag(AddTagFeature.State(tag: Tag(id: UUID(), tagName: "")))
-                return .none
-                
-            case .destination(.presented(.addTag(.delegate(.saveTag(let tag))))):
-                state.tags.append(tag)
+                state.destination = .addTag(AddTagFeature.State())
                 return .none
                 
             case .tappedTag(let tag):
@@ -186,6 +201,47 @@ struct DiaryCreationFeature: Sendable {
         .ifLet(\.$destination, action: \.destination)
     }
 }
+
+// MARK: - private method
+
+private extension DiaryCreationFeature {
+    
+    func fetchTags() -> Effect<Self.Action> {
+        
+        return .run { send in
+            
+            let tags = await trainingTagApi.fetchAll().map {
+                
+                Tag(id: $0.id, tagName: $0.tagName)
+            }
+            
+            await send(.fetchedTags(tags))
+        }
+    }
+    
+    func fetchGoals() -> Effect<Self.Action> {
+        
+        return .run { send in
+            
+            let goals = await trainingGoalApi.fetchAll().map {
+                
+                Goal(id: $0.id, goalName: $0.goalType.name, numberOfSets: $0.numberOfSets, setCount: $0.setCount)
+            }
+            
+            await send(.fetchedGoals(goals))
+        }
+    }
+    
+    func cancelChangesetObserve() -> Effect<Self.Action> {
+        
+        return .concatenate(
+            .cancel(id: TrainingTagsSubscriber()),
+            .cancel(id: TrainingGoalsSubscriber())
+        )
+    }
+}
+
+// MARK: - extension (for destination)
 
 extension DiaryCreationFeature {
     

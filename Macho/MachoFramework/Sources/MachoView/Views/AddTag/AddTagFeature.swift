@@ -4,32 +4,38 @@
 //  
 //  Created by Daiki Fujimori on 2024/04/06
 //  
-//
 
 import ComposableArchitecture
+import Foundation
 
-struct AddTagFeature: Reducer {
+@Reducer
+struct AddTagFeature: Sendable {
     
+    // MARK: - State
+    
+    @ObservableState
     struct State: Equatable {
         
-        var tag: Tag
+        var tagName = ""
         var isEnableSaveButton = false
     }
     
-    enum Action: Equatable {
+    // MARK: - Action
+    
+    @ObservableState
+    enum Action: Sendable, Equatable {
         
         case cancelButtonTapped
-        case delegate(Delegate)
         case saveButtonTapped
         case setTagName(String)
-        
-        enum Delegate: Equatable {
-            
-            case saveTag(Tag)
-        }
     }
     
+    // MARK: - Dependencies
+    
+    @Dependency(\.trainingTagApi) var trainingTagApi
     @Dependency(\.dismiss) var dismiss
+    
+    // MARK: - body
     
     func reduce(into state: inout State, action: Action) -> Effect<Action> {
         
@@ -38,20 +44,28 @@ struct AddTagFeature: Reducer {
         case .cancelButtonTapped:
             return .run { _ in await dismiss() }
             
-        case .delegate:
-            return .none
-            
         case .saveButtonTapped:
-            return .run { [tag = state.tag] send in
+            return .run { [tagName = state.tagName] send in
                 
-                await send(.delegate(.saveTag(tag)))
+                
                 await dismiss()
             }
             
         case .setTagName(let tagName):
-            state.tag.tagName = tagName
+            state.tagName = tagName
             state.isEnableSaveButton = !tagName.isEmpty
             return .none
         }
+    }
+}
+
+// MARK: - private method
+
+private extension AddTagFeature {
+    
+    func saveTag(tagName: String) async {
+        
+        let tag = Tag(id: UUID(), tagName: tagName)
+        await trainingTagApi.addTags([tag])
     }
 }

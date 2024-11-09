@@ -3,7 +3,6 @@
 //  
 //  
 //  Created by Daiki Fujimori on 2024/05/03
-//  
 //
 
 import ComposableArchitecture

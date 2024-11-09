@@ -7,6 +7,7 @@
 
 import Combine
 import ComposableArchitecture
+import RealmHelper
 import SwiftUI
 
 struct DiaryListFilterView: View {
@@ -215,9 +216,9 @@ private extension DiaryListFilterView {
         DiaryListFilterItem(target: .achievement, filterItemId: UUID(), value: "達成していない")
     ]
     
-    return DiaryListFilterView(store: Store(initialState: DiaryListFilterFeature.State(),
-                                            reducer: { DiaryListFilterFeature() },
-                                            withDependencies: {
+    DiaryListFilterView(store: Store(initialState: DiaryListFilterFeature.State(),
+                                     reducer: { DiaryListFilterFeature() },
+                                     withDependencies: {
         $0.diaryListFilterApi = DiaryListFilterClient(addFilter: { filter in
             
             currentFilters += [filter]
@@ -248,12 +249,21 @@ private extension DiaryListFilterView {
                 .init(id: UUID(), name: "ダンベルプレス")
             ]
         }
-        $0.trainingTagApi = TrainingTagClient {
+        $0.trainingTagApi = TrainingTagClient { _ in
+            
+            return true
+        } updateTag: { _ in
+            
+            return true
+        } fetchAll: {
             
             return [
                 .init(id: UUID(), tagName: "元気"),
                 .init(id: UUID(), tagName: "雨")
             ]
+        } getTrainingTagPublisher: {
+            
+            return  PassthroughSubject<[TrainingTagEntity], Never>().eraseToAnyPublisher()
         }
     }))
 }
