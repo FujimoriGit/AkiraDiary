@@ -6,7 +6,6 @@
 //
 
 import ComposableArchitecture
-import RealmHelper
 import SwiftUI
 
 struct DiaryDetailView: View {
@@ -24,14 +23,24 @@ struct DiaryDetailView: View {
     private let sectionTitleFontSize: CGFloat = 14
     private let achievedIconFontSize: CGFloat = 25
     private let trainingDetailTextFontSize: CGFloat = 14
+    private let tagTextFontSize: CGFloat = 14
     
     private let contentsHorizontalPadding: CGFloat = 16
     private let titleBottomPadding: CGFloat = 18
     private let dividerTopPadding: CGFloat = 30
     private let dividerBottomPadding: CGFloat = 20
     private let trainingTotalResultSectionSpace: CGFloat = 16
+    private let trainingTotalResultTextSpace: CGFloat = 8
+    private let resultPerTrainingSectionVerticalSpace: CGFloat = 10
+    private let trainingNameTrailingPadding: CGFloat = 16
+    private let tagSectionVerticalPadding: CGFloat = 10
+    private let tagsSpace: CGFloat = 8
+    private let tagVerticalPadding: CGFloat = 4
+    private let tagHorizontalPadding: CGFloat = 8
     
     private let dividerHeight: CGFloat = 1
+    
+    private let tagCornerRadius: CGFloat = 10
     
     private let defaultMessageLineLimit = 3
     
@@ -51,20 +60,15 @@ struct DiaryDetailView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .navigation) {
-                    NavigationBackButton {
+                    NavigationButton(.back) {
                        // TODO: 戻るイベントを呼ぶ
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: {
-                        
-                    }, label: {
-                        Image(systemName: "pencil")
-                            .resizable()
-                            .padding(6)
-                            .accessibilityHidden(true)
-                    })
-                    .frameButtonStyle(frameWidth: .zero)
+                    // swiftlint:disable:next accessibility_label_for_image
+                    NavigationButton(.other(icon: Image(systemName: "pencil"))) {
+                       // TODO: 編集ボタン押下イベントを呼ぶ
+                    }
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -95,6 +99,9 @@ private extension DiaryDetailView {
                 createContentsDivider()
                 createTrainingResultSectionView(store.totalResult)
                     .padding(.horizontal, contentsHorizontalPadding)
+                createBasicDivider()
+                    .padding(.vertical, resultPerTrainingSectionVerticalSpace)
+                createResultPerTrainingSectionView(store.trainings)
             }
         }
     }
@@ -106,18 +113,30 @@ private extension DiaryDetailView {
     }
     
     func createMessageView() -> some View {
-        Text(store.message)
-            .font(.system(size: messageFontSize))
-            .lineLimit(defaultMessageLineLimit)
+        OmittableMessageView(store.message,
+                             fontSize: messageFontSize)
     }
     
     func createTagsSectionView() -> some View {
-        VStack(spacing: .zero) {
+        VStack(spacing: tagSectionVerticalPadding) {
             Text("Tags")
                 .font(.system(size: sectionTitleFontSize,
                               weight: .bold))
                 .frame(maxWidth: .infinity,
                        alignment: .leading)
+            FlowLayout(alignment: .leading, spacing: tagsSpace) {
+                ForEach(store.tags) {
+                    // TODO: 色は仮(藤森さんの実装に合わせる)
+                    Text($0.tagName)
+                        .font(.system(size: tagTextFontSize))
+                        .padding(.vertical, tagVerticalPadding)
+                        .padding(.horizontal, tagHorizontalPadding)
+                        .foregroundStyle(Color(asset: CustomColor.fillButtonForegroundColor))
+                        .background(Color(asset: CustomColor.fillButtonBackgroundColor))
+                        .clipShape(RoundedRectangle(cornerRadius: tagCornerRadius))
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
     
@@ -130,7 +149,8 @@ private extension DiaryDetailView {
                        alignment: .leading)
             AchieveIconView(isAchieved: true,
                             size: achievedIconFontSize)
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading,
+                   spacing: trainingTotalResultTextSpace) {
                 Text("種目数：\(trainingResult.trainingCount)")
                 Text("トレーニング開始時間：\(trainingResult.startDateDisplayText)")
                 Text("トレーニング終了時間：\(trainingResult.endDateDisplayText)")
@@ -140,36 +160,75 @@ private extension DiaryDetailView {
         }
     }
     
+    func createResultPerTrainingSectionView(_ trainingResultList: [TrainingTypeResult]) -> some View {
+        VStack(alignment: .leading, spacing: resultPerTrainingSectionVerticalSpace) {
+            ForEach(trainingResultList) {
+                createResultPerTrainingItemView($0)
+                createBasicDivider()
+            }
+        }
+    }
+    
+    func createResultPerTrainingItemView(_ resultItem: TrainingTypeResult) -> some View {
+        HStack(spacing: .zero) {
+            Text(resultItem.trainingName)
+                .font(.system(size: sectionTitleFontSize, weight: .bold))
+                .frame(maxHeight: .infinity,
+                       alignment: .topLeading)
+            Spacer()
+                .frame(width: trainingNameTrailingPadding)
+            VStack(spacing: .zero) {
+                Spacer()
+                Text(resultItem.goalResultText)
+                Text(resultItem.actualResultText)
+            }
+            .font(.system(size: trainingDetailTextFontSize))
+            Spacer()
+            AchieveIconView(isAchieved: resultItem.isAchieved,
+                            size: achievedIconFontSize)
+        }
+        .padding(.horizontal, contentsHorizontalPadding)
+    }
+    
     func createContentsDivider() -> some View {
         VStack(spacing: .zero) {
             Spacer()
                 .frame(height: dividerTopPadding)
-            Rectangle()
-                .ignoresSafeArea()
-                .frame(maxWidth: .infinity,
-                       maxHeight: dividerHeight)
+            createBasicDivider()
             Spacer()
                 .frame(height: dividerBottomPadding)
         }
+    }
+    
+    func createBasicDivider() -> some View {
+        Rectangle()
+            .ignoresSafeArea()
+            .frame(maxWidth: .infinity,
+                   maxHeight: dividerHeight)
     }
 }
 
 // MARK: - preview
 
 #Preview {
-    let goal1 = TrainingGoalEntity(id: UUID(),
-                                   goalType: TrainingTypeEntity(id: UUID(), name: "腹筋"), numberOfSets: 3,
-                                   setCount: 3,
-                                   startTime: Date(),
-                                   endTime: Date(),
-                                   isSuccess: true)
-    let tag1 = TrainingTagEntity(id: UUID(), tagName: "XXX")
-    let initialDiaryEntity = DiaryEntity(id: UUID(),
-                                         date: Date(),
-                                         title: "Preview",
-                                         mainText: "preview sample message xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-                                         goals: [goal1],
-                                         tags: [tag1])
+    let goal1 = TrainingContentData(id: UUID(),
+                                    trainingType: TrainingTypeData(id: UUID(), name: "腹筋"),
+                                    goalNumberOfSets: 3,
+                                    goalSetCount: 3,
+                                    actualNumberOfSets: 3,
+                                    actualSetCount: 3,
+                                    startTime: Date(),
+                                    endTime: Date())
+    let tag1 = TrainingTagData(id: UUID(), tagName: "XXX")
+    let tag2 = TrainingTagData(id: UUID(), tagName: "ZZZZZZZ")
+    let tag3 = TrainingTagData(id: UUID(), tagName: "UUUUU")
+    let initialDiaryEntity = DiaryData(id: UUID(),
+                                       date: Date(),
+                                       title: "Preview",
+                                       // swiftlint:disable:next line_length
+                                       mainText: "preview sample message\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                                       goals: [goal1],
+                                       tags: [tag1, tag2, tag3])
     DiaryDetailView(store: Store(initialState: DiaryDetailFeature.State(diary: initialDiaryEntity),
                                  reducer: { DiaryDetailFeature() }))
 }
