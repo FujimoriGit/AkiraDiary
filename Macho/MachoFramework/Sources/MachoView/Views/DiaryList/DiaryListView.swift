@@ -119,7 +119,7 @@ private extension DiaryListView {
     
     func createListSection() -> some View {
         TrackableList(store: store.scope(state: \.trackableList, action: \.trackableList)) {
-            ForEachStore(store.scope(state: \.diaries,
+            ForEachStore(store.scope(state: \.filteredDiaries,
                                      action: \.diaries)) { store in
                 DiaryListItemView(store: store)
                     .frame(minHeight: diaryItemMinHeightSize)

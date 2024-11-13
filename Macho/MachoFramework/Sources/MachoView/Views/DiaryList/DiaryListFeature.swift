@@ -32,8 +32,10 @@ struct DiaryListFeature: Sendable {
         
         // MARK: Component States
         
+        /// フィルター反映後の日記リスト
+        var filteredDiaries = IdentifiedArrayOf<DiaryListItemFeature.State>()
         /// 日記リストに表示する日記の項目の要素
-        var diaries = IdentifiedArrayOf<DiaryListItemFeature.State>()
+        @ObservationStateIgnored var diaries = IdentifiedArrayOf<DiaryListItemFeature.State>()
         /// スクロール位置追跡リストのコンポーネントState
         @ObservationStateIgnored var trackableList = TrackableListFeature.State()
         
@@ -142,13 +144,13 @@ struct DiaryListFeature: Sendable {
         
         // Actionハンドラ追加
         createActionHandler()
-        .forEach(\.diaries, action: \.diaries) {
-            
-            DiaryListItemFeature()
-        }
-        .forEach(\.path, action: \.path)
-        .ifLet(\.$destination, action: \.destination)
-        .ifLet(\.$alert, action: \.alert)
+            .forEach(\.filteredDiaries, action: \.diaries) {
+                
+                DiaryListItemFeature()
+            }
+            .forEach(\.path, action: \.path)
+            .ifLet(\.$destination, action: \.destination)
+            .ifLet(\.$alert, action: \.alert)
     }
 }
 
@@ -251,8 +253,11 @@ private extension DiaryListFeature {
                 
             case .deletedDiaryItem(let id):
                 logger.info("deletedDiaryItem(id: \(id))")
+                // 日記リストの更新
                 state.diaries.remove(id: id)
-                state.viewState.hasDiaryItems = !state.diaries.isEmpty
+                state = updateDiaries(newDiaries: state.diaries, state: state)
+                // 日記リストの有無更新
+                state.viewState.hasDiaryItems = !state.filteredDiaries.isEmpty
                 
                 return .none
                 
@@ -264,7 +269,7 @@ private extension DiaryListFeature {
                 // 日記リストが存在しない場合は何もしない
                 if state.diaries.isEmpty { return .none }
                 // 日記リストのフィルター反映
-                state = getUpdatedStateAfterReloadFilter(receive: filters, state: state)
+                state = updateDiaries(newDiaries: state.diaries, state: state)
                 
                 return .none
             }
@@ -385,33 +390,35 @@ private extension DiaryListFeature {
         var updatedState = state
         // Stateの更新
         diaries.forEach { updatedState.diaries.updateOrAppend(.init($0)) }
-        // フィルターの反映
-        updatedState = getUpdatedStateAfterReloadFilter(receive: state.currentFilters, state: updatedState)
+        updatedState = updateDiaries(newDiaries: updatedState.diaries, state: updatedState)
         // リロード中フラグを倒す
         updatedState.viewState.isLoadingDiaries = false
         // 表示中リスト有無のフラグ更新
-        updatedState.viewState.hasDiaryItems = !updatedState.diaries.isEmpty
+        updatedState.viewState.hasDiaryItems = !updatedState.filteredDiaries.isEmpty
         
         logger.debug("did end update diaries(\(state.diaries))")
         return updatedState
     }
     
-    /// 日記リストのフィルター更新を反映した日記リストのStateを返す
-    /// - Parameters:
-    ///   - filters: 更新後のフィルター
-    ///   - state: 更新前のフィルター
-    func getUpdatedStateAfterReloadFilter(receive filters: [DiaryListFilterItem], state: State) -> State {
+    func updateDiaries(newDiaries: IdentifiedArrayOf<DiaryListItemFeature.State>, state: State) -> State {
         
         var updatedState = state
-        // 日記の作成日付で降順にソートする
-        updatedState.diaries = sortWithFilteringDiaryList(updatedState.diaries, filters: filters)
         
-        logger.debug("did end update diaries(\(state.diaries))")
+        // 日記の作成日付で降順にソートする
+        updatedState.diaries = newDiaries
+        updatedState.diaries.sort { $0.date > $1.date }
+        // フィルターの反映
+        updatedState.filteredDiaries = getFilteringDiaryList(diaryList: updatedState.diaries,
+                                                                  filters: updatedState.currentFilters)
         return updatedState
     }
-            
-    func sortWithFilteringDiaryList(_ diaryList: IdentifiedArrayOf<DiaryListItemFeature.State>,
-                                    filters: [DiaryListFilterItem]) -> IdentifiedArrayOf<DiaryListItemFeature.State> {
+    
+    /// フィルターを反映した日記リストのを返す
+    /// - Parameters:
+    ///   - diaryList: 更新対象の日記リスト
+    ///   - filters: フィルター
+    func getFilteringDiaryList(diaryList: IdentifiedArrayOf<DiaryListItemFeature.State>,
+                               filters: [DiaryListFilterItem]) -> IdentifiedArrayOf<DiaryListItemFeature.State> {
         
         // フィルタリング処理
         var filteredList = diaryList.filter { item in
@@ -422,8 +429,6 @@ private extension DiaryListFeature {
                                  tagList: item.tagList)
             }
         }
-        // 日記の作成日付で降順にソートする
-        filteredList.sort { $0.date > $1.date }
         
         logger.debug("did finish filtering(before: \(diaryList), after: \(filteredList), filter: \(filters))")
         return filteredList
