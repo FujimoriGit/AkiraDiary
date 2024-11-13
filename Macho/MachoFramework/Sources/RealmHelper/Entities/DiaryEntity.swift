@@ -8,7 +8,7 @@
 import Foundation
 import RealmSwift
 
-public struct DiaryEntity: BaseRealmEntity, Equatable {
+public struct DiaryEntity: BaseRealmEntity {
     
     public let id: UUID
     /// 日付
@@ -21,6 +21,12 @@ public struct DiaryEntity: BaseRealmEntity, Equatable {
     public let goals: [TrainingContentEntity]
     /// タグリスト
     public let tags: [TrainingTagEntity]
+    
+    /// 全ての目標を達成したかどうか
+    public var isAchieved: Bool {
+        
+        return !goals.contains { !$0.isAchieved }
+    }
     
     public static let executor = RealmObserverExecutor<Self>()
     

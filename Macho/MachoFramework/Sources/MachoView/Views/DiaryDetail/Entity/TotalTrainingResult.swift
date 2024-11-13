@@ -16,6 +16,8 @@ struct TotalTrainingResult {
     
     /// トレーニング種目数
     let trainingCount: Int
+    /// 全ての目標を達成したかどうか
+    let isAchievedTotalGoal: Bool
     private let startDate: Date?
     private let endDate: Date?
     
@@ -41,6 +43,7 @@ struct TotalTrainingResult {
     init(_ diary: DiaryData) {
         
         trainingCount = diary.goals.count
+        isAchievedTotalGoal = diary.isAchieved
         startDate = diary.goals.compactMap(\.startTime).min { $0 < $1 }
         endDate = diary.goals.compactMap(\.endTime).max { $0 < $1 }
     }

@@ -203,16 +203,16 @@ private extension DiaryListView {
             
         // TODO: 実装出来次第正しい画面に変更する
         case .editScreen(let editScreenStore):
-            AddContactView(store: editScreenStore)
+            AnyView(AddContactView(store: editScreenStore))
             
         case .createScreen(let createScreenStore):
-            AddContactView(store: createScreenStore)
+            AnyView(AddContactView(store: createScreenStore))
             
         case .graphScreen(let graphScreenStore):
-            AddContactView(store: graphScreenStore)
+            AnyView(AddContactView(store: graphScreenStore))
             
         case .detailScreen(let detailScreenStore):
-            AddContactView(store: detailScreenStore)
+            AnyView(DiaryDetailView(store: detailScreenStore))
         }
     }
 }
@@ -235,90 +235,7 @@ private extension DiaryListView {
 // MARK: - preview
 
 #Preview {
-    PreviewDiaryListView()
-}
-
-struct PreviewDiaryListView: View {
-    
-    private let state: DiaryListFeature.State
-    private let publisher = PassthroughSubject<[DiaryListFilterItem], Never>()
-    @State private var currentFilters = [
-        DiaryListFilterItem(target: .achievement,
-                            filterItemId: UUID(),
-                            value: "達成していない"),
-        DiaryListFilterItem(target: .trainingType,
-                            filterItemId: UUID(),
-                            value: "腹筋")
-    ]
-    
-    init() {
-        
-        var diaries: IdentifiedArrayOf<DiaryListItemFeature.State> = []
-        
-        for num in 0...10 {
-            diaries.append(DiaryListItemFeature.State(title: "\(num)",
-                                                      message: "",
-                                                      date: Date(),
-                                                      isWin: true,
-                                                      trainingList: [],
-                                                      tagList: []))
-        }
-        
-        self.state = DiaryListFeature.State(diaries: diaries)
-    }
-    
-    var body: some View {
-        DiaryListView(store: Store(initialState: state) {
-            withDependencies {
-                // 日記リスト取得のAPI DI
-                $0.diaryListFetchApi = DiaryClient(fetch: { _, _ in
-                    
-                    return [
-                        .init(id: UUID(),
-                              date: Date(),
-                              title: "sample title",
-                              mainText: "sample message",
-                              goals: [],
-                              tags: [])
-                    ]
-                }, deleteItem: { id async throws(DiaryClient.Error) in
-                    
-                    if Int.random(in: 0..<10) < 4 {
-                        
-                        throw DiaryClient.Error.failedDeletingItem(target: id)
-                    }
-                }, observeDiaryList: {
-                    
-                    return PassthroughSubject<[DiaryData], Never>().eraseToAnyPublisher()
-                })
-                // フィルター取得API DI
-                $0.diaryListFilterApi = DiaryListFilterClient(addFilter: { filter in
-                    
-                    currentFilters += [filter]
-                    publisher.send(currentFilters)
-                    return true
-                }, updateFilter: { filter in
-                    
-                    guard let index = currentFilters.firstIndex(where: { $0.target == filter.target })
-                    else { return false }
-                    currentFilters[index] = filter
-                    publisher.send(currentFilters)
-                    return true
-                }, deleteFilters: { targets in
-                    
-                    currentFilters = currentFilters.filter { !targets.contains($0) }
-                    publisher.send(currentFilters)
-                    return true
-                }, fetchFilterList: {
-                    
-                    return currentFilters
-                }, getFilterListObserver: {
-                    
-                    return publisher.eraseToAnyPublisher()
-                })
-            } operation: {
-                DiaryListFeature()
-            }
-        })
-    }
+    DiaryListView(store: Store(initialState: DiaryListFeature.State()) {
+        DiaryListFeature()
+    })
 }

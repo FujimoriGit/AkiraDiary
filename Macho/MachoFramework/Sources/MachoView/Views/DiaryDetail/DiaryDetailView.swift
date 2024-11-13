@@ -61,20 +61,31 @@ struct DiaryDetailView: View {
             .toolbar {
                 ToolbarItem(placement: .navigation) {
                     NavigationButton(.back) {
-                       // TODO: 戻るイベントを呼ぶ
+                        store.send(.tappedBackNavigationButton)
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     // swiftlint:disable:next accessibility_label_for_image
                     NavigationButton(.other(icon: Image(systemName: "pencil"))) {
-                       // TODO: 編集ボタン押下イベントを呼ぶ
+                        store.send(.tappedEditButton)
                     }
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("Detail")
         } destination: { store in
-            // TODO: 編集画面への遷移を実装する
+            switch store.case {
+                
+            case .editDiaryView(let store):
+                // TODO: 仮の遷移先のため実装完了したら編集画面への遷移を実装する
+                AddContactView(store: store)
+            }
+        }
+        .onAppear {
+            store.send(.onAppear)
+        }
+        .onDisappear {
+            store.send(.onDisappear)
         }
     }
 }
@@ -147,7 +158,7 @@ private extension DiaryDetailView {
                               weight: .bold))
                 .frame(maxWidth: .infinity,
                        alignment: .leading)
-            AchieveIconView(isAchieved: true,
+            AchieveIconView(isAchieved: trainingResult.isAchievedTotalGoal,
                             size: achievedIconFontSize)
             VStack(alignment: .leading,
                    spacing: trainingTotalResultTextSpace) {
