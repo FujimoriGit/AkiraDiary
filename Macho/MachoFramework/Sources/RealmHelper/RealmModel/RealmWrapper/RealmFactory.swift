@@ -33,7 +33,9 @@ private extension RealmFactory {
     static func getConfiguration() -> Realm.Configuration {
         
         let schemeVersion = RealmSchemaVersion(value: 1)
-        let fileUrl = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
+        let fileUrl = FileManager.default
+            .urls(for: .applicationSupportDirectory, in: .userDomainMask).first?
+            .appending(path: "db.realm")
         
         logger.debug("Realm configuration(schemaVersion=\(schemeVersion.value), fileUrl=\(fileUrl?.path ?? ""))")
         
