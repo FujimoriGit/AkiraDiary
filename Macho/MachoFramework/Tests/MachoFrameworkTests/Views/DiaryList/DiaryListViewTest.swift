@@ -5,12 +5,12 @@
 //  Created by 佐藤汰一 on 2024/06/01.
 //
 
+import Combine
 import ComposableArchitecture
 import RealmHelper
 import XCTest
 
 @testable import MachoView
-import Combine
 
 final class DiaryListViewTests: XCTestCase {
     

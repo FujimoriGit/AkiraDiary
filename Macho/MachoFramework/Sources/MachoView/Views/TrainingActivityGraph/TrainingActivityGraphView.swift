@@ -12,11 +12,11 @@ struct TrainingActivityGraphView: View {
     
     // MARK: - private property
     
-    @Bindable private var store: StoreOf<TrainingActivityGraphViewFeature>
+    @Bindable private var store: StoreOf<TrainingActivityGraphFeature>
     
     // MARK: - initialize method
     
-    init(store: StoreOf<TrainingActivityGraphViewFeature>) {
+    init(store: StoreOf<TrainingActivityGraphFeature>) {
         
         self.store = store
     }
@@ -31,6 +31,6 @@ struct TrainingActivityGraphView: View {
 // MARK: - preview
 
 #Preview {
-    TrainingActivityGraphView(store: Store(initialState: .init(),
-                                           reducer: { TrainingActivityGraphViewFeature() }))
+    TrainingActivityGraphView(store: Store(initialState: .init(viewState: .init()),
+                                           reducer: { TrainingActivityGraphFeature() }))
 }

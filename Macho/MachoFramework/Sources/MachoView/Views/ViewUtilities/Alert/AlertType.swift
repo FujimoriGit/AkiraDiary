@@ -11,6 +11,7 @@ enum AlertType {
     
     case deleteDiaryItemConfirmAlert // 日記項目削除時の確認アラート
     case editDiaryItemConfirmAlert // 日記項目編集時の確認アラート
+    case emptyDiaryItemAlert // 日記が一件も存在しない場合のアラート
 }
 
 // MARK: - アラートのタイトル
@@ -26,6 +27,11 @@ extension AlertType {
             
         case .editDiaryItemConfirmAlert:
             return "日記の編集を行いますか？"
+        
+        case .emptyDiaryItemAlert:
+            return "まだ日記が一度も作成されていません。"
+            + "\n"
+            + "日記を作成してみましょう!"
         }
     }
 }
@@ -38,7 +44,9 @@ extension AlertType {
         
         switch self {
             
-        case .deleteDiaryItemConfirmAlert, .editDiaryItemConfirmAlert:
+        case .deleteDiaryItemConfirmAlert,
+                .editDiaryItemConfirmAlert,
+                .emptyDiaryItemAlert:
             return nil
         }
     }
@@ -52,7 +60,9 @@ extension AlertType {
         
         switch self {
             
-        case .deleteDiaryItemConfirmAlert, .editDiaryItemConfirmAlert:
+        case .deleteDiaryItemConfirmAlert,
+                .editDiaryItemConfirmAlert,
+                .emptyDiaryItemAlert:
             return "OK"
         }
     }
@@ -66,7 +76,9 @@ extension AlertType {
         
         switch self {
             
-        case .deleteDiaryItemConfirmAlert, .editDiaryItemConfirmAlert:
+        case .deleteDiaryItemConfirmAlert,
+                .editDiaryItemConfirmAlert,
+                .emptyDiaryItemAlert:
             return nil
         }
     }
