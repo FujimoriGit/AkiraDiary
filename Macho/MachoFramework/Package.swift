@@ -13,6 +13,12 @@ let package = Package(
             targets: [
                 "MachoFramework",
             ]
+        ),
+        .library(
+            name: "MachoView",
+            targets: [
+                "MachoView",
+            ]
         )
     ],
     dependencies: [
@@ -29,17 +35,12 @@ let package = Package(
             name: "MachoFramework",
             dependencies: [
                 "MachoView",
-                "MachoCore",
                 "MachoModel",
             ]
         ),
         .target(
             name: "MachoView",
             dependencies: [
-                .product(
-                    name: "ComposableArchitecture",
-                    package: "swift-composable-architecture"
-                ),
                 "MachoCore"
             ],
             plugins: [
