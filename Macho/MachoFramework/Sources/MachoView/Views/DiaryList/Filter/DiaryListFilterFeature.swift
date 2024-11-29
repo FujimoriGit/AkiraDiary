@@ -7,6 +7,7 @@
 
 import ComposableArchitecture
 import Foundation
+import MachoCore
 
 @Reducer
 struct DiaryListFilterFeature {
@@ -65,9 +66,9 @@ struct DiaryListFilterFeature {
         case receiveFetchSelectableFilterRes([DiaryListFilterItem])
     }
     
-    @Dependency(\.diaryListFilterApi) var diaryListFilterApi
-    @Dependency(\.trainingTypeApi) var trainingTypeApi
-    @Dependency(\.trainingTagApi) var trainingTagApi
+    @Dependency(\.diaryListFilterClient) var diaryListFilterApi
+    @Dependency(\.trainingTypeClient) var trainingTypeApi
+    @Dependency(\.trainingTagClient) var trainingTagApi
     @Dependency(\.dismiss) var dismiss
     
     var body: some ReducerOf<Self> {
@@ -131,13 +132,18 @@ private extension DiaryListFilterFeature {
             .run { send in
                 
                 let result = await diaryListFilterApi.fetchFilterList()
-                await send(.receiveDidChangeFilterItems(result))
+                await send(.receiveDidChangeFilterItems(DiaryListFilterDataConverter
+                    .convertToDiaryFilterItemList(result)))
             },
             .publisher {
                 
                 return diaryListFilterApi.getFilterListObserver()
                     .receive(on: DispatchQueue.main)
-                    .map { .receiveDidChangeFilterItems($0) }
+                    .map {
+                        
+                        return .receiveDidChangeFilterItems(DiaryListFilterDataConverter
+                        .convertToDiaryFilterItemList($0))
+                    }
             }.cancellable(id: FilterObserveCancellable())
         )
     }
@@ -147,7 +153,9 @@ private extension DiaryListFilterFeature {
         
         return .run { _ in
             
-            guard await diaryListFilterApi.deleteFilters(currentFilters.filter { $0.target == type }) else {
+            let entities = DiaryListFilterDataConverter
+                .convertToDiaryListFilterDataList(currentFilters.elements.filter { $0.target == type })
+            guard await diaryListFilterApi.deleteFilters(entities) else {
                 
                 logger.error("did fail delete filter(target: \(type)).")
                 return
@@ -161,8 +169,9 @@ private extension DiaryListFilterFeature {
         
         return .run { _ in
             
-            guard let deleteItem = currentFilters.first(where: { $0.target == type && $0.value == value }),
-                  await diaryListFilterApi.deleteFilters([deleteItem]) else {
+            guard let deleteItem = currentFilters
+                .first(where: { $0.target == type && $0.value == value }),
+                  await diaryListFilterApi.deleteFilters([DiaryListFilterConcreteData(deleteItem)]) else {
                 
                 logger.error("did fail delete filter(target: \(type), value: \(value)).")
                 return
@@ -186,7 +195,7 @@ private extension DiaryListFilterFeature {
             
             // 複数選択可能な場合または、まだ登録されていないフィルター種別の場合は、
             // 新規のフィルターとしてDBに保存する
-            guard await diaryListFilterApi.addFilter(targetFilter) else {
+            guard await diaryListFilterApi.addFilter(DiaryListFilterConcreteData(targetFilter)) else {
                 
                 logger.error("did fail add filter(\(targetFilter)).")
                 return
@@ -197,7 +206,7 @@ private extension DiaryListFilterFeature {
         else {
             
             // それ以外の場合は、すでに登録されている同じフィルター種別の値を更新する
-            guard await diaryListFilterApi.updateFilter(targetFilter) else {
+            guard await diaryListFilterApi.updateFilter(DiaryListFilterConcreteData(targetFilter)) else {
                 
                 logger.error("did fail update filter(\(targetFilter)).")
                 return

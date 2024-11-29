@@ -7,6 +7,7 @@
 
 import Combine
 import ComposableArchitecture
+import MachoCore
 import SwiftUI
 
 struct DiaryListFilterView: View {
@@ -210,50 +211,48 @@ private extension DiaryListFilterView {
 #Preview {
     // priview内でprivateが使用できないため、警告を無視する
     // swiftlint:disable:next private_subject
-    let publisher = PassthroughSubject<[DiaryListFilterItem], Never>()
-    var currentFilters = [
-        DiaryListFilterItem(target: .achievement, filterItemId: UUID(), value: "達成していない")
+    let publisher = PassthroughSubject<[any DiaryListFilterData], Never>()
+    var currentFilters: [any DiaryListFilterData] = [
+        DiaryListFilterConcreteData(DiaryListFilterItem(target: .achievement, filterItemId: UUID(), value: "達成していない"))
     ]
     
-    return DiaryListFilterView(store: Store(initialState: DiaryListFilterFeature.State(),
-                                            reducer: { DiaryListFilterFeature() },
-                                            withDependencies: {
-        $0.diaryListFilterApi = DiaryListFilterClient(addFilter: { filter in
+    DiaryListFilterView(store: Store(initialState: DiaryListFilterFeature.State(),
+                                     reducer: { DiaryListFilterFeature() },
+                                     withDependencies: {
+        $0.diaryListFilterClient = DiaryListFilterClient(fetchFilterList: {
+            
+            return currentFilters
+        }, addFilter: { filter in
             
             currentFilters += [filter]
             publisher.send(currentFilters)
             return true
         }, updateFilter: { filter in
             
-            guard let index = currentFilters.firstIndex(where: { $0.target == filter.target }) else { return false }
+            guard let index = currentFilters.firstIndex(where: { $0.id == filter.id }) else { return false }
             currentFilters[index] = filter
             publisher.send(currentFilters)
             return true
         }, deleteFilters: { targets in
             
-            currentFilters = currentFilters.filter { !targets.contains($0) }
+            for target in targets {
+                
+                // swiftlint:disable:next force_unwrapping
+                currentFilters.remove(at: currentFilters.firstIndex(where: { $0.id == target.id })!)
+            }
             publisher.send(currentFilters)
             return true
-        }, fetchFilterList: {
-            
-            return currentFilters
         }, getFilterListObserver: {
             
             return publisher.eraseToAnyPublisher()
         })
-        $0.trainingTypeApi = TrainingTypeClient {
+        $0.trainingTypeClient = TrainingTypeClient {
             
-            return [
-                .init(id: UUID(), name: "腹筋"),
-                .init(id: UUID(), name: "ダンベルプレス")
-            ]
+            return []
         }
-        $0.trainingTagApi = TrainingTagClient {
+        $0.trainingTagClient = TrainingTagClient {
             
-            return [
-                .init(id: UUID(), tagName: "元気"),
-                .init(id: UUID(), tagName: "雨")
-            ]
+            return []
         }
     }))
 }

@@ -6,9 +6,11 @@
 //
 
 import Foundation
+import MachoCore
+import RealmHelper
 import RealmSwift
 
-public struct DiaryListFilterEntity: BaseRealmEntity {
+public struct DiaryListFilterEntity: BaseRealmEntity, DiaryListFilterData {
     
     public let id: String
     // フィルターの種別
@@ -36,6 +38,14 @@ public struct DiaryListFilterEntity: BaseRealmEntity {
         filterValue = realmObject.filterValue
     }
     
+    init(_ data: some DiaryListFilterData) {
+        
+        id = data.id
+        filterTarget = data.filterTarget
+        filterId = data.filterId
+        filterValue = data.filterValue
+    }
+    
     public func toRealmObject() -> DiaryListFilterRealmObject {
         
         return DiaryListFilterRealmObject(id: id,
@@ -47,7 +57,8 @@ public struct DiaryListFilterEntity: BaseRealmEntity {
 
 public class DiaryListFilterRealmObject: Object {
     
-    @Persisted(primaryKey: true) var id: String
+    @Persisted(primaryKey: true)
+    var id: String
     // フィルターの種別
     @Persisted var filterTarget: String
     // フィルターのID

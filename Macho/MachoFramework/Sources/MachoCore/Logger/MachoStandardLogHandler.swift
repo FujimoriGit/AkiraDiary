@@ -15,7 +15,7 @@ struct MachoStandardLogHandler: LogHandler {
             return metadata[metadataKey]
         }
         set(newValue) {
-            guard let newValue = newValue else { return }
+            guard let newValue else { return }
             metadata.updateValue(newValue, forKey: metadataKey)
         }
     }
@@ -32,13 +32,14 @@ struct MachoStandardLogHandler: LogHandler {
         self.subSystemName = subSystemName
     }
     
+    // swiftlint:disable:next function_parameter_count
     func log(level: Logging.Logger.Level,
              message: Logging.Logger.Message,
-             metadata: Logging.Logger.Metadata?,
-             source: String,
-             file: String,
-             function: String,
-             line: UInt) {
+             metadata: Logging.Logger.Metadata?, // swiftlint:disable:this unused_parameter
+             source: String, // swiftlint:disable:this unused_parameter
+             file: String, // swiftlint:disable:this unused_parameter
+             function: String, // swiftlint:disable:this unused_parameter
+             line: UInt) { // swiftlint:disable:this unused_parameter
         
         showLog(level: level, message: message)
     }

@@ -6,13 +6,17 @@
 //
 
 import Foundation
+import MachoCore
+import RealmHelper
 import RealmSwift
 
-public struct TrainingContentEntity: BaseRealmEntity {
+public struct TrainingContentEntity: BaseRealmEntity, TrainingContentData {
+    
+    public typealias TrainingType = TrainingTypeEntity
     
     public let id: UUID
     /// 種目
-    public let trainingType: TrainingTypeEntity?
+    public var trainingType: TrainingType?
     /// 目標1セットの回数
     public let goalNumberOfSets: Int
     /// 目標セット数
@@ -80,10 +84,42 @@ public struct TrainingContentEntity: BaseRealmEntity {
         endTime = realmObject.endTime
     }
     
+    init(_ data: some TrainingContentData) {
+        
+        id = data.id
+        if let trainingType = data.trainingType {
+            
+            self.trainingType = TrainingTypeEntity(trainingType)
+        }
+        else {
+            
+            trainingType = nil
+        }
+        goalNumberOfSets = data.goalNumberOfSets
+        goalSetCount = data.goalSetCount
+        actualNumberOfSets = data.actualNumberOfSets
+        actualSetCount = data.actualSetCount
+        startTime = data.startTime
+        endTime = data.endTime
+    }
+    
     public func toRealmObject() -> TrainingContentRealmObject {
         
+        guard let trainingTypeEntity = trainingType else {
+            
+            assertionFailure("Invalid entity type: \(type(of: trainingType))")
+            return TrainingContentRealmObject(id: id,
+                                              trainingType: nil,
+                                              goalNumberOfSets: goalNumberOfSets,
+                                              goalSetCount: goalSetCount,
+                                              actualNumberOfSets: actualNumberOfSets,
+                                              actualSetCount: actualSetCount,
+                                              startTime: startTime,
+                                              endTime: endTime)
+        }
+        
         return TrainingContentRealmObject(id: id,
-                                          trainingType: trainingType?.toRealmObject(),
+                                          trainingType: trainingTypeEntity.toRealmObject(),
                                           goalNumberOfSets: goalNumberOfSets,
                                           goalSetCount: goalSetCount,
                                           actualNumberOfSets: actualNumberOfSets,
@@ -95,7 +131,8 @@ public struct TrainingContentEntity: BaseRealmEntity {
 
 public class TrainingContentRealmObject: Object {
     
-    @Persisted(primaryKey: true) var id: UUID
+    @Persisted(primaryKey: true)
+    var id: UUID
     @Persisted var trainingType: TrainingTypeRealmObject?
     @Persisted var goalNumberOfSets: Int
     @Persisted var goalSetCount: Int

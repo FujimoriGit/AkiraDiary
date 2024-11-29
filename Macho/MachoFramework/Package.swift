@@ -10,8 +10,10 @@ let package = Package(
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "MachoFramework",
-            type: .dynamic,
-            targets: ["MachoFramework"]),
+            targets: [
+                "MachoFramework",
+            ]
+        )
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", exact: "1.12.1"),
@@ -25,7 +27,11 @@ let package = Package(
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "MachoFramework",
-            dependencies: ["MachoView"]
+            dependencies: [
+                "MachoView",
+                "MachoCore",
+                "MachoModel",
+            ]
         ),
         .target(
             name: "MachoView",
@@ -34,7 +40,6 @@ let package = Package(
                     name: "ComposableArchitecture",
                     package: "swift-composable-architecture"
                 ),
-                "RealmHelper",
                 "MachoCore"
             ],
             plugins: [
@@ -42,6 +47,15 @@ let package = Package(
                 .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLintPlugins")
             ]
         ),
+        .target(name: "MachoModel",
+                dependencies: [
+                    "MachoCore",
+                    "RealmHelper"
+                ],
+                plugins: [
+                    .plugin(name: "SwiftLintBuildToolPlugin",
+                            package: "SwiftLintPlugins")
+                ]),
         .target(
             name: "RealmHelper",
             dependencies: [
@@ -49,17 +63,27 @@ let package = Package(
                 "MachoCore"
             ],
             plugins: [
-                .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLintPlugins")
+                .plugin(name: "SwiftLintBuildToolPlugin",
+                        package: "SwiftLintPlugins")
             ]
         ),
         .target(
             name: "MachoCore",
-            dependencies: [.product(name: "Logging", package: "swift-log")]
+            dependencies: [
+                .product(
+                    name: "ComposableArchitecture",
+                    package: "swift-composable-architecture"
+                ),
+                .product(name: "Logging", package: "swift-log")
+            ],
+            plugins: [
+                .plugin(name: "SwiftLintBuildToolPlugin",
+                        package: "SwiftLintPlugins")
+            ]
         ),
         .testTarget(
             name: "MachoFrameworkTests",
             dependencies: [
-                "MachoFramework",
                 "MachoView",
                 "RealmHelper",
                 "MachoCore",

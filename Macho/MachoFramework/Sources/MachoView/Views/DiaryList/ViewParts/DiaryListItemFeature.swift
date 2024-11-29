@@ -7,6 +7,7 @@
 
 import ComposableArchitecture
 import Foundation
+import MachoCore
 
 @Reducer
 struct DiaryListItemFeature: Sendable {
@@ -31,7 +32,7 @@ struct DiaryListItemFeature: Sendable {
             self.tagList = tagList
         }
         
-        init(_ entity: DiaryData) {
+        init(_ entity: any DiaryData) {
             
             id = entity.id
             title = entity.title

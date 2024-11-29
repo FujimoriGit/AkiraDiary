@@ -6,9 +6,11 @@
 //  
 
 import Foundation
+import MachoCore
+import RealmHelper
 import RealmSwift
 
-public struct TrainingTypeEntity: BaseRealmEntity {
+public struct TrainingTypeEntity: BaseRealmEntity, TrainingTypeData {
     
     public let id: UUID
     public let name: String
@@ -27,6 +29,12 @@ public struct TrainingTypeEntity: BaseRealmEntity {
         name = realmObject.name
     }
     
+    init(_ data: some TrainingTypeData) {
+        
+        id = data.id
+        name = data.name
+    }
+    
     public func toRealmObject() -> TrainingTypeRealmObject {
         
         return TrainingTypeRealmObject(id: id, name: name)
@@ -35,7 +43,8 @@ public struct TrainingTypeEntity: BaseRealmEntity {
 
 public class TrainingTypeRealmObject: Object {
     
-    @Persisted(primaryKey: true) var id: UUID
+    @Persisted(primaryKey: true)
+    var id: UUID
     @Persisted var name: String
     
     convenience init(id: UUID, name: String) {

@@ -6,9 +6,14 @@
 //  
 
 import Foundation
+import MachoCore
+import RealmHelper
 import RealmSwift
 
-public struct DiaryEntity: BaseRealmEntity {
+public struct DiaryEntity: BaseRealmEntity, DiaryData {
+    
+    public typealias GoalType = TrainingContentEntity
+    public typealias TagType = TrainingTagEntity
     
     public let id: UUID
     /// 日付
@@ -18,9 +23,9 @@ public struct DiaryEntity: BaseRealmEntity {
     /// 日記本文
     public let mainText: String
     /// 目標種目リスト
-    public let goals: [TrainingContentEntity]
+    public let goals: [GoalType]
     /// タグリスト
-    public let tags: [TrainingTagEntity]
+    public let tags: [TagType]
     
     public static let executor = RealmObserverExecutor<Self>()
     
@@ -49,6 +54,16 @@ public struct DiaryEntity: BaseRealmEntity {
         tags = realmObject.tags.map { TrainingTagEntity(realmObject: $0) }
     }
     
+    init(_ data: some DiaryData) {
+        
+        id = data.id
+        date = data.date
+        title = data.title
+        mainText = data.mainText
+        goals = data.goals.map { TrainingContentEntity($0) }
+        tags = data.tags.map { TrainingTagEntity($0) }
+    }
+    
     public func toRealmObject() -> DiaryRealmObject {
         
         let goalObjects = goals.reduce(List<TrainingContentRealmObject>()) {
@@ -74,7 +89,8 @@ public struct DiaryEntity: BaseRealmEntity {
 
 public class DiaryRealmObject: Object {
     
-    @Persisted(primaryKey: true) var id: UUID
+    @Persisted(primaryKey: true)
+    var id: UUID
     /// 日付
     @Persisted var date: Date
     /// 日記タイトル

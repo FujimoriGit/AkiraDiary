@@ -7,6 +7,7 @@
 
 import ComposableArchitecture
 import Foundation
+import MachoCore
 
 @Reducer
 struct DiaryListFeature: Sendable {
@@ -121,8 +122,8 @@ struct DiaryListFeature: Sendable {
     
     // MARK: dependency property
     
-    @Dependency(\.diaryListFetchApi) var diaryListFetchClient
-    @Dependency(\.diaryListFilterApi) var diaryListFilterApi
+    @Dependency(\.diaryEntityClient) var diaryEntityApi
+    @Dependency(\.diaryListFilterClient) var diaryListFilterApi
     @Dependency(\.date) var date
     @Dependency(\.uuid) var uuid
     
@@ -350,7 +351,8 @@ private extension DiaryListFeature {
         return .concatenate(
             .run { send in
                 
-                let currentFilterList = await diaryListFilterApi.fetchFilterList()
+                let currentFilterList = DiaryListFilterDataConverter
+                    .convertToDiaryFilterItemList(await diaryListFilterApi.fetchFilterList())
                 return await send(.receiveLoadDiaryListFilter(filters: currentFilterList))
             },
             loadDiaryListItem(date.now),
@@ -358,7 +360,11 @@ private extension DiaryListFeature {
                 
                 return diaryListFilterApi.getFilterListObserver()
                     .receive(on: DispatchQueue.main)
-                    .map { .receiveLoadDiaryListFilter(filters: $0) }
+                    .map {
+                        
+                        return .receiveLoadDiaryListFilter(filters: DiaryListFilterDataConverter
+                            .convertToDiaryFilterItemList($0))
+                    }
             }.cancellable(id: FilterObserveCancellable())
         )
     }
@@ -370,8 +376,9 @@ private extension DiaryListFeature {
         
         return .run { send in
             
-            let diaryItems = await diaryListFetchClient.fetch(startDate,
-                                                              limitFetchDiary).map { DiaryListItemFeature.State($0) }
+            let diaryItems = await diaryEntityApi.fetchAll()
+//                .fetch(startDate, limitFetchDiary)
+                .map { DiaryListItemFeature.State($0) }
             await send(.receiveLoadDiaryItems(items: diaryItems),
                        animation: .spring)
         }
@@ -444,7 +451,12 @@ private extension DiaryListFeature {
         
         return .run { send in
             
-            try await diaryListFetchClient.deleteItem(id)
+            guard await diaryEntityApi.deleteDiary(id) else {
+                
+                logger.error("Failed delete diary(id: \(id)).")
+                return
+            }
+            
             await send(.deletedDiaryItem(id: id), animation: .spring)
         }
     }

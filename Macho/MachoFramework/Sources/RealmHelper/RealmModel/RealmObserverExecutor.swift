@@ -13,6 +13,10 @@ public class RealmObserverExecutor<T: BaseRealmEntity> {
     private let publisher = PassthroughSubject<[T], Never>()
     private var token: NotificationToken?
     
+    public init() {
+        // nop
+    }
+    
     /// RealmDBのデータ変更を検知するPublisherを返す
     ///
     /// startObservationを呼び出すまではPublisherは何も検知しない
