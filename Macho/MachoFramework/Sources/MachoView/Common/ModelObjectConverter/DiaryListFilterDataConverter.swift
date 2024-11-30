@@ -22,6 +22,17 @@ struct DiaryListFilterDataConverter {
     
     static func convertToDiaryListFilterDataList(_ items: [DiaryListFilterItem]) -> [some DiaryListFilterData] {
         
-        return items.map { DiaryListFilterConcreteData($0) }
+        return items.map { ConcreteDiaryListFilterData($0) }
+    }
+}
+
+extension ConcreteDiaryListFilterData {
+    
+    init(_ item: DiaryListFilterItem) {
+        
+        self.init(id: item.id,
+                  filterTarget: item.target.rawValue,
+                  filterId: item.filterItemId,
+                  filterValue: item.value)
     }
 }

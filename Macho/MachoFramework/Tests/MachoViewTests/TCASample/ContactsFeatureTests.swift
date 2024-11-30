@@ -8,6 +8,7 @@
 
 import ComposableArchitecture
 import XCTest
+
 @testable import MachoView
 
 final class ContactsFeatureTests: XCTestCase {

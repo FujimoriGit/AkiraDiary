@@ -83,13 +83,19 @@ let package = Package(
             ]
         ),
         .testTarget(
-            name: "MachoFrameworkTests",
+            name: "MachoViewTests",
             dependencies: [
-                "MachoView",
-                "RealmHelper",
-                "MachoCore",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-                .product(name: "Logging", package: "swift-log")
+                "MachoView"
+            ]),
+        .testTarget(
+            name: "MachoModelTests",
+            dependencies: [
+                "MachoModel"
+            ]),
+        .testTarget(
+            name: "RealmHelperTests",
+            dependencies: [
+                "RealmHelper"
             ]),
     ]
 )

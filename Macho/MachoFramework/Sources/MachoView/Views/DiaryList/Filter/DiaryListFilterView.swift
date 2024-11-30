@@ -213,7 +213,7 @@ private extension DiaryListFilterView {
     // swiftlint:disable:next private_subject
     let publisher = PassthroughSubject<[any DiaryListFilterData], Never>()
     var currentFilters: [any DiaryListFilterData] = [
-        DiaryListFilterConcreteData(DiaryListFilterItem(target: .achievement, filterItemId: UUID(), value: "達成していない"))
+        ConcreteDiaryListFilterData(DiaryListFilterItem(target: .achievement, filterItemId: UUID(), value: "達成していない"))
     ]
     
     DiaryListFilterView(store: Store(initialState: DiaryListFilterFeature.State(),

@@ -6,9 +6,10 @@
 //  
 //
 
-@testable import MachoView
 import ComposableArchitecture
 import XCTest
+
+@testable import MachoView
 
 final class CounterFeatureTests: XCTestCase {
     
