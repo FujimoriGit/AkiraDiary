@@ -27,8 +27,6 @@ public struct DiaryEntity: BaseRealmEntity, DiaryData {
     /// タグリスト
     public let tags: [TagType]
     
-    public static let executor = RealmObserverExecutor<Self>()
-    
     public init(id: UUID,
                 date: Date,
                 title: String,

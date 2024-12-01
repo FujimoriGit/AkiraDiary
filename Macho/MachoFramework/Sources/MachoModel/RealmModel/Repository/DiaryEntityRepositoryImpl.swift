@@ -35,10 +35,9 @@ public struct DiaryEntityRepositoryImpl: RealmUseable {
             .delete { (entity: DiaryEntity) in entity.id == id } ?? false
     }
     
-    public func getDiaryObserver() -> AnyPublisher<[DiaryEntity], Never> {
+    public func getDiaryObserver() async -> AnyPublisher<[DiaryEntity], Never>? {
         
-        let executor = DiaryEntity.executor
-        executor.startObservation()
-        return executor.getPublisher()
+        guard let realm = await getRealm() else { return nil }
+        return await realm.getEntityChangeObserver()
     }
 }

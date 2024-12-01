@@ -93,6 +93,7 @@ final class DiaryListFilterViewTest: XCTestCase {
             
             $0.currentFilters = expectedReceiveFilters
         }
+        await testStore.receive(\.startFilterItemsObserver)
         
         await testStore.send(.tappedOutsideArea)
         XCTAssertTrue(isDismissInvoked.value)
@@ -120,7 +121,7 @@ final class DiaryListFilterViewTest: XCTestCase {
             ConcreteDiaryListFilterData(target: .trainingType, filterItemId: Self.dumbbellPressTrainingId, value: "ダンベルプレス")
         ]
         
-        let testPublisher = PassthroughSubject<[any DiaryListFilterData], Never>()
+        let testPublisher = PassthroughSubject<[any DiaryListFilterData], Error>()
         
         // フィルター取得処理のMock生成
         let mockFilterClient = DiaryListFilterClient.getMockClient(expectedFetchList: [
@@ -161,6 +162,7 @@ final class DiaryListFilterViewTest: XCTestCase {
             
             $0.currentFilters = fetchFilters
         }
+        await testStore.receive(\.startFilterItemsObserver)
         
         await testStore.send(.tappedFilterTypeDeleteButton(target: .trainingType))
         testPublisher.send(expectedFiltersData)
@@ -198,7 +200,7 @@ final class DiaryListFilterViewTest: XCTestCase {
         let deleteFilterData = ConcreteDiaryListFilterData(deleteFilter)
         
         
-        let testPublisher = PassthroughSubject<[any DiaryListFilterData], Never>()
+        let testPublisher = PassthroughSubject<[any DiaryListFilterData], Error>()
         
         // フィルター取得処理のMock生成
         let mockFilterClient = DiaryListFilterClient.getMockClient(expectedFetchList: [
@@ -239,6 +241,7 @@ final class DiaryListFilterViewTest: XCTestCase {
             
             $0.currentFilters = fetchFilters
         }
+        await testStore.receive(\.startFilterItemsObserver)
         
         await testStore.send(.tappedFilterItemDeleteButton(filter: deleteFilter))
         testPublisher.send(expectedFiltersData)
@@ -291,7 +294,7 @@ final class DiaryListFilterViewTest: XCTestCase {
             DiaryListFilterItem(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋"),
         ])
         
-        let testPublisher = PassthroughSubject<[any DiaryListFilterData], Never>()
+        let testPublisher = PassthroughSubject<[any DiaryListFilterData], Error>()
         
         // フィルター取得処理のMock生成
         let mockFilterClient = DiaryListFilterClient.getMockClient(expectedFetchList: [
@@ -329,6 +332,7 @@ final class DiaryListFilterViewTest: XCTestCase {
             
             $0.currentFilters = fetchFilters
         }
+        await testStore.receive(\.startFilterItemsObserver)
         
         await testStore.send(.tappedFilterMenuItem(filter: addFilter))
         testPublisher.send(addedExpectedFiltersData)

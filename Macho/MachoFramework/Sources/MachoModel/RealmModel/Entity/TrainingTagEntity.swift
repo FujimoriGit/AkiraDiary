@@ -15,8 +15,6 @@ public struct TrainingTagEntity: BaseRealmEntity, TrainingTagData {
     public let id: UUID
     public let tagName: String
     
-    public static let executor = RealmObserverExecutor<Self>()
-    
     public init(id: UUID, tagName: String) {
         
         self.id = id

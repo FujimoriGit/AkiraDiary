@@ -13,11 +13,11 @@ public struct DiaryEntityClient {
     
     public let fetchAll: () async -> [any DiaryData]
     public let deleteDiary: (_ id: UUID) async -> Bool
-    public let getDiaryObserver: () -> AnyPublisher<[any DiaryData], Never>
+    public let getDiaryObserver: () async -> AnyPublisher<[any DiaryData], Never>?
     
     public init(fetchAll: @escaping () async -> [any DiaryData],
                 deleteDiary: @escaping (_: UUID) async -> Bool,
-                getDiaryObserver: @escaping () -> AnyPublisher<[any DiaryData], Never>) {
+                getDiaryObserver: @escaping () async -> AnyPublisher<[any DiaryData], Never>?) {
         
         self.fetchAll = fetchAll
         self.deleteDiary = deleteDiary

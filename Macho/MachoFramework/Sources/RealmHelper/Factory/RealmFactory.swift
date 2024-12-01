@@ -5,12 +5,12 @@
 //  Created by 佐藤汰一 on 2024/11/28.
 //
 
-import Foundation
+import MachoCore
 
 public struct RealmFactory {
     
-    public static func create(url: URL, version: UInt64) -> Task<RealmAccessible, Error> {
+    public static func create(config: DbConfiguration) -> Task<RealmAccessible, Error> {
         
-        return Task { RealmAccessor() }
+        return Task { try await RealmAccessor(config) }
     }
 }

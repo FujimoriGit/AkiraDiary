@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import MachoCore
 import RealmHelper
 
 final class RealmStore {
@@ -16,8 +17,21 @@ final class RealmStore {
     
     init() {
         
-        realm = RealmFactory.create(url: URL.applicationSupportDirectory
-            .appending(path: "db.realm"),
-                                    version: 1)
+        let dir = URL.applicationSupportDirectory
+        if !FileManager.default.fileExists(atPath: dir.path()) {
+            
+            do {
+                
+                try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+            }
+            catch {
+                
+                logger.error("Failed create directory: \(dir)")
+            }
+        }
+        
+        let config = DbConfiguration(url: dir.appending(path: "db.realm"),
+                                     version: 1)
+        realm = RealmFactory.create(config: config)
     }
 }

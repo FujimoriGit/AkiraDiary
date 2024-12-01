@@ -6,6 +6,7 @@
 //
 
 import Combine
+import MachoCore
 import RealmSwift
 
 public protocol RealmAccessible {
@@ -43,6 +44,6 @@ public protocol RealmAccessible {
     /// 指定した型に対応するRealmオブジェクトテーブルの変更を監視するPublisherを返す
     /// - Parameter type: 監視するデータの型
     /// - Returns: 監視用のPublisher
-    func observeDidChangeRealmObject<T>(subject: PassthroughSubject<[T], Never>)
-    async -> NotificationToken? where T: BaseRealmEntity
+    func getEntityChangeObserver<T>()
+    async -> AnyPublisher<[T], Never> where T: BaseRealmEntity
 }

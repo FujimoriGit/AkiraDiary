@@ -182,6 +182,8 @@ final class DiaryListViewTests: XCTestCase {
             $0.viewState.hasDiaryItems = true
         }
         
+        await store.receive(\.startFilterItemObserve)
+        
         // 画面非表示
         await store.send(.onDisappearView)
     }
@@ -271,6 +273,8 @@ final class DiaryListViewTests: XCTestCase {
             $0.viewState.hasDiaryItems = true
         }
         
+        await store.receive(\.startFilterItemObserve)
+        
         // 画面非表示
         await store.send(.onDisappearView)
     }
@@ -347,6 +351,8 @@ final class DiaryListViewTests: XCTestCase {
             // 日記リストがあるかどうかのフラグ更新
             $0.viewState.hasDiaryItems = false
         }
+        
+        await store.receive(\.startFilterItemObserve)
         
         // 画面非表示
         await store.send(.onDisappearView)
@@ -540,7 +546,7 @@ final class DiaryListViewTests: XCTestCase {
         let changeFilters = [DiaryListFilterItem(target: .trainingType, filterItemId: UUID(), value: "腹筋")]
         let changeFiltersData = changeFilters.map { ConcreteDiaryListFilterData($0) }
         let expectedDiariesAfterChangeFilter: IdentifiedArrayOf<DiaryListItemFeature.State> = []
-        let filterPublisher = PassthroughSubject<[any DiaryListFilterData], Never>()
+        let filterPublisher = PassthroughSubject<[any DiaryListFilterData], Error>()
         
         let mockDiaryListClient = DiaryEntityClient.getMockClient(expectedFetchList: [expectedData])
         let mockDiaryListFilterClient = DiaryListFilterClient.getMockClient(expectedFetchList: receivedFiltersData,
@@ -576,6 +582,8 @@ final class DiaryListViewTests: XCTestCase {
             // 日記リストがあるかどうかのフラグ更新
             $0.viewState.hasDiaryItems = true
         }
+        
+        await store.receive(\.startFilterItemObserve)
         
         // フィルターボタンを押下
         await store.send(.tappedFilterButton) {

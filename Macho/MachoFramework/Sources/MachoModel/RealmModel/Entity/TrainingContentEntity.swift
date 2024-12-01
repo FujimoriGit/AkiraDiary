@@ -44,8 +44,6 @@ public struct TrainingContentEntity: BaseRealmEntity, TrainingContentData {
         return false
     }
     
-    public static let executor = RealmObserverExecutor<Self>()
-    
     public init(id: UUID,
                 trainingType: TrainingTypeEntity,
                 goalNumberOfSets: Int,

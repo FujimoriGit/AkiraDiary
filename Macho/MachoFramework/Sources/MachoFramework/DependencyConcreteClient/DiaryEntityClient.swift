@@ -21,8 +21,9 @@ extension DiaryEntityClient: DependencyKey {
         return await repository.deleteDiary(id)
     } getDiaryObserver: {
         
-        return repository.getDiaryObserver()
-            .compactMap { $0 as [any DiaryData] }
+        guard let publisher = await repository.getDiaryObserver() else { return nil }
+        return publisher
+            .map { $0 as [any DiaryData] }
             .eraseToAnyPublisher()
     }
 }

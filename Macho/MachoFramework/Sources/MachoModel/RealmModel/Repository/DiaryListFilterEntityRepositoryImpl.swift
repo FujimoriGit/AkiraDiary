@@ -44,11 +44,10 @@ public struct DiaryListFilterEntityRepositoryImpl: RealmUseable {
         ?? false
     }
     
-    public func getObserver() -> AnyPublisher<[DiaryListFilterEntity], Never> {
+    public func getObserver() async -> AnyPublisher<[DiaryListFilterEntity], Never>? {
         
-        let executor = DiaryListFilterEntity.executor
-        executor.startObservation()
-        return executor.getPublisher()
+        guard let realm = await getRealm() else { return nil }
+        return await realm.getEntityChangeObserver()
     }
 }
 

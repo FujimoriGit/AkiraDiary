@@ -5,6 +5,7 @@
 //  Created by 佐藤汰一 on 2024/07/28.
 //
 
+import Combine
 import ComposableArchitecture
 import Foundation
 import MachoCore
@@ -41,7 +42,7 @@ struct DiaryListFilterFeature {
         }
     }
     
-    enum Action: Equatable {
+    enum Action {
         
         // MARK: Event Action
         
@@ -64,6 +65,8 @@ struct DiaryListFilterFeature {
         case receiveDidChangeFilterItems([DiaryListFilterItem])
         /// 選択可能なフィルターの値取得完了
         case receiveFetchSelectableFilterRes([DiaryListFilterItem])
+        /// フィルターの監視処理開始
+        case startFilterItemsObserver(AnyPublisher<[DiaryListFilterItem], Never>)
     }
     
     @Dependency(\.diaryListFilterClient) var diaryListFilterApi
@@ -115,6 +118,17 @@ struct DiaryListFilterFeature {
                 logger.info("receiveFetchSelectableFilterRes(selectableFilterValues: \(selectableFilterValues))")
                 state.selectableFilterValues = selectableFilterValues
                 return .none
+                
+            case .startFilterItemsObserver(let publisher):
+                logger.info("startFilterItemsObserver(publisher: \(publisher))")
+                return .publisher {
+                    
+                    return publisher.map {
+                        
+                        return .receiveDidChangeFilterItems($0)
+                    }
+                }
+                    .cancellable(id: FilterObserveCancellable())
             }
         }
     }
@@ -135,16 +149,24 @@ private extension DiaryListFilterFeature {
                 await send(.receiveDidChangeFilterItems(DiaryListFilterDataConverter
                     .convertToDiaryFilterItemList(result)))
             },
-            .publisher {
+            .run { send in
                 
-                return diaryListFilterApi.getFilterListObserver()
+                guard let publisher = await diaryListFilterApi.getFilterListObserver() else {
+                    
+                    await send(.startFilterItemsObserver(PassthroughSubject().eraseToAnyPublisher()))
+                    return
+                }
+                
+                let resultPublisher = publisher
                     .receive(on: DispatchQueue.main)
-                    .map {
+                    .map { output in
                         
-                        return .receiveDidChangeFilterItems(DiaryListFilterDataConverter
-                        .convertToDiaryFilterItemList($0))
+                        return DiaryListFilterDataConverter.convertToDiaryFilterItemList(output)
                     }
-            }.cancellable(id: FilterObserveCancellable())
+                    .eraseToAnyPublisher()
+                
+                await send(.startFilterItemsObserver(resultPublisher))
+            }
         )
     }
     
@@ -248,5 +270,41 @@ private extension DiaryListFilterFeature {
             .cancel(id: FilterObserveCancellable()),
             .run { _ in await self.dismiss() }
         )
+    }
+}
+
+// MARK: - conform Equatable
+
+extension DiaryListFilterFeature.Action: Equatable {
+    
+    static func == (lhs: DiaryListFilterFeature.Action, rhs: DiaryListFilterFeature.Action) -> Bool {
+        
+        switch (lhs, rhs) {
+            
+        case (.onAppear, .onAppear),
+            (.tappedOutsideArea, .tappedOutsideArea),
+            (.tappedCloseButton, .tappedCloseButton):
+            return true
+            
+        case let (.tappedFilterTypeDeleteButton(lhsValue), .tappedFilterTypeDeleteButton(rhsValue)):
+            return lhsValue == rhsValue
+            
+        case let (.tappedFilterItemDeleteButton(lhsValue), .tappedFilterItemDeleteButton(rhsValue)):
+            return lhsValue == rhsValue
+            
+        case let (.tappedFilterMenuItem(lhsValue), .tappedFilterMenuItem(rhsValue)):
+            return lhsValue == rhsValue
+            
+        case let (.receiveDidChangeFilterItems(lhsValue), .receiveDidChangeFilterItems(rhsValue)):
+            return lhsValue == rhsValue
+            
+        case let (.receiveFetchSelectableFilterRes(lhsValue), .receiveFetchSelectableFilterRes(rhsValue)):
+            return lhsValue == rhsValue
+            
+        case let (.startFilterItemsObserver(lhsValue), .startFilterItemsObserver(rhsValue)):
+            return lhsValue.description == rhsValue.description
+            
+        default: return false
+        }
     }
 }

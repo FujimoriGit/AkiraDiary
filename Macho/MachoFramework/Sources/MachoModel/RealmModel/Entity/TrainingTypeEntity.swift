@@ -15,8 +15,6 @@ public struct TrainingTypeEntity: BaseRealmEntity, TrainingTypeData {
     public let id: UUID
     public let name: String
     
-    public static let executor = RealmObserverExecutor<Self>()
-    
     public init(id: UUID, name: String) {
         
         self.id = id

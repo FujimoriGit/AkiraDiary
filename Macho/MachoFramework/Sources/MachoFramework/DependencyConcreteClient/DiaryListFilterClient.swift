@@ -27,7 +27,7 @@ extension DiaryListFilterClient: DependencyKey {
         return await repository.deleteFilters(targets)
     } getFilterListObserver: {
         
-        return repository.getObserver()
+        return await repository.getObserver()?
             .map { $0 as [any DiaryListFilterData] }
             .eraseToAnyPublisher()
     }

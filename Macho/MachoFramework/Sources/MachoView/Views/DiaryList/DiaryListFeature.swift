@@ -5,6 +5,7 @@
 //  Created by 佐藤汰一 on 2024/01/07.
 //
 
+@preconcurrency import Combine
 import ComposableArchitecture
 import Foundation
 import MachoCore
@@ -66,7 +67,7 @@ struct DiaryListFeature: Sendable {
     
     // MARK: - Action
     
-    enum Action: Sendable, Equatable {
+    enum Action: Sendable {
         
         // MARK: Presentation Action
         
@@ -107,6 +108,8 @@ struct DiaryListFeature: Sendable {
         case deletedDiaryItem(id: UUID)
         /// 日記リストのフィルター取得に成功した時の副作用を処理する
         case receiveLoadDiaryListFilter(filters: [DiaryListFilterItem])
+        /// フィルター変更監視処理の開始
+        case startFilterItemObserve(AnyPublisher<[DiaryListFilterItem], Never>)
         
         @CasePathable
         enum Alert: Equatable {
@@ -268,6 +271,17 @@ private extension DiaryListFeature {
                 state = getUpdatedStateAfterReloadFilter(receive: filters, state: state)
                 
                 return .none
+                
+            case .startFilterItemObserve(let publisher):
+                logger.info("startFilterItemObserve(publisher: \(publisher))")
+                
+                return .publisher {
+                    
+                    publisher.map {
+                        
+                        return .receiveLoadDiaryListFilter(filters: $0)
+                    }
+                }.cancellable(id: FilterObserveCancellable())
             }
         }
     }
@@ -356,16 +370,21 @@ private extension DiaryListFeature {
                 return await send(.receiveLoadDiaryListFilter(filters: currentFilterList))
             },
             loadDiaryListItem(date.now),
-            .publisher {
+            .run { send in
                 
-                return diaryListFilterApi.getFilterListObserver()
+                guard let publisher = await diaryListFilterApi.getFilterListObserver() else {
+                    
+                    await send(.startFilterItemObserve(PassthroughSubject().eraseToAnyPublisher()))
+                    return
+                }
+                
+                let resultPublisher = publisher
                     .receive(on: DispatchQueue.main)
-                    .map {
-                        
-                        return .receiveLoadDiaryListFilter(filters: DiaryListFilterDataConverter
-                            .convertToDiaryFilterItemList($0))
-                    }
-            }.cancellable(id: FilterObserveCancellable())
+                    .map { DiaryListFilterDataConverter.convertToDiaryFilterItemList($0) }
+                    .eraseToAnyPublisher()
+                
+                await send(.startFilterItemObserve(resultPublisher))
+            }
         )
     }
     
@@ -377,7 +396,6 @@ private extension DiaryListFeature {
         return .run { send in
             
             let diaryItems = await diaryEntityApi.fetchAll()
-//                .fetch(startDate, limitFetchDiary)
                 .map { DiaryListItemFeature.State($0) }
             await send(.receiveLoadDiaryItems(items: diaryItems),
                        animation: .spring)
@@ -489,3 +507,50 @@ private extension DiaryListFeature {
         return updateTargetState
     }
 }
+
+// MARK: - conform Equatable
+
+extension DiaryListFeature.Action: Equatable {
+    
+    static func == (lhs: DiaryListFeature.Action, rhs: DiaryListFeature.Action) -> Bool {
+        
+        switch (lhs, rhs) {
+            
+        case (.onAppearView, .onAppearView),
+            (.onDisappearView, .onDisappearView),
+            (.tappedFilterButton, .tappedFilterButton),
+            (.tappedGraphButton, .tappedGraphButton),
+            (.tappedCreateNewDiaryButton, .tappedCreateNewDiaryButton):
+            return true
+            
+        case let (.alert(lhsValue), .alert(rhsValue)):
+            return lhsValue == rhsValue
+            
+        case let (.destination(lhsValue), .destination(rhsValue)):
+            return lhsValue == rhsValue
+        
+        case let (.path(lhsValue), .path(rhsValue)):
+            return lhsValue == rhsValue
+            
+        case let (.diaries(lhsValue), .diaries(rhsValue)):
+            return lhsValue == rhsValue
+        
+        case let (.trackableList(lhsValue), .trackableList(rhsValue)):
+            return lhsValue == rhsValue
+        
+        case let (.receiveLoadDiaryItems(lhsValue), .receiveLoadDiaryItems(rhsValue)):
+            return lhsValue == rhsValue
+        
+        case let (.deletedDiaryItem(lhsValue), .deletedDiaryItem(rhsValue)):
+            return lhsValue == rhsValue
+
+        case let (.receiveLoadDiaryListFilter(lhsValue), .receiveLoadDiaryListFilter(rhsValue)):
+            return lhsValue == rhsValue
+            
+        case let (.startFilterItemObserve(lhsValue), .startFilterItemObserve(rhsValue)):
+            return lhsValue.description == rhsValue.description
+            
+        default: return false
+        }
+    }
+} // swiftlint:disable:this file_length

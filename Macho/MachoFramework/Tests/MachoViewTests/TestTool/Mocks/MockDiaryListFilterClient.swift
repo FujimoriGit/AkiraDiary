@@ -18,7 +18,7 @@ extension DiaryListFilterClient {
                               expectedUpdateFilterResult: Bool = false,
                               expectedDeleteFilters: [ConcreteDiaryListFilterData] = [],
                               expectedDeleteFiltersResult: Bool = false,
-                              stubObserver: AnyPublisher<[any DiaryListFilterData], Never> = PassthroughSubject().eraseToAnyPublisher()) -> DiaryListFilterClient {
+                              stubObserver: AnyPublisher<[any DiaryListFilterData], Error> = PassthroughSubject().eraseToAnyPublisher()) -> DiaryListFilterClient {
         
         return DiaryListFilterClient {
             

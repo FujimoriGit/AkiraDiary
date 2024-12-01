@@ -18,6 +18,14 @@ extension RealmUseable {
     
     func getRealm() async -> RealmAccessible? {
         
-        return try? await realm.value
+        do {
+            
+            return try await realm.value
+        }
+        catch {
+            
+            logger.error("Failed create realm: \(error)")
+            return nil
+        }
     }
 }

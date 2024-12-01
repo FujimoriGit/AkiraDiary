@@ -33,13 +33,13 @@ public struct DiaryListFilterClient {
     public var deleteFilters: (_ targets: [any DiaryListFilterData]) async -> Bool
     
     /// 日記リストのフィルター設定が更新を監視用のPublisherを返す
-    public var getFilterListObserver: () -> AnyPublisher<[any DiaryListFilterData], Never>
+    public var getFilterListObserver: () async -> AnyPublisher<[any DiaryListFilterData], Never>?
     
     public init(fetchFilterList: @escaping () async -> [any DiaryListFilterData],
                 addFilter: @escaping (_: any DiaryListFilterData) async -> Bool,
                 updateFilter: @escaping (_: any DiaryListFilterData) async -> Bool,
                 deleteFilters: @escaping (_: [any DiaryListFilterData]) async -> Bool,
-                getFilterListObserver: @escaping () -> AnyPublisher<[any DiaryListFilterData], Never>) {
+                getFilterListObserver: @escaping () async -> AnyPublisher<[any DiaryListFilterData], Never>?) {
         
         self.fetchFilterList = fetchFilterList
         self.addFilter = addFilter

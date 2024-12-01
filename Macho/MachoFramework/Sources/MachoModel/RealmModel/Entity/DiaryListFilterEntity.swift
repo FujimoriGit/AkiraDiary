@@ -19,9 +19,7 @@ public struct DiaryListFilterEntity: BaseRealmEntity, DiaryListFilterData {
     public let filterId: UUID
     // フィルターの項目
     public let filterValue: String
-    
-    public static let executor = RealmObserverExecutor<Self>()
-    
+        
     public init(id: String, filterTarget: String, filterId: UUID, filterValue: String) {
         
         self.id = id
