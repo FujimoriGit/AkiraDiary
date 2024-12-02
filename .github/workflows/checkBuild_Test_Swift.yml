@@ -51,7 +51,7 @@ jobs:
             fi
           done
           if $MODEL_CHANGED && $VIEW_CHANGED; then
-            echo "scheme=MachoFrameWork" >> $GITHUB_OUTPUT
+            echo "scheme=MachoFramework" >> $GITHUB_OUTPUT
           elif $MODEL_CHANGED; then
             echo "scheme=MachoModelTest" >> $GITHUB_OUTPUT
           elif $VIEW_CHANGED; then
@@ -59,6 +59,8 @@ jobs:
           else
             echo "scheme=" >> $GITHUB_OUTPUT
           fi
+
+          echo env.scheme
 
   build:
     if: ${{ github.event.issue.pull_request && github.event.comment.body == 'test-this-please' || !github.event.issue.pull_request }}
