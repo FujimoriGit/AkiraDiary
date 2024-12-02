@@ -18,8 +18,6 @@ on:
 env:
   # チェックアウト
   DEVELOPER_DIR: /Applications/Xcode_16.1.app
-  VIEW_DIR: Macho/MachoFramework/Sources/MachoView/
-  MODEL_DIR: Macho/MachoFramework/Sources/MachoModel/
 
 jobs:
   determine-test-scheme:
@@ -55,6 +53,7 @@ jobs:
             echo "scheme=MachoViewTest" >> $GITHUB_OUTPUT
           else
             echo "scheme=" >> $GITHUB_OUTPUT
+          fi
 
   build:
     if: ${{ github.event.issue.pull_request && github.event.comment.body == 'test-this-please' || !github.event.issue.pull_request }}
