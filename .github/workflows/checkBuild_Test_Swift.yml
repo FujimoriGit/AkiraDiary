@@ -18,13 +18,49 @@ on:
 env:
   # チェックアウト
   DEVELOPER_DIR: /Applications/Xcode_16.1.app
+  VIEW_DIR: Macho/MachoFramework/Sources/MachoView/
+  MODEL_DIR: Macho/MachoFramework/Sources/MachoModel/
 
 jobs:
+  determine-test-scheme:
+    runs-on: ubuntu-latest
+    outputs:
+      test_scheme: ${{ steps.set-scheme.outputs.scheme }}
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - id: set-scheme
+        run: |
+          MODEL_CHANGED=false
+          VIEW_CHANGED=false
+          for file in $(git diff --name-only ${{ github.event.before }} ${{ github.sha }}); do
+            if [[ $file == Macho/MachoFramework/Sources/MachoModel/* ]] || [[ $file == Macho/MachoFramework/Tests/MachoModelTests/* ]] || [[ $file == Macho/MachoFramework/Sources/RealmHelper/* ]]; then
+              MODEL_CHANGED=true
+            fi
+            if [[ $file == Macho/MachoFramework/Sources/MachoView/* ]] || [[ $file == Macho/MachoFramework/Tests/MachoViewTests/* ]]; then
+              VIEW_CHANGED=true
+            fi
+            if [[ $file == Macho/MachoFramework/Sources/MachoCore/* ]]; then
+              VIEW_CHANGED=true
+              MODEL_CHANGED=true
+            fi
+            if $MODEL_CHANGED && $VIEW_CHANGED; then
+              break
+            fi
+          done
+          if $MODEL_CHANGED && $VIEW_CHANGED; then
+            echo "scheme=MachoFrameWork" >> $GITHUB_OUTPUT
+          elif $MODEL_CHANGED; then
+            echo "scheme=MachoModelTest" >> $GITHUB_OUTPUT
+          elif $VIEW_CHANGED; then
+            echo "scheme=MachoViewTest" >> $GITHUB_OUTPUT
+          else
+            echo "scheme=" >> $GITHUB_OUTPUT
+
   build:
     if: ${{ github.event.issue.pull_request && github.event.comment.body == 'test-this-please' || !github.event.issue.pull_request }}
     # 実行環境はmacosに設定
     runs-on: macos-latest
-
+    needs: determine-test-scheme
     steps:
       # チェックアウト(リポジトリからソースコードを取得)
       - uses: actions/checkout@v4.2.2
@@ -36,7 +72,7 @@ jobs:
       # Xcodeのバージョン選択
       - name: Select Xcode version
         run: sudo xcode-select -s '${{ env.DEVELOPER_DIR }}/Contents/Developer'
-      
+
       # Xcodeのバージョン出力
       - name: Show Xcode version
         run: xcodebuild -version
@@ -86,8 +122,7 @@ jobs:
           xcodebuild
           -configuration Debug
           -destination 'platform=iOS Simulator,OS=18.1,name=iPhone 16 Pro'
-          -scheme Macho
-          -testPlan Macho
+          -scheme ${{ needs.determine-test-scheme.outputs.test_scheme }}
           -skipPackagePluginValidation
           -skipMacroValidation
           -scmProvider xcode
