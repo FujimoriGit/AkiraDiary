@@ -21,22 +21,26 @@ public struct DiaryEntityRepositoryImpl: RealmUseable {
     
     public func fetchAll() async -> [DiaryEntity] {
         
+        logger.debug("[In]")
         return await (getRealm()?.read(where: nil) ?? [])
     }
     
     public func insertOrUpdate(_ diary: some DiaryData) async -> Bool {
         
+        logger.debug("[In] diary: \(diary)")
         return await getRealm()?.insert(records: [DiaryEntity(diary)]) ?? false
     }
     
     public func deleteDiary(_ id: UUID) async -> Bool {
         
+        logger.debug("[In] id: \(id)")
         return await getRealm()?
             .delete { (entity: DiaryEntity) in entity.id == id } ?? false
     }
     
     public func getDiaryObserver() async -> AnyPublisher<[DiaryEntity], Never>? {
         
+        logger.debug("[In]")
         guard let realm = await getRealm() else { return nil }
         return await realm.getEntityChangeObserver()
     }

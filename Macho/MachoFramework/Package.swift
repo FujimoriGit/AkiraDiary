@@ -7,7 +7,6 @@ let package = Package(
     name: "MachoFramework",
     platforms: [.macOS(.v12),.iOS(.v17)],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "MachoFramework",
             targets: [
@@ -29,8 +28,6 @@ let package = Package(
         .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins", exact: "0.56.1")
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "MachoFramework",
             dependencies: [
@@ -85,17 +82,12 @@ let package = Package(
         .testTarget(
             name: "MachoViewTests",
             dependencies: [
-                "MachoView"
+                "MachoView",
             ]),
         .testTarget(
             name: "MachoModelTests",
             dependencies: [
-                "MachoModel"
-            ]),
-        .testTarget(
-            name: "RealmHelperTests",
-            dependencies: [
-                "RealmHelper"
-            ]),
+                "MachoModel",
+            ])
     ]
 )

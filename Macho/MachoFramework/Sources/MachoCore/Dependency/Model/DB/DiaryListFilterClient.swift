@@ -19,12 +19,12 @@ public struct DiaryListFilterClient {
     ///  - filter: 追加するフィルター
     /// - Returns: trueであれば削除成功、そうでなければ失敗
     public var addFilter: (_ filter: any DiaryListFilterData) async -> Bool
-    
-    /// 日記リストのフィルター更新
-    /// - Parameters:
-    ///  - filter: 更新後のフィルター
-    /// - Returns: trueであれば削除成功、そうでなければ失敗
-    public var updateFilter: (_ filter: any DiaryListFilterData) async -> Bool
+//
+//    /// 日記リストのフィルター更新
+//    /// - Parameters:
+//    ///  - filter: 更新後のフィルター
+//    /// - Returns: trueであれば削除成功、そうでなければ失敗
+//    public var updateFilter: (_ filter: any DiaryListFilterData) async -> Bool
     
     /// 日記リストのフィルター削除
     /// - Parameters:
@@ -37,13 +37,11 @@ public struct DiaryListFilterClient {
     
     public init(fetchFilterList: @escaping () async -> [any DiaryListFilterData],
                 addFilter: @escaping (_: any DiaryListFilterData) async -> Bool,
-                updateFilter: @escaping (_: any DiaryListFilterData) async -> Bool,
                 deleteFilters: @escaping (_: [any DiaryListFilterData]) async -> Bool,
                 getFilterListObserver: @escaping () async -> AnyPublisher<[any DiaryListFilterData], Never>?) {
         
         self.fetchFilterList = fetchFilterList
         self.addFilter = addFilter
-        self.updateFilter = updateFilter
         self.deleteFilters = deleteFilters
         self.getFilterListObserver = getFilterListObserver
     }
@@ -54,7 +52,6 @@ extension DiaryListFilterClient: TestDependencyKey {
     public static var testValue = DiaryListFilterClient(
         fetchFilterList: unimplemented(placeholder: []),
         addFilter: unimplemented(placeholder: false),
-        updateFilter: unimplemented(placeholder: false),
         deleteFilters: unimplemented(placeholder: false),
         getFilterListObserver: unimplemented(placeholder: PassthroughSubject().eraseToAnyPublisher())
     )

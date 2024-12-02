@@ -212,30 +212,13 @@ private extension DiaryListFilterFeature {
             return
         }
         
-        let hasSameTarget = currentFilters.contains { $0.target == targetFilter.target }
-        if !hasSameTarget || targetFilter.isMultiSelectFilter {
+        guard await diaryListFilterApi.addFilter(ConcreteDiaryListFilterData(targetFilter)) else {
             
-            // 複数選択可能な場合または、まだ登録されていないフィルター種別の場合は、
-            // 新規のフィルターとしてDBに保存する
-            guard await diaryListFilterApi.addFilter(ConcreteDiaryListFilterData(targetFilter)) else {
-                
-                logger.error("did fail add filter(\(targetFilter)).")
-                return
-            }
-            
-            logger.debug("added filter(\(targetFilter)).")
+            logger.error("did fail add filter(\(targetFilter)).")
+            return
         }
-        else {
-            
-            // それ以外の場合は、すでに登録されている同じフィルター種別の値を更新する
-            guard await diaryListFilterApi.updateFilter(ConcreteDiaryListFilterData(targetFilter)) else {
-                
-                logger.error("did fail update filter(\(targetFilter)).")
-                return
-            }
-            
-            logger.debug("updated filter(\(targetFilter)).")
-        }
+        
+        logger.debug("added filter(\(targetFilter)).")
     }
     
     /// アプリに登録しているトレーニング種目を取得する

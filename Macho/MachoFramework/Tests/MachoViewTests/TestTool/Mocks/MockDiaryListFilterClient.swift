@@ -14,37 +14,17 @@ extension DiaryListFilterClient {
     static func getMockClient(expectedFetchList: [ConcreteDiaryListFilterData] = [],
                               expectedAddFilter: ConcreteDiaryListFilterData? = nil,
                               expectedAddFilterResult: Bool = false,
-                              expectedUpdateFilter: ConcreteDiaryListFilterData? = nil,
-                              expectedUpdateFilterResult: Bool = false,
                               expectedDeleteFilters: [ConcreteDiaryListFilterData] = [],
                               expectedDeleteFiltersResult: Bool = false,
-                              stubObserver: AnyPublisher<[any DiaryListFilterData], Error> = PassthroughSubject().eraseToAnyPublisher()) -> DiaryListFilterClient {
+                              stubObserver: AnyPublisher<[any DiaryListFilterData], Never> = PassthroughSubject().eraseToAnyPublisher()) -> DiaryListFilterClient {
         
         return DiaryListFilterClient {
             
             return expectedFetchList
         } addFilter: { data in
             
-            guard let expectedAddFilter,
-                  let data = data as? ConcreteDiaryListFilterData else {
-                
-                XCTFail("Failed to add filter.")
-                return false
-            }
-            
-            XCTAssertEqual(data, expectedAddFilter)
-            return expectedAddFilterResult
-        } updateFilter: { filter in
-            
-            guard let expectedUpdateFilter,
-                  let filter = filter as? ConcreteDiaryListFilterData else {
-                
-                XCTFail("Failed to update filter.")
-                return false
-            }
-            
-            XCTAssertEqual(filter, expectedUpdateFilter)
-            return expectedAddFilterResult
+            return await addFilterMock(expectedAddFilter: expectedAddFilter,
+                                       expectedAddFilterResult: expectedAddFilterResult)(data)
         } deleteFilters: { targets in
             
             guard let targets = targets as? [ConcreteDiaryListFilterData] else {
@@ -58,6 +38,23 @@ extension DiaryListFilterClient {
         } getFilterListObserver: {
             
             return stubObserver
+        }
+    }
+    
+    static func addFilterMock(expectedAddFilter: ConcreteDiaryListFilterData? = nil,
+                              expectedAddFilterResult: Bool = false) -> (any DiaryListFilterData) async -> Bool {
+        
+        return { data in
+            
+            guard let expectedAddFilter,
+                  let data = data as? ConcreteDiaryListFilterData else {
+                
+                XCTFail("Failed to add filter.")
+                return false
+            }
+            
+            XCTAssertEqual(data, expectedAddFilter)
+            return expectedAddFilterResult
         }
     }
 }

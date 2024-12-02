@@ -36,37 +36,16 @@
       "enabled" : false,
       "target" : {
         "containerPath" : "container:Macho.xcodeproj",
-        "identifier" : "D9F161062AE39EE60061307C",
-        "name" : "MachoUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:MachoFramework",
-        "identifier" : "MachoViewTests",
-        "name" : "MachoViewTests"
+        "identifier" : "D9F160FC2AE39EE60061307C",
+        "name" : "MachoTests"
       }
     },
     {
       "enabled" : false,
       "target" : {
         "containerPath" : "container:Macho.xcodeproj",
-        "identifier" : "D9F160FC2AE39EE60061307C",
-        "name" : "MachoTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:MachoFramework",
-        "identifier" : "RealmHelperTests",
-        "name" : "RealmHelperTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:MachoFramework",
-        "identifier" : "MachoModelTests",
-        "name" : "MachoModelTests"
+        "identifier" : "D9F161062AE39EE60061307C",
+        "name" : "MachoUITests"
       }
     }
   ],

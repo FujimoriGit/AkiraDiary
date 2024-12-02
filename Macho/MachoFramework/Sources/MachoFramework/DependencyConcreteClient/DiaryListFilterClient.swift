@@ -19,9 +19,6 @@ extension DiaryListFilterClient: DependencyKey {
     } addFilter: { data in
         
         return await repository.add(data)
-    } updateFilter: { data in
-        
-        return await repository.updateFilter(data)
     } deleteFilters: { targets in
         
         return await repository.deleteFilters(targets)

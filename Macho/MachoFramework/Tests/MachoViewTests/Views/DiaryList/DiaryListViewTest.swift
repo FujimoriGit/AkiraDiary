@@ -546,7 +546,7 @@ final class DiaryListViewTests: XCTestCase {
         let changeFilters = [DiaryListFilterItem(target: .trainingType, filterItemId: UUID(), value: "腹筋")]
         let changeFiltersData = changeFilters.map { ConcreteDiaryListFilterData($0) }
         let expectedDiariesAfterChangeFilter: IdentifiedArrayOf<DiaryListItemFeature.State> = []
-        let filterPublisher = PassthroughSubject<[any DiaryListFilterData], Error>()
+        let filterPublisher = PassthroughSubject<[any DiaryListFilterData], Never>()
         
         let mockDiaryListClient = DiaryEntityClient.getMockClient(expectedFetchList: [expectedData])
         let mockDiaryListFilterClient = DiaryListFilterClient.getMockClient(expectedFetchList: receivedFiltersData,

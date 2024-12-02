@@ -121,7 +121,7 @@ final class DiaryListFilterViewTest: XCTestCase {
             ConcreteDiaryListFilterData(target: .trainingType, filterItemId: Self.dumbbellPressTrainingId, value: "ダンベルプレス")
         ]
         
-        let testPublisher = PassthroughSubject<[any DiaryListFilterData], Error>()
+        let testPublisher = PassthroughSubject<[any DiaryListFilterData], Never>()
         
         // フィルター取得処理のMock生成
         let mockFilterClient = DiaryListFilterClient.getMockClient(expectedFetchList: [
@@ -200,7 +200,7 @@ final class DiaryListFilterViewTest: XCTestCase {
         let deleteFilterData = ConcreteDiaryListFilterData(deleteFilter)
         
         
-        let testPublisher = PassthroughSubject<[any DiaryListFilterData], Error>()
+        let testPublisher = PassthroughSubject<[any DiaryListFilterData], Never>()
         
         // フィルター取得処理のMock生成
         let mockFilterClient = DiaryListFilterClient.getMockClient(expectedFetchList: [
@@ -294,7 +294,7 @@ final class DiaryListFilterViewTest: XCTestCase {
             DiaryListFilterItem(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋"),
         ])
         
-        let testPublisher = PassthroughSubject<[any DiaryListFilterData], Error>()
+        let testPublisher = PassthroughSubject<[any DiaryListFilterData], Never>()
         
         // フィルター取得処理のMock生成
         let mockFilterClient = DiaryListFilterClient.getMockClient(expectedFetchList: [
@@ -309,8 +309,7 @@ final class DiaryListFilterViewTest: XCTestCase {
         ],
                                                                    expectedAddFilter: addFilterData,
                                                                    expectedAddFilterResult: true,
-                                                                   expectedUpdateFilter: updateFilterData,
-                                                                   expectedUpdateFilterResult: true, stubObserver: testPublisher.eraseToAnyPublisher())
+                                                                   expectedDeleteFiltersResult: true, stubObserver: testPublisher.eraseToAnyPublisher())
         
         let testStore = TestStore(initialState: DiaryListFilterFeature.State()) {
             
@@ -343,6 +342,9 @@ final class DiaryListFilterViewTest: XCTestCase {
         
         await testStore.send(.tappedFilterMenuItem(filter: addFilter))
         
+        testStore.dependencies.diaryListFilterClient.addFilter =
+        DiaryListFilterClient.addFilterMock(expectedAddFilter: updateFilterData,
+                                            expectedAddFilterResult: true)
         await testStore.send(.tappedFilterMenuItem(filter: updateFilter))
         testPublisher.send(updatedExpectedFiltersData)
         await testStore.receive(\.receiveDidChangeFilterItems) {

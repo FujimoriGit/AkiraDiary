@@ -14,17 +14,78 @@ import Testing
 @testable import RealmHelper
 
 @Suite(
-    "日記エンティティリポジトリのテスト",
+    "日記EntityRepositoryTest",
     .timeLimit(.minutes(1))
 )
+@MainActor
 struct DiaryEntityRepositoryTest {
     
-    @Test("日記の登録",
-          arguments: [
-            ConcreteDiaryData(id: UUID(),
+    static let dummyIdArray = (1...10).map { _ in UUID() }
+    
+    @Test(
+        "日記取得処理と取得したエンティティの検証",
+        arguments: [
+            (1, 1, 2, 1),
+            (1, 1, 1, 1),
+            (1, 1, 1, 2),
+            (1, 1, 0, 2),
+            (1, 1, 1, 0),
+            (1, 1, 0, 0),
+            (99, 99, 99, 99),
+        ]
+    )
+    func fetchEntityTest(goalSet: Int, goalNumOfSet: Int, actualSet: Int, actualNumOfSet: Int) async throws {
+        
+        let realm = TestRealmGenerator.setupRealm("fetch_entity_realm_\(UUID().uuidString)")
+        let testRepository = DiaryEntityRepositoryImpl(realm)
+        
+        let entity = ConcreteDiaryData(id: UUID(),
+                                       date: Date(),
+                                       title: "sample",
+                                       mainText: "sample",
+                                       goals: [
+                                         ConcreteTrainingContentData(id: UUID(),
+                                                                     trainingType: Self.sampleTrainingType1,
+                                                                     goalNumberOfSets: goalNumOfSet,
+                                                                     goalSetCount: goalSet,
+                                                                     actualNumberOfSets: actualNumOfSet,
+                                                                     actualSetCount: actualSet,
+                                                                     startTime: nil,
+                                                                     endTime: nil,
+                                                                     isAchieved: (actualNumOfSet >= goalNumOfSet && actualSet >= goalSet) || actualSet > goalSet)
+                                       ],
+                                       tags: [Self.sampleTag1])
+        
+        #expect(await testRepository.insertOrUpdate(entity),
+                "assert insert proc is successed.")
+        
+        let result = await testRepository.fetchAll()
+        assertDiaryData(expected: entity, actual: result.first)
+        
+        print("Complete Test: case(\(#function)).")
+    }
+    
+    @Test(
+        "日記エンティティの監視処理テスト",
+        arguments: [
+            ObserveEntityTestArgument(insertIds: [Self.dummyIdArray[0]],
+                                      deleteTargetIds: [Self.dummyIdArray[0]]),
+            ObserveEntityTestArgument(insertIds: Self.dummyIdArray,
+                                      deleteTargetIds: [
+                                        Self.dummyIdArray[0],
+                                        Self.dummyIdArray[3],
+                                        UUID()
+                                      ])
+        ]
+    )
+    func observeDiaryEntityTest(_ testArg: ObserveEntityTestArgument) async throws {
+        
+        let insertDiaries = testArg.insertIds.map {
+            
+            ConcreteDiaryData(id: $0,
                               date: Date(),
-                              title: "sample1",
-                              mainText: "sample1",
+                              title: "sample_\($0.uuidString)",
+                              mainText: "sample_\($0.uuidString)",
                               goals: [
                                 ConcreteTrainingContentData(id: UUID(),
                                                             trainingType: Self.sampleTrainingType1,
@@ -37,61 +98,116 @@ struct DiaryEntityRepositoryTest {
                                                             isAchieved: true)
                               ],
                               tags: [Self.sampleTag1])
-          ]
-    )
-    func insert(_ diary: ConcreteDiaryData) async throws {
-        
-        let realm = setupRealm(diary.id.uuidString)
-        let testRepository = DiaryEntityRepositoryImpl(realm)
-        var publisherValues = await testRepository.getDiaryObserver()
-        var cancellable: AnyCancellable?
-        
-        await confirmation { confimation in
-            
-            cancellable = publisherValues?.sink(receiveCompletion: {
-                
-                if case let .failure(error) = $0 {
-                    
-                    Issue.record("Unexpected receive completion: \($0).")
-                }
-            }, receiveValue: { output in
-                
-                #expect(output.count == 1, "assert inserted observer output count.")
-                assertDiaryData(expected: diary, actual: output.first)
-                confimation.confirm()
-                cancellable?.cancel()
-            })
-            
-            #expect(await testRepository.insertOrUpdate(diary), "assert insert proc is successed.")
         }
         
-//        let nilResult = try await publisherValues?.next()
-//        #expect(nilResult == nil, "assert initial observer.")
+        let realm = TestRealmGenerator.setupRealm("observe_diary_entity_realm_\(testArg.id.uuidString)")
+        let testRepository = DiaryEntityRepositoryImpl(realm)
         
+        var observeValues = await testRepository.getDiaryObserver()?.values.makeAsyncIterator()
+        #expect(await observeValues?.next() == [])
         
+        print("start Observe: \(String(describing: observeValues))")
         
-//        let insertedResult = try await publisherValues?.next()
-//        #expect(insertedResult?.count == 1, "assert inserted observer output count.")
-//        assertDiaryData(expected: diary, actual: insertedResult?.first)
+        let insetTask = Task {
+            
+            var result: [[DiaryEntity]] = []
+            
+            for i in 1...insertDiaries.count {
+                
+                print("Waiting insert event: \(i) / \(insertDiaries.count)")
+                let output = await observeValues?.next() ?? []
+                result.append(output)
+                print("Received insert event: \(i) / \(insertDiaries.count), output: \(output)")
+            }
+            return result
+        }
         
+        for insertDiary in insertDiaries {
+            
+            #expect(await testRepository.insertOrUpdate(insertDiary),
+                    "assert insert proc is successed.")
+        }
+        
+        let observedOutputs = await insetTask.value
+        var expectedOutputs: [ConcreteDiaryData] = []
+        
+        for index in insertDiaries.indices {
+            
+            expectedOutputs.append(insertDiaries[index])
+            assertDiariesArray(expected: expectedOutputs, actual: observedOutputs[index])
+        }
+        
+        let expectedDeleteDiaries = testArg.deleteTargetIds.filter { deleteId in
+            
+            insertDiaries.contains { $0.id == deleteId }
+        }
+        
+        let deleteTask = Task {
+            
+            var result: [[DiaryEntity]] = []
+            for i in 1...expectedDeleteDiaries.count {
+                
+                print("Waiting delete event: \(i) / \(expectedDeleteDiaries.count)")
+                let output = await observeValues?.next() ?? []
+                result.append(output)
+                print("Received delete event: \(i) / \(expectedDeleteDiaries.count), output: \(output)")
+            }
+            return result
+        }
+        
+        for id in testArg.deleteTargetIds {
+            
+            var result = false
+            if let target = expectedDeleteDiaries.first(where: { $0 == id }) {
+                
+                result = await testRepository.deleteDiary(target)
+            }
+            else {
+                
+                result = await testRepository.deleteDiary(UUID())
+            }
+            
+            #expect(result, "assert delete proc is successed.")
+        }
+        
+        var observedDeletedOutputs = await deleteTask.value
+        var expectedDeletedOutputs: [ConcreteDiaryData] = insertDiaries
+        
+        for deleteDiary in expectedDeleteDiaries {
+            
+            expectedDeletedOutputs.removeAll { $0.id == deleteDiary }
+            assertDiariesArray(expected: expectedDeletedOutputs,
+                               actual: observedDeletedOutputs.removeFirst())
+        }
+        
+        #expect(observedDeletedOutputs.isEmpty, "check all delete diary in expected.")
+        
+        print("Complete Test case\(#function): \(String(describing: observeValues))")
     }
 }
 
 private extension DiaryEntityRepositoryTest {
-    
-    func setupRealm(_ caseName: String) -> Task<RealmAccessible, Error> {
-        
-//        let config = DbConfiguration(isOnMemoryId: caseName, version: 1)
-        let config = DbConfiguration(url: URL.applicationSupportDirectory.appending(path: "\(caseName).realm"),
-                                     version: 1)
-        return RealmFactory.create(config: config)
-    }
     
     func assertDiaryData(expected: ConcreteDiaryData, actual: DiaryEntity?) {
         
         let expectedData = DiaryEntity(expected)
         #expect(expectedData == actual)
     }
+    
+    func assertDiariesArray(expected: [ConcreteDiaryData], actual: [DiaryEntity]) {
+        
+        for index in expected.indices {
+            
+            assertDiaryData(expected: expected[index], actual: actual[index])
+        }
+    }
+}
+
+struct ObserveEntityTestArgument {
+    
+    let id = UUID()
+    let insertIds: [UUID]
+    let deleteTargetIds: [UUID]
 }
 
 private extension DiaryEntityRepositoryTest {

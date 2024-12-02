@@ -14,7 +14,7 @@ extension DiaryEntityClient {
     static func getMockClient(expectedFetchList: [ConcreteDiaryData] = [],
                               expectedDeleteDiaryId: UUID? = nil,
                               expectedDeleteDiaryResult: Bool = false,
-                              stubObserver: AnyPublisher<[any DiaryData], Error> = PassthroughSubject().eraseToAnyPublisher()) -> DiaryEntityClient {
+                              stubObserver: AnyPublisher<[any DiaryData], Never> = PassthroughSubject().eraseToAnyPublisher()) -> DiaryEntityClient {
         
         return DiaryEntityClient {
             

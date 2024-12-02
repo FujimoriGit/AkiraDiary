@@ -227,12 +227,6 @@ private extension DiaryListFilterView {
             currentFilters += [filter]
             publisher.send(currentFilters)
             return true
-        }, updateFilter: { filter in
-            
-            guard let index = currentFilters.firstIndex(where: { $0.id == filter.id }) else { return false }
-            currentFilters[index] = filter
-            publisher.send(currentFilters)
-            return true
         }, deleteFilters: { targets in
             
             for target in targets {

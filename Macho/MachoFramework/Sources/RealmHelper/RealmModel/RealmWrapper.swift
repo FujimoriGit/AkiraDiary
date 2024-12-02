@@ -121,6 +121,8 @@ struct RealmWrapper {
         let token = await realm.objects(type.RealmObject)
             .observe(on: RealmActor.shared) { _, snapshot in
                 
+                logger.debug("[In] type: \(type), snapshot: \(snapshot)")
+                
                 switch snapshot {
                     
                 case .initial(let initial):
