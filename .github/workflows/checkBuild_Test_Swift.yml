@@ -123,9 +123,9 @@ jobs:
 
       # 単体テストの実行
       - name: Xcode test
-        working-directory: ./Macho
         run: set -o pipefail &&
           xcodebuild
+          -workspace Macho/Macho.xcworkspace
           -configuration Debug
           -destination 'platform=iOS Simulator,OS=18.1,name=iPhone 16 Pro'
           -scheme ${{ needs.determine-test-scheme.outputs.test_scheme }}
