@@ -30,7 +30,7 @@ jobs:
         run: |
           MODEL_CHANGED=false
           VIEW_CHANGED=false
-          TARGET_REF="${{ github.base_ref }}"
+          TARGET_REF="${{ github.event.pull_request.base.sha }}"
           CURRENT_REF=${{ github.sha }}
           for file in $(git diff --name-only $TARGET_REF $CURRENT_REF); do
             if [[ $file == Macho/MachoFramework/Sources/MachoModel/* ]] || [[ $file == Macho/MachoFramework/Tests/MachoModelTests/* ]] || [[ $file == Macho/MachoFramework/Sources/RealmHelper/* ]]; then
