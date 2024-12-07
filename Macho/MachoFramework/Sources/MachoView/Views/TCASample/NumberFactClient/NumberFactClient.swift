@@ -9,9 +9,9 @@
 import ComposableArchitecture
 import Foundation
 
-struct NumberFactClient {
+struct NumberFactClient: Sendable {
     
-    var fetch: (Int) async throws -> String
+    var fetch: @Sendable (Int) async throws -> String
 }
 
 extension NumberFactClient: DependencyKey {

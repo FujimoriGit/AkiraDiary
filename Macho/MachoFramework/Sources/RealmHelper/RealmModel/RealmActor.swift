@@ -10,7 +10,7 @@ import RealmSwift
 @globalActor
 public struct RealmActor {
     
-    public static var shared = ActorType()
+    public static let shared = ActorType()
     
     public actor ActorType {}
 }

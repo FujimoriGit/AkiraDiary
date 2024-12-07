@@ -7,7 +7,7 @@
 
 import RealmSwift
 
-public protocol BaseRealmEntity {
+public protocol BaseRealmEntity: Sendable {
     
     associatedtype RealmObject: Object
     

@@ -9,7 +9,7 @@ import Combine
 import MachoCore
 import RealmSwift
 
-public protocol RealmAccessible {
+public protocol RealmAccessible: Sendable {
     
     /// 任意のデータをRealmDBから取得する
     ///  - Parameters:
@@ -29,11 +29,11 @@ public protocol RealmAccessible {
     ///   - value: 更新するデータの主キーと更新したいカラムをDictionary型で指定する
     /// - Returns: 更新に成功した場合はtrue、失敗した場合はfalseを返す
     /// 重複したレコードが存在する場合は更新する
-    func update<T>(type: T.Type, value: [String: Any]) async -> Bool where T: BaseRealmEntity
+    func update<T>(type: T.Type, value: sending [String: Any]) async -> Bool where T: BaseRealmEntity
     
     /// RealmDBに保存しているデータの削除
     /// - Returns: 削除に成功した場合はtrue、失敗した場合はfalseを返す
-    func delete<T>(where filterHandler: @escaping (T) -> Bool) async -> Bool where T: BaseRealmEntity
+    func delete<T>(where filterHandler: sending @escaping (T) -> Bool) async -> Bool where T: BaseRealmEntity
     
     func deleteAll<T>(type: T.Type) async -> Bool where T: BaseRealmEntity
     

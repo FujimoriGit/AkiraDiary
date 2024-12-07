@@ -7,12 +7,12 @@
 
 import ComposableArchitecture
 
-public struct TrainingTypeClient {
+public struct TrainingTypeClient: Sendable {
 
     /// 登録されているすべてのトレーニング種目を取得する
-    public var fetchAllType: () async -> [any TrainingTypeData]
+    public var fetchAllType: @Sendable () async -> [any TrainingTypeData]
     
-    public init(fetchAllType: @escaping () async -> [any TrainingTypeData]) {
+    public init(fetchAllType: @escaping @Sendable () async -> [any TrainingTypeData]) {
         
         self.fetchAllType = fetchAllType
     }
@@ -20,7 +20,7 @@ public struct TrainingTypeClient {
 
 extension TrainingTypeClient: TestDependencyKey {
     
-    public static var testValue = TrainingTypeClient(fetchAllType: unimplemented(placeholder: []))
+    public static let testValue = TrainingTypeClient(fetchAllType: unimplemented(placeholder: []))
 }
 
 public extension DependencyValues {

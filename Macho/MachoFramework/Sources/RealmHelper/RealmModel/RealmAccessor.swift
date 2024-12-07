@@ -5,7 +5,7 @@
 //  Created by 佐藤汰一 on 2023/11/04.
 //
 
-import Combine
+@preconcurrency import Combine
 import MachoCore
 import RealmSwift
 
@@ -51,14 +51,14 @@ public struct RealmAccessor: RealmAccessible {
     ///   - value: 更新するデータの主キーと更新したいカラムをDictionary型で指定する
     /// - Returns: 更新に成功した場合はtrue、失敗した場合はfalseを返す
     /// 重複したレコードが存在する場合は更新する
-    public func update<T>(type: T.Type, value: [String: Any]) async -> Bool where T: BaseRealmEntity {
+    public func update<T>(type: T.Type, value: sending [String: Any]) async -> Bool where T: BaseRealmEntity {
         
         return await realm.update(type: type, value: value)
     }
     
     /// RealmDBに保存しているデータの削除
     /// - Returns: 削除に成功した場合はtrue、失敗した場合はfalseを返す
-    public func delete<T>(where filterHandler: @escaping (T) -> Bool) async -> Bool where T: BaseRealmEntity {
+    public func delete<T>(where filterHandler: sending @escaping (T) -> Bool) async -> Bool where T: BaseRealmEntity {
         
         return await realm.delete(where: filterHandler)
     }

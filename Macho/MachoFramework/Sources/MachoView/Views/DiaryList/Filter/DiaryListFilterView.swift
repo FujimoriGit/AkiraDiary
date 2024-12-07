@@ -5,7 +5,7 @@
 //  Created by 佐藤汰一 on 2024/07/28.
 //
 
-import Combine
+@preconcurrency import Combine
 import ComposableArchitecture
 import MachoCore
 import SwiftUI
@@ -209,44 +209,6 @@ private extension DiaryListFilterView {
 // MARK: - preview section
 
 #Preview {
-    // priview内でprivateが使用できないため、警告を無視する
-    // swiftlint:disable:next private_subject
-    let publisher = PassthroughSubject<[any DiaryListFilterData], Never>()
-    var currentFilters: [any DiaryListFilterData] = [
-        ConcreteDiaryListFilterData(DiaryListFilterItem(target: .achievement, filterItemId: UUID(), value: "達成していない"))
-    ]
-    
     DiaryListFilterView(store: Store(initialState: DiaryListFilterFeature.State(),
-                                     reducer: { DiaryListFilterFeature() },
-                                     withDependencies: {
-        $0.diaryListFilterClient = DiaryListFilterClient(fetchFilterList: {
-            
-            return currentFilters
-        }, addFilter: { filter in
-            
-            currentFilters += [filter]
-            publisher.send(currentFilters)
-            return true
-        }, deleteFilters: { targets in
-            
-            for target in targets {
-                
-                // swiftlint:disable:next force_unwrapping
-                currentFilters.remove(at: currentFilters.firstIndex(where: { $0.id == target.id })!)
-            }
-            publisher.send(currentFilters)
-            return true
-        }, getFilterListObserver: {
-            
-            return publisher.eraseToAnyPublisher()
-        })
-        $0.trainingTypeClient = TrainingTypeClient {
-            
-            return []
-        }
-        $0.trainingTagClient = TrainingTagClient {
-            
-            return []
-        }
-    }))
+                                     reducer: { DiaryListFilterFeature() }))
 }

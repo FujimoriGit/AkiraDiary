@@ -9,7 +9,7 @@ import Foundation
 import MachoCore
 import RealmHelper
 
-public struct TrainingTagEntityRepositoryImpl: RealmUseable {
+public struct TrainingTagEntityRepositoryImpl: RealmUseable, Sendable {
     
     let realm: Task<RealmAccessible, any Error>
     

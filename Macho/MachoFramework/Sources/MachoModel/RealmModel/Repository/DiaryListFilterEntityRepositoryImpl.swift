@@ -10,7 +10,7 @@ import Foundation
 import MachoCore
 import RealmHelper
 
-public struct DiaryListFilterEntityRepositoryImpl: RealmUseable {
+public struct DiaryListFilterEntityRepositoryImpl: RealmUseable, Sendable {
     
     let realm: Task<RealmAccessible, any Error>
     

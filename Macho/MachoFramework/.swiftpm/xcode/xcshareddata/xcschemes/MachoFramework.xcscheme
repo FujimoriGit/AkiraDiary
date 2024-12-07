@@ -30,9 +30,6 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:MachoFramework.xctestplan">
-         </TestPlanReference>
-         <TestPlanReference
             reference = "container:../MachoFramework.xctestplan"
             default = "YES">
          </TestPlanReference>

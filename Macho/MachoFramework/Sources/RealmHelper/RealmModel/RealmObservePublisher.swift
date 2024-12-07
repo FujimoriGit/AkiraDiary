@@ -8,18 +8,20 @@
 import Combine
 import RealmSwift
 
-final class RealmObservePublisher<Output>: Publisher
+// @RealmActorでしか`token`の設定を行わないため`@unchecked Sendable`とする
+final class RealmObservePublisher<Output>: Publisher, @unchecked Sendable
 where Output: Collection, Output.Element: BaseRealmEntity {
     
     typealias Failure = Never
     
-    fileprivate var token: NotificationToken?
+    private var token: NotificationToken?
     private let originalPublisher = PassthroughSubject<Output, Failure>()
     
     init() {
         // nop
     }
     
+    /// - Attention: RealmのEntity監視時にのみ設定する
     func setToken(_ token: NotificationToken) {
         
         self.token = token

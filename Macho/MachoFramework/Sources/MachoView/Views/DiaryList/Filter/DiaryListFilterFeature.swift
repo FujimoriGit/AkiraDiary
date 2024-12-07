@@ -5,7 +5,7 @@
 //  Created by 佐藤汰一 on 2024/07/28.
 //
 
-import Combine
+@preconcurrency import Combine
 import ComposableArchitecture
 import Foundation
 import MachoCore
@@ -42,7 +42,7 @@ struct DiaryListFilterFeature {
         }
     }
     
-    enum Action {
+    enum Action: Sendable {
         
         // MARK: Event Action
         

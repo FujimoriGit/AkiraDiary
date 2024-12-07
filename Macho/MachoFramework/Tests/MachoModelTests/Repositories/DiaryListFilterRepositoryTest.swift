@@ -5,7 +5,7 @@
 //  Created by 佐藤汰一 on 2024/12/02.
 //
 
-import Combine
+@preconcurrency import Combine
 import Foundation
 import Testing
 
@@ -17,6 +17,7 @@ import Testing
     "日記リストフィルターEntityRepositoryTest",
     .timeLimit(.minutes(1))
 )
+@MainActor
 struct DiaryListFilterRepositoryTest {
 
     @Test(
@@ -60,12 +61,12 @@ struct DiaryListFilterRepositoryTest {
     @Test(
         "Entityの監視でEntityの追加、更新、削除を検知する挙動の確認",
         arguments: [
-            ObserveTestArgument(insertIds: [Self.entityArray[0]],
-                                updateIds: [Self.entityArray[0]],
-                                deleteIds: [Self.entityArray[0]]),
-            ObserveTestArgument(insertIds: Self.entityArray,
-                                updateIds: [Self.entityArray[0], Self.entityArray[3]],
-                                deleteIds: [Self.entityArray[0], Self.entityArray[7]])
+            ObserveTestArgument(insertIds: [await Self.entityArray[0]],
+                                updateIds: [await Self.entityArray[0]],
+                                deleteIds: [await Self.entityArray[0]]),
+            ObserveTestArgument(insertIds: await Self.entityArray,
+                                updateIds: [await Self.entityArray[0], await Self.entityArray[3]],
+                                deleteIds: [await Self.entityArray[0], await Self.entityArray[7]])
         ]
     )
     func observeEntityTest(_ arg: ObserveTestArgument) async throws {

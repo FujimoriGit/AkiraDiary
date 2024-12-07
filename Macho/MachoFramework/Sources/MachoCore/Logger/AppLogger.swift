@@ -7,7 +7,7 @@
 
 import Logging
 
-public struct AppLogger {
+public struct AppLogger: Sendable {
     
     public static let shared = Self(label: "Macho")
     

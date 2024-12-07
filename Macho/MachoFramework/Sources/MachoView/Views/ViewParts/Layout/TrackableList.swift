@@ -128,9 +128,9 @@ struct TrackableList<Content>: View where Content: View {
     }
 }
 
-struct ScrollOffsetPreferenceKey: PreferenceKey {
+struct ScrollOffsetPreferenceKey: @preconcurrency PreferenceKey {
     
-    static var defaultValue = CGFloat.zero
+    @MainActor static var defaultValue = CGFloat.zero
     
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
         

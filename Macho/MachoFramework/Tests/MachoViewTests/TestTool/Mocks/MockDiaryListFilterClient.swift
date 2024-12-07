@@ -5,7 +5,7 @@
 //  Created by 佐藤汰一 on 2024/11/29.
 //
 
-import Combine
+@preconcurrency import Combine
 import MachoCore
 import XCTest
 
@@ -42,7 +42,7 @@ extension DiaryListFilterClient {
     }
     
     static func addFilterMock(expectedAddFilter: ConcreteDiaryListFilterData? = nil,
-                              expectedAddFilterResult: Bool = false) -> (any DiaryListFilterData) async -> Bool {
+                              expectedAddFilterResult: Bool = false) -> @Sendable (any DiaryListFilterData) async -> Bool {
         
         return { data in
             

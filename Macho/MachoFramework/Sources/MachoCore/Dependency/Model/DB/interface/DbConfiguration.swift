@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct DbConfiguration {
+public struct DbConfiguration: Sendable {
     
     public let url: URL?
     public let version: UInt64

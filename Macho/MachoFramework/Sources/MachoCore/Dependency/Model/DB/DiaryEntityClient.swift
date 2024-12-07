@@ -9,15 +9,15 @@ import Combine
 import ComposableArchitecture
 import Foundation
 
-public struct DiaryEntityClient {
+public struct DiaryEntityClient: Sendable {
     
-    public let fetchAll: () async -> [any DiaryData]
-    public let deleteDiary: (_ id: UUID) async -> Bool
-    public let getDiaryObserver: () async -> AnyPublisher<[any DiaryData], Never>?
+    public let fetchAll: @Sendable () async -> [any DiaryData]
+    public let deleteDiary: @Sendable (_ id: UUID) async -> Bool
+    public let getDiaryObserver: @Sendable () async -> AnyPublisher<[any DiaryData], Never>?
     
-    public init(fetchAll: @escaping () async -> [any DiaryData],
-                deleteDiary: @escaping (_: UUID) async -> Bool,
-                getDiaryObserver: @escaping () async -> AnyPublisher<[any DiaryData], Never>?) {
+    public init(fetchAll: @escaping @Sendable () async -> [any DiaryData],
+                deleteDiary: @escaping @Sendable (_: UUID) async -> Bool,
+                getDiaryObserver: @escaping @Sendable () async -> AnyPublisher<[any DiaryData], Never>?) {
         
         self.fetchAll = fetchAll
         self.deleteDiary = deleteDiary
@@ -27,7 +27,7 @@ public struct DiaryEntityClient {
 
 extension DiaryEntityClient: TestDependencyKey {
     
-    public static var testValue = DiaryEntityClient(
+    public static let testValue = DiaryEntityClient(
         fetchAll: unimplemented(placeholder: []),
         deleteDiary: unimplemented(placeholder: false),
         getDiaryObserver: unimplemented(placeholder: PassthroughSubject().eraseToAnyPublisher())

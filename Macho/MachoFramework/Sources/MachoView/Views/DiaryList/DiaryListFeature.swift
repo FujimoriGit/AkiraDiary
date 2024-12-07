@@ -332,8 +332,8 @@ extension DiaryListFeature {
 
 extension DiaryListFeature {
     
-    @Reducer(state: .equatable, action: .equatable)
-    enum Destination: Equatable {
+    @Reducer(state: .equatable, .sendable, action: .equatable, .sendable)
+    enum Destination: Equatable, Sendable {
         
         // フィルター画面
         case filterScreen(DiaryListFilterFeature)

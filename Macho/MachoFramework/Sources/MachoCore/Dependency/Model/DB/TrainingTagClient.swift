@@ -7,12 +7,12 @@
 
 import ComposableArchitecture
 
-public struct TrainingTagClient {
+public struct TrainingTagClient: Sendable {
 
     /// 登録しているタグをすべて取得する
-    public var fetchAll: () async -> [any TrainingTagData]
+    public var fetchAll: @Sendable () async -> [any TrainingTagData]
     
-    public init(fetchAll: @escaping () async -> [any TrainingTagData]) {
+    public init(fetchAll: @escaping @Sendable () async -> [any TrainingTagData]) {
         
         self.fetchAll = fetchAll
     }
@@ -20,7 +20,7 @@ public struct TrainingTagClient {
 
 extension TrainingTagClient: TestDependencyKey {
     
-    public static var testValue = TrainingTagClient(fetchAll: unimplemented(placeholder: []))
+    public static let testValue = TrainingTagClient(fetchAll: unimplemented(placeholder: []))
 }
 
 public extension DependencyValues {

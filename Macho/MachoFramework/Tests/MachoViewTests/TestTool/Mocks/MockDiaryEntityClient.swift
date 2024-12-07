@@ -5,7 +5,7 @@
 //  Created by 佐藤汰一 on 2024/11/29.
 //
 
-import Combine
+@preconcurrency import Combine
 import MachoCore
 import XCTest
 

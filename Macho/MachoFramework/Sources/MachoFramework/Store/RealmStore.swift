@@ -9,7 +9,7 @@ import Foundation
 import MachoCore
 import RealmHelper
 
-final class RealmStore {
+final class RealmStore: Sendable {
     
     static let shared = RealmStore()
     

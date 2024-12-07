@@ -1,0 +1,58 @@
+@startuml
+top to bottom direction
+
+actor developer
+
+package Schemes {
+    file Macho_scheme
+    file MachoFramework_scheme
+    file MachoView_scheme
+}
+
+package Modules {
+    component Macho
+
+    package MachoFramework_library {
+        component MachoFramework #green;line:green;
+        together {
+            component MachoView #palegreen;line:green;
+            component MachoModel #palegreen;line:green;
+        }
+        component RealmHelper #palegreen;line:green;
+        component "                      MachoCore                      " as MachoCore #palegreen;line:green;
+        note right
+            各モジュール間はMachoCoreを介して
+            参照している
+        end note
+
+        package 外部ライブラリ {
+            component ComposableArchitecture #red
+            component RealmSwift #red
+        }
+    }
+}
+
+
+developer -- Macho_scheme: run(アプリ実行) or archive(リリースビルド)
+developer -- MachoView_scheme: preview(プレビュー)
+developer -- MachoFramework_scheme: test or full build
+
+Macho_scheme -- Macho
+MachoFramework_scheme -- MachoFramework
+MachoView_scheme -- MachoView
+Macho --> MachoFramework_library: import
+
+MachoFramework --> MachoView: Dependencyの実装注入
+MachoFramework ---> MachoModel
+
+MachoView --> MachoCore
+
+MachoModel --> RealmHelper
+MachoModel --> MachoCore
+
+RealmHelper --> MachoCore
+
+MachoCore -> ComposableArchitecture
+RealmHelper -> RealmSwift
+
+@enduml

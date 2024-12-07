@@ -51,16 +51,18 @@ jobs:
             fi
           done
           if $MODEL_CHANGED && $VIEW_CHANGED; then
+            echo "MachoFramework"
             echo "scheme=MachoFramework" >> $GITHUB_OUTPUT
           elif $MODEL_CHANGED; then
+            echo "MachoModelTest"
             echo "scheme=MachoModelTest" >> $GITHUB_OUTPUT
           elif $VIEW_CHANGED; then
+            echo "MachoViewTest"
             echo "scheme=MachoViewTest" >> $GITHUB_OUTPUT
           else
+            echo ""
             echo "scheme=" >> $GITHUB_OUTPUT
           fi
-
-          echo env.scheme
 
   build:
     if: ${{ github.event.issue.pull_request && github.event.comment.body == 'test-this-please' || !github.event.issue.pull_request }}
@@ -132,7 +134,6 @@ jobs:
           -skipPackagePluginValidation
           -skipMacroValidation
           -scmProvider xcode
-          -skip-testing:MachoUITests
           -clonedSourcePackagesDirPath SourcePackages
           clean test |
           bundle exec xcpretty

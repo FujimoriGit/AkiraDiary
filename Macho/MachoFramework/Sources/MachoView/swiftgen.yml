@@ -6,7 +6,7 @@ xcassets:
     - Color.xcassets
     - Image.xcassets
   outputs:
-    templateName: swift5
+    templatePath: ./assets_custom_template.stencil
     output: Assets.swift
     params:
       ForceProvidesNamespaces:  true

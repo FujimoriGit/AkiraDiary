@@ -5,7 +5,7 @@
 //  Created by 佐藤汰一 on 2024/11/30.
 //
 
-import Combine
+@preconcurrency import Combine
 import Foundation
 import Testing
 
@@ -68,12 +68,12 @@ struct DiaryEntityRepositoryTest {
     @Test(
         "日記エンティティの監視処理テスト",
         arguments: [
-            ObserveEntityTestArgument(insertIds: [Self.dummyIdArray[0]],
-                                      deleteTargetIds: [Self.dummyIdArray[0]]),
-            ObserveEntityTestArgument(insertIds: Self.dummyIdArray,
+            ObserveEntityTestArgument(insertIds: [await Self.dummyIdArray[0]],
+                                      deleteTargetIds: [await Self.dummyIdArray[0]]),
+            ObserveEntityTestArgument(insertIds: await Self.dummyIdArray,
                                       deleteTargetIds: [
-                                        Self.dummyIdArray[0],
-                                        Self.dummyIdArray[3],
+                                        await Self.dummyIdArray[0],
+                                        await Self.dummyIdArray[3],
                                         UUID()
                                       ])
         ]

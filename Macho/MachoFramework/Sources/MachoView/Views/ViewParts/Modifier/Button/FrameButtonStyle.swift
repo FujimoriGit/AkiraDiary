@@ -50,6 +50,7 @@ extension Button {
     ///   - pressedBackgroundColor: ボタンのハイライト時の背景色
     ///   - frameWidth: borderの長さ
     ///   - cornerRadius: ボタンの角の丸み
+    @MainActor
     func frameButtonStyle(foregroundColor: Color = Color(asset: CustomColor.frameButtonForegroundColor),
                           backgroundColor: Color = Color(asset: CustomColor.frameButtonBackgroundColor),
                           pressedBackgroundColor: Color = Color(asset: CustomColor.focusButtonBackgroundColor),
@@ -73,6 +74,7 @@ extension Menu {
     ///   - pressedBackgroundColor: ボタンのハイライト時の背景色
     ///   - frameWidth: borderの長さ
     ///   - cornerRadius: ボタンの角の丸み
+    @MainActor
     func frameButtonStyle(foregroundColor: Color = Color(asset: CustomColor.frameButtonForegroundColor),
                           backgroundColor: Color = Color(asset: CustomColor.frameButtonBackgroundColor),
                           pressedBackgroundColor: Color = Color(asset: CustomColor.focusButtonBackgroundColor),

@@ -7,10 +7,10 @@
 
 import Combine
 import MachoCore
-import RealmSwift
+@preconcurrency import RealmSwift
 
 @RealmActor
-struct RealmWrapper {
+struct RealmWrapper: Sendable {
     
     private let realm: Realm
     
@@ -139,57 +139,6 @@ struct RealmWrapper {
         publisher.setToken(token)
         return publisher.eraseToAnyPublisher()
     }
-    
-//    enum DbObserveResult<T: BaseRealmEntity> {
-//        
-//        case initial([T])
-//        case update([T])
-//    }
-    
-//    func readObjectsForObserve<T>(type: T.Type) async -> AsyncStream<DbObserveResult<T>>
-//    where T: BaseRealmEntity {
-//                
-//        let objects = realm.objects(type.RealmObject)
-//            
-//        let stream = AsyncStream<DbObserveResult<T>> { @RealmActor continuation in
-//        
-//            let token = objects.observe { snapshot in
-//                    
-//                    switch snapshot {
-//                        
-//                    case .initial(let initial):
-//                        continuation.yield(.initial(toUnManagedObject(initial)))
-//                        
-//                    case .update(let update, _, _, _):
-//                        continuation.yield(.update(toUnManagedObject(update)))
-//                        
-//                    case .error(let error):
-//                        logger.error("Occurred realm observe error: \(error), type: \(type)")
-//                    }
-//                }
-//        }
-//        return stream
-//    }
-//    
-//    func readObjectsForObserve<T>(type: T.Type) async -> AnyPublisher<[T], Never>
-//    where T: BaseRealmEntity {
-//        
-//        return realm.objects(type.RealmObject).changesetPublisher
-//            .map {
-//                
-//                switch $0 {
-//                    
-//                case .initial(let results), .update(let results, _, _, _):
-//                    return results.map { T(realmObject: $0) }
-//                
-//                case .error(let error):
-//                    logger.error("Occurred realm observe error: \(error), type: \(type)")
-//                    return []
-//                }
-//            }
-//            .replaceError(with: [])
-//            .eraseToAnyPublisher()
-//    }
 }
 
 // MARK: - RealmActor private methods
