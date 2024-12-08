@@ -2,7 +2,7 @@
 //  MachoApp.swift
 //  Macho
 //
-//  Created by 藤森大輝 on 2023/10/21.
+//  Created by Daiki Fujimori on 2023/10/21.
 //
 
 import MachoFramework

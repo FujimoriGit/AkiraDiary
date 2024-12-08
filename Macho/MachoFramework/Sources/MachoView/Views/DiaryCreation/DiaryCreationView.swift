@@ -34,6 +34,8 @@ struct DiaryCreationView: View {
     private let textEditorCornerRadius: CGFloat = 4
     private let tagPadding = EdgeInsets(top: 5, leading: 12, bottom: 5, trailing: 12)
     private let tagButtonsBothPadding: CGFloat = 24
+    private let goalCellHeight: CGFloat = 86
+    private let goalCellMargin: CGFloat = 0.5
     private let startButtonHeight: CGFloat = 48
     private let startButtonBottomPadding: CGFloat = 16
     
@@ -50,34 +52,29 @@ struct DiaryCreationView: View {
     // MARK: - body
     
     var body: some View {
-        NavigationStack {
-            GeometryReader { geometry in
-                // 計算を一回のみにする
-                let calculatedWidth = ViewUtil.calcWidth(size: geometry.size, horizontalPadding: horizontalPadding)
-                
-                createView(calculatedWidth: calculatedWidth)
-                    .frame(maxWidth: geometry.size.width, minHeight: geometry.size.height)
+        GeometryReader { geometry in
+            createView(parentSize: geometry.size)
+                .frame(maxWidth: geometry.size.width, minHeight: geometry.size.height)
+        }
+        .navigationTitle("Create Diary")
+        .navigationBarTitleDisplayMode(.inline)
+        .sheet(item: $store.scope(state: \.destination?.addGoal, action: \.destination.addGoal)) { addGoalStore in
+            
+            NavigationStack {
+                // 次画面のインスタンス生成
+                AddGoalView(store: addGoalStore)
             }
-            .navigationTitle("Create Diary")
-            .navigationBarTitleDisplayMode(.inline)
-            .sheet(item: $store.scope(state: \.destination?.addGoal, action: \.destination.addGoal)) { addGoalStore in
-                
-                NavigationStack {
-                    // 次画面のインスタンス生成
-                    AddGoalView(store: addGoalStore)
-                }
+        }
+        .sheet(item: $store.scope(state: \.destination?.addTag, action: \.destination.addTag)) { addTagStore in
+            
+            NavigationStack {
+                // 次画面のインスタンス生成
+                AddTagView(store: addTagStore)
             }
-            .sheet(item: $store.scope(state: \.destination?.addTag, action: \.destination.addTag)) { addTagStore in
-                
-                NavigationStack {
-                    // 次画面のインスタンス生成
-                    AddTagView(store: addTagStore)
-                }
-            }
-            .onAppear {
-                
-                store.send(.onAppear)
-            }
+        }
+        .onAppear {
+            
+            store.send(.onAppear)
         }
     }
 }
@@ -86,27 +83,27 @@ struct DiaryCreationView: View {
 
 private extension DiaryCreationView {
     
-    func createView(calculatedWidth: CGFloat) -> some View {
+    func createView(parentSize: CGSize) -> some View {
         
         VStack {
             ScrollView {
-                titleTextField(calculatedWidth: calculatedWidth)
+                titleTextField(parentSize: parentSize)
                 
-                messageTextField(calculatedWidth: calculatedWidth)
+                messageTextField(parentSize: parentSize)
                 
                 Spacer()
                     .frame(height: placeholderToTagsPadding)
                 
-                tagsArea(calculatedWidth: calculatedWidth)
+                tagsArea(parentSize: parentSize)
                 
                 Spacer()
                     .frame(height: tagButtonsBothPadding)
                 
-                goalsArea(calculatedWidth: calculatedWidth)
+                goalsArea(parentSize: parentSize)
             }
             .scrollIndicators(.hidden)
             
-            startButton(animationsRunning: store.animationsRunning, calculatedWidth: calculatedWidth) {
+            startButton(animationsRunning: store.animationsRunning, parentSize: parentSize) {
                 
                 store.send(.trainingStartButtonTapped)
             }
@@ -114,7 +111,7 @@ private extension DiaryCreationView {
         }
     }
     
-    func titleTextField(calculatedWidth: CGFloat) -> some View {
+    func titleTextField(parentSize: CGSize) -> some View {
         VStack(alignment: .leading) {
             Text("title")
             TextField("\(formatter.string(from: Date()))", text: $store.titleText.sending(\.titleTextChange))
@@ -122,10 +119,10 @@ private extension DiaryCreationView {
                 .overlay(RoundedRectangle(cornerRadius: textEditorCornerRadius)
                     .stroke(Color(uiColor: .systemGray2), lineWidth: lineWidth))
         }
-        .frame(width: calculatedWidth - (lineWidth * 2))
+        .frame(width: abs(ViewUtil.calcWidth(size: parentSize, horizontalPadding: horizontalPadding) - (lineWidth * 2)))
     }
     
-    func messageTextField(calculatedWidth: CGFloat) -> some View {
+    func messageTextField(parentSize: CGSize) -> some View {
         VStack(alignment: .leading) {
             Text("message")
             ZStack(alignment: .topLeading) {
@@ -142,50 +139,58 @@ private extension DiaryCreationView {
                 }
             }
         }
-        .frame(width: calculatedWidth - (lineWidth * 2))
+        .frame(width: abs(ViewUtil.calcWidth(size: parentSize, horizontalPadding: horizontalPadding) - (lineWidth * 2)))
     }
     
-    func tagsArea(calculatedWidth: CGFloat) -> some View {
+    func tagsArea(parentSize: CGSize) -> some View {
         
         VStack(spacing: tagButtonsBothPadding) {
-            addingButton(title: "Tags", maxWidth: calculatedWidth) {
+            addingButton(title: "Tags", parentSize: parentSize) {
                 
                 store.send(.tappedAddingTagButton)
             }
             
-            tags(store.tags) { tag in
+            tags { tag in
                 
                 store.send(.tappedTag(tag))
             }
         }
-        .frame(maxWidth: calculatedWidth, alignment: .leading)
+        .frame(maxWidth: ViewUtil.calcWidth(size: parentSize, horizontalPadding: horizontalPadding),
+               alignment: .leading)
     }
     
-    func goalsArea(calculatedWidth: CGFloat) -> some View {
+    func goalsArea(parentSize: CGSize) -> some View {
         
         VStack(spacing: tagButtonsBothPadding) {
-            addingButton(title: "Goals", maxWidth: calculatedWidth) {
+            addingButton(title: "Goals", parentSize: parentSize) {
                 
                 store.send(.tappedAddingGoalButton)
             }
-            
-            goals(store.goals) { goal in
+            if store.goals.isEmpty {
                 
-                store.send(.tappedGoal(goal))
+                Text("目標を追加してください")
+                    .foregroundStyle(Color(uiColor: .placeholderText))
+                    .font(.system(size: 20, weight: .bold))
+            }
+            else {
+                
+                goals()
             }
         }
-        .frame(maxWidth: calculatedWidth, alignment: .leading)
+        .frame(maxWidth: ViewUtil.calcWidth(size: parentSize, horizontalPadding: horizontalPadding),
+               minHeight: 124,
+               alignment: .leading)
     }
     
-    func tags(_ tags: [Tag], action: @escaping (Tag) -> Void) -> some View {
+    func tags(action: @escaping (Tag) -> Void) -> some View {
         
         FlowLayout(alignment: .leading, spacing: 8) {
-            ForEach(tags, id: \.id) { tag in
+            ForEach(store.tags, id: \.id) { tag in
                 Button(action: {
                     action(tag)
                 }, label: {
                     HStack(spacing: 4) {
-                        Text(tag.tagName)
+                        Text(tag.entity.tagName)
                             .font(.system(size: textSize, weight: tag.isSelected ? .semibold : .regular))
                         
                         Image(systemName: tag.isSelected ? "checkmark.circle.fill" : "circle.dashed")
@@ -202,39 +207,44 @@ private extension DiaryCreationView {
         }
     }
     
-    func goals(_ goals: [Goal], action: @escaping (Goal) -> Void) -> some View {
+    func goals() -> some View {
         
-        VStack {
-            ForEach(goals, id: \.id) { goal in
-                Button {
-                    action(goal)
-                } label: {
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(goal.goalName)
-                            Text("\(goal.numberOfSets) 回, \(goal.setCount) セット")
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding()
-                        
-                        Image(systemName: goal.isSelected ? "checkmark.circle.fill" : "circle.dashed")
-                            .foregroundStyle(.white)
-                            .font(.system(size: 24, weight: goal.isSelected ? .semibold : .regular))
-                            .contentTransition(.symbolEffect)
-                            .animation(.linear, value: goal.isSelected)
-                            .padding(.trailing, 12)
-                    }
-                    .contentShape(Rectangle())
-                    .frame(maxWidth: .infinity, minHeight: 48)
+        List(store.goals, id: \.id) { goal in
+            HStack {
+                VStack(alignment: .leading) {
+                    Text(goal.trainingType.name)
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(.white)
+                    Text("\(goal.numberOfSets) 回, \(goal.setCount) セット")
+                        .font(.system(size: 16))
+                        .foregroundStyle(.white)
                 }
-                .fillButtonStyle(foregroundColor: .white,
-                                 backgroundColor: goal.isSelected ? .indigo : .gray,
-                                 pressedBackgroundColor: .indigo.opacity(0.5))
+            }
+            .clipped()
+            .listRowBackground(Color.indigo)
+            .listRowSeparator(.hidden)
+            .fixedSize(horizontal: false, vertical: true)
+            .swipeActions {
+                Button(role: .destructive) {
+                    store.send(.deletedGoal(goal))
+                } label: {
+                    Label("Delete", systemImage: "trash")
+                }
+                Button(action: {
+                    store.send(.editingGoal(goal))
+                },
+                       label: {
+                    Label("Edit", systemImage: "pencil")
+                })
             }
         }
+        .listStyle(.plain)
+        .listRowSpacing(10.0)
+        .scrollDisabled(true)
+        .frame(minHeight: (goalCellHeight + goalCellMargin) * CGFloat(store.goals.count))
     }
     
-    func addingButton(title: String, maxWidth: CGFloat, action: @escaping () -> Void) -> some View {
+    func addingButton(title: String, parentSize: CGSize, action: @escaping () -> Void) -> some View {
         
         HStack {
             Text(title)
@@ -244,10 +254,14 @@ private extension DiaryCreationView {
                     .foregroundStyle(.mint)
             })
         }
-        .frame(maxWidth: maxWidth, alignment: .leading)
+        .frame(maxWidth: ViewUtil.calcWidth(size: parentSize, horizontalPadding: horizontalPadding),
+               alignment: .leading)
     }
     
-    func startButton(animationsRunning: Bool, calculatedWidth: CGFloat, action: @escaping () -> Void) -> some View {
+    func startButton(animationsRunning: Bool,
+                     parentSize: CGSize,
+                     action: @escaping () -> Void) -> some View {
+        
         Button(action: action, label: {
             HStack {
                 Image(systemName: "figure.run.square.stack")
@@ -256,9 +270,11 @@ private extension DiaryCreationView {
                 Text("Training Start!")
                     .font(.system(size: textSize, weight: .bold))
             }
-            .frame(maxWidth: calculatedWidth, minHeight: startButtonHeight)
+            .frame(maxWidth: ViewUtil.calcWidth(size: parentSize, horizontalPadding: horizontalPadding),
+                   minHeight: startButtonHeight)
         })
-        .fillButtonStyle(backgroundColor: .orange)
+        .fillButtonStyle(backgroundColor: store.isEnableStartButton ? .orange : .gray)
+        .disabled(!store.isEnableStartButton)
     }
 }
 

@@ -13,18 +13,23 @@ import RealmHelper
 struct TrainingTagClient {
 
     /// タグの登録
-    var addTags: ([Tag]) async -> Bool
+    var add: (TrainingTagData) async -> Bool
     /// タグの更新
-    var updateTag: (Tag) async -> Bool
+    var updateTag: (TrainingTagData) async -> Bool
     /// 登録しているタグをすべて取得する
-    var fetchAll: () async -> [TrainingTagEntity]
+    var fetchAll: () async -> [TrainingTagData]
     /// 監視用のPublisherを返す
-    var getTrainingTagPublisher: () -> AnyPublisher<[TrainingTagEntity], Never>
+    var getTrainingTagPublisher: () -> AnyPublisher<[TrainingTagData], Never>
 }
 
 extension TrainingTagClient: DependencyKey {
 
-    static var liveValue: TrainingTagClient = .createCustomValue()
+    static var liveValue: TrainingTagClient = .createCustomValue {
+        
+        let executor = TrainingTagEntity.executor
+        executor.startObservation()
+        return executor.getPublisher().eraseToAnyPublisher()
+    }
 
     static var previewValue = TrainingTagClient { _ in
         
@@ -68,10 +73,10 @@ private extension TrainingTagClient {
 
         return TrainingTagClient {
             
-            return await addTags(tags: $0)
+            return await addTags(realm, tag: $0)
         } updateTag: {
             
-            return await updateTag(tag: $0)
+            return await updateTag(realm, tag: $0)
         } fetchAll: {
             
             return await fetchAllTag(realm)
@@ -87,26 +92,22 @@ private extension TrainingTagClient {
     }
     
     /// DBにタグを追加します.
-    static func addTags(_ realm: RealmAccessible = RealmAccessor(), tags: [Tag]) async -> Bool {
+    static func addTags(_ realm: RealmAccessible = RealmAccessor(), tag: TrainingTagData) async -> Bool {
         
-        if tags.isEmpty {
+        guard await fetchAllTag(realm).contains(where: { $0.tagName == tag.tagName }) else {
             
-            logger.error("tags is empty.")
+            logger.error("same name already added.")
             return false
         }
         
-        let records = tags.map {
-            
-            return TrainingTagEntity(id: $0.id, tagName: $0.tagName)
-        }
+        let record = TrainingTagEntity(id: tag.id, tagName: tag.tagName)
         
-        return await realm.insert(records: records)
+        return await realm.insert(records: [record])
     }
     
-    static func updateTag(_ realm: RealmAccessible = RealmAccessor(), tag: Tag) async -> Bool {
+    static func updateTag(_ realm: RealmAccessible = RealmAccessor(), tag: TrainingTagData) async -> Bool {
         
-        let value: [String: Any] = ["id": tag.id,
-                            "tagTagName": tag.tagName]
+        let value: [String: Any] = ["id": tag.id, "tagName": tag.tagName]
         
         return await realm.update(type: TrainingTagEntity.self, value: value)
     }

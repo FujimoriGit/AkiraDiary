@@ -6,30 +6,27 @@
 //
 
 import ComposableArchitecture
-import RealmHelper
 import SwiftUI
 
 struct Tag: Equatable, Identifiable {
     
-    let id: UUID
-    var tagName: String
+    var id: UUID { entity.id }
+    let entity: TrainingTagData
     var isSelected = false
 }
 
 struct Goal: Equatable, Identifiable {
     
     let id: UUID
-    var goalName: String
+    var trainingType: TrainingTypeData
     var numberOfSets: Int
     var setCount: Int
-    var isSelected = false
 }
 
 @Reducer
 struct DiaryCreationFeature: Sendable {
     
     struct TrainingTagsSubscriber: Hashable {}
-    struct TrainingGoalsSubscriber: Hashable {}
     
     // MARK: State
     
@@ -52,21 +49,22 @@ struct DiaryCreationFeature: Sendable {
         
         case onAppear
         case didChangeTags
-        case didChangeGoals
         case fetchedTags([Tag])
-        case fetchedGoals([Goal])
         case titleTextChange(String)
         case messageTextChange(String)
         case trainingStartButtonTapped
+        case animateStartButton
         case destination(PresentationAction<Destination.Action>)
         case tappedAddingTagButton
         case tappedTag(Tag)
         case tappedAddingGoalButton
-        case tappedGoal(Goal)
+        case deletedGoal(Goal)
+        case editingGoal(Goal)
     }
     
     @Dependency(\.trainingTagApi) var trainingTagApi
-    @Dependency(\.trainingGoalApi) var trainingGoalApi
+    @Dependency(\.diaryListFetchApi) var diaryListFetchApi
+    @Dependency(\.dismiss) var dismiss
     
     // MARK: - body
     
@@ -77,40 +75,28 @@ struct DiaryCreationFeature: Sendable {
             switch action {
                 
             case .onAppear:
-                logger.info("onAppear")
+                logger.debug("onAppear")
                 return .concatenate(
                     .publisher {
-                        
+                         
                         return trainingTagApi.getTrainingTagPublisher()
                             .receive(on: DispatchQueue.main)
                             .map { _ in .didChangeTags }
                     }.cancellable(id: TrainingTagsSubscriber()),
-                    .publisher {
-                        
-                        return trainingGoalApi.getTrainingGoalPublisher()
-                            .receive(on: DispatchQueue.main)
-                            .map { _ in .didChangeGoals }
-                    }.cancellable(id: TrainingGoalsSubscriber()),
-                    fetchTags(),
-                    fetchGoals()
+                    fetchTags()
                 )
                 
             case .didChangeTags:
                 return fetchTags()
                 
-            case .didChangeGoals:
-                return fetchGoals()
-                
             case .fetchedTags(let tags):
                 state.tags = tags
                 return .none
                 
-            case .fetchedGoals(let goals):
-                state.goals = goals
-                return .none
-                
             case .titleTextChange(let text):
+                if state.titleText.isEmpty, text.isEmpty { return .none }
                 state.titleText = text
+                state.isEnableStartButton = isEnableStartButton(state: state)
                 return .none
                 
             case .messageTextChange(let text):
@@ -118,6 +104,16 @@ struct DiaryCreationFeature: Sendable {
                 return .none
                 
             case .trainingStartButtonTapped:
+                return .concatenate(
+                    .send(.animateStartButton),
+                    .run { [state] _ in
+                        
+                        await addDiary(state: state)
+                        await dismiss()
+                    }
+                )
+                
+            case .animateStartButton:
                 withAnimation(.easeIn(duration: 0.5)) {
                     
                     state.animationsRunning.toggle()
@@ -129,13 +125,13 @@ struct DiaryCreationFeature: Sendable {
                 return .none
                 
             case .tappedTag(let tag):
-                withAnimation(.easeIn(duration: 0.5)) {
+                withAnimation(.easeIn(duration: 0.15)) {
                     
                     state.tags = state.tags.map {
                         
-                        if tag.id == $0.id {
+                        if $0.entity.id == tag.entity.id {
                             
-                            return Tag(id: $0.id, tagName: $0.tagName, isSelected: !$0.isSelected)
+                            return Tag(entity: $0.entity, isSelected: !$0.isSelected)
                         }
                         
                         return $0
@@ -156,45 +152,35 @@ struct DiaryCreationFeature: Sendable {
                 return .none
                 
             case .tappedAddingGoalButton:
-                state.destination = .addGoal(AddGoalFeature.State(goal: Goal(id: UUID(),
-                                                                             goalName: "",
-                                                                             numberOfSets: 0,
-                                                                             setCount: 0)))
+                state.destination = .addGoal(AddGoalFeature.State())
                 return .none
                 
-            case .tappedGoal(let goal):
+            case .deletedGoal(let goal):
                 withAnimation(.easeIn(duration: 0.5)) {
                     
-                    state.goals = state.goals.map {
-                        
-                        if goal.id == $0.id {
-                            
-                            return Goal(id: $0.id, goalName: $0.goalName, numberOfSets: $0.numberOfSets,
-                                        setCount: $0.setCount, isSelected: !$0.isSelected)
-                        }
-                        
-                        return $0
-                    }
+                    state.goals.removeAll(where: { $0.id == goal.id })
                 }
                 return .none
                 
-            case .destination(.presented(.addGoal(.cancelButtonTapped))):
+            case .editingGoal(let goal):
+                state.destination = .addGoal(AddGoalFeature.State(selectedTrainingType: goal.trainingType,
+                                                                  numberOfSets: goal.numberOfSets,
+                                                                  setCount: goal.setCount,
+                                                                  isEnableSaveButton: true))
                 return .none
                 
-            case .destination(.presented(.addGoal(.saveButtonTapped))):
+            case .destination(.presented(.addGoal(.delegate(.saveGoal(let goal))))):
+                guard let index = state.goals.firstIndex(where: { $0.trainingType == goal.trainingType }) else {
+                    
+                    state.goals.append(goal)
+                    state.isEnableStartButton = isEnableStartButton(state: state)
+                    return .none
+                }
+                state.goals[index] = goal
+                state.isEnableStartButton = isEnableStartButton(state: state)
                 return .none
                 
-            case .destination(.presented(.addGoal(.delegate(.saveTag(let goal))))):
-                state.goals.append(goal)
-                return .none
-                
-            case .destination(.presented(.addGoal(.setGoalName))):
-                return .none
-                
-            case .destination(.presented(.addGoal(.setNumberOfSets))):
-                return .none
-                
-            case .destination(.presented(.addGoal(.setCount))):
+            case .destination:
                 return .none
             }
         }
@@ -210,34 +196,52 @@ private extension DiaryCreationFeature {
         
         return .run { send in
             
-            let tags = await trainingTagApi.fetchAll().map {
-                
-                Tag(id: $0.id, tagName: $0.tagName)
-            }
+            let tags = await trainingTagApi.fetchAll().map { Tag(entity: $0) }
             
             await send(.fetchedTags(tags))
         }
     }
     
-    func fetchGoals() -> Effect<Self.Action> {
+    func addDiary(state: State) async {
         
-        return .run { send in
+        let diary = createDiary(state: state)
+        _ = await diaryListFetchApi.add(diary)
+    }
+    
+    func createDiary(state: State) -> DiaryData {
+        
+        let startDate = Date()
+        
+        let goals = state.goals.map {
             
-            let goals = await trainingGoalApi.fetchAll().map {
-                
-                Goal(id: $0.id, goalName: $0.goalType.name, numberOfSets: $0.numberOfSets, setCount: $0.setCount)
-            }
-            
-            await send(.fetchedGoals(goals))
+            TrainingContentData(id: $0.id,
+                                trainingType: $0.trainingType,
+                                goalNumberOfSets: $0.numberOfSets,
+                                goalSetCount: $0.setCount,
+                                actualNumberOfSets: nil,
+                                actualSetCount: nil,
+                                startTime: startDate,
+                                endTime: nil)
         }
+        
+        let tags = state.tags.map { $0.entity }
+        
+        return DiaryData(id: UUID(),
+                         date: startDate,
+                         title: state.titleText,
+                         mainText: state.messageText,
+                         goals: goals,
+                         tags: tags)
     }
     
     func cancelChangesetObserve() -> Effect<Self.Action> {
         
-        return .concatenate(
-            .cancel(id: TrainingTagsSubscriber()),
-            .cancel(id: TrainingGoalsSubscriber())
-        )
+        return .cancel(id: TrainingTagsSubscriber())
+    }
+    
+    func isEnableStartButton(state: State) -> Bool {
+        
+        return !(state.titleText.isEmpty || state.goals.isEmpty)
     }
 }
 

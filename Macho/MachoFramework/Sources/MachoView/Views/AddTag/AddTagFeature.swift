@@ -16,13 +16,13 @@ struct AddTagFeature: Sendable {
     @ObservableState
     struct State: Equatable {
         
+        var id: UUID?
         var tagName = ""
         var isEnableSaveButton = false
     }
     
     // MARK: - Action
     
-    @ObservableState
     enum Action: Sendable, Equatable {
         
         case cancelButtonTapped
@@ -45,8 +45,16 @@ struct AddTagFeature: Sendable {
             return .run { _ in await dismiss() }
             
         case .saveButtonTapped:
-            return .run { [tagName = state.tagName] send in
+            return .run { [id = state.id, tagName = state.tagName] _ in
                 
+                if let id {
+                    
+                    await updateTag(id: id, tagName: tagName)
+                }
+                else {
+                    
+                    await saveTag(tagName: tagName)
+                }
                 
                 await dismiss()
             }
@@ -65,7 +73,13 @@ private extension AddTagFeature {
     
     func saveTag(tagName: String) async {
         
-        let tag = Tag(id: UUID(), tagName: tagName)
-        await trainingTagApi.addTags([tag])
+        let entity = TrainingTagData(id: UUID(), tagName: tagName)
+        _ = await trainingTagApi.add(entity)
+    }
+    
+    func updateTag(id: UUID, tagName: String) async {
+        
+        let entity = TrainingTagData(id: id, tagName: tagName)
+        _ = await trainingTagApi.updateTag(entity)
     }
 }
