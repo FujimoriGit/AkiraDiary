@@ -153,6 +153,9 @@ private extension DiaryCreationView {
             tags { tag in
                 
                 store.send(.tappedTag(tag))
+            } longPressAction: { tag in
+                
+                store.send(.longTappedTag(tag))
             }
         }
         .frame(maxWidth: ViewUtil.calcWidth(size: parentSize, horizontalPadding: horizontalPadding),
@@ -182,13 +185,13 @@ private extension DiaryCreationView {
                alignment: .leading)
     }
     
-    func tags(action: @escaping (Tag) -> Void) -> some View {
+    func tags(tapAction: @escaping (Tag) -> Void,
+              longPressAction: @escaping (Tag) -> Void) -> some View {
         
         FlowLayout(alignment: .leading, spacing: 8) {
             ForEach(store.tags, id: \.id) { tag in
-                Button(action: {
-                    action(tag)
-                }, label: {
+                // tapとlongPressのイベントをハンドルするため、actionでは何もしない
+                Button(action: {}, label: {
                     HStack(spacing: 4) {
                         Text(tag.entity.tagName)
                             .font(.system(size: textSize, weight: tag.isSelected ? .semibold : .regular))
@@ -202,6 +205,14 @@ private extension DiaryCreationView {
                     .background(tag.isSelected ? .indigo : .gray)
                     .foregroundStyle(.white)
                     .cornerRadius(14)
+                    .onTapGesture {
+                        
+                        tapAction(tag)
+                    }
+                    .onLongPressGesture {
+                        
+                        longPressAction(tag)
+                    }
                 })
             }
         }

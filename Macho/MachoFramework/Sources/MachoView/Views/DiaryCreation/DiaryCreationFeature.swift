@@ -57,6 +57,7 @@ struct DiaryCreationFeature: Sendable {
         case destination(PresentationAction<Destination.Action>)
         case tappedAddingTagButton
         case tappedTag(Tag)
+        case longTappedTag(Tag)
         case tappedAddingGoalButton
         case deletedGoal(Goal)
         case editingGoal(Goal)
@@ -83,11 +84,11 @@ struct DiaryCreationFeature: Sendable {
                             .receive(on: DispatchQueue.main)
                             .map { _ in .didChangeTags }
                     }.cancellable(id: TrainingTagsSubscriber()),
-                    fetchTags()
+                    fetchTags(state: state)
                 )
                 
             case .didChangeTags:
-                return fetchTags()
+                return fetchTags(state: state)
                 
             case .fetchedTags(let tags):
                 state.tags = tags
@@ -139,6 +140,12 @@ struct DiaryCreationFeature: Sendable {
                 }
                 return .none
                 
+            case .longTappedTag(let tag):
+                state.destination = .addTag(AddTagFeature.State(id: tag.id,
+                                                                tagName: tag.entity.tagName,
+                                                                isEnableSaveButton: true))
+                return .none
+                
             case .destination(.dismiss):
                 return .none
                 
@@ -159,6 +166,7 @@ struct DiaryCreationFeature: Sendable {
                 withAnimation(.easeIn(duration: 0.5)) {
                     
                     state.goals.removeAll(where: { $0.id == goal.id })
+                    state.isEnableStartButton = isEnableStartButton(state: state)
                 }
                 return .none
                 
@@ -192,11 +200,19 @@ struct DiaryCreationFeature: Sendable {
 
 private extension DiaryCreationFeature {
     
-    func fetchTags() -> Effect<Self.Action> {
+    func fetchTags(state: State) -> Effect<Self.Action> {
         
         return .run { send in
             
-            let tags = await trainingTagApi.fetchAll().map { Tag(entity: $0) }
+            let tags = await trainingTagApi.fetchAll().map { entity in
+                
+                if let tag = state.tags.first(where: { $0.id == entity.id }) {
+                    
+                    return Tag(entity: entity, isSelected: tag.isSelected)
+                }
+                
+                return Tag(entity: entity)
+            }
             
             await send(.fetchedTags(tags))
         }
