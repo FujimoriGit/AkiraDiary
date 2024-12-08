@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "MachoView"
-               BuildableName = "MachoView"
-               BlueprintName = "MachoView"
+               BlueprintIdentifier = "MachoModel"
+               BuildableName = "MachoModel"
+               BlueprintName = "MachoModel"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -30,7 +30,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:../MachoView.xctestplan">
+            reference = "container:../MachoModelTests.xctestplan">
          </TestPlanReference>
       </TestPlans>
    </TestAction>
@@ -54,9 +54,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "MachoView"
-            BuildableName = "MachoView"
-            BlueprintName = "MachoView"
+            BlueprintIdentifier = "MachoModel"
+            BuildableName = "MachoModel"
+            BlueprintName = "MachoModel"
             ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>

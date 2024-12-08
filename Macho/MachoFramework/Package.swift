@@ -18,6 +18,12 @@ let package = Package(
             targets: [
                 "MachoView",
             ]
+        ),
+        .library(
+            name: "MachoModel",
+            targets: [
+                "MachoModel",
+            ]
         )
     ],
     dependencies: [

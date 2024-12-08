@@ -54,14 +54,14 @@ jobs:
             echo "MachoFramework"
             echo "scheme=MachoFramework" >> $GITHUB_OUTPUT
           elif $MODEL_CHANGED; then
-            echo "MachoModelTest"
-            echo "scheme=MachoModelTest" >> $GITHUB_OUTPUT
+            echo "MachoModel"
+            echo "scheme=MachoModel" >> $GITHUB_OUTPUT
           elif $VIEW_CHANGED; then
-            echo "MachoViewTest"
-            echo "scheme=MachoViewTest" >> $GITHUB_OUTPUT
+            echo "MachoView"
+            echo "scheme=MachoView" >> $GITHUB_OUTPUT
           else
             echo ""
-            echo "scheme=" >> $GITHUB_OUTPUT
+            echo "scheme=MachoFramework" >> $GITHUB_OUTPUT
           fi
 
   build:

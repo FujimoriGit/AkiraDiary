@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "5C87C6FD-9B47-43B4-B086-6CE8ED8C0701",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "MachoModelTests",
+        "name" : "MachoModelTests"
+      }
+    }
+  ],
+  "version" : 1
+}

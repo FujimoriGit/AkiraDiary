@@ -10,4 +10,10 @@
    <FileRef
       location = "group:Macho.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:MachoModelTests.xctestplan">
+   </FileRef>
+   <FileRef
+      location = "group:MachoView.xctestplan">
+   </FileRef>
 </Workspace>
