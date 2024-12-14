@@ -85,7 +85,7 @@ private extension DiaryCreationView {
     
     func createView(parentSize: CGSize) -> some View {
         
-        VStack {
+        LazyVStack {
             ScrollView {
                 titleTextField(parentSize: parentSize)
                 
