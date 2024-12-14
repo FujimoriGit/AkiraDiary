@@ -58,18 +58,18 @@ struct DiaryCreationView: View {
         }
         .navigationTitle("Create Diary")
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(item: $store.scope(state: \.destination?.addGoal, action: \.destination.addGoal)) { addGoalStore in
+        .sheet(item: $store.scope(state: \.destination, action: \.destination)) { destination in
             
             NavigationStack {
                 // 次画面のインスタンス生成
-                AddGoalView(store: addGoalStore)
-            }
-        }
-        .sheet(item: $store.scope(state: \.destination?.addTag, action: \.destination.addTag)) { addTagStore in
-            
-            NavigationStack {
-                // 次画面のインスタンス生成
-                AddTagView(store: addTagStore)
+                switch destination.case {
+                    
+                case .addGoal(let store):
+                    AddGoalView(store: store)
+                    
+                case .addTag(let store):
+                    AddTagView(store: store)
+                }
             }
         }
         .onAppear {

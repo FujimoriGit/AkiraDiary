@@ -70,7 +70,7 @@ struct AddGoalFeature: Sendable {
                         
                         return trainingTypeApi.getPublisher()
                             .receive(on: DispatchQueue.main)
-                            .map { _ in .didChangeTrainingTypes }
+                            .map { .fetchedTrainingTypes($0) }
                     }.cancellable(id: TrainingTypesSubscriber()),
                     fetchTrainingTypes()
                 )

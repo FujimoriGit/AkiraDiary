@@ -45,16 +45,13 @@ struct AddTagView: View {
     }
 }
 
-// MARK: - previews
+// MARK: - preview
 
-struct AddTagPreviews: PreviewProvider {
-    
-    static var previews: some View {
-        NavigationStack {
-            AddTagView(store: Store(initialState: AddTagFeature.State()) {
-                
-                AddTagFeature()
-            })
-        }
+#Preview {
+    NavigationStack {
+        AddTagView(store: Store(initialState: AddTagFeature.State()) {
+            
+            AddTagFeature()
+        })
     }
 }

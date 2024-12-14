@@ -49,7 +49,7 @@ struct DiaryCreationFeature: Sendable {
         
         case onAppear
         case didChangeTags
-        case fetchedTags([Tag])
+        case fetchedTags([TrainingTagData])
         case titleTextChange(String)
         case messageTextChange(String)
         case trainingStartButtonTapped
@@ -82,16 +82,24 @@ struct DiaryCreationFeature: Sendable {
                          
                         return trainingTagApi.getTrainingTagPublisher()
                             .receive(on: DispatchQueue.main)
-                            .map { _ in .didChangeTags }
+                            .map { .fetchedTags($0) }
                     }.cancellable(id: TrainingTagsSubscriber()),
-                    fetchTags(state: state)
+                    fetchTags()
                 )
                 
             case .didChangeTags:
-                return fetchTags(state: state)
+                return fetchTags()
                 
             case .fetchedTags(let tags):
-                state.tags = tags
+                state.tags = tags.map { entity in
+                    
+                    if let tag = state.tags.first(where: { $0.id == entity.id }) {
+                        
+                        return Tag(entity: entity, isSelected: tag.isSelected)
+                    }
+                    
+                    return Tag(entity: entity)
+                }
                 return .none
                 
             case .titleTextChange(let text):
@@ -146,18 +154,6 @@ struct DiaryCreationFeature: Sendable {
                                                                 isEnableSaveButton: true))
                 return .none
                 
-            case .destination(.dismiss):
-                return .none
-                
-            case .destination(.presented(.addTag(.cancelButtonTapped))):
-                return .none
-                
-            case .destination(.presented(.addTag(.saveButtonTapped))):
-                return .none
-                
-            case .destination(.presented(.addTag(.setTagName))):
-                return .none
-                
             case .tappedAddingGoalButton:
                 state.destination = .addGoal(AddGoalFeature.State())
                 return .none
@@ -200,19 +196,11 @@ struct DiaryCreationFeature: Sendable {
 
 private extension DiaryCreationFeature {
     
-    func fetchTags(state: State) -> Effect<Self.Action> {
+    func fetchTags() -> Effect<Self.Action> {
         
         return .run { send in
             
-            let tags = await trainingTagApi.fetchAll().map { entity in
-                
-                if let tag = state.tags.first(where: { $0.id == entity.id }) {
-                    
-                    return Tag(entity: entity, isSelected: tag.isSelected)
-                }
-                
-                return Tag(entity: entity)
-            }
+            let tags = await trainingTagApi.fetchAll()
             
             await send(.fetchedTags(tags))
         }

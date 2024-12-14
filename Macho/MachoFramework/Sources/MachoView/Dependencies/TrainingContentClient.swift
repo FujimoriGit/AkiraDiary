@@ -67,19 +67,16 @@ extension TrainingContentClient: DependencyKey {
         
         return PassthroughSubject<[TrainingContentEntity], Never>().eraseToAnyPublisher()
     }
-}
-
-private extension TrainingContentClient {
     
     static func createCustomValue(_ realm: RealmAccessible = RealmAccessor(),
                                   publisher: (() -> AnyPublisher<[TrainingContentEntity], Never>)? = nil) -> TrainingContentClient {
         
         return TrainingContentClient {
             
-            return await addGoals(goals: $0)
+            return await addGoals(realm, goals: $0)
         } updateGoal: {
             
-            return await updateGoal(goal: $0)
+            return await updateGoal(realm, goal: $0)
         } fetchAll: {
             
             return await fetchAllGoal(realm)
@@ -88,6 +85,9 @@ private extension TrainingContentClient {
             return publisher?() ?? PassthroughSubject<[TrainingContentEntity], Never>().eraseToAnyPublisher()
         }
     }
+}
+
+private extension TrainingContentClient {
 
     static func fetchAllGoal(_ realm: RealmAccessible) async -> [TrainingContentEntity] {
 

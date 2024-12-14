@@ -100,14 +100,13 @@ private extension AddGoalView {
     }
 }
 
-struct AddGoalPreviews: PreviewProvider {
-    
-    static var previews: some View {
-        NavigationStack {
-            AddGoalView(store: Store(initialState: AddGoalFeature.State()) {
-                
-                AddGoalFeature()
-            })
-        }
+// MARK: - preview
+
+#Preview {
+    NavigationStack {
+        AddGoalView(store: Store(initialState: AddGoalFeature.State()) {
+            
+            AddGoalFeature()
+        })
     }
 }
