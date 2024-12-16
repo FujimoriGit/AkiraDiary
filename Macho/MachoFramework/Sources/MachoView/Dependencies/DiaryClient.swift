@@ -11,6 +11,7 @@ import RealmHelper
 
 struct DiaryClient {
     
+    let add: (DiaryData) async -> Bool
     /// 開始日付以降の日記情報の取得を行う
     /// - Parameters:
     ///   - startDate: 日記取得の開始日付
@@ -36,7 +37,11 @@ extension DiaryClient: DependencyKey {
     static let liveValue: DiaryClient = .createCustomValue()
     
     /// デフォルトのPreview時のモック処理
-    static var previewValue = Self { _, _ in
+    static var previewValue = Self { _ in
+        
+        return true
+    }
+    fetch: { _, _ in
         
         return []
     } deleteItem: { _ in
@@ -44,7 +49,11 @@ extension DiaryClient: DependencyKey {
     }
     
     /// デフォルトのTest時のモック処理
-    static var testValue = Self { _, _ in
+    static var testValue = Self { _ in
+        
+        return true
+    }
+    fetch: { _, _ in
         
         return []
     } deleteItem: { _ in
@@ -53,7 +62,11 @@ extension DiaryClient: DependencyKey {
     
     static func createCustomValue(_ realm: RealmAccessible = RealmAccessor()) -> DiaryClient {
         
-        return DiaryClient { startDate, limitCount in
+        return DiaryClient { diary in
+            
+            return await add(realm, diary: diary)
+        }
+        fetch: { startDate, limitCount in
             
             return await fetchDiaryList(realm, from: startDate, limit: limitCount)
         } deleteItem: { target async throws(Self.Error) in
@@ -69,6 +82,11 @@ extension DiaryClient: DependencyKey {
 // MARK: - ロジック
 
 private extension DiaryClient {
+    
+    static func add(_ realm: RealmAccessible, diary: DiaryData) async -> Bool {
+        
+        return await realm.insert(records: [diary])
+    }
     
     static func fetchDiaryList(_ realm: RealmAccessible, from startDate: Date, limit: Int) async -> [DiaryData] {
         

@@ -17,7 +17,7 @@ public struct DiaryEntity: BaseRealmEntity {
     public let title: String
     /// 日記本文
     public let mainText: String
-    /// 目標種目リスト
+    /// 目標リスト
     public let goals: [TrainingContentEntity]
     /// タグリスト
     public let tags: [TrainingTagEntity]
