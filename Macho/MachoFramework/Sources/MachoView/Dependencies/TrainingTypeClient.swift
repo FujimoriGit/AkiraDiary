@@ -11,12 +11,15 @@ import Foundation
 import RealmHelper
 
 struct TrainingTypeClient {
-    
+
+    /// 種目の登録
+    var add: (_ trainingTypeName: String) async -> Bool
+    /// 種目の更新
+    var update: (TrainingTypeData) async -> Bool
     /// 登録されているすべてのトレーニング種目を取得する
-    var fetchAllType: () async -> [TrainingTypeEntity]
+    var fetchAll: () async -> [TrainingTypeEntity]
     
-    /// トレーニング種目のEntityの変更を監視するPublisherを取得する
-    var getObserver: () -> AnyPublisher<[TrainingTypeEntity], Never>
+    var getPublisher: () -> AnyPublisher<[TrainingTypeData], Never>
 }
 
 extension TrainingTypeClient: DependencyKey {
@@ -28,25 +31,84 @@ extension TrainingTypeClient: DependencyKey {
         return executor.getPublisher()
     }
     
-    static func createCustomValue(
-        _ realm: RealmAccessible = RealmAccessor(),
-        observer: (() -> AnyPublisher<[TrainingTypeEntity], Never>)? = nil
-    ) -> TrainingTypeClient {
+    static var previewValue = TrainingTypeClient { _ in
         
-        return TrainingTypeClient {
+        return true
+    } update: { _ in
+        
+       return true
+    } fetchAll: {
+        
+        let types = [
+            "もりもり",
+            "トレーニング",
+            "Swift",
+            "iOS開発",
+            "SwiftUI",
+            "UIKit",
+            "WWDC",
+            "Python",
+            "JavaScript",
+            "PHP",
+            "Ruby",
+            "Flutter",
+            "Dart",
+            "Android",
+            "iPhone",
+            "あきら",
+            "たいち"
+        ]
+        
+        return types.map { TrainingTypeEntity(id: UUID(), name: $0) }
+    } getPublisher: {
+        
+        return PassthroughSubject<[TrainingTypeData], Never>().eraseToAnyPublisher()
+    }
+    
+    static func createCustomValue(_ realm: RealmAccessible = RealmAccessor(),
+                                  publisher: (() -> AnyPublisher<[TrainingTypeData], Never>)? = nil) -> TrainingTypeClient {
+        
+        TrainingTypeClient {
             
-            await fetchAllType(realm)
-        } getObserver: {
+            return await add(realm, trainingTypeName: $0)
+        } update: {
             
-            return observer?() ?? PassthroughSubject().eraseToAnyPublisher()
+            return await update(realm, trainingType: $0)
+        } fetchAll: {
+            
+            return await fetchAll(realm)
+        } getPublisher: {
+            
+            return publisher?() ?? PassthroughSubject<[TrainingTypeData], Never>().eraseToAnyPublisher()
         }
     }
 }
 
 private extension TrainingTypeClient {
-    
-    static func fetchAllType(_ realm: RealmAccessible) async -> [TrainingTypeEntity] {
+
+    static func add(_ realm: RealmAccessible = RealmAccessor(), trainingTypeName: String) async -> Bool {
         
+        let types = await fetchAll(realm)
+        if types.contains(where: { $0.name == trainingTypeName }) {
+            
+            logger.error("already added.")
+            return false
+        }
+        
+        let trainingType = TrainingTypeEntity(id: UUID(), name: trainingTypeName)
+        
+        return await realm.insert(records: [trainingType])
+    }
+    
+    static func update(_ realm: RealmAccessible = RealmAccessor(), trainingType: TrainingTypeData) async -> Bool {
+        
+        let value: [String: Any] = ["id": trainingType.id, "name": trainingType.name]
+        
+        return await realm.update(type: TrainingTypeEntity.self, value: value)
+    }
+    
+    static func fetchAll(_ realm: RealmAccessible) async -> [TrainingTypeEntity] {
+
         return await realm.read(where: nil)
     }
 }

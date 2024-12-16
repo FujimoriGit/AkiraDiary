@@ -78,12 +78,12 @@ struct SelectTrainingTypeContentFeature: PopUpableContentFeature {
                 return .concatenate([
                     .run { send in
                         
-                        let selectableTrainingTypeList = await trainingTypeApi.fetchAllType()
+                        let selectableTrainingTypeList = await trainingTypeApi.fetchAll()
                         await send(.didLoadSelectableTrainingTypeList(selectableTrainingTypeList))
                     },
                     .publisher {
                         
-                        return trainingTypeApi.getObserver()
+                        return trainingTypeApi.getPublisher()
                             .receive(on: DispatchQueue.main)
                             .map { .didLoadSelectableTrainingTypeList($0) }
                     }

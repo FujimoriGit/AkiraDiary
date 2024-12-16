@@ -237,8 +237,7 @@ private extension DiaryListFeature {
             case .tappedCreateNewDiaryButton:
                 logger.info("tappedCreateNewDiaryButton")
                 // TODO: 日記作成画面表示を実行
-                state.path.append(.createScreen(AddContactFeature.State(contact: .init(id: uuid.callAsFunction(),
-                                                                                       name: ""))))
+                state.path.append(.createScreen(DiaryCreationFeature.State()))
                 return .none
                 
             case .receiveLoadDiaryItems(let items):
@@ -280,7 +279,7 @@ extension DiaryListFeature {
         // 日記編集画面
         case editScreen(AddContactFeature)
         // 日記作成画面
-        case createScreen(AddContactFeature)
+        case createScreen(DiaryCreationFeature)
         // グラフ画面
         case graphScreen(TrainingActivityGraphFeature)
         // 詳細画面

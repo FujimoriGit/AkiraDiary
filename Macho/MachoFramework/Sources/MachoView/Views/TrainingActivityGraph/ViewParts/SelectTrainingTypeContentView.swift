@@ -142,9 +142,11 @@ private extension SelectTrainingTypeContentView {
         ),
                      reducer: { PopUpFeature() },
                      withDependencies: {
-                         $0.trainingTypeApi = TrainingTypeClient(fetchAllType: {
+                         $0.trainingTypeApi = TrainingTypeClient(add: { _ in false },
+                                                                 update: {_ in false },
+                                                                 fetchAll: {
                              return selectableTrainingTypeList
-                         }, getObserver: {
+                         }, getPublisher: {
                              return PassthroughSubject().eraseToAnyPublisher()
                          })
                      })
