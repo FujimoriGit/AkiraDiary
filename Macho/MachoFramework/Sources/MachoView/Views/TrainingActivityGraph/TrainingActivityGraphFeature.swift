@@ -19,21 +19,31 @@ struct TrainingActivityGraphFeature {
         // MARK: Presents States
         
         @Presents var alert: AlertState<Action.Alert>?
+        @Presents var destination: Destination.State?
         
         // MARK: View State
         
         var viewState: ViewState
+        var currentActivityPeriodTitle: String {
+            
+            return viewState.activityPeriod.title
+        }
+        
+        init() {
+            
+            viewState = .init()
+        }
         
         struct ViewState: Equatable {
             
             /// グラフ表示開始日付
-            let activityStartPeriod: Date
+            var activityStartPeriod: Date
             /// グラフ表示期間
-            let activityPeriod: ActivityPeriod
+            var activityPeriod: ActivityPeriod
             /// 表示トレーニングリスト
-            let targetTrainingTypeList: [TrainingTypeData]
+            var targetTrainingTypeList: SelectTrainingTypeContentFeature.State
             /// 一日毎のアクティビティ結果
-            let activityResultList: ActivityResults
+            var activityResultList: ActivityResults
             
             init(activityStartPeriod: Date,
                  activityPeriod: ActivityPeriod,
@@ -42,7 +52,7 @@ struct TrainingActivityGraphFeature {
                 
                 self.activityStartPeriod = activityStartPeriod
                 self.activityPeriod = activityPeriod
-                self.targetTrainingTypeList = targetTrainingTypeList
+                self.targetTrainingTypeList = .init(selectingTrainingTypeList: targetTrainingTypeList)
                 self.activityResultList = activityResultList
             }
             
@@ -51,7 +61,7 @@ struct TrainingActivityGraphFeature {
                 let component = Calendar.current.dateComponents([.year, .month], from: current)
                 self.activityStartPeriod = Calendar.current.date(from: component) ?? current
                 self.activityPeriod = .month
-                self.targetTrainingTypeList = []
+                self.targetTrainingTypeList = .init(selectingTrainingTypeList: [])
                 self.activityResultList = .init(resultList: [])
             }
         }
@@ -64,6 +74,7 @@ struct TrainingActivityGraphFeature {
         // MARK: - rooting event action
         
         case alert(PresentationAction<Alert>)
+        case destination(PresentationAction<Destination.Action>)
         
         // MARK: user event action
         
@@ -73,8 +84,8 @@ struct TrainingActivityGraphFeature {
         case didSelectActivityStartPeriodMenu(Date)
         /// グラフ表示期間のメニュー選択時
         case didSelectActivityPeriodMenu(ActivityPeriod)
-        /// グラフ表示開始日付のメニュー選択時
-        case didSelectTargetTrainingTypeMenu([TrainingTypeData])
+        /// グラフ表示対象のトレーニング種目選択ボタン押下時
+        case tappedTargetTrainingTypeMenu
         /// グラフ表示開始日付のメニュー選択時
         case tappedDayOfCalendar(Date)
         /// アクティビティのセルタップ時
@@ -107,7 +118,106 @@ struct TrainingActivityGraphFeature {
     var body: some ReducerOf<Self> {
         
         Reduce { state, action in
-            return .none
+            
+            logger.info("action: \(action)")
+            
+            switch action {
+                
+            case .alert(_):
+                // TODO: 未実装
+                return .none
+                
+            case .destination(.presented(.selectTrainingTypePopUp(.childAction(.delegate(.selectedTrainingTypeList(let selectedTrainingTypeList)))))):
+                // TODO: 未実装
+                return .none
+                
+            case .destination(_):
+                // TODO: 未実装
+                return .none
+                
+            case .onAppear:
+                // TODO: 未実装
+                return .none
+                
+            case .didSelectActivityStartPeriodMenu(let selectDate):
+                defaultAppStorage.setDouble(selectDate.timeIntervalSince1970, .activityStartPeriod)
+                state.updateActivityStartPeriod(selectDate)
+                return loadActivityResult()
+                
+            case .didSelectActivityPeriodMenu(let selectPeriod):
+                defaultAppStorage.setInt(selectPeriod.rawValue, .activityPeriod)
+                state.updateActivityPeriod(selectPeriod)
+                return loadActivityResult()
+                
+            case .tappedTargetTrainingTypeMenu:
+                state.destination = .selectTrainingTypePopUp(.init(childState: state.viewState.targetTrainingTypeList))
+                return .none
+                
+            case .tappedDayOfCalendar(_):
+                // TODO: 未実装
+                return .none
+                
+            case .tappedActivityCell:
+                // TODO: 未実装
+                return .none
+                
+            case .didReceiveDiaryData(_):
+                // TODO: 未実装
+                return .none
+                
+            case .didReceiveTrainingTypeList(_):
+                // TODO: 未実装
+                return .none
+            }
         }
+        .ifLet(\.$destination, action: \.destination)
+    }
+}
+
+extension TrainingActivityGraphFeature {
+    
+    @Reducer(state: .equatable, .sendable, action: .equatable, .sendable)
+    enum Destination: Equatable {
+        
+        case selectTrainingTypePopUp(PopUpFeature<SelectTrainingTypeContentFeature>)
+        
+        var id: Int {
+            
+            switch self {
+                
+            case .selectTrainingTypePopUp:
+                return 0
+            }
+        }
+        
+        static func == (lhs: TrainingActivityGraphFeature.Destination, rhs: TrainingActivityGraphFeature.Destination) -> Bool {
+            
+            return lhs.id == rhs.id
+        }
+    }
+}
+
+// MARK: - private feature method definition
+
+private extension TrainingActivityGraphFeature {
+    
+    func loadActivityResult() -> Effect<Action> {
+        
+        return .none
+    }
+}
+
+// MARK: - state util method definition
+
+private extension TrainingActivityGraphFeature.State {
+    
+    mutating func updateActivityStartPeriod(_ selectedDate: Date) {
+        
+        viewState.activityStartPeriod = selectedDate
+    }
+    
+    mutating func updateActivityPeriod(_ selectedPeriod: ActivityPeriod) {
+        
+        viewState.activityPeriod = selectedPeriod
     }
 }

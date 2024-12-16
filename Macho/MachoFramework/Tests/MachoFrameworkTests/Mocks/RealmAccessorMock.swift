@@ -5,12 +5,12 @@
 //  Created by 佐藤汰一 on 2024/10/12.
 //
 
+import Combine
 import RealmHelper
 import RealmSwift
-import Combine
 import XCTest
 
-struct RealmAccessorMock<Entity>: RealmAccessible where Entity: BaseRealmEntity {
+class RealmAccessorMock<Entity>: RealmAccessible where Entity: BaseRealmEntity {
     
     private var fetchEntity: [Entity]
     private var expectedInsertResult: ([Entity]) -> Bool
@@ -18,7 +18,9 @@ struct RealmAccessorMock<Entity>: RealmAccessible where Entity: BaseRealmEntity 
     private var expectedDeleteResult: () -> Bool
     private var expectedDeleteAllResult: () -> Bool
     private var expectedTruncateResult: () -> Bool
-    private var expectedNotificationToken: NotificationToken
+    private var expectedNotification: AnyPublisher<[Entity], Never>
+    
+    private var cancellable: AnyCancellable?
     
     init(fetchEntity: [Entity] = [],
          expectedInsertResult: @escaping ([Entity]) -> Bool = { _ in true },
@@ -26,7 +28,7 @@ struct RealmAccessorMock<Entity>: RealmAccessible where Entity: BaseRealmEntity 
          expectedDeleteResult: @escaping () -> Bool = { true },
          expectedDeleteAllResult: @escaping () -> Bool = { true },
          expectedTruncateResult: @escaping () -> Bool = { true },
-         expectedNotificationToken: NotificationToken = .init()) {
+         expectedNotification: AnyPublisher<[Entity], Never> = PassthroughSubject<[Entity], Never>().eraseToAnyPublisher()) {
         
         self.fetchEntity = fetchEntity
         self.expectedInsertResult = expectedInsertResult
@@ -34,7 +36,7 @@ struct RealmAccessorMock<Entity>: RealmAccessible where Entity: BaseRealmEntity 
         self.expectedDeleteResult = expectedDeleteResult
         self.expectedDeleteAllResult = expectedDeleteAllResult
         self.expectedTruncateResult = expectedTruncateResult
-        self.expectedNotificationToken = expectedNotificationToken
+        self.expectedNotification = expectedNotification
     }
     
     func read<T>(where filterHandler: ((T) -> Bool)?) async -> [T] where T : BaseRealmEntity {
@@ -98,8 +100,20 @@ struct RealmAccessorMock<Entity>: RealmAccessible where Entity: BaseRealmEntity 
     
     func observeDidChangeRealmObject<T>(subject: PassthroughSubject<[T], Never>) async -> NotificationToken? where T : BaseRealmEntity {
         
-        printDebugLog("expectedNotificationToken: \(expectedNotificationToken)")
-        return expectedNotificationToken
+        cancellable = expectedNotification.sink { [weak self] entities in
+            
+            guard let self,
+                  let safeTypeEntities = entities as? [T] else {
+                
+                XCTFail("Missing sending entities type: \(Entity.self) expected: \(T.self)")
+                return
+            }
+            
+            self.printDebugLog("Did received expectedNotification: \(safeTypeEntities)")
+            subject.send(safeTypeEntities)
+        }
+        
+        return nil
     }
 }
 

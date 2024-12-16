@@ -199,21 +199,20 @@ private extension DiaryListView {
     
     func getNavigationDestination(_ store: Store<DiaryListFeature.Path.State,
                                   DiaryListFeature.Path.Action>) -> some View {
-        
         switch store.case {
             
         // TODO: 実装出来次第正しい画面に変更する
         case .editScreen(let editScreenStore):
-            AddContactView(store: editScreenStore)
+            AnyView(AddContactView(store: editScreenStore))
             
         case .createScreen(let createScreenStore):
-            AddContactView(store: createScreenStore)
+            AnyView(AddContactView(store: createScreenStore))
             
         case .graphScreen(let graphScreenStore):
-            AddContactView(store: graphScreenStore)
+            AnyView(TrainingActivityGraphView(store: graphScreenStore))
             
         case .detailScreen(let detailScreenStore):
-            AddContactView(store: detailScreenStore)
+            AnyView(AddContactView(store: detailScreenStore))
         }
     }
 }

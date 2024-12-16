@@ -287,7 +287,7 @@ extension TrainingActivityGraphViewTest {
         let expectedFetchDiaryData7 = Self.sampleDiaryData7
         let expectedFetchDiaryData8 = Self.sampleDiaryData8
         
-        let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(viewState: .init()),
+        let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(),
                                   reducer: { TrainingActivityGraphFeature() },
                                   withDependencies: {
             
@@ -385,7 +385,7 @@ extension TrainingActivityGraphViewTest {
         let expectedFetchDiaryData2 = Self.sampleDiaryData2
         let expectedFetchDiaryData3 = Self.sampleDiaryData3
         
-        let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(viewState: .init()),
+        let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(),
                                   reducer: { TrainingActivityGraphFeature() },
                                   withDependencies: {
             
@@ -461,7 +461,7 @@ extension TrainingActivityGraphViewTest {
         let testUserDefaults = createTestUserDefaults(initialStartDate: initialStartPeriod,
                                                       initialPeriod: .month,
                                                       initialTrainingTypeList: [Self.absTraining])
-        let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(viewState: .init()),
+        let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(),
                                   reducer: { TrainingActivityGraphFeature() },
                                   withDependencies: {
             
@@ -549,7 +549,7 @@ extension TrainingActivityGraphViewTest {
         let testUserDefaults = createTestUserDefaults(initialStartDate: initialStartPeriod,
                                                       initialPeriod: .month,
                                                       initialTrainingTypeList: [Self.absTraining])
-        let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(viewState: .init()),
+        let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(),
                                   reducer: { TrainingActivityGraphFeature() },
                                   withDependencies: {
             
@@ -641,7 +641,7 @@ extension TrainingActivityGraphViewTest {
         let testUserDefaults = createTestUserDefaults(initialStartDate: initialStartPeriod,
                                                       initialPeriod: .year,
                                                       initialTrainingTypeList: [Self.absTraining])
-        let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(viewState: .init()),
+        let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(),
                                   reducer: { TrainingActivityGraphFeature() },
                                   withDependencies: {
             
@@ -703,7 +703,12 @@ extension TrainingActivityGraphViewTest {
             Self.benchPressTraining
         ]
         
-        await testStore.send(.didSelectTargetTrainingTypeMenu(expectedChangeTrainingTypeList)) {
+        await testStore.send(.tappedTargetTrainingTypeMenu) {
+            
+            $0.destination = .selectTrainingTypePopUp(.init(childState: .init(selectingTrainingTypeList: [Self.absTraining])))
+        }
+        
+        await testStore.send(.destination(.presented(.selectTrainingTypePopUp(.childAction(.delegate(.selectedTrainingTypeList(expectedChangeTrainingTypeList))))))) {
             
             $0.viewState = .init(activityStartPeriod: initialStartPeriod,
                                  activityPeriod: .year,
@@ -720,6 +725,11 @@ extension TrainingActivityGraphViewTest {
                                                              title: expectedFetchDiaryData3.title,
                                                              isAchieved: true)])
                                  ]))
+        }
+        
+        await testStore.send(.destination(.dismiss)) {
+            
+            $0.destination = nil
         }
         
         // UserDefaultsにグラフ表示期間の設定が正しく保存されているか確認
@@ -772,7 +782,7 @@ extension TrainingActivityGraphViewTest {
         let testUserDefaults = createTestUserDefaults(initialStartDate: initialStartPeriod,
                                                       initialPeriod: .year,
                                                       initialTrainingTypeList: expectedTrainingTypeList)
-        let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(viewState: .init()),
+        let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(),
                                   reducer: { TrainingActivityGraphFeature() },
                                   withDependencies: {
             

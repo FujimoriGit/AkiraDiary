@@ -215,7 +215,7 @@ private extension DiaryListFilterView {
         DiaryListFilterItem(target: .achievement, filterItemId: UUID(), value: "達成していない")
     ]
     
-    return DiaryListFilterView(store: Store(initialState: DiaryListFilterFeature.State(),
+    DiaryListFilterView(store: Store(initialState: DiaryListFilterFeature.State(),
                                             reducer: { DiaryListFilterFeature() },
                                             withDependencies: {
         $0.diaryListFilterApi = DiaryListFilterClient(addFilter: { filter in
@@ -247,6 +247,9 @@ private extension DiaryListFilterView {
                 .init(id: UUID(), name: "腹筋"),
                 .init(id: UUID(), name: "ダンベルプレス")
             ]
+        } getObserver: {
+            
+            return PassthroughSubject().eraseToAnyPublisher()
         }
         $0.trainingTagApi = TrainingTagClient {
             
