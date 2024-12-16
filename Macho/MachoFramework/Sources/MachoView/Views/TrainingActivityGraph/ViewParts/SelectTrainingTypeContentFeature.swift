@@ -69,8 +69,7 @@ struct SelectTrainingTypeContentFeature: PopUpableContentFeature {
         
         Reduce { state, action in
             
-            logger.info("action: \(action), state: \(state)")
-            print("\(#file) \(#function) action: \(action)")
+            logger.info("action: \(action)")
             
             switch action {
                 
@@ -94,7 +93,6 @@ struct SelectTrainingTypeContentFeature: PopUpableContentFeature {
                 return .concatenate(
                     .run { [selectingTrainingTypeList = state.selectingTrainingTypeList] send in
                         
-                        print("selectedTrainingTypeList with onDisappear.")
                         await send(.delegate(.selectedTrainingTypeList(selectingTrainingTypeList)))
                     },
                     .cancel(id: Cancellable())

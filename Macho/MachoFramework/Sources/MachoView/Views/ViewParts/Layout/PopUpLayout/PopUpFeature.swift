@@ -49,15 +49,15 @@ struct PopUpFeature<ChildContentFeature: PopUpableContentFeature> where ChildCon
         }
         Reduce { state, action in
             
-            logger.info("action: \(action)")
-            
             switch action {
                 
             case .onAppear:
+                logger.info("action: \(action)")
                 state.isShowing = true
                 return .none
                 
             case .tappedBackground:
+                logger.info("action: \(action)")
                 return .run { send in
                     
                     await send(.childAction(.willDismissAction),
@@ -81,6 +81,7 @@ private extension PopUpFeature {
         
         return .run { _ in
             
+            logger.info("start dismiss.")
             await dismiss()
         }
         .debounce(id: DebounceId(),

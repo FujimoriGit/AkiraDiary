@@ -228,7 +228,7 @@ private extension DiaryCreationFeature {
                                 endTime: nil)
         }
         
-        let tags = state.tags.map { $0.entity }
+        let tags = state.tags.map(\.entity)
         
         return DiaryData(id: UUID(),
                          date: startDate,
