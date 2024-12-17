@@ -219,7 +219,7 @@ private extension DiaryListFilterFeature {
         }
         
         // トレーニング種目のフィルター値を追加
-        let trainingTypeList = await trainingTypeApi.fetchAllType().map {
+        let trainingTypeList = await trainingTypeApi.fetchAll().map {
             
             return DiaryListFilterItem(target: .trainingType, filterItemId: $0.id, value: $0.name)
         }

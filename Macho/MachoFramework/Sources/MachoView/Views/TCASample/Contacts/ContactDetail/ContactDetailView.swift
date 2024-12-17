@@ -3,7 +3,6 @@
 //  Macho
 //  
 //  Created by Daiki Fujimori on 2023/11/11
-//  
 //
 
 import ComposableArchitecture
