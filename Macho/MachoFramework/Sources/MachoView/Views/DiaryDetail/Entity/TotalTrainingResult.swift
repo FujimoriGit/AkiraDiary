@@ -10,7 +10,7 @@ import Foundation
 struct TotalTrainingResult {
     
     // 時間の表示形式
-    private static let displayDateFormat = Date.Format(time: .shortJp)
+    private static let displayDateFormat: Date.MachoFormat = .localeDateTime
     // 時間が表示できない場合のデフォルト文言
     private static let defaultDateDisplayText = "まだ記録されていません"
     
@@ -50,7 +50,7 @@ private extension TotalTrainingResult {
     
     func getDisplayDateText(_ date: Date?) -> String {
         
-        guard let text = date?.toString(Self.displayDateFormat,
+        guard let text = date?.formatted(Self.displayDateFormat,
                                         timeZone: .autoupdatingCurrent) else {
             
             return Self.defaultDateDisplayText
