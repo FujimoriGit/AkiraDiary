@@ -2,12 +2,18 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:MachoFramework.xctestplan">
+   </FileRef>
+   <FileRef
       location = "group:MachoFramework">
    </FileRef>
    <FileRef
       location = "group:Macho.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:MachoFramework/MachoFramework.xctestplan">
+      location = "group:MachoModelTests.xctestplan">
+   </FileRef>
+   <FileRef
+      location = "group:MachoView.xctestplan">
    </FileRef>
 </Workspace>
