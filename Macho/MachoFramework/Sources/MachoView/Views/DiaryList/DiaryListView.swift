@@ -196,6 +196,7 @@ private extension DiaryListView {
 
 private extension DiaryListView {
     
+    @ViewBuilder
     func getNavigationDestination(_ store: Store<DiaryListFeature.Path.State,
                                   DiaryListFeature.Path.Action>) -> some View {
         
@@ -206,7 +207,7 @@ private extension DiaryListView {
             AddContactView(store: editScreenStore)
             
         case .createScreen(let createScreenStore):
-            AddContactView(store: createScreenStore)
+            DiaryCreationView(store: createScreenStore)
             
         case .graphScreen(let graphScreenStore):
             AddContactView(store: graphScreenStore)
@@ -271,7 +272,10 @@ struct PreviewDiaryListView: View {
         DiaryListView(store: Store(initialState: state) {
             withDependencies {
                 // 日記リスト取得のAPI DI
-                $0.diaryListFetchApi = DiaryClient(fetch: { _, _ in
+                $0.diaryListFetchApi = DiaryClient(add: { _ in
+                    
+                    return false
+                }, fetch: { _, _ in
                     
                     return [
                         .init(id: UUID(),

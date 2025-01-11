@@ -89,7 +89,7 @@ private extension DiaryListFilterView {
                 createScrollArea()
             }
             .padding(.vertical, dialogPadding)
-            .frame(width: parentSize.width - dialogPadding)
+            .frame(width: abs(parentSize.width - dialogPadding))
             .background(Color(asset: CustomColor.appPrimaryBackgroundColor))
             .borderModifier(cornerRadius: dialogCornerRadius)
             Button(action: { // 閉じるボタン
@@ -215,9 +215,9 @@ private extension DiaryListFilterView {
         DiaryListFilterItem(target: .achievement, filterItemId: UUID(), value: "達成していない")
     ]
     
-    return DiaryListFilterView(store: Store(initialState: DiaryListFilterFeature.State(),
-                                            reducer: { DiaryListFilterFeature() },
-                                            withDependencies: {
+    DiaryListFilterView(store: Store(initialState: DiaryListFilterFeature.State(),
+                                     reducer: { DiaryListFilterFeature() },
+                                     withDependencies: {
         $0.diaryListFilterApi = DiaryListFilterClient(addFilter: { filter in
             
             currentFilters += [filter]
@@ -241,19 +241,37 @@ private extension DiaryListFilterView {
             
             return publisher.eraseToAnyPublisher()
         })
-        $0.trainingTypeApi = TrainingTypeClient {
+        $0.trainingTypeApi = TrainingTypeClient { _ in
+            
+            return true
+        } update: { _ in
+            
+            return true
+        } fetchAll: {
             
             return [
                 .init(id: UUID(), name: "腹筋"),
                 .init(id: UUID(), name: "ダンベルプレス")
             ]
+        } getPublisher: {
+            
+            return PassthroughSubject<[TrainingTypeData], Never>().eraseToAnyPublisher()
         }
-        $0.trainingTagApi = TrainingTagClient {
+        $0.trainingTagApi = TrainingTagClient { _ in
+            
+            return true
+        } updateTag: { _ in
+            
+            return true
+        } fetchAll: {
             
             return [
                 .init(id: UUID(), tagName: "元気"),
                 .init(id: UUID(), tagName: "雨")
             ]
+        } getTrainingTagPublisher: {
+            
+            return PassthroughSubject<[TrainingTagData], Never>().eraseToAnyPublisher()
         }
     }))
 }
