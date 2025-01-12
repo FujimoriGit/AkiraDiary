@@ -287,11 +287,7 @@ extension TrainingActivityGraphViewTest {
         let expectedFetchDiaryData7 = Self.sampleDiaryData7
         let expectedFetchDiaryData8 = Self.sampleDiaryData8
         
-<<<<<<< HEAD:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraph/TrainingActivityGraphViewTest.swift
         let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(),
-=======
-        let testStore = TestStore(initialState: .getDefaultState(),
->>>>>>> BR_topic/1.0/#48_impl_graph_view_feature:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraphViewTest.swift
                                   reducer: { TrainingActivityGraphFeature() },
                                   withDependencies: {
             
@@ -309,8 +305,6 @@ extension TrainingActivityGraphViewTest {
             $0.defaultAppStorage = createTestUserDefaults(initialStartDate: initialStartPeriod)
         })
         
-        throw XCTSkip("テスト対象未実装のためスキップ")
-        
         await testStore.send(.onAppear) {
             
             $0 = .init(activityStartPeriod: initialStartPeriod,
@@ -319,112 +313,68 @@ extension TrainingActivityGraphViewTest {
                        activityResultList: .init(resultList: []))
         }
         
+        // TODO: 実装できたらコメントアウト外す
         await testStore.receive(\.didReceiveTrainingTypeList)
-                
-//        await testStore.receive(\.didReceiveDiaryData) {
-//            
-//            $0.viewState = .init(activityStartPeriod: initialStartPeriod,
-//                                 activityPeriod: .week,
-//                                 targetTrainingTypeList: expectedTrainingTypeList,
-//                                 activityResultList: .init(resultList: [
-//                                    .init(targetDate: expectedFetchDiaryData1.date,
-//                                          isAchieved: true,
-//                                          activities: [.init(id: expectedFetchDiaryData1.id,
-//                                                             title: expectedFetchDiaryData1.title,
-//                                                             isAchieved: true)]),
-//                                    .init(targetDate: expectedFetchDiaryData2.date,
-//                                          isAchieved: false,
-//                                          activities: [.init(id: expectedFetchDiaryData2.id,
-//                                                             title: expectedFetchDiaryData2.title,
-//                                                             isAchieved: false)]),
-//                                    .init(targetDate: expectedFetchDiaryData4.date,
-//                                          isAchieved: true,
-//                                          activities: [.init(id: expectedFetchDiaryData4.id,
-//                                                             title: expectedFetchDiaryData4.title,
-//                                                             isAchieved: true)]),
-//                                    .init(targetDate: expectedFetchDiaryData5.date,
-//                                          isAchieved: false,
-//                                          activities: [.init(id: expectedFetchDiaryData5.id,
-//                                                             title: expectedFetchDiaryData5.title,
-//                                                             isAchieved: false)]),
-//                                    .init(targetDate: expectedFetchDiaryData7.date,
-//                                          isAchieved: false,
-//                                          activities: [
-//                                            .init(id: expectedFetchDiaryData7.id,
-//                                                             title: expectedFetchDiaryData7.title,
-//                                                             isAchieved: true),
-//                                            .init(id: expectedFetchDiaryData8.id,
-//                                                             title: expectedFetchDiaryData8.title,
-//                                                             isAchieved: false)
-//                                          ])
-//                                 ]))
-//        }
+        
+        //        await testStore.receive(\.didReceiveDiaryData) {
+        //
+        //            $0.viewState = .init(activityStartPeriod: initialStartPeriod,
+        //                                 activityPeriod: .week,
+        //                                 targetTrainingTypeList: expectedTrainingTypeList,
+        //                                 activityResultList: .init(resultList: [
+        //                                    .init(targetDate: expectedFetchDiaryData1.date,
+        //                                          isAchieved: true,
+        //                                          activities: [.init(id: expectedFetchDiaryData1.id,
+        //                                                             title: expectedFetchDiaryData1.title,
+        //                                                             isAchieved: true)]),
+        //                                    .init(targetDate: expectedFetchDiaryData2.date,
+        //                                          isAchieved: false,
+        //                                          activities: [.init(id: expectedFetchDiaryData2.id,
+        //                                                             title: expectedFetchDiaryData2.title,
+        //                                                             isAchieved: false)]),
+        //                                    .init(targetDate: expectedFetchDiaryData4.date,
+        //                                          isAchieved: true,
+        //                                          activities: [.init(id: expectedFetchDiaryData4.id,
+        //                                                             title: expectedFetchDiaryData4.title,
+        //                                                             isAchieved: true)]),
+        //                                    .init(targetDate: expectedFetchDiaryData5.date,
+        //                                          isAchieved: false,
+        //                                          activities: [.init(id: expectedFetchDiaryData5.id,
+        //                                                             title: expectedFetchDiaryData5.title,
+        //                                                             isAchieved: false)]),
+        //                                    .init(targetDate: expectedFetchDiaryData7.date,
+        //                                          isAchieved: false,
+        //                                          activities: [
+        //                                            .init(id: expectedFetchDiaryData7.id,
+        //                                                             title: expectedFetchDiaryData7.title,
+        //                                                             isAchieved: true),
+        //                                            .init(id: expectedFetchDiaryData8.id,
+        //                                                             title: expectedFetchDiaryData8.title,
+        //                                                             isAchieved: false)
+        //                                          ])
+        //                                 ]))
+        //        }
         
         await testStore.send(.tappedFilterDisplayButton) {
             
-<<<<<<< HEAD:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraph/TrainingActivityGraphViewTest.swift
-            $0.viewState.isShowingFilter = false
-=======
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .week,
-                       targetTrainingTypeList: [],
-                       activityResultList: .init(resultList: []))
->>>>>>> BR_topic/1.0/#48_impl_graph_view_feature:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraphViewTest.swift
+            $0.isShowingFilter = false
         }
         
         await testStore.send(.tappedFilterDisplayButton) {
             
-<<<<<<< HEAD:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraph/TrainingActivityGraphViewTest.swift
-            $0.viewState.isShowingFilter = true
+            $0.isShowingFilter = true
         }
         
         await testStore.send(.onDragEndedFilterArea(result: .init(startLocation: CGPoint(x: .zero, y: 140),
                                                                   currentLocation: CGPoint(x: .zero, y: 90)))) {
             
-            $0.viewState.isShowingFilter = false
+            $0.isShowingFilter = false
         }
         
         await testStore.send(.onDragEndedFilterArea(result: .init(startLocation: CGPoint(x: .zero, y: 90),
                                                                   currentLocation: CGPoint(x: .zero, y: 140)))) {
             
-            $0.viewState.isShowingFilter = true
-=======
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .week,
-                       targetTrainingTypeList: expectedTrainingTypeList,
-                       activityResultList: .init(resultList: [
-                        .init(targetDate: expectedFetchDiaryData1.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData1.id,
-                                                 title: expectedFetchDiaryData1.title,
-                                                 isAchieved: true)]),
-                        .init(targetDate: expectedFetchDiaryData2.date,
-                              isAchieved: false,
-                              activities: [.init(id: expectedFetchDiaryData2.id,
-                                                 title: expectedFetchDiaryData2.title,
-                                                 isAchieved: false)]),
-                        .init(targetDate: expectedFetchDiaryData4.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData4.id,
-                                                 title: expectedFetchDiaryData4.title,
-                                                 isAchieved: true)]),
-                        .init(targetDate: expectedFetchDiaryData5.date,
-                              isAchieved: false,
-                              activities: [.init(id: expectedFetchDiaryData5.id,
-                                                 title: expectedFetchDiaryData5.title,
-                                                 isAchieved: false)]),
-                        .init(targetDate: expectedFetchDiaryData7.date,
-                              isAchieved: false,
-                              activities: [
-                                .init(id: expectedFetchDiaryData7.id,
-                                      title: expectedFetchDiaryData7.title,
-                                      isAchieved: true),
-                                .init(id: expectedFetchDiaryData8.id,
-                                      title: expectedFetchDiaryData8.title,
-                                      isAchieved: false)
-                              ])
-                       ]))
->>>>>>> BR_topic/1.0/#48_impl_graph_view_feature:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraphViewTest.swift
+            $0.isShowingFilter = true
         }
     }
     
@@ -452,11 +402,7 @@ extension TrainingActivityGraphViewTest {
         let expectedFetchDiaryData2 = Self.sampleDiaryData2
         let expectedFetchDiaryData3 = Self.sampleDiaryData3
         
-<<<<<<< HEAD:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraph/TrainingActivityGraphViewTest.swift
         let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(),
-=======
-        let testStore = TestStore(initialState: .getDefaultState(),
->>>>>>> BR_topic/1.0/#48_impl_graph_view_feature:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraphViewTest.swift
                                   reducer: { TrainingActivityGraphFeature() },
                                   withDependencies: {
             
@@ -472,45 +418,30 @@ extension TrainingActivityGraphViewTest {
                                                           initialTrainingTypeList: [Self.absTraining])
         })
         
-        throw XCTSkip("テスト対象未実装のためスキップ")
-        
         await testStore.send(.onAppear) {
             
-<<<<<<< HEAD:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraph/TrainingActivityGraphViewTest.swift
-            $0.viewState = .init(activityStartPeriod: initialStartPeriod,
-                                 activityPeriod: .year,
-                                 targetTrainingTypeList: [],
-                                 activityResultList: .init(resultList: []))
-=======
             $0 = .init(activityStartPeriod: initialStartPeriod,
                        activityPeriod: .year,
-                       targetTrainingTypeList: [Self.absTraining],
+                       targetTrainingTypeList: [],
                        activityResultList: .init(resultList: []))
->>>>>>> BR_topic/1.0/#48_impl_graph_view_feature:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraphViewTest.swift
         }
         
         await testStore.receive(\.didReceiveTrainingTypeList) {
             
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .year,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: []))
+            $0.targetTrainingTypeList = [Self.absTraining]
         }
         
         throw XCTSkip("No implementation yet.")
         
         await testStore.receive(\.didReceiveDiaryData) {
             
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .year,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: [
-                        .init(targetDate: expectedFetchDiaryData3.date,
-                              isAchieved: false,
-                              activities: [.init(id: expectedFetchDiaryData3.id,
-                                                 title: expectedFetchDiaryData3.title,
-                                                 isAchieved: false)]),
-                       ]))
+            $0.activityResultList = .init(resultList: [
+                .init(targetDate: expectedFetchDiaryData3.date,
+                      isAchieved: false,
+                      activities: [.init(id: expectedFetchDiaryData3.id,
+                                         title: expectedFetchDiaryData3.title,
+                                         isAchieved: false)]),
+            ])
         }
         
         await testStore.send(.tappedActivityCell)
@@ -543,11 +474,7 @@ extension TrainingActivityGraphViewTest {
         let testUserDefaults = createTestUserDefaults(initialStartDate: initialStartPeriod,
                                                       initialPeriod: .month,
                                                       initialTrainingTypeList: [Self.absTraining])
-<<<<<<< HEAD:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraph/TrainingActivityGraphViewTest.swift
         let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(),
-=======
-        let testStore = TestStore(initialState: .getDefaultState(),
->>>>>>> BR_topic/1.0/#48_impl_graph_view_feature:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraphViewTest.swift
                                   reducer: { TrainingActivityGraphFeature() },
                                   withDependencies: {
             
@@ -558,67 +485,50 @@ extension TrainingActivityGraphViewTest {
             $0.defaultAppStorage = testUserDefaults
         })
         
-        throw XCTSkip("テスト対象未実装のためスキップ")
-        
         await testStore.send(.onAppear) {
             
-<<<<<<< HEAD:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraph/TrainingActivityGraphViewTest.swift
-            $0.viewState = .init(activityStartPeriod: initialStartPeriod,
-                                 activityPeriod: .month,
-                                 targetTrainingTypeList: [],
-                                 activityResultList: .init(resultList: []))
-=======
             $0 = .init(activityStartPeriod: initialStartPeriod,
                        activityPeriod: .month,
-                       targetTrainingTypeList: [Self.absTraining],
+                       targetTrainingTypeList: [],
                        activityResultList: .init(resultList: []))
->>>>>>> BR_topic/1.0/#48_impl_graph_view_feature:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraphViewTest.swift
         }
         
         await testStore.receive(\.didReceiveTrainingTypeList) {
             
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .month,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: []))
+            $0.targetTrainingTypeList = [Self.absTraining]
         }
         
-        throw XCTSkip("No implementation yet.")
-        
-        await testStore.receive(\.didReceiveDiaryData) {
-            
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .month,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: []))
-        }
+        // TODO: 実装できたらコメントアウト外す
+        //        await testStore.receive(\.didReceiveDiaryData) {
+        //
+        //            $0 = .init(activityStartPeriod: initialStartPeriod,
+        //                       activityPeriod: .month,
+        //                       targetTrainingTypeList: [Self.absTraining],
+        //                       activityResultList: .init(resultList: []))
+        //        }
         
         let expectedChangeActivityStartPeriod = Self.getSelectDate(year: 2024, month: 6, day: 1)
         
         await testStore.send(.didSelectActivityStartPeriodMenu(expectedChangeActivityStartPeriod)) {
             
-            $0 = .init(activityStartPeriod: expectedChangeActivityStartPeriod,
-                       activityPeriod: .month,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: []))
+            $0.activityStartPeriod = expectedChangeActivityStartPeriod
         }
         
         // UserDefaultsにグラフ表示開始日付の設定が正しく保存されているか確認
         XCTAssertEqual(expectedChangeActivityStartPeriod.timeIntervalSince1970,
                        testUserDefaults.getDouble(.activityStartPeriod))
         
+        throw XCTSkip("No implementation yet.")
+        
         await testStore.receive(\.didReceiveDiaryData) {
             
-            $0 = .init(activityStartPeriod: expectedChangeActivityStartPeriod,
-                       activityPeriod: .month,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: [
-                        .init(targetDate: expectedFetchDiaryData1.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData1.id,
-                                                 title: expectedFetchDiaryData1.title,
-                                                 isAchieved: true)]),
-                       ]))
+            $0.activityResultList = .init(resultList: [
+                .init(targetDate: expectedFetchDiaryData1.date,
+                      isAchieved: true,
+                      activities: [.init(id: expectedFetchDiaryData1.id,
+                                         title: expectedFetchDiaryData1.title,
+                                         isAchieved: true)]),
+            ])
         }
     }
     
@@ -646,11 +556,7 @@ extension TrainingActivityGraphViewTest {
         let testUserDefaults = createTestUserDefaults(initialStartDate: initialStartPeriod,
                                                       initialPeriod: .month,
                                                       initialTrainingTypeList: [Self.absTraining])
-<<<<<<< HEAD:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraph/TrainingActivityGraphViewTest.swift
         let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(),
-=======
-        let testStore = TestStore(initialState: .getDefaultState(),
->>>>>>> BR_topic/1.0/#48_impl_graph_view_feature:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraphViewTest.swift
                                   reducer: { TrainingActivityGraphFeature() },
                                   withDependencies: {
             
@@ -661,58 +567,32 @@ extension TrainingActivityGraphViewTest {
             $0.defaultAppStorage = testUserDefaults
         })
         
-        throw XCTSkip("テスト対象未実装のためスキップ")
-        
         await testStore.send(.onAppear) {
             
-<<<<<<< HEAD:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraph/TrainingActivityGraphViewTest.swift
-            $0.viewState = .init(activityStartPeriod: initialStartPeriod,
-                                 activityPeriod: .month,
-                                 targetTrainingTypeList: [],
-                                 activityResultList: .init(resultList: []))
-=======
             $0 = .init(activityStartPeriod: initialStartPeriod,
                        activityPeriod: .month,
-                       targetTrainingTypeList: [Self.absTraining],
+                       targetTrainingTypeList: [],
                        activityResultList: .init(resultList: []))
->>>>>>> BR_topic/1.0/#48_impl_graph_view_feature:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraphViewTest.swift
         }
         
         await testStore.receive(\.didReceiveTrainingTypeList) {
             
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .month,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: []))
+            $0.targetTrainingTypeList = [Self.absTraining]
         }
         
-<<<<<<< HEAD:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraph/TrainingActivityGraphViewTest.swift
         // TODO: 実装できたらコメントアウト外す
-//        await testStore.receive(\.didReceiveDiaryData) {
-//            
-//            $0.viewState = .init(activityStartPeriod: initialStartPeriod,
-//                                 activityPeriod: .month,
-//                                 targetTrainingTypeList: [Self.absTraining],
-//                                 activityResultList: .init(resultList: []))
-//        }
-                
-=======
-        await testStore.receive(\.didReceiveDiaryData) {
-            
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .month,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: []))
-        }
+        //        await testStore.receive(\.didReceiveDiaryData) {
+        //
+        //            $0.viewState = .init(activityStartPeriod: initialStartPeriod,
+        //                                 activityPeriod: .month,
+        //                                 targetTrainingTypeList: [Self.absTraining],
+        //                                 activityResultList: .init(resultList: []))
+        //        }
         
->>>>>>> BR_topic/1.0/#48_impl_graph_view_feature:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraphViewTest.swift
         let expectedActivityPeriod: ActivityPeriod = .year
         await testStore.send(.didSelectActivityPeriodMenu(expectedActivityPeriod)) {
             
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: expectedActivityPeriod,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: []))
+            $0.activityPeriod = expectedActivityPeriod
         }
         
         // UserDefaultsにグラフ表示期間の設定が正しく保存されているか確認
@@ -724,21 +604,18 @@ extension TrainingActivityGraphViewTest {
         
         await testStore.receive(\.didReceiveDiaryData) {
             
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: expectedActivityPeriod,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: [
-                        .init(targetDate: expectedFetchDiaryData1.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData1.id,
-                                                 title: expectedFetchDiaryData1.title,
-                                                 isAchieved: true)]),
-                        .init(targetDate: expectedFetchDiaryData3.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData3.id,
-                                                 title: expectedFetchDiaryData3.title,
-                                                 isAchieved: true)]),
-                       ]))
+            $0.activityResultList = .init(resultList: [
+                .init(targetDate: expectedFetchDiaryData1.date,
+                      isAchieved: true,
+                      activities: [.init(id: expectedFetchDiaryData1.id,
+                                         title: expectedFetchDiaryData1.title,
+                                         isAchieved: true)]),
+                .init(targetDate: expectedFetchDiaryData3.date,
+                      isAchieved: true,
+                      activities: [.init(id: expectedFetchDiaryData3.id,
+                                         title: expectedFetchDiaryData3.title,
+                                         isAchieved: true)]),
+            ])
         }
     }
     
@@ -766,11 +643,7 @@ extension TrainingActivityGraphViewTest {
         let testUserDefaults = createTestUserDefaults(initialStartDate: initialStartPeriod,
                                                       initialPeriod: .year,
                                                       initialTrainingTypeList: [Self.absTraining])
-<<<<<<< HEAD:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraph/TrainingActivityGraphViewTest.swift
         let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(),
-=======
-        let testStore = TestStore(initialState: .getDefaultState(),
->>>>>>> BR_topic/1.0/#48_impl_graph_view_feature:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraphViewTest.swift
                                   reducer: { TrainingActivityGraphFeature() },
                                   withDependencies: {
             
@@ -781,88 +654,45 @@ extension TrainingActivityGraphViewTest {
             $0.defaultAppStorage = testUserDefaults
         })
         
-        throw XCTSkip("テスト対象未実装のためスキップ")
-        
         await testStore.send(.onAppear) {
             
-<<<<<<< HEAD:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraph/TrainingActivityGraphViewTest.swift
-            $0.viewState = .init(activityStartPeriod: initialStartPeriod,
-                                 activityPeriod: .year,
-                                 targetTrainingTypeList: [],
-                                 activityResultList: .init(resultList: []))
-=======
             $0 = .init(activityStartPeriod: initialStartPeriod,
                        activityPeriod: .year,
-                       targetTrainingTypeList: [Self.absTraining],
+                       targetTrainingTypeList: [],
                        activityResultList: .init(resultList: []))
->>>>>>> BR_topic/1.0/#48_impl_graph_view_feature:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraphViewTest.swift
+            //            $0 = .init(activityStartPeriod: initialStartPeriod,
+            //                       activityPeriod: .year,
+            //                       targetTrainingTypeList: [Self.absTraining],
+            //                       activityResultList: .init(resultList: []))
         }
         
         await testStore.receive(\.didReceiveTrainingTypeList) {
             
-<<<<<<< HEAD:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraph/TrainingActivityGraphViewTest.swift
-            $0.viewState = .init(activityStartPeriod: initialStartPeriod,
-                                 activityPeriod: .year,
-                                 targetTrainingTypeList: [Self.absTraining],
-                                 activityResultList: .init(resultList: []))
+            $0 = .init(activityStartPeriod: initialStartPeriod,
+                       activityPeriod: .year,
+                       targetTrainingTypeList: [Self.absTraining],
+                       activityResultList: .init(resultList: []))
         }
         
         // TODO: 実装できたらコメントアウト外す
-//        await testStore.receive(\.didReceiveDiaryData) {
-//            
-//            $0.viewState = .init(activityStartPeriod: initialStartPeriod,
-//                                 activityPeriod: .year,
-//                                 targetTrainingTypeList: [Self.absTraining],
-//                                 activityResultList: .init(resultList: [
-//                                    .init(targetDate: expectedFetchDiaryData1.date,
-//                                          isAchieved: true,
-//                                          activities: [.init(id: expectedFetchDiaryData1.id,
-//                                                             title: expectedFetchDiaryData1.title,
-//                                                             isAchieved: true)]),
-//                                    .init(targetDate: expectedFetchDiaryData3.date,
-//                                          isAchieved: true,
-//                                          activities: [.init(id: expectedFetchDiaryData3.id,
-//                                                             title: expectedFetchDiaryData3.title,
-//                                                             isAchieved: true)])
-//                                 ]))
-//        }
-=======
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .year,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: [
-                        .init(targetDate: expectedFetchDiaryData1.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData1.id,
-                                                 title: expectedFetchDiaryData1.title,
-                                                 isAchieved: true)]),
-                        .init(targetDate: expectedFetchDiaryData3.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData3.id,
-                                                 title: expectedFetchDiaryData3.title,
-                                                 isAchieved: true)])
-                       ]))
-        }
-        
-        await testStore.receive(\.didReceiveDiaryData) {
-            
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .year,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: [
-                        .init(targetDate: expectedFetchDiaryData1.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData1.id,
-                                                 title: expectedFetchDiaryData1.title,
-                                                 isAchieved: true)]),
-                        .init(targetDate: expectedFetchDiaryData3.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData3.id,
-                                                 title: expectedFetchDiaryData3.title,
-                                                 isAchieved: true)])
-                       ]))
-        }
->>>>>>> BR_topic/1.0/#48_impl_graph_view_feature:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraphViewTest.swift
+        //        await testStore.receive(\.didReceiveDiaryData) {
+        //
+        //            $0 = .init(activityStartPeriod: initialStartPeriod,
+        //                                 activityPeriod: .year,
+        //                                 targetTrainingTypeList: [Self.absTraining],
+        //                                 activityResultList: .init(resultList: [
+        //                                    .init(targetDate: expectedFetchDiaryData1.date,
+        //                                          isAchieved: true,
+        //                                          activities: [.init(id: expectedFetchDiaryData1.id,
+        //                                                             title: expectedFetchDiaryData1.title,
+        //                                                             isAchieved: true)]),
+        //                                    .init(targetDate: expectedFetchDiaryData3.date,
+        //                                          isAchieved: true,
+        //                                          activities: [.init(id: expectedFetchDiaryData3.id,
+        //                                                             title: expectedFetchDiaryData3.title,
+        //                                                             isAchieved: true)])
+        //                                 ]))
+        //        }
         
         let expectedChangeTrainingTypeList: [TrainingTypeData] = [
             Self.absTraining,
@@ -876,46 +706,12 @@ extension TrainingActivityGraphViewTest {
         
         await testStore.send(.selectTrainingPopUp(.presented(.childAction(.delegate(.selectedTrainingTypeList(expectedChangeTrainingTypeList)))))) {
             
-<<<<<<< HEAD:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraph/TrainingActivityGraphViewTest.swift
-            $0.viewState = .init(activityStartPeriod: initialStartPeriod,
-                                 activityPeriod: .year,
-                                 targetTrainingTypeList: expectedChangeTrainingTypeList,
-                                 activityResultList: .init(resultList: [])
-//                                 activityResultList: .init(resultList: [
-//                                    .init(targetDate: expectedFetchDiaryData1.date,
-//                                          isAchieved: true,
-//                                          activities: [.init(id: expectedFetchDiaryData1.id,
-//                                                             title: expectedFetchDiaryData1.title,
-//                                                             isAchieved: true)]),
-//                                    .init(targetDate: expectedFetchDiaryData3.date,
-//                                          isAchieved: true,
-//                                          activities: [.init(id: expectedFetchDiaryData3.id,
-//                                                             title: expectedFetchDiaryData3.title,
-//                                                             isAchieved: true)])
-//                                 ])
-                                 )
+            $0.targetTrainingTypeList = expectedChangeTrainingTypeList
         }
         
         await testStore.send(.selectTrainingPopUp(.dismiss)) {
             
             $0.selectTrainingPopUp = nil
-=======
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .year,
-                       targetTrainingTypeList: expectedChangeTrainingTypeList,
-                       activityResultList: .init(resultList: [
-                        .init(targetDate: expectedFetchDiaryData1.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData1.id,
-                                                 title: expectedFetchDiaryData1.title,
-                                                 isAchieved: true)]),
-                        .init(targetDate: expectedFetchDiaryData3.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData3.id,
-                                                 title: expectedFetchDiaryData3.title,
-                                                 isAchieved: true)])
-                       ]))
->>>>>>> BR_topic/1.0/#48_impl_graph_view_feature:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraphViewTest.swift
         }
         
         // UserDefaultsにグラフ表示期間の設定が正しく保存されているか確認
@@ -971,11 +767,7 @@ extension TrainingActivityGraphViewTest {
         let testUserDefaults = createTestUserDefaults(initialStartDate: initialStartPeriod,
                                                       initialPeriod: .year,
                                                       initialTrainingTypeList: expectedTrainingTypeList)
-<<<<<<< HEAD:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraph/TrainingActivityGraphViewTest.swift
         let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(),
-=======
-        let testStore = TestStore(initialState: .getDefaultState(),
->>>>>>> BR_topic/1.0/#48_impl_graph_view_feature:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraphViewTest.swift
                                   reducer: { TrainingActivityGraphFeature() },
                                   withDependencies: {
             
@@ -985,29 +777,20 @@ extension TrainingActivityGraphViewTest {
             $0.defaultAppStorage = testUserDefaults
         })
         
-        throw XCTSkip("テスト対象未実装のためスキップ")
-        
         await testStore.send(.onAppear) {
             
-<<<<<<< HEAD:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraph/TrainingActivityGraphViewTest.swift
-            $0.viewState = .init(activityStartPeriod: initialStartPeriod,
-                                 activityPeriod: .year,
-                                 targetTrainingTypeList: [],
-                                 activityResultList: .init(resultList: []))
-=======
             $0 = .init(activityStartPeriod: initialStartPeriod,
                        activityPeriod: .year,
-                       targetTrainingTypeList: expectedTrainingTypeList,
+                       targetTrainingTypeList: [],
                        activityResultList: .init(resultList: []))
->>>>>>> BR_topic/1.0/#48_impl_graph_view_feature:Macho/MachoFramework/Tests/MachoFrameworkTests/Views/TrainingActivityGraphViewTest.swift
         }
         
         await testStore.receive(\.didReceiveTrainingTypeList) {
             
-            $0.viewState = .init(activityStartPeriod: initialStartPeriod,
-                                 activityPeriod: .year,
-                                 targetTrainingTypeList: expectedTrainingTypeList,
-                                 activityResultList: .init(resultList: []))
+            $0 = .init(activityStartPeriod: initialStartPeriod,
+                       activityPeriod: .year,
+                       targetTrainingTypeList: expectedTrainingTypeList,
+                       activityResultList: .init(resultList: []))
         }
         
         // TODO: 実装できたら削除する
