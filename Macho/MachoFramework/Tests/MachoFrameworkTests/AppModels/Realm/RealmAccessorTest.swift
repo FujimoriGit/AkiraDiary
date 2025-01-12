@@ -97,6 +97,7 @@ final class RealmAccessorTest: XCTestCase {
         
         let realm = RealmAccessor()
         let filterId = realmTestData[0].id
+        
         guard await realm.delete(where: { (tag: TrainingTagEntity) in tag.id == filterId }) else {
             
             XCTFail("Fail delete")
@@ -150,7 +151,7 @@ final class RealmAccessorTest: XCTestCase {
         await fulfillment(of: [expectation], timeout: 10)
         cancellable.cancel()
         
-        // Assertiton開始
+        // Assertion開始
         guard let target = results.filter({ $0.id == expectedData.id }).first else {
             
             XCTFail("Fail observe, expectedId: \(expectedData.id)")

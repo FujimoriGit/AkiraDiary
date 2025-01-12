@@ -74,8 +74,7 @@ private extension DiaryListItemView {
                     .frame(width: winLoseLabelTrailingPadding)
                 VStack(spacing: .zero) {
                     createTopContents(title: store.title,
-                                      date: store.date.toString(.init(date: .jpGregorian),
-                                                                isOmissionTens: true))
+                                      date: store.date.formatted(.date))
                     Spacer()
                         .frame(height: titlePaddingBottom)
                     createMessageContent(message: store.message)
@@ -142,10 +141,10 @@ private extension DiaryListItemView {
                                                           goalNumberOfSets: 3,
                                                           goalSetCount: 3,
                                                           actualNumberOfSets: 3,
-                                                          actualSetCount: 3,
-                                                          startTime: Date(),
-                                                          endTime: Date())],
-                              tags: [TrainingTagData(id: UUID(), tagName: "xxx")])
+                                                          actualSetCount: 3)],
+                              tags: [TrainingTagData(id: UUID(), tagName: "xxx")],
+                              startTime: Date(),
+                              endTime: Date())
     ScrollView {
         LazyVStack(spacing: .zero) {
             DiaryListItemView(store: Store(initialState: DiaryListItemFeature.State(diaryData)) {

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct TrainingTypeResult: Identifiable {
+struct TrainingTypeResult: Equatable, Identifiable {
     
     // MARK: - public property
     

@@ -196,6 +196,7 @@ private extension DiaryListView {
 
 private extension DiaryListView {
     
+    @ViewBuilder
     func getNavigationDestination(_ store: Store<DiaryListFeature.Path.State,
                                   DiaryListFeature.Path.Action>) -> some View {
         
@@ -203,16 +204,16 @@ private extension DiaryListView {
             
         // TODO: 実装出来次第正しい画面に変更する
         case .editScreen(let editScreenStore):
-            AnyView(AddContactView(store: editScreenStore))
+            AddContactView(store: editScreenStore)
             
         case .createScreen(let createScreenStore):
-            AnyView(AddContactView(store: createScreenStore))
+            DiaryCreationView(store: createScreenStore)
             
         case .graphScreen(let graphScreenStore):
-            AnyView(AddContactView(store: graphScreenStore))
+            AddContactView(store: graphScreenStore)
             
         case .detailScreen(let detailScreenStore):
-            AnyView(DiaryDetailView(store: detailScreenStore))
+            DiaryDetailView(store: detailScreenStore)
         }
     }
 }

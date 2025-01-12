@@ -7,10 +7,10 @@
 
 import Foundation
 
-struct TotalTrainingResult {
+struct TotalTrainingResult: Equatable {
     
     // 時間の表示形式
-    private static let displayDateFormat = Date.Format(time: .shortJp)
+    private static let displayDateFormat: Date.MachoFormat = .localeDateTime
     // 時間が表示できない場合のデフォルト文言
     private static let defaultDateDisplayText = "まだ記録されていません"
     
@@ -44,8 +44,8 @@ struct TotalTrainingResult {
         
         trainingCount = diary.goals.count
         isAchievedTotalGoal = diary.isAchieved
-        startDate = diary.goals.compactMap(\.startTime).min { $0 < $1 }
-        endDate = diary.goals.compactMap(\.endTime).max { $0 < $1 }
+        startDate = diary.startTime
+        endDate = diary.endTime
     }
 }
 
@@ -53,8 +53,8 @@ private extension TotalTrainingResult {
     
     func getDisplayDateText(_ date: Date?) -> String {
         
-        guard let text = date?.toString(Self.displayDateFormat,
-                                        timeZone: .autoupdatingCurrent) else {
+        guard let text = date?.formatted(Self.displayDateFormat,
+                                         timeZone: .autoupdatingCurrent) else {
             
             return Self.defaultDateDisplayText
         }

@@ -42,7 +42,7 @@ final class DiaryDetailViewTest: XCTestCase {
         
         await testStore.receive(\.didReceivedDiary) {
             
-            $0.diary = Self.updatedSampleDiaryEntity1
+            $0.updateDiary(Self.updatedSampleDiaryEntity1)
         }
         
         await testStore.send(.tappedBackNavigationButton)
@@ -127,17 +127,13 @@ private extension DiaryDetailViewTest {
                                                       goalNumberOfSets: 3,
                                                       goalSetCount: 3,
                                                       actualNumberOfSets: 3,
-                                                      actualSetCount: 3,
-                                                      startTime: Date(),
-                                                      endTime: Date())
+                                                      actualSetCount: 3)
     static let sampleDiaryGoal2 = TrainingContentData(id: UUID(),
                                                       trainingType: TrainingTypeEntity(id: UUID(), name: "ベンチプレス"),
                                                       goalNumberOfSets: 2,
                                                       goalSetCount: 1,
                                                       actualNumberOfSets: 1,
-                                                      actualSetCount: 1,
-                                                      startTime: Date(),
-                                                      endTime: Date())
+                                                      actualSetCount: 1)
     
     static let sampleDiaryTag1 = TrainingTagEntity(id: UUID(), tagName: "tag1")
     static let sampleDiaryTag2 = TrainingTagEntity(id: UUID(), tagName: "tag2")
@@ -150,17 +146,23 @@ private extension DiaryDetailViewTest {
                                                 title: "sample1",
                                                 mainText: "sample1 message",
                                                 goals: [sampleDiaryGoal1],
-                                                tags: [sampleDiaryTag1])
+                                                tags: [sampleDiaryTag1],
+                                                startTime: Date(),
+                                                endTime: nil)
     static let updatedSampleDiaryEntity1 = DiaryEntity(id: sampleDiaryEntity1Id,
                                                        date: Date(),
                                                        title: "updated_sample1",
                                                        mainText: "updated_sample1 message",
                                                        goals: [sampleDiaryGoal1],
-                                                       tags: [sampleDiaryTag1])
+                                                       tags: [sampleDiaryTag1],
+                                                       startTime: Date(),
+                                                       endTime: nil)
     static let sampleDiaryEntity2 = DiaryEntity(id: sampleDiaryEntity2Id,
                                                 date: Date(),
                                                 title: "sample2",
                                                 mainText: "sample2 message",
                                                 goals: [sampleDiaryGoal2],
-                                                tags: [sampleDiaryTag2])
+                                                tags: [sampleDiaryTag2],
+                                                startTime: Date(),
+                                                endTime: nil)
 }

@@ -227,9 +227,7 @@ private extension DiaryDetailView {
                                     goalNumberOfSets: 3,
                                     goalSetCount: 3,
                                     actualNumberOfSets: 3,
-                                    actualSetCount: 3,
-                                    startTime: Date(),
-                                    endTime: Date())
+                                    actualSetCount: 3)
     let tag1 = TrainingTagData(id: UUID(), tagName: "XXX")
     let tag2 = TrainingTagData(id: UUID(), tagName: "ZZZZZZZ")
     let tag3 = TrainingTagData(id: UUID(), tagName: "UUUUU")
@@ -239,7 +237,9 @@ private extension DiaryDetailView {
                                        // swiftlint:disable:next line_length
                                        mainText: "preview sample message\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
                                        goals: [goal1],
-                                       tags: [tag1, tag2, tag3])
+                                       tags: [tag1, tag2, tag3],
+                                       startTime: Date(),
+                                       endTime: Date())
     DiaryDetailView(store: Store(initialState: DiaryDetailFeature.State(diary: initialDiaryEntity),
                                  reducer: { DiaryDetailFeature() }))
 }

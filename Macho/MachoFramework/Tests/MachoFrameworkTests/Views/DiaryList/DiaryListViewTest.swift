@@ -632,10 +632,10 @@ private extension DiaryListViewTests {
                                                      goalNumberOfSets: 3,
                                                      goalSetCount: 3,
                                                      actualNumberOfSets: isWin ? 3 : 1,
-                                                     actualSetCount: 3,
-                                                     startTime: Date(),
-                                                     endTime: Date())],
-                         tags: [tag ?? Self.tag1])
+                                                     actualSetCount: 3)],
+                         tags: [tag ?? Self.tag1],
+                         startTime: Date(),
+                         endTime: Date())
     }
 }
 
