@@ -31,6 +31,8 @@ struct TrainingActivityGraphView: View {
 // MARK: - preview
 
 #Preview {
-    TrainingActivityGraphView(store: Store(initialState: .init(viewState: .init()),
-                                           reducer: { TrainingActivityGraphFeature() }))
+    TrainingActivityGraphView(
+        store: Store(initialState: .getDefaultState(),
+                     reducer: { TrainingActivityGraphFeature() })
+    )
 }

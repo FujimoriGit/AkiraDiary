@@ -22,38 +22,22 @@ struct TrainingActivityGraphFeature {
         
         // MARK: View State
         
-        var viewState: ViewState
+        /// グラフ表示開始日付
+        let activityStartPeriod: Date
+        /// グラフ表示期間
+        let activityPeriod: ActivityPeriod
+        /// 表示トレーニングリスト
+        let targetTrainingTypeList: [TrainingTypeData]
+        /// 一日毎のアクティビティ結果
+        let activityResultList: ActivityResults
         
-        struct ViewState: Equatable {
+        static func getDefaultState(_ current: Date = .now) -> State {
             
-            /// グラフ表示開始日付
-            let activityStartPeriod: Date
-            /// グラフ表示期間
-            let activityPeriod: ActivityPeriod
-            /// 表示トレーニングリスト
-            let targetTrainingTypeList: [TrainingTypeData]
-            /// 一日毎のアクティビティ結果
-            let activityResultList: ActivityResults
-            
-            init(activityStartPeriod: Date,
-                 activityPeriod: ActivityPeriod,
-                 targetTrainingTypeList: [TrainingTypeData],
-                 activityResultList: ActivityResults) {
-                
-                self.activityStartPeriod = activityStartPeriod
-                self.activityPeriod = activityPeriod
-                self.targetTrainingTypeList = targetTrainingTypeList
-                self.activityResultList = activityResultList
-            }
-            
-            init(current: Date = Date.now) {
-                
-                let component = Calendar.current.dateComponents([.year, .month], from: current)
-                self.activityStartPeriod = Calendar.current.date(from: component) ?? current
-                self.activityPeriod = .month
-                self.targetTrainingTypeList = []
-                self.activityResultList = .init(resultList: [])
-            }
+            let component = Calendar.current.dateComponents([.year, .month], from: current)
+            return .init(activityStartPeriod: Calendar.current.date(from: component) ?? current,
+                         activityPeriod: .month,
+                         targetTrainingTypeList: [],
+                         activityResultList: .init(resultList: []))
         }
     }
     
