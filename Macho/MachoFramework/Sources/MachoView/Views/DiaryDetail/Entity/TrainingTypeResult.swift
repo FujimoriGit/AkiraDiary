@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct TrainingTypeResult {
+struct TrainingTypeResult: Equatable {
     
     /// 種目名
     let trainingName: String

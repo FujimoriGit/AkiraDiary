@@ -563,9 +563,7 @@ private extension DiaryListViewTests {
                                       goalNumberOfSets: 1,
                                       goalSetCount: 1,
                                       actualNumberOfSets: diary.isWin ? 2 : 0,
-                                      actualSetCount: 1,
-                                      startTime: nil,
-                                      endTime: nil)
+                                      actualSetCount: 1)
             }
             let tags = diary.tagList.map { TrainingTagEntity(id: $0, tagName: $0.description) }
             return DiaryEntity(id: diary.id,
@@ -573,7 +571,9 @@ private extension DiaryListViewTests {
                                title: diary.title,
                                mainText: diary.message,
                                goals: goals,
-                               tags: tags)
+                               tags: tags,
+                               startTime: nil,
+                               endTime: nil)
         })
     }
 }

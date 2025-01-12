@@ -28,19 +28,20 @@ struct DiaryDetailFeature {
         
         // MARK: view state
         
-        fileprivate var diary: DiaryData
         /// メッセージをさらに表示しているかどうか
         var isShownMoreMessage = false
+        /// 日記EntityのID
+        @ObservationStateIgnored let diaryId: UUID
         /// 日記のタイトル
-        var title: String { diary.title }
+        private(set) var title: String
         /// 日記のメッセージ
-        var message: String { diary.mainText }
+        private(set) var message: String
         /// 日記のタグ
-        var tags: [TrainingTagData] { diary.tags }
+        private(set) var tags: [TrainingTagData]
         /// 日記に設定したトレーニングの総合結果
-        var totalResult: TotalTrainingResult { TotalTrainingResult(diary) }
+        private(set) var totalResult: TotalTrainingResult
         /// 日記に設定したトレーニング種目毎の結果
-        var trainings: [TrainingTypeResult] { diary.goals.map { TrainingTypeResult($0) } }
+        private(set) var trainings: [TrainingTypeResult]
     }
     
     // MARK: - Action
@@ -113,7 +114,7 @@ struct DiaryDetailFeature {
                 return .none
                 
             case .didReceivedDiary(let diary):
-                state.diary = diary
+                state.updateDiary(diary)
                 return .none
             }
         }
@@ -155,10 +156,32 @@ private extension DiaryDetailFeature {
         
         return .publisher {
             diaryListItemApi.observeDiaryList()
-                .compactMap { $0.first { $0.id == state.diary.id } }
+                .compactMap { $0.first { $0.id == state.diaryId } }
                 .map { Action.didReceivedDiary($0) }
                 .eraseToAnyPublisher()
         }
         .cancellable(id: DiaryObserveCancellable())
+    }
+}
+
+extension DiaryDetailFeature.State {
+    
+    init(diary: DiaryData) {
+        
+        diaryId = diary.id
+        title = diary.title
+        message = diary.mainText
+        tags = diary.tags
+        totalResult = TotalTrainingResult(diary)
+        trainings = diary.goals.map { TrainingTypeResult($0) }
+    }
+    
+    mutating func updateDiary(_ diary: DiaryData) {
+        
+        title = diary.title
+        message = diary.mainText
+        tags = diary.tags
+        totalResult = TotalTrainingResult(diary)
+        trainings = diary.goals.map { TrainingTypeResult($0) }
     }
 }

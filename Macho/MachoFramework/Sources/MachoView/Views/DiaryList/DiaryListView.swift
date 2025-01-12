@@ -283,7 +283,9 @@ struct PreviewDiaryListView: View {
                               title: "sample title",
                               mainText: "sample message",
                               goals: [],
-                              tags: [])
+                              tags: [],
+                              startTime: Date(),
+                              endTime: nil)
                     ]
                 }, deleteItem: { id async throws(DiaryClient.Error) in
                     

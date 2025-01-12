@@ -223,9 +223,7 @@ private extension DiaryCreationFeature {
                                 goalNumberOfSets: $0.numberOfSets,
                                 goalSetCount: $0.setCount,
                                 actualNumberOfSets: nil,
-                                actualSetCount: nil,
-                                startTime: startDate,
-                                endTime: nil)
+                                actualSetCount: nil)
         }
         
         let tags = state.tags.map { $0.entity }
@@ -235,7 +233,9 @@ private extension DiaryCreationFeature {
                          title: state.titleText,
                          mainText: state.messageText,
                          goals: goals,
-                         tags: tags)
+                         tags: tags,
+                         startTime: startDate,
+                         endTime: nil)
     }
     
     func cancelChangesetObserve() -> Effect<Self.Action> {

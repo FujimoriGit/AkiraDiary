@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct TotalTrainingResult {
+struct TotalTrainingResult: Equatable {
     
     // 時間の表示形式
     private static let displayDateFormat: Date.MachoFormat = .localeDateTime
@@ -41,8 +41,8 @@ struct TotalTrainingResult {
     init(_ diary: DiaryData) {
         
         trainingCount = diary.goals.count
-        startDate = diary.goals.compactMap(\.startTime).min { $0 < $1 }
-        endDate = diary.goals.compactMap(\.endTime).max { $0 < $1 }
+        startDate = diary.startTime
+        endDate = diary.endTime
     }
 }
 
