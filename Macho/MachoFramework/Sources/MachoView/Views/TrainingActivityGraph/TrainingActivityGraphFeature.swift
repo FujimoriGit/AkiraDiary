@@ -24,49 +24,25 @@ struct TrainingActivityGraphFeature {
         
         // MARK: View State
         
-        var viewState: ViewState
         var currentActivityPeriodTitle: String {
             
-            return viewState.activityPeriod.title
+            return activityPeriod.title
         }
         
         var selectingTrainingTypeNameList: [String] {
             
-            return viewState.targetTrainingTypeList.map(\.name)
+            return targetTrainingTypeList.map(\.name)
         }
-        
-        init() {
-            
-            viewState = .init()
-        }
-        
-        struct ViewState: Equatable {
-            
-            var isShowingFilter = true
-            /// グラフ表示開始日付
-            var activityStartPeriod: Date = .now
-            /// グラフ表示期間
-            var activityPeriod: ActivityPeriod = .week
-            /// 表示トレーニングリスト
-            var targetTrainingTypeList: [TrainingTypeData] = []
-            /// 一日毎のアクティビティ結果
-            var activityResultList: ActivityResults = .init(resultList: [])
-            
-            init(activityStartPeriod: Date,
-                 activityPeriod: ActivityPeriod,
-                 targetTrainingTypeList: [TrainingTypeData],
-                 activityResultList: ActivityResults) {
-                
-                self.activityStartPeriod = activityStartPeriod
-                self.activityPeriod = activityPeriod
-                self.targetTrainingTypeList = targetTrainingTypeList
-                self.activityResultList = activityResultList
-            }
-            
-            init() {
-                // nop
-            }
-        }
+
+        var isShowingFilter = true
+        /// グラフ表示開始日付
+        var activityStartPeriod: Date = .now
+        /// グラフ表示期間
+        var activityPeriod: ActivityPeriod = .week
+        /// 表示トレーニングリスト
+        var targetTrainingTypeList: [TrainingTypeData] = []
+        /// 一日毎のアクティビティ結果
+        var activityResultList: ActivityResults = .init(resultList: [])
     }
     
     // MARK: - action definition
@@ -104,7 +80,6 @@ struct TrainingActivityGraphFeature {
         /// 保存しているトレーニング種目取得時
         case didReceiveTrainingTypeList([TrainingTypeData])
         
-        @CasePathable
         enum Alert: Equatable {
             
             /// 日記データが１件も登録されていない場合のアラート
@@ -139,7 +114,7 @@ struct TrainingActivityGraphFeature {
                     .delegate(.selectedTrainingTypeList(let selectedTrainingTypeList))
                 )
             )):
-                state.updateTrainingTypeList(selectedTrainingTypeList)
+                state.targetTrainingTypeList = selectedTrainingTypeList
                 defaultAppStorage.setStringArray(selectedTrainingTypeList.map(\.id.uuidString),
                                                  .targetTrainingTypeList)
                 return loadActivityResult()
@@ -157,17 +132,17 @@ struct TrainingActivityGraphFeature {
                 
             case .didSelectActivityStartPeriodMenu(let selectDate):
                 defaultAppStorage.setDouble(selectDate.timeIntervalSince1970, .activityStartPeriod)
-                state.updateActivityStartPeriod(selectDate)
+                state.activityStartPeriod = selectDate
                 return loadActivityResult()
                 
             case .didSelectActivityPeriodMenu(let selectPeriod):
                 defaultAppStorage.setInt(selectPeriod.rawValue, .activityPeriod)
-                state.updateActivityPeriod(selectPeriod)
+                state.activityPeriod = selectPeriod
                 return loadActivityResult()
                 
             case .tappedTargetTrainingTypeMenu:
                 state.selectTrainingPopUp = .init(
-                    childState: .init(selectingTrainingTypeList: state.viewState.targetTrainingTypeList)
+                    childState: .init(selectingTrainingTypeList: state.targetTrainingTypeList)
                 )
                 return .none
                 
@@ -180,11 +155,11 @@ struct TrainingActivityGraphFeature {
                 return .none
                 
             case .onDragEndedFilterArea(let result):
-                state.viewState.isShowingFilter = result.isUpGesture
+                state.isShowingFilter = result.isUpGesture
                 return .none
                 
             case .tappedFilterDisplayButton:
-                state.viewState.isShowingFilter.toggle()
+                state.isShowingFilter.toggle()
                 return .none
                 
             case .didReceiveDiaryData:
@@ -197,7 +172,7 @@ struct TrainingActivityGraphFeature {
                     
                     selectedIds.contains($0.id.uuidString)
                 }
-                state.updateTrainingTypeList(selectedTrainingTypeList)
+                state.targetTrainingTypeList = selectedTrainingTypeList
                 return .none
             }
         }
@@ -216,34 +191,13 @@ private extension TrainingActivityGraphFeature {
         var currentState = current
         let startPeriodDate = Date(timeIntervalSince1970: defaultAppStorage.getDouble(.activityStartPeriod))
         let activityPeriod = ActivityPeriod(rawValue: defaultAppStorage.getInt(.activityPeriod))
-        currentState.updateActivityStartPeriod(startPeriodDate)
-        currentState.updateActivityPeriod(activityPeriod)
+        currentState.activityStartPeriod = startPeriodDate
+        currentState.activityPeriod = activityPeriod ?? currentState.activityPeriod
         return currentState
     }
     
     func loadActivityResult() -> Effect<Action> {
         
         return .none
-    }
-}
-
-// MARK: - state util method definition
-
-private extension TrainingActivityGraphFeature.State {
-    
-    mutating func updateActivityStartPeriod(_ selectedDate: Date) {
-        
-        viewState.activityStartPeriod = selectedDate
-    }
-    
-    mutating func updateActivityPeriod(_ selectedPeriod: ActivityPeriod?) {
-        
-        guard let selectedPeriod else { return }
-        viewState.activityPeriod = selectedPeriod
-    }
-    
-    mutating func updateTrainingTypeList(_ selectedTrainingTypeList: [TrainingTypeData]) {
-        
-        viewState.targetTrainingTypeList = selectedTrainingTypeList
     }
 }

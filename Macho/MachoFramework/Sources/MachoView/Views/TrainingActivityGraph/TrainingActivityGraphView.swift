@@ -78,7 +78,7 @@ private extension TrainingActivityGraphView {
     
     func createFilterSettingArea() -> some View {
         VStack(spacing: .zero) {
-            if store.viewState.isShowingFilter {
+            if store.isShowingFilter {
                 VStack(alignment: .leading, spacing: .zero) {
                     Text("Filter")
                         .font(.system(size: filterTitleFontSize,
@@ -103,7 +103,7 @@ private extension TrainingActivityGraphView {
                 store.send(.tappedFilterDisplayButton,
                            animation: .spring)
             } label: {
-                Image(systemName: store.viewState.isShowingFilter ? "arrowtriangle.up.fill" : "arrowtriangle.down.fill")
+                Image(systemName: store.isShowingFilter ? "arrowtriangle.up.fill" : "arrowtriangle.down.fill")
                     .resizable()
                     .padding(buttonPadding)
                     .frame(width: filterToggleIconSize,
@@ -111,7 +111,7 @@ private extension TrainingActivityGraphView {
                     .accessibilityHidden(true)
             }
             .frameButtonStyle(frameWidth: .zero)
-            if store.viewState.isShowingFilter {
+            if store.isShowingFilter {
                 Rectangle()
                     .frame(maxWidth: .infinity,
                            maxHeight: dividerHeight)
@@ -139,7 +139,7 @@ private extension TrainingActivityGraphView {
             Text("表示開始日時")
                 .font(.system(size: filterTitleFontSize))
             Spacer()
-            DatePickerView(date: $store.viewState.activityStartPeriod.sending(\.didSelectActivityStartPeriodMenu))
+            DatePickerView(date: $store.activityStartPeriod.sending(\.didSelectActivityStartPeriodMenu))
         }
     }
     
