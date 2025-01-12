@@ -204,7 +204,7 @@ private extension DiaryListView {
             
         // TODO: 実装出来次第正しい画面に変更する
         case .editScreen(let editScreenStore):
-            AnyView(AddContactView(store: editScreenStore))
+            AddContactView(store: editScreenStore)
             
         case .createScreen(let createScreenStore):
             DiaryCreationView(store: createScreenStore)
@@ -213,7 +213,7 @@ private extension DiaryListView {
             TrainingActivityGraphView(store: graphScreenStore)
             
         case .detailScreen(let detailScreenStore):
-            AnyView(AddContactView(store: detailScreenStore))
+            AddContactView(store: detailScreenStore)
         }
     }
 }
