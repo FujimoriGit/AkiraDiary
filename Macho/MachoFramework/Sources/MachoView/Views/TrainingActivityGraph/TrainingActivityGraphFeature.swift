@@ -31,7 +31,7 @@ struct TrainingActivityGraphFeature {
         /// 一日毎のアクティビティ結果
         let activityResultList: ActivityResults
         
-        static func getDefaultState(_ current: Date = .now) -> State {
+        static func getDefaultState(_ current: Date = .now) -> Self {
             
             let component = Calendar.current.dateComponents([.year, .month], from: current)
             return .init(activityStartPeriod: Calendar.current.date(from: component) ?? current,
@@ -71,7 +71,6 @@ struct TrainingActivityGraphFeature {
         /// 保存しているトレーニング種目取得時
         case didReceiveTrainingTypeList([TrainingTypeData])
         
-        @CasePathable
         enum Alert: Equatable {
             
             /// 日記データが１件も登録されていない場合のアラート
