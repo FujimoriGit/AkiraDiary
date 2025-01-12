@@ -28,7 +28,7 @@ struct DiaryDetailFeature {
         
         // MARK: view state
         
-        var diary: DiaryData
+        fileprivate var diary: DiaryData
         /// メッセージをさらに表示しているかどうか
         var isShownMoreMessage = false
         /// 日記のタイトル
