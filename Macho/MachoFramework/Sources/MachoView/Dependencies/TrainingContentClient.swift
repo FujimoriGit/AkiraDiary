@@ -59,17 +59,17 @@ extension TrainingContentClient: DependencyKey {
                                                      goalNumberOfSets: Int.random(in: 8...15),
                                                      goalSetCount: Int.random(in: 2...5),
                                                      actualNumberOfSets: nil,
-                                                     actualSetCount: nil,
-                                                     startTime: nil,
-                                                     endTime: nil)
+                                                     actualSetCount: nil)
         }
     } getTrainingGoalPublisher: {
         
         return PassthroughSubject<[TrainingContentEntity], Never>().eraseToAnyPublisher()
     }
     
-    static func createCustomValue(_ realm: RealmAccessible = RealmAccessor(),
-                                  publisher: (() -> AnyPublisher<[TrainingContentEntity], Never>)? = nil) -> TrainingContentClient {
+    static func createCustomValue(
+        _ realm: RealmAccessible = RealmAccessor(),
+        publisher: (() -> AnyPublisher<[TrainingContentEntity], Never>)? = nil
+    ) -> TrainingContentClient {
         
         return TrainingContentClient {
             
@@ -111,9 +111,7 @@ private extension TrainingContentClient {
                                          goalNumberOfSets: $0.numberOfSets,
                                          goalSetCount: $0.setCount,
                                          actualNumberOfSets: nil,
-                                         actualSetCount: nil,
-                                         startTime: nil,
-                                         endTime: nil)
+                                         actualSetCount: nil)
         }
         
         return await realm.insert(records: records)

@@ -27,7 +27,7 @@ extension TrainingTagClient: DependencyKey {
     static var liveValue: TrainingTagClient = .createCustomValue {
         
         let executor = TrainingTagEntity.executor
-        executor.startObservation()
+        executor.startObservation(RealmAccessor())
         return executor.getPublisher().eraseToAnyPublisher()
     }
 

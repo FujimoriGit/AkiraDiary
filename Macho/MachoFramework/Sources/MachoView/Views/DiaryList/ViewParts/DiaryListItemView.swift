@@ -74,8 +74,7 @@ private extension DiaryListItemView {
                     .frame(width: winLoseLabelTrailingPadding)
                 VStack(spacing: .zero) {
                     createTopContents(title: store.title,
-                                      date: store.date.toString(.init(date: .jpGregorian),
-                                                                isOmissionTens: true))
+                                      date: store.date.formatted(.date))
                     Spacer()
                         .frame(height: titlePaddingBottom)
                     createMessageContent(message: store.message)

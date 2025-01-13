@@ -22,11 +22,11 @@ public class RealmObserverExecutor<T: BaseRealmEntity> {
     }
     
     /// RealmDBのデータ変更の監視を開始する
-    public func startObservation() {
+    public func startObservation(_ realm: RealmAccessible) {
         
         Task {
             
-            token = await RealmAccessor().observeDidChangeRealmObject(subject: publisher)
+            token = await realm.observeDidChangeRealmObject(subject: publisher)
         }
     }
     

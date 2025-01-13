@@ -9,7 +9,6 @@ import Combine
 import ComposableArchitecture
 import SwiftUI
 
-@MainActor
 struct DiaryListView: View {
     
     // MARK: - TCA store property
@@ -284,7 +283,9 @@ struct PreviewDiaryListView: View {
                               title: "sample title",
                               mainText: "sample message",
                               goals: [],
-                              tags: [])
+                              tags: [],
+                              startTime: Date(),
+                              endTime: nil)
                     ]
                 }, deleteItem: { id async throws(DiaryClient.Error) in
                     
@@ -292,6 +293,9 @@ struct PreviewDiaryListView: View {
                         
                         throw DiaryClient.Error.failedDeletingItem(target: id)
                     }
+                }, observeDiaryList: {
+                    
+                    return PassthroughSubject<[DiaryData], Never>().eraseToAnyPublisher()
                 })
                 // フィルター取得API DI
                 $0.diaryListFilterApi = DiaryListFilterClient(addFilter: { filter in
