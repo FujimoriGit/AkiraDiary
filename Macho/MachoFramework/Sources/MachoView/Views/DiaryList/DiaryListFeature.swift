@@ -109,7 +109,6 @@ struct DiaryListFeature: Sendable {
         /// 日記リストのフィルター取得に成功した時の副作用を処理する
         case receiveLoadDiaryListFilter(filters: [DiaryListFilterItem])
         
-        @CasePathable
         enum Alert: Equatable {
             
             /// 日記の編集を行うかどうかの確認アラート
