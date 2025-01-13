@@ -8,7 +8,7 @@
 import Foundation
 import RealmSwift
 
-public struct TrainingContentEntity: BaseRealmEntity, Equatable {
+public struct TrainingContentEntity: BaseRealmEntity {
     
     public let id: UUID
     /// 種目

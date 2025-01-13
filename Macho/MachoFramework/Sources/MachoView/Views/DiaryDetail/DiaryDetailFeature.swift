@@ -46,7 +46,7 @@ struct DiaryDetailFeature {
     
     // MARK: - Action
     
-    enum Action {
+    enum Action: Equatable {
         
         // MARK: Navigation Action
         
@@ -62,8 +62,6 @@ struct DiaryDetailFeature {
         case tappedEditButton
         /// 戻るボタン押下時
         case tappedBackNavigationButton
-        /// さらに表示ボタン押下時
-        case tappedShowMoreMessageButton
         
         // MARK: Effect Action
         
@@ -108,10 +106,6 @@ struct DiaryDetailFeature {
                         await dismiss()
                     }
                 )
-                
-            case .tappedShowMoreMessageButton:
-                state.isShownMoreMessage.toggle()
-                return .none
                 
             case .didReceivedDiary(let diary):
                 state.updateDiary(diary)

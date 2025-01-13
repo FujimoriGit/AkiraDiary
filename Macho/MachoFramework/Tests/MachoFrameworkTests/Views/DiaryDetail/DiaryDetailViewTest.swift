@@ -73,12 +73,10 @@ final class DiaryDetailViewTest: XCTestCase {
         await testStore.send(.onDisappear)
     }
     
-    /// さらに表示ボタンタップ時の確認
+    /// 日記監視挙動の確認
     ///
     /// # 確認する仕様
     /// - 画面に表示していない日記の変更があっても画面の内容は変更されないこと
-    /// - さらに表示するボタンを押下すると本文のテキストが全文表示されること
-    /// - 本文を省略するボタンを押下すると本文のテキストが省略されること
     /// - 画面が非表示になると日記の監視が終了すること
     @MainActor
     func testOnTappedShowMoreMessage() async throws {
@@ -102,14 +100,6 @@ final class DiaryDetailViewTest: XCTestCase {
         
         await testStore.receive(\.didReceivedDiary)
         
-        await testStore.send(.tappedShowMoreMessageButton) {
-            
-            $0.isShownMoreMessage = true
-        }
-        await testStore.send(.tappedShowMoreMessageButton) {
-            
-            $0.isShownMoreMessage = false
-        }
         await testStore.send(.onDisappear)
         
         // dismissしていないか確認

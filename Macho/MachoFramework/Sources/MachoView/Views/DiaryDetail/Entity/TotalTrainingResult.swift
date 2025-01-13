@@ -16,6 +16,8 @@ struct TotalTrainingResult: Equatable {
     
     /// トレーニング種目数
     let trainingCount: Int
+    /// 全ての目標を達成したかどうか
+    let isAchievedTotalGoal: Bool
     private let startDate: Date?
     private let endDate: Date?
     
@@ -41,6 +43,7 @@ struct TotalTrainingResult: Equatable {
     init(_ diary: DiaryData) {
         
         trainingCount = diary.goals.count
+        isAchievedTotalGoal = diary.isAchieved
         startDate = diary.startTime
         endDate = diary.endTime
     }
@@ -51,7 +54,7 @@ private extension TotalTrainingResult {
     func getDisplayDateText(_ date: Date?) -> String {
         
         guard let text = date?.formatted(Self.displayDateFormat,
-                                        timeZone: .autoupdatingCurrent) else {
+                                         timeZone: .autoupdatingCurrent) else {
             
             return Self.defaultDateDisplayText
         }
