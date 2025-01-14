@@ -5,6 +5,8 @@
 //  Created by 佐藤汰一 on 2024/11/24.
 //
 
+import Foundation
+
 struct ActivityResults: Equatable {
     
     private let resultList: [ActivityResultOfDay]
@@ -12,6 +14,16 @@ struct ActivityResults: Equatable {
     init(resultList: [ActivityResultOfDay]) {
         
         self.resultList = resultList
+    }
+    
+    /// カレンダーの各日のコンポーネントにデコレーションするクラスを生成する
+    func buildCalendarDecorator() -> [DateComponents: ActivityResultDecoration] {
+        
+        return resultList.reduce(into: [:]) {
+            
+            $0.updateValue($1.calendarDecoration,
+                           forKey: Calendar.current.dateComponents([.year, .month, .day], from: $1.targetDate))
+        }
     }
 }
 

@@ -13,86 +13,40 @@ import SwiftUI
 
 struct CalendarView: UIViewRepresentable {
     
-    @Bindable private var store: StoreOf<CalendarFeature>
     @Environment(\.locale) private var locale
     
     private let initialDate: DateComponents
     private let interval: DateInterval
-    private let decolator: UICalendarViewDelegate?
+    private let decorator: UICalendarViewDelegate?
+    private let onSelectDay: (DateComponents?) -> Void
     
-    init(store: StoreOf<CalendarFeature>,
-         initialDate: DateComponents,
+    /// カレンダーコンポーネント
+    /// - Parameters:
+    ///   - initialDate: 最初に表示する日付
+    ///   - interval: 表示する期間
+    ///   - decorator: カレンダーの装飾
+    ///   - onSelectDay: 日付タップ時のハンドラ
+    init(initialDate: DateComponents,
          interval: DateInterval,
-         decolator: UICalendarViewDelegate? = nil) {
+         decorator: UICalendarViewDelegate? = nil,
+         onSelectDay: @escaping (DateComponents?) -> Void = { _ in }) {
         
-        self.store = store
         self.initialDate = initialDate
         self.interval = interval
-        self.decolator = decolator
+        self.decorator = decorator
+        self.onSelectDay = onSelectDay
     }
     
-    func makeUIView(context: Context) -> CalendarUIView {
+    func makeUIView(context: Context) -> UICalendarView {
         
-        let content = CalendarUIView { selectedDate in
-            
-            store.send(.didSelectDay(selectedDate))
-        }
-        
-        return content
+        return SingleSelectCalendarView(selectHandler: onSelectDay)
     }
 
-    func updateUIView(_ uiView: CalendarUIView, context: Context) {
+    func updateUIView(_ uiView: UICalendarView, context: Context) {
         
         uiView.visibleDateComponents = initialDate
         uiView.availableDateRange = interval
         uiView.locale = locale
-        uiView.delegate = decolator
-    }
-}
-
-final class CalendarUIView: UICalendarView, UICalendarSelectionSingleDateDelegate {
-    
-    private let selectHandler: (DateComponents?) -> Void
-    
-    init(selectHandler: @escaping (DateComponents?) -> Void) {
-        
-        self.selectHandler = selectHandler
-        super.init(frame: .zero)
-        
-        selectionBehavior = UICalendarSelectionSingleDate(delegate: self)
-    }
-    
-    required init?(coder: NSCoder) {
-        
-        assertionFailure("init(coder:) has not been implemented")
-        return nil
-    }
-    
-    func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
-        
-        selectHandler(dateComponents)
-    }
-}
-
-@Reducer
-struct CalendarFeature {
-    
-    @ObservableState
-    struct State: Equatable {}
-    
-    enum Action: Equatable {
-        
-        case didSelectDay(DateComponents?)
-    }
-    
-    var body: some ReducerOf<Self> {
-        Reduce { state, action in
-            
-            switch action {
-                
-            case .didSelectDay:
-                return .none
-            }
-        }
+        uiView.delegate = decorator
     }
 }

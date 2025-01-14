@@ -18,9 +18,8 @@ struct ActivityCalendarFeature {
     @ObservableState
     struct State: Equatable, Sendable {
         
-        var calendarView = CalendarFeature.State()
         var displayInterval: DateInterval
-        var calendarDecorator: CalendarViewDecolator? = nil
+        var calendarDecorator: CalendarViewDecorator<ActivityResultDecoration>
         var initialDisplayDate: DateComponents {
             
             return Calendar.current.dateComponents(in: .current, from: displayInterval.start)
@@ -30,44 +29,29 @@ struct ActivityCalendarFeature {
     // MARK: - action definition
     
     enum Action: Equatable {
-        
-        // MARK: event actions
-        
-        /// 画面表示時
-        case onAppear
-        
+                
         // MARK: delegate actions
         
-        /// カレンダー画面のAction
-        case calendarView(CalendarFeature.Action)
+        case delegate(Delegate)
+        
+        enum Delegate: Equatable {
+            
+            /// カレンダーの日付を選択した時
+            case selectedDay(DateComponents?)
+        }
     }
     
     // MARK: - reduce definition
     
     var body: some ReducerOf<Self> {
         
-        Scope(state: \.calendarView, action: \.calendarView) {
-            CalendarFeature()
-        }
         Reduce { state, action in
             
             switch action {
                 
-            case .onAppear:
-                state.calendarDecorator = CalendarViewDecolator(componentsDecorationDic: [:])
-                return .none
-                
-            case .calendarView(.didSelectDay(let day)):
-                print("did select calendar day: \(day?.description)")
-                return .none
-                
-            case .calendarView:
+            case .delegate:
                 return .none
             }
         }
     }
-}
-
-private extension ActivityCalendarFeature {
-    
 }

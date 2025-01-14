@@ -58,7 +58,11 @@ struct TrainingActivityGraphView: View {
             createFilterSettingArea()
                 .frame(maxWidth: .infinity)
             ScrollView {
-                LazyVStack(spacing: .zero) {}
+                LazyVStack(spacing: .zero) {
+                    ActivityCalendarView(store: store.scope(state: \.calendar, action: \.calendar))
+                }
+                .frame(maxHeight: .infinity)
+                .padding(.horizontal, 16)
             }
         }
         .navigationBarTitleDisplayMode(.inline)

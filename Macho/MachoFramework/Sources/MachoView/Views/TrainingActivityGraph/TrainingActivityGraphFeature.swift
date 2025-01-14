@@ -43,6 +43,11 @@ struct TrainingActivityGraphFeature {
         var targetTrainingTypeList: [TrainingTypeData] = []
         /// 一日毎のアクティビティ結果
         var activityResultList: ActivityResults = .init(resultList: [])
+        
+        // MARK: child feature state
+        
+        var calendar = ActivityCalendarFeature.State(displayInterval: .init(start: .now, end: .now),
+                                                     calendarDecorator: .getInitial())
     }
     
     // MARK: - action definition
@@ -80,6 +85,11 @@ struct TrainingActivityGraphFeature {
         /// 保存しているトレーニング種目取得時
         case didReceiveTrainingTypeList([TrainingTypeData])
         
+        // MARK: child feature action
+        
+        /// カレンダーコンポーネントのイベント
+        case calendar(ActivityCalendarFeature.Action)
+        
         enum Alert: Equatable {
             
             /// 日記データが１件も登録されていない場合のアラート
@@ -99,6 +109,10 @@ struct TrainingActivityGraphFeature {
     // swiftlint:disable:next closure_body_length
     var body: some ReducerOf<Self> {
         
+        Scope(state: \.calendar, action: \.calendar) {
+            
+            ActivityCalendarFeature()
+        }
         Reduce { state, action in
             
             logger.info("action: \(action)")
@@ -173,6 +187,9 @@ struct TrainingActivityGraphFeature {
                     selectedIds.contains($0.id.uuidString)
                 }
                 state.targetTrainingTypeList = selectedTrainingTypeList
+                return .none
+                
+            case .calendar:
                 return .none
             }
         }

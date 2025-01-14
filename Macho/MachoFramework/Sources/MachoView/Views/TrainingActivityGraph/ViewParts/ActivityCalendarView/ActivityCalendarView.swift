@@ -32,24 +32,34 @@ struct ActivityCalendarView: View {
     // MARK: - view body
     
     var body: some View {
-        CalendarView(store: store.scope(state: \.calendarView, action: \.calendarView),
-                     initialDate: store.initialDisplayDate,
+        CalendarView(initialDate: store.initialDisplayDate,
                      interval: store.displayInterval,
-                     decolator: store.calendarDecorator)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                     decorator: store.calendarDecorator) {
+            store.send(.delegate(.selectedDay($0)))
+        }
+                     .frame(maxWidth: .infinity,
+                            maxHeight: .infinity)
     }
 }
 
-private extension ActivityCalendarView {
-}
+// MARK: - preview definition
 
 #Preview {
     let interval = DateInterval(start: Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date(),
                                 end: Date())
-    ActivityCalendarView(store: Store(initialState: .init(displayInterval: interval)) {
+    let activityResults = ActivityResults(resultList: [
+        ActivityResultOfDay(targetDate: interval.start,
+                            activities: [.init(id: UUID(), title: "Test1", isAchieved: true)]),
+        ActivityResultOfDay(targetDate: Calendar.current.date(byAdding: .day, value: 1, to: interval.start) ?? .now,
+                            activities: [.init(id: UUID(), title: "Test2", isAchieved: false)])
+    ])
+    
+    ActivityCalendarView(store: Store(initialState: .init(
+        displayInterval: interval,
+        calendarDecorator: .create(activityResults: activityResults)
+    )) {
         ActivityCalendarFeature()
     })
-    .frame(height: 300)
     .padding(.horizontal, 16)
     .environment(\.locale, Locale(identifier: "ja_JP"))
 }
