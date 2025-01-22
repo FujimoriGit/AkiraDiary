@@ -23,6 +23,22 @@ struct ActivityResultOfDay: Equatable {
     var calendarDecoration: ActivityResultDecoration { ActivityResultDecoration(activityResult: self) }
 }
 
+extension ActivityResultOfDay {
+    
+    init(dayOfdiaries: [DiaryData]) {
+        
+        if dayOfdiaries.isEmpty {
+            
+            // 空の配列が入力されることを想定していない
+            assertionFailure("Empty diaries.")
+        }
+        
+        // swiftlint:disable:next force_unwrapping
+        targetDate = dayOfdiaries.first!.date
+        activities = dayOfdiaries.map { .init(id: $0.id, title: $0.title, isAchieved: true) } // TODO: 仮実装
+    }
+}
+
 // MARK: - struct definition
 
 extension ActivityResultOfDay {

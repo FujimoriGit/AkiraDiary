@@ -67,9 +67,16 @@ struct TrainingActivityGraphView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("Activity")
-        .fullScreenCover(item: $store.scope(state: \.selectTrainingPopUp,
-                                            action: \.selectTrainingPopUp)) {
-            PopUpView<SelectTrainingTypeContentView, SelectTrainingTypeContentFeature>(store: $0)
+        .fullScreenCover(item: $store.scope(state: \.popup,
+                                            action: \.popup)) {
+            switch $0.case {
+                
+            case .selectTraining(let store):
+                PopUpView<SelectTrainingTypeContentView, SelectTrainingTypeContentFeature>(store: store)
+                
+            case .detailDayOfActivity(let store):
+                PopUpView<DetailDayOfActivityView, DetailDayOfActivityFeature>(store: store)
+            }
         }
         .transaction { $0.disablesAnimations = true }
         .onAppear {
@@ -218,6 +225,12 @@ private extension TrainingActivityGraphView {
             selectableTrainingTypeList[4].id.uuidString
         ],
                                     .targetTrainingTypeList)
+        userDefaults.setDouble(
+            // swiftlint:disable:next force_unwrapping
+            Calendar.current.date(from: .init(year: 2024, month: 11, day: 1))!.timeIntervalSince1970,
+            .activityStartPeriod
+        )
+        userDefaults.setInt(ActivityPeriod.month.rawValue, .activityPeriod)
         return userDefaults
     }
     TrainingActivityGraphView(store: Store(initialState: .init(),

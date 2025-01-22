@@ -20,7 +20,7 @@ struct TrainingActivityGraphFeature {
         // MARK: Presents States
         
         @Presents var alert: AlertState<Action.Alert>?
-        @Presents var selectTrainingPopUp: PopUpFeature<SelectTrainingTypeContentFeature>.State?
+        @Presents var popup: PopUpDestination.State?
         
         // MARK: View State
         
@@ -42,7 +42,7 @@ struct TrainingActivityGraphFeature {
         /// 表示トレーニングリスト
         var targetTrainingTypeList: [TrainingTypeData] = []
         /// 一日毎のアクティビティ結果
-        var activityResultList: ActivityResults = .init(resultList: [])
+        var activityResultList: ActivityResults = .init([])
         
         // MARK: child feature state
         
@@ -57,7 +57,7 @@ struct TrainingActivityGraphFeature {
         // MARK: - rooting event action
         
         case alert(PresentationAction<Alert>)
-        case selectTrainingPopUp(PresentationAction<PopUpFeature<SelectTrainingTypeContentFeature>.Action>)
+        case popup(PresentationAction<PopUpDestination.Action>)
         
         // MARK: user event action
         
@@ -123,17 +123,20 @@ struct TrainingActivityGraphFeature {
                 // TODO: 未実装
                 return .none
                 
-            case .selectTrainingPopUp(.presented(
-                .childAction(
+            case .popup(.presented(.selectTraining(.childAction(
                     .delegate(.selectedTrainingTypeList(let selectedTrainingTypeList))
-                )
-            )):
+                )))):
                 state.targetTrainingTypeList = selectedTrainingTypeList
                 defaultAppStorage.setStringArray(selectedTrainingTypeList.map(\.id.uuidString),
                                                  .targetTrainingTypeList)
                 return loadActivityResult()
                 
-            case .selectTrainingPopUp:
+            case .popup(.presented(.detailDayOfActivity(.childAction(
+                .delegate(.tappedActivityArea(let diaryId))
+            )))):
+                return .none
+                
+            case .popup:
                 return .none
                 
             case .onAppear:
@@ -146,17 +149,17 @@ struct TrainingActivityGraphFeature {
                 
             case .didSelectActivityStartPeriodMenu(let selectDate):
                 defaultAppStorage.setDouble(selectDate.timeIntervalSince1970, .activityStartPeriod)
-                state.activityStartPeriod = selectDate
+                state.updateStartPeriodDate(selectDate)
                 return loadActivityResult()
                 
             case .didSelectActivityPeriodMenu(let selectPeriod):
                 defaultAppStorage.setInt(selectPeriod.rawValue, .activityPeriod)
-                state.activityPeriod = selectPeriod
+                state.updatePeriod(selectPeriod)
                 return loadActivityResult()
                 
             case .tappedTargetTrainingTypeMenu:
-                state.selectTrainingPopUp = .init(
-                    childState: .init(selectingTrainingTypeList: state.targetTrainingTypeList)
+                state.popup = .selectTraining(
+                    .init(childState: .init(selectingTrainingTypeList: state.targetTrainingTypeList))
                 )
                 return .none
                 
@@ -189,12 +192,46 @@ struct TrainingActivityGraphFeature {
                 state.targetTrainingTypeList = selectedTrainingTypeList
                 return .none
                 
+            case .calendar(.delegate(.selectedDay(let day))):
+                
+                guard let day,
+                      let result = state.activityResultList.getResultOfDay(day) else {
+                    
+                    logger.debug("Nothing activity result in scope period.")
+                    return .none
+                }
+                state.popup = .detailDayOfActivity(.init(childState: .init(result)))
+                return .none
+                
             case .calendar:
                 return .none
             }
         }
-        .ifLet(\.$selectTrainingPopUp, action: \.selectTrainingPopUp) {
-            PopUpFeature<SelectTrainingTypeContentFeature>()
+        .ifLet(\.$popup, action: \.popup)
+    }
+}
+
+// MARK: - popup destination definition
+
+extension TrainingActivityGraphFeature {
+    
+    @Reducer(state: .equatable, action: .equatable)
+    @CasePathable
+    enum PopUpDestination: Equatable {
+        
+        case selectTraining(PopUpFeature<SelectTrainingTypeContentFeature>)
+        case detailDayOfActivity(PopUpFeature<DetailDayOfActivityFeature>)
+        
+        static func == (lhs: Self, rhs: Self) -> Bool {
+            
+            switch lhs {
+                
+            case .selectTraining:
+                rhs.is(\.selectTraining)
+                
+            case .detailDayOfActivity:
+                rhs.is(\.detailDayOfActivity)
+            }
         }
     }
 }
@@ -208,13 +245,18 @@ private extension TrainingActivityGraphFeature {
         var currentState = current
         let startPeriodDate = Date(timeIntervalSince1970: defaultAppStorage.getDouble(.activityStartPeriod))
         let activityPeriod = ActivityPeriod(rawValue: defaultAppStorage.getInt(.activityPeriod))
-        currentState.activityStartPeriod = startPeriodDate
-        currentState.activityPeriod = activityPeriod ?? currentState.activityPeriod
+        currentState.updateStartPeriodDate(startPeriodDate)
+        currentState.updatePeriod(activityPeriod ?? currentState.activityPeriod)
         return currentState
     }
     
     func loadActivityResult() -> Effect<Action> {
         
-        return .none
+        return .concatenate([
+            .run { send in
+                
+                await send(.didReceiveDiaryData(diaryListFetchApi.fetch(.now, 100))) // TODO: 仮実装
+            }
+        ])
     }
 }

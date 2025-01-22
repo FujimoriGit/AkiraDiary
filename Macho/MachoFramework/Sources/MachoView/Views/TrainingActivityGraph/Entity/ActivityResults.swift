@@ -11,9 +11,21 @@ struct ActivityResults: Equatable {
     
     private let resultList: [ActivityResultOfDay]
     
-    init(resultList: [ActivityResultOfDay]) {
+    init(_ diaries: [DiaryData]) {
         
-        self.resultList = resultList
+        resultList = diaries.reduce(into: [[DiaryData]]()) { partialResult, diary in
+            
+            let targetDateComponent = Calendar.current.dateComponents([.year, .month, .day], from: diary.date)
+            let targetIndex = partialResult.firstIndex {
+                
+                guard let diaryDate = $0.first?.date else { return false }
+                return Calendar.current.date(diaryDate, matchesComponents: targetDateComponent)
+            }
+            
+            guard let targetIndex else { return }
+            partialResult[targetIndex].append(diary)
+        }
+        .map { ActivityResultOfDay(dayOfdiaries: $0) }
     }
     
     /// カレンダーの各日のコンポーネントにデコレーションするクラスを生成する
@@ -23,6 +35,16 @@ struct ActivityResults: Equatable {
             
             $0.updateValue($1.calendarDecoration,
                            forKey: Calendar.current.dateComponents([.year, .month, .day], from: $1.targetDate))
+        }
+    }
+    
+    /// 引数の日にちに合致するアクティビティ結果を取得する
+    func getResultOfDay(_ day: DateComponents) -> ActivityResultOfDay? {
+        
+        let calendar = Calendar.current
+        return resultList.first {
+            
+            return calendar.date($0.targetDate, matchesComponents: day)
         }
     }
 }

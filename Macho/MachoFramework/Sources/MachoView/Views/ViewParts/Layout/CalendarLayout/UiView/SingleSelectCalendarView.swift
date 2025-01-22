@@ -21,12 +21,14 @@ final class SingleSelectCalendarView: UICalendarView, UICalendarSelectionSingleD
         selectionBehavior = UICalendarSelectionSingleDate(delegate: self)
     }
     
+    // swiftlint:disable:next unused_parameter
     required init?(coder: NSCoder) {
         
         assertionFailure("init(coder:) has not been implemented")
         return nil
     }
     
+    // swiftlint:disable:next unused_parameter
     func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
         
         selectHandler(dateComponents)
