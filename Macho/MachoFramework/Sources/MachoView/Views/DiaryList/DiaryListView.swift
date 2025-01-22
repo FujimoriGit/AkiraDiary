@@ -9,7 +9,6 @@ import Combine
 import ComposableArchitecture
 import SwiftUI
 
-@MainActor
 struct DiaryListView: View {
     
     // MARK: - TCA store property
@@ -120,7 +119,7 @@ private extension DiaryListView {
     
     func createListSection() -> some View {
         TrackableList(store: store.scope(state: \.trackableList, action: \.trackableList)) {
-            ForEachStore(store.scope(state: \.diaries,
+            ForEachStore(store.scope(state: \.filteredDiaries,
                                      action: \.diaries)) { store in
                 DiaryListItemView(store: store)
                     .frame(minHeight: diaryItemMinHeightSize)
@@ -213,7 +212,7 @@ private extension DiaryListView {
             TrainingActivityGraphView(store: graphScreenStore)
             
         case .detailScreen(let detailScreenStore):
-            AddContactView(store: detailScreenStore)
+            DiaryDetailView(store: detailScreenStore)
         }
     }
 }
@@ -236,90 +235,7 @@ private extension DiaryListView {
 // MARK: - preview
 
 #Preview {
-    PreviewDiaryListView()
-}
-
-struct PreviewDiaryListView: View {
-    
-    private let state: DiaryListFeature.State
-    private let publisher = PassthroughSubject<[DiaryListFilterItem], Never>()
-    @State private var currentFilters = [
-        DiaryListFilterItem(target: .achievement,
-                            filterItemId: UUID(),
-                            value: "達成していない"),
-        DiaryListFilterItem(target: .trainingType,
-                            filterItemId: UUID(),
-                            value: "腹筋")
-    ]
-    
-    init() {
-        
-        var diaries: IdentifiedArrayOf<DiaryListItemFeature.State> = []
-        
-        for num in 0...10 {
-            diaries.append(DiaryListItemFeature.State(title: "\(num)",
-                                                      message: "",
-                                                      date: Date(),
-                                                      isWin: true,
-                                                      trainingList: [],
-                                                      tagList: []))
-        }
-        
-        self.state = DiaryListFeature.State(diaries: diaries)
-    }
-    
-    var body: some View {
-        DiaryListView(store: Store(initialState: state) {
-            withDependencies {
-                // 日記リスト取得のAPI DI
-                $0.diaryListFetchApi = DiaryClient(add: { _ in
-                    
-                    return false
-                }, fetch: { _, _ in
-                    
-                    return [
-                        .init(id: UUID(),
-                              date: Date(),
-                              title: "sample title",
-                              mainText: "sample message",
-                              goals: [],
-                              tags: [])
-                    ]
-                }, deleteItem: { id async throws(DiaryClient.Error) in
-                    
-                    if Int.random(in: 0..<10) < 4 {
-                        
-                        throw DiaryClient.Error.failedDeletingItem(target: id)
-                    }
-                })
-                // フィルター取得API DI
-                $0.diaryListFilterApi = DiaryListFilterClient(addFilter: { filter in
-                    
-                    currentFilters += [filter]
-                    publisher.send(currentFilters)
-                    return true
-                }, updateFilter: { filter in
-                    
-                    guard let index = currentFilters.firstIndex(where: { $0.target == filter.target })
-                    else { return false }
-                    currentFilters[index] = filter
-                    publisher.send(currentFilters)
-                    return true
-                }, deleteFilters: { targets in
-                    
-                    currentFilters = currentFilters.filter { !targets.contains($0) }
-                    publisher.send(currentFilters)
-                    return true
-                }, fetchFilterList: {
-                    
-                    return currentFilters
-                }, getFilterListObserver: {
-                    
-                    return publisher.eraseToAnyPublisher()
-                })
-            } operation: {
-                DiaryListFeature()
-            }
-        })
-    }
+    DiaryListView(store: Store(initialState: DiaryListFeature.State()) {
+        DiaryListFeature()
+    })
 }

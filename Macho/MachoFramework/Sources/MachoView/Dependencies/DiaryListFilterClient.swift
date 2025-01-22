@@ -42,7 +42,7 @@ extension DiaryListFilterClient: DependencyKey {
     static var liveValue = createCustomValue(RealmAccessor()) {
         
         let executor = DiaryListFilterEntity.executor
-        executor.startObservation()
+        executor.startObservation(RealmAccessor())
         return executor.getPublisher().map { convertFilterEntityToItem($0) }.eraseToAnyPublisher()
     }
     

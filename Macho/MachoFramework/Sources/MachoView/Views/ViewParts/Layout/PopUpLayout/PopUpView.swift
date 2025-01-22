@@ -8,7 +8,10 @@
 import ComposableArchitecture
 import SwiftUI
 
-struct PopUpView<PopUpContentView: PopUpableContentView, PopUpContentFeature: PopUpableContentFeature>: View where PopUpContentView.Feature == PopUpContentFeature {
+struct PopUpView<
+    PopUpContentView: PopUpableContentView,
+    PopUpContentFeature: PopUpableContentFeature
+>: View where PopUpContentView.Feature == PopUpContentFeature {
     
     @Bindable private var store: StoreOf<PopUpFeature<PopUpContentFeature>>
         
@@ -56,7 +59,10 @@ private extension PopUpView {
 }
 
 #Preview("default") {
-    PopUpView<SelectTrainingTypeContentView, SelectTrainingTypeContentFeature>(
+    PopUpView<
+        SelectTrainingTypeContentView,
+        SelectTrainingTypeContentFeature
+    >(
         store: Store(initialState: PopUpFeature.State(childState: .init(selectingTrainingTypeList: [TrainingTypeData]())),
                      reducer: { PopUpFeature() })
     )

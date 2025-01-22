@@ -17,7 +17,7 @@ final class CalendarViewDecorator<Decoration: CalendarViewDecoratable>: NSObject
     
     // MARK: - initialize method
     
-    init(componentsDecorationDic: [DateComponents : Decoration]) {
+    init(componentsDecorationDic: [DateComponents: Decoration]) {
         
         self.componentsDecorationDic = componentsDecorationDic
     }
@@ -31,7 +31,9 @@ final class CalendarViewDecorator<Decoration: CalendarViewDecoratable>: NSObject
     
     // MARK: - public method
     
-    func calendarView(_ calendarView: UICalendarView, decorationFor dateComponents: DateComponents) -> UICalendarView.Decoration? {
+    // swiftlint:disable:next unused_parameter
+    func calendarView(_ calendarView: UICalendarView,
+                      decorationFor dateComponents: DateComponents) -> UICalendarView.Decoration? {
         
         guard let targetKey = componentsDecorationDic.keys.first(where: { isSameDay($0, rhs: dateComponents) }) else { return nil }
         return componentsDecorationDic[targetKey]?.getDecoration()
@@ -42,9 +44,8 @@ final class CalendarViewDecorator<Decoration: CalendarViewDecoratable>: NSObject
     /// - Returns: デコレーションの内容を比較した結果を返す
     override func isEqual(_ object: Any?) -> Bool {
         
-        guard let decorator = object as? CalendarViewDecorator else { return false }
+        guard let decorator = object as? Self else { return false }
         return decorator.componentsDecorationDic == componentsDecorationDic
-        
     }
 }
 

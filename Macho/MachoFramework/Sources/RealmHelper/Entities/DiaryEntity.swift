@@ -21,6 +21,16 @@ public struct DiaryEntity: BaseRealmEntity {
     public let goals: [TrainingContentEntity]
     /// タグリスト
     public let tags: [TrainingTagEntity]
+    /// 開始時間
+    public let startTime: Date?
+    /// 終了時間
+    public let endTime: Date?
+    
+    /// 全ての目標を達成したかどうか
+    public var isAchieved: Bool {
+        
+        return !goals.contains { !$0.isAchieved }
+    }
     
     public static let executor = RealmObserverExecutor<Self>()
     
@@ -29,7 +39,9 @@ public struct DiaryEntity: BaseRealmEntity {
                 title: String,
                 mainText: String,
                 goals: [TrainingContentEntity],
-                tags: [TrainingTagEntity]) {
+                tags: [TrainingTagEntity],
+                startTime: Date?,
+                endTime: Date?) {
         
         self.id = id
         self.date = date
@@ -37,6 +49,8 @@ public struct DiaryEntity: BaseRealmEntity {
         self.mainText = mainText
         self.goals = goals
         self.tags = tags
+        self.startTime = startTime
+        self.endTime = endTime
     }
     
     public init(realmObject: DiaryRealmObject) {
@@ -47,6 +61,8 @@ public struct DiaryEntity: BaseRealmEntity {
         mainText = realmObject.mainText
         goals = realmObject.goals.map { TrainingContentEntity(realmObject: $0) }
         tags = realmObject.tags.map { TrainingTagEntity(realmObject: $0) }
+        startTime = realmObject.startTime
+        endTime = realmObject.endTime
     }
     
     public func toRealmObject() -> DiaryRealmObject {
@@ -68,7 +84,9 @@ public struct DiaryEntity: BaseRealmEntity {
                                 title: title,
                                 mainText: mainText,
                                 goals: goalObjects,
-                                tags: tagObjects)
+                                tags: tagObjects,
+                                startTime: startTime,
+                                endTime: endTime)
     }
 }
 
@@ -85,13 +103,19 @@ public class DiaryRealmObject: Object {
     @Persisted var goals: List<TrainingContentRealmObject>
     /// タグリスト
     @Persisted var tags: List<TrainingTagRealmObject>
+    /// 開始時間
+    @Persisted var startTime: Date?
+    /// 終了時間
+    @Persisted var endTime: Date?
     
     convenience init(id: UUID,
                      date: Date,
                      title: String,
                      mainText: String,
                      goals: List<TrainingContentRealmObject>,
-                     tags: List<TrainingTagRealmObject>) {
+                     tags: List<TrainingTagRealmObject>,
+                     startTime: Date?,
+                     endTime: Date?) {
         
         self.init()
         
@@ -101,5 +125,7 @@ public class DiaryRealmObject: Object {
         self.mainText = mainText
         self.goals = goals
         self.tags = tags
+        self.startTime = startTime
+        self.endTime = endTime
     }
 }

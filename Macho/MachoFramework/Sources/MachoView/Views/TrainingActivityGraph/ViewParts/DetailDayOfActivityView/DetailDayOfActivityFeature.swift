@@ -70,7 +70,7 @@ extension DetailDayOfActivityFeature.State {
     
     init(_ result: ActivityResultOfDay) {
         
-        targetDayStr = result.targetDate.toString(.init())
+        targetDayStr = result.targetDate.formatted(.date)
         activities = result.activities
         isAchieved = result.isAchieved
     }

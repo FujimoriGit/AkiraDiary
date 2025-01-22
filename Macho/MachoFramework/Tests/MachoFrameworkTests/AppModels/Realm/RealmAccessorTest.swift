@@ -144,7 +144,7 @@ final class RealmAccessorTest: XCTestCase {
                 }
             }
         
-        TrainingTagEntity.executor.startObservation()
+        TrainingTagEntity.executor.startObservation(RealmAccessor())
         await insertTestData(data: [expectedData])
         
         // fulfillを待つ
@@ -182,7 +182,7 @@ final class RealmAccessorTest: XCTestCase {
                 }
             }
         
-        TrainingTagEntity.executor.startObservation()
+        TrainingTagEntity.executor.startObservation(RealmAccessor())
         
         await insertTestData(data: [TrainingTagEntity(id: expectedData.id, tagName: "testData3")])
         let updateValue = ["id": expectedData.id, "tagName": expectedData.tagName] as [String : Any]
@@ -223,7 +223,7 @@ final class RealmAccessorTest: XCTestCase {
                 }
             }
         
-        TrainingTagEntity.executor.startObservation()
+        TrainingTagEntity.executor.startObservation(RealmAccessor())
         await deleteTestData(deleteTarget: deleteTarget.id)
         
         // fulfillを待つ

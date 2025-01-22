@@ -30,19 +30,19 @@ struct DiaryListFilterItem: Identifiable, Equatable {
     var isMultiSelectFilter: Bool { target.isMultiSelectFilter }
     
     /// フィルターの条件にヒットしたかどうか
-    func isMatchFilter(_ diaryItem: DiaryListItemFeature.State) -> Bool {
+    func isMatchFilter(isAchieved: Bool, trainingList: [UUID], tagList: [UUID]) -> Bool {
         
         switch target {
             
         case .achievement:
             guard let achievement = TrainingAchievement(value: value) else { return false }
-            return diaryItem.isWin == (achievement == .achieved)
+            return isAchieved == (achievement == .achieved)
             
         case .trainingType:
-            return diaryItem.trainingList.contains(filterItemId)
+            return trainingList.contains(filterItemId)
             
         case .tag:
-            return diaryItem.tagList.contains(filterItemId)
+            return tagList.contains(filterItemId)
         }
     }
 }
