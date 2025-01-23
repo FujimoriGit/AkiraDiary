@@ -28,9 +28,11 @@ final class SingleSelectCalendarView: UICalendarView, UICalendarSelectionSingleD
         return nil
     }
     
-    // swiftlint:disable:next unused_parameter
     func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
         
         selectHandler(dateComponents)
+        
+        // 選択後に再度同じ日付を選択できるようにするために、選択状態を解除するようにする
+        selection.setSelected(nil, animated: true)
     }
 }

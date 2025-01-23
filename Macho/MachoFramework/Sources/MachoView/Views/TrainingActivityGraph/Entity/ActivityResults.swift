@@ -22,7 +22,11 @@ struct ActivityResults: Equatable {
                 return Calendar.current.date(diaryDate, matchesComponents: targetDateComponent)
             }
             
-            guard let targetIndex else { return }
+            guard let targetIndex else {
+                
+                partialResult.append([diary])
+                return
+            }
             partialResult[targetIndex].append(diary)
         }
         .map { ActivityResultOfDay(dayOfdiaries: $0) }
@@ -34,17 +38,17 @@ struct ActivityResults: Equatable {
         return resultList.reduce(into: [:]) {
             
             $0.updateValue($1.calendarDecoration,
-                           forKey: Calendar.current.dateComponents([.year, .month, .day], from: $1.targetDate))
+                           forKey: Calendar.current.dateComponents([.year, .month, .day],
+                                                                   from: $1.targetDate))
         }
     }
     
     /// 引数の日にちに合致するアクティビティ結果を取得する
-    func getResultOfDay(_ day: DateComponents) -> ActivityResultOfDay? {
+    func getResultOfDay(_ day: DateComponents, calendar: Calendar) -> ActivityResultOfDay? {
         
-        let calendar = Calendar.current
         return resultList.first {
             
-            return calendar.date($0.targetDate, matchesComponents: day)
+            return calendar.dateComponents([.year, .month, .day], from: $0.targetDate).isMatchDate(day)
         }
     }
 }

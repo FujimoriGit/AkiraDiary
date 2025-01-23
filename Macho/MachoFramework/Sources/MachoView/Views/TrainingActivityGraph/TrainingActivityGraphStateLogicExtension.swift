@@ -25,7 +25,8 @@ extension TrainingActivityGraphFeature.State {
     
     mutating func updateActivityResults(_ diaries: [DiaryData]) {
         
-        
+        activityResultList = .init(diaries)
+        calendar.decorationDic = activityResultList.buildCalendarDecorator()
     }
 }
 

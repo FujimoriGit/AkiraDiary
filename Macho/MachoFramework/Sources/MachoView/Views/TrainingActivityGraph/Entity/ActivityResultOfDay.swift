@@ -35,7 +35,9 @@ extension ActivityResultOfDay {
         
         // swiftlint:disable:next force_unwrapping
         targetDate = dayOfdiaries.first!.date
-        activities = dayOfdiaries.map { .init(id: $0.id, title: $0.title, isAchieved: true) } // TODO: 仮実装
+        activities = dayOfdiaries.map { .init(id: $0.id,
+                                              title: $0.title,
+                                              isAchieved: $0.isAchieved) }
     }
 }
 

@@ -78,10 +78,13 @@ struct TrainingActivityGraphView: View {
                 PopUpView<DetailDayOfActivityView, DetailDayOfActivityFeature>(store: store)
             }
         }
-        .transaction { $0.disablesAnimations = true }
-        .onAppear {
-            store.send(.onAppear)
-        }
+                                            .transaction { $0.disablesAnimations = true }
+                                            .onAppear {
+                                                store.send(.onAppear)
+                                            }
+                                            .navigationDestination(item: $store.scope(state: \.navigationDestination?.detailScreen, action: \.navigationDestination.detailScreen)) {
+                                                DiaryDetailView(store: $0)
+                                            }
     }
 }
 
@@ -207,42 +210,78 @@ private extension TrainingActivityGraphView {
 // MARK: - preview
 
 #Preview {
-    let selectableTrainingTypeList: [TrainingTypeData] = [
-        .init(id: UUID(), name: "腹筋"),
-        .init(id: UUID(), name: "ベンチプレス"),
-        .init(id: UUID(), name: "腕立て伏せ"),
-        .init(id: UUID(), name: "ああああああああああ"),
-        .init(id: UUID(), name: "ええええ"),
-        .init(id: UUID(), name: "ううう"),
-        .init(id: UUID(), name: "おおおおおおおおおおおお")
-    ]
+    
+    @Previewable @Environment(\.calendar)
+    var calendar
+    
+    let absId = UUID()
+    let benchPressId = UUID()
+    let diaryId = UUID()
+    
+    var fetchDiaries: [DiaryData] {
+        [
+            .init(id: diaryId,
+                  date: .now,
+                  title: "Test1",
+                  mainText: "",
+                  goals: [
+                    .init(id: UUID(),
+                          trainingType: .init(id: absId, name: "aaa"),
+                          goalNumberOfSets: 3,
+                          goalSetCount: 3,
+                          actualNumberOfSets: 3,
+                          actualSetCount: 3)
+                  ],
+                  tags: [],
+                  startTime: nil,
+                  endTime: nil)
+        ]
+    }
+    var selectableTrainingTypeList: [TrainingTypeData] {
+        
+        [
+            .init(id: absId, name: "腹筋"),
+            .init(id: benchPressId, name: "ベンチプレス")
+        ]
+    }
     var previewUserDefault: UserDefaults {
         
         // swiftlint:disable:next force_unwrapping
         let userDefaults = UserDefaults(suiteName: "preview")!
         userDefaults.setStringArray([
-            selectableTrainingTypeList[0].id.uuidString,
-            selectableTrainingTypeList[4].id.uuidString
+            selectableTrainingTypeList[0].id.uuidString
         ],
                                     .targetTrainingTypeList)
         userDefaults.setDouble(
-            // swiftlint:disable:next force_unwrapping
-            Calendar.current.date(from: .init(year: 2024, month: 11, day: 1))!.timeIntervalSince1970,
+            Date.now.addingTimeInterval(-(60 * 60 * 24 * 7)).timeIntervalSince1970,
             .activityStartPeriod
         )
         userDefaults.setInt(ActivityPeriod.month.rawValue, .activityPeriod)
         return userDefaults
     }
-    TrainingActivityGraphView(store: Store(initialState: .init(),
-                                           reducer: { TrainingActivityGraphFeature() }, withDependencies: {
-        $0.defaultAppStorage = previewUserDefault
-        $0.trainingTypeApi = .init(add: { _ in true },
-                                   update: { _ in true },
-                                   fetchAll: {
-            return selectableTrainingTypeList
-        }, getPublisher: {
-            return PassthroughSubject().eraseToAnyPublisher()
-        })
-    }))
+    
+    NavigationView {
+        TrainingActivityGraphView(store: Store(initialState: .init(),
+                                               reducer: { TrainingActivityGraphFeature() },
+                                               withDependencies: {
+            $0.defaultAppStorage = previewUserDefault
+            $0.trainingTypeApi = .init(add: { _ in true },
+                                       update: { _ in true },
+                                       fetchAll: {
+                
+                return selectableTrainingTypeList
+            }, getPublisher: {
+                
+                return PassthroughSubject().eraseToAnyPublisher()
+            })
+            $0.diaryListFetchApi = .init(add: { _ in true },
+                                         fetch: { _, _ in fetchDiaries },
+                                         deleteItem: { _ in },
+                                         observeDiaryList: {
+                
+                return PassthroughSubject().eraseToAnyPublisher()
+            })
+        }))
+    }
     .environment(\.locale, Locale(identifier: "ja_JP"))
 }

@@ -12,6 +12,10 @@ import SwiftUI
 @Reducer
 struct TrainingActivityGraphFeature {
     
+    // MARK: - publisher cancellable
+    
+    struct Cancellable: Hashable {}
+    
     // MARK: - state definition
     
     @ObservableState
@@ -21,6 +25,10 @@ struct TrainingActivityGraphFeature {
         
         @Presents var alert: AlertState<Action.Alert>?
         @Presents var popup: PopUpDestination.State?
+        
+        // MARK: Navigation State
+        
+        @Presents var navigationDestination: Path.State?
         
         // MARK: View State
         
@@ -33,7 +41,7 @@ struct TrainingActivityGraphFeature {
             
             return targetTrainingTypeList.map(\.name)
         }
-
+        
         var isShowingFilter = true
         /// グラフ表示開始日付
         var activityStartPeriod: Date = .now
@@ -44,25 +52,31 @@ struct TrainingActivityGraphFeature {
         /// 一日毎のアクティビティ結果
         var activityResultList: ActivityResults = .init([])
         
-        // MARK: child feature state
+        // MARK: Child Feature
         
         var calendar = ActivityCalendarFeature.State(displayInterval: .init(start: .now, end: .now),
-                                                     calendarDecorator: .getInitial())
+                                                     decorationDic: [:])
     }
     
     // MARK: - action definition
     
     enum Action: Equatable, Sendable {
         
-        // MARK: - rooting event action
+        // MARK: Presents
         
         case alert(PresentationAction<Alert>)
         case popup(PresentationAction<PopUpDestination.Action>)
         
-        // MARK: user event action
+        // MARK: Navigation
+        
+        case navigationDestination(PresentationAction<Path.Action>)
+        
+        // MARK: User Event
         
         /// 画面表示時
         case onAppear
+        /// 画面非表示時
+        case onDisappear
         /// グラフ表示開始日付のメニュー選択時
         case didSelectActivityStartPeriodMenu(Date)
         /// グラフ表示期間のメニュー選択時
@@ -78,14 +92,16 @@ struct TrainingActivityGraphFeature {
         /// フィルター領域のトグルボタンタップ時
         case tappedFilterDisplayButton
         
-        // MARK: effect event action
+        // MARK: Effect Event
         
         /// 日記データを取得時
         case didReceiveDiaryData([DiaryData])
+        /// 詳細表示のための日記データの取得
+        case didReceiveDiaryDataForShowingDetail(DiaryData)
         /// 保存しているトレーニング種目取得時
         case didReceiveTrainingTypeList([TrainingTypeData])
         
-        // MARK: child feature action
+        // MARK: Child Feature
         
         /// カレンダーコンポーネントのイベント
         case calendar(ActivityCalendarFeature.Action)
@@ -100,6 +116,7 @@ struct TrainingActivityGraphFeature {
     // MARK: private property
     
     @Dependency(\.dismiss) private var dismiss
+    @Dependency(\.calendar) private var calendar
     @Dependency(\.diaryListFetchApi) private var diaryListFetchApi
     @Dependency(\.trainingTypeApi) private var trainingTypeApi
     @Dependency(\.defaultAppStorage) private var defaultAppStorage
@@ -134,18 +151,21 @@ struct TrainingActivityGraphFeature {
             case .popup(.presented(.detailDayOfActivity(.childAction(
                 .delegate(.tappedActivityArea(let diaryId))
             )))):
-                return .none
+                state.popup = nil
+                return fetchDiaryDataById(diaryId)
                 
             case .popup:
                 return .none
                 
+            case .navigationDestination:
+                return .none
+                
             case .onAppear:
                 state = setupStateOnAppear(state)
-                return .run { send in
-                    
-                    await send(.didReceiveTrainingTypeList(trainingTypeApi.fetchAll()))
-                }
-                // TODO: 日記リストの取得、監視が残件
+                return buildEffectWhenAppear()
+                
+            case .onDisappear:
+                return .cancel(id: Cancellable())
                 
             case .didSelectActivityStartPeriodMenu(let selectDate):
                 defaultAppStorage.setDouble(selectDate.timeIntervalSince1970, .activityStartPeriod)
@@ -179,23 +199,25 @@ struct TrainingActivityGraphFeature {
                 state.isShowingFilter.toggle()
                 return .none
                 
-            case .didReceiveDiaryData:
-                // TODO: 未実装
+            case .didReceiveDiaryData(let diaries):
+                state.updateActivityResults(diaries)
+                return .none
+                
+            case .didReceiveDiaryDataForShowingDetail(let diary):
+                state.navigationDestination = .detailScreen(.init(diary: diary))
                 return .none
                 
             case .didReceiveTrainingTypeList(let trainingTypeList):
                 let selectedIds = defaultAppStorage.getStringArray(.targetTrainingTypeList)
-                let selectedTrainingTypeList = trainingTypeList.filter {
-                    
-                    selectedIds.contains($0.id.uuidString)
-                }
-                state.targetTrainingTypeList = selectedTrainingTypeList
-                return .none
+                state.targetTrainingTypeList = getSelectedTrainingTypeFilters(
+                    trainingTypeList: trainingTypeList,
+                    selectedIdList: selectedIds
+                )
+                return loadActivityResult()
                 
             case .calendar(.delegate(.selectedDay(let day))):
-                
                 guard let day,
-                      let result = state.activityResultList.getResultOfDay(day) else {
+                      let result = state.activityResultList.getResultOfDay(day, calendar: calendar) else {
                     
                     logger.debug("Nothing activity result in scope period.")
                     return .none
@@ -208,6 +230,7 @@ struct TrainingActivityGraphFeature {
             }
         }
         .ifLet(\.$popup, action: \.popup)
+        .ifLet(\.$navigationDestination, action: \.navigationDestination)
     }
 }
 
@@ -216,23 +239,21 @@ struct TrainingActivityGraphFeature {
 extension TrainingActivityGraphFeature {
     
     @Reducer(state: .equatable, action: .equatable)
-    @CasePathable
-    enum PopUpDestination: Equatable {
+    enum PopUpDestination {
         
         case selectTraining(PopUpFeature<SelectTrainingTypeContentFeature>)
         case detailDayOfActivity(PopUpFeature<DetailDayOfActivityFeature>)
+    }
+}
+
+// MARK: - navigation path definition
+
+extension TrainingActivityGraphFeature {
+    
+    @Reducer(state: .equatable, action: .equatable)
+    enum Path {
         
-        static func == (lhs: Self, rhs: Self) -> Bool {
-            
-            switch lhs {
-                
-            case .selectTraining:
-                rhs.is(\.selectTraining)
-                
-            case .detailDayOfActivity:
-                rhs.is(\.detailDayOfActivity)
-            }
-        }
+        case detailScreen(DiaryDetailFeature)
     }
 }
 
@@ -250,13 +271,52 @@ private extension TrainingActivityGraphFeature {
         return currentState
     }
     
-    func loadActivityResult() -> Effect<Action> {
+    func buildEffectWhenAppear() -> Effect<Action> {
         
         return .concatenate([
             .run { send in
                 
-                await send(.didReceiveDiaryData(diaryListFetchApi.fetch(.now, 100))) // TODO: 仮実装
+                await send(.didReceiveTrainingTypeList(trainingTypeApi.fetchAll()))
+            },
+            .publisher {
+                
+                diaryListFetchApi.observeDiaryList()
+                    .map { .didReceiveDiaryData($0) }
             }
+                .cancellable(id: Cancellable()),
+            .publisher {
+                
+                trainingTypeApi.getPublisher()
+                    .map { .didReceiveTrainingTypeList($0) }
+            }
+                .cancellable(id: Cancellable())
         ])
+    }
+    
+    func loadActivityResult() -> Effect<Action> {
+        
+        return .run { send in
+            
+            await send(.didReceiveDiaryData(diaryListFetchApi.fetch(.now, .zero)))
+        }
+    }
+    
+    func getSelectedTrainingTypeFilters(trainingTypeList: [TrainingTypeData],
+                                        selectedIdList: [String]) -> [TrainingTypeData] {
+        
+        return trainingTypeList.filter {
+            
+            return selectedIdList.contains($0.id.uuidString)
+        }
+    }
+    
+    func fetchDiaryDataById(_ diaryId: UUID) -> Effect<Action> {
+        
+        return .run { send in
+            
+            guard let diaryData = await diaryListFetchApi.fetch(.now, .zero)
+                .first(where: { $0.id == diaryId }) else { return }
+            await send(.didReceiveDiaryDataForShowingDetail(diaryData))
+        }
     }
 }

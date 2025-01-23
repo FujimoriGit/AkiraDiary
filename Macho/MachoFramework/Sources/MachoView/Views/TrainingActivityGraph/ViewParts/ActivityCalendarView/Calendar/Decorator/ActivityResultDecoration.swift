@@ -9,7 +9,7 @@
 
 import UIKit
 
-struct ActivityResultDecoration: CalendarViewDecoratable {
+struct ActivityResultDecoration: Equatable {
     
     private let activityResult: ActivityResultOfDay
     
@@ -25,15 +25,5 @@ struct ActivityResultDecoration: CalendarViewDecoratable {
         UIColor(asset: CustomColor.winColor) :
         UIColor(asset: CustomColor.loseColor)
         return .image(UIImage(systemName: systemImageName), color: imageColor)
-    }
-}
-
-// MARK: - for factory method extension
-
-extension CalendarViewDecorator where Decoration == ActivityResultDecoration {
-    
-    static func create(activityResults: ActivityResults) -> some CalendarViewDecorator {
-        
-        return CalendarViewDecorator(componentsDecorationDic: activityResults.buildCalendarDecorator())
     }
 }

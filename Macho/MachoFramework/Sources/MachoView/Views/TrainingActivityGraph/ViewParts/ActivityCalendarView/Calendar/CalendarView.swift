@@ -22,7 +22,7 @@ struct CalendarView: UIViewRepresentable {
     
     private let initialDate: DateComponents
     private let interval: DateInterval
-    private let decorator: UICalendarViewDelegate?
+    private let decorationDic: [DateComponents: ActivityResultDecoration]
     private let onSelectDay: (DateComponents?) -> Void
     
     /// カレンダーコンポーネント
@@ -33,12 +33,12 @@ struct CalendarView: UIViewRepresentable {
     ///   - onSelectDay: 日付タップ時のハンドラ
     init(initialDate: DateComponents,
          interval: DateInterval,
-         decorator: UICalendarViewDelegate? = nil,
+         decorationDic: [DateComponents: ActivityResultDecoration] = [:],
          onSelectDay: @escaping (DateComponents?) -> Void = { _ in }) {
         
         self.initialDate = initialDate
         self.interval = interval
-        self.decorator = decorator
+        self.decorationDic = decorationDic
         self.onSelectDay = onSelectDay
     }
     
@@ -48,7 +48,11 @@ struct CalendarView: UIViewRepresentable {
         return SingleSelectCalendarView(selectHandler: onSelectDay)
     }
     
-    // swiftlint:disable:next unused_parameter
+    func makeCoordinator() -> CalendarViewDecorator {
+        
+        return CalendarViewDecorator (componentsDecorationDic: [:])
+    }
+    
     func updateUIView(_ uiView: UICalendarView, context: Context) {
                 
         // update available date range
@@ -91,6 +95,9 @@ struct CalendarView: UIViewRepresentable {
         
         // update decorator
         
+        let decorator = context.coordinator
+        decorator.componentsDecorationDic = decorationDic
         uiView.delegate = decorator
+        uiView.reloadDecorations(forDateComponents: decorationDic.keys.map(\.self), animated: true)
     }
 }

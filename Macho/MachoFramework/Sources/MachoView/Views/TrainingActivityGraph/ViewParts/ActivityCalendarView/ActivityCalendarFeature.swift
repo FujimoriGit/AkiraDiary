@@ -19,7 +19,7 @@ struct ActivityCalendarFeature {
     struct State: Equatable, Sendable {
         
         var displayInterval: DateInterval
-        var calendarDecorator: CalendarViewDecorator<ActivityResultDecoration>
+        var decorationDic: [DateComponents: ActivityResultDecoration]
         var initialDisplayDate: DateComponents {
             
             return Calendar.current.dateComponents(in: .current, from: displayInterval.start)
@@ -45,7 +45,7 @@ struct ActivityCalendarFeature {
     
     var body: some ReducerOf<Self> {
         
-        Reduce { state, action in
+        Reduce { _, action in
             
             switch action {
                 
