@@ -24,7 +24,7 @@ struct DiaryDetailFeature {
         
         // MARK: path
         
-        var path = StackState<Path.State>()
+        @Presents var navigationDestination: Path.State?
         
         // MARK: view state
         
@@ -50,7 +50,7 @@ struct DiaryDetailFeature {
         
         // MARK: Navigation Action
         
-        case path(StackActionOf<Path>)
+        case navigationDestination(PresentationAction<Path.Action>)
         
         // MARK: Event Action
         
@@ -84,7 +84,7 @@ struct DiaryDetailFeature {
             
             switch action {
                 
-            case .path:
+            case .navigationDestination:
                 return .none
                 
             case .onAppear:
@@ -95,7 +95,7 @@ struct DiaryDetailFeature {
                 
             case .tappedEditButton:
                 // TODO: 編集画面ができたら正しいStateを設定する
-                state.path.append(.editDiaryView(.init(contact: .init(id: .init(.zero), name: "sample"))))
+                state.navigationDestination = .editDiaryView(.init(contact: .init(id: .init(.zero), name: "sample")))
                 return .none
                 
             case .tappedBackNavigationButton:
@@ -112,7 +112,7 @@ struct DiaryDetailFeature {
                 return .none
             }
         }
-        .forEach(\.path, action: \.path)
+        .ifLet(\.$navigationDestination, action: \.navigationDestination)
     }
 }
 
@@ -121,24 +121,10 @@ struct DiaryDetailFeature {
 extension DiaryDetailFeature {
     
     @Reducer(state: .equatable, action: .equatable)
-    enum Path: Equatable {
+    enum Path {
         
         // TODO: 編集画面ができたら変更する
         case editDiaryView(AddContactFeature)
-        
-        var id: Int {
-            
-            switch self {
-                
-            case .editDiaryView:
-                return 0
-            }
-        }
-        
-        static func == (lhs: DiaryDetailFeature.Path, rhs: DiaryDetailFeature.Path) -> Bool {
-            
-            return lhs.id == rhs.id
-        }
     }
 }
 
@@ -150,6 +136,7 @@ private extension DiaryDetailFeature {
         
         return .publisher {
             diaryListItemApi.observeDiaryList()
+                .receive(on: DispatchQueue.main)
                 .compactMap { $0.first { $0.id == state.diaryId } }
                 .map { Action.didReceivedDiary($0) }
                 .eraseToAnyPublisher()

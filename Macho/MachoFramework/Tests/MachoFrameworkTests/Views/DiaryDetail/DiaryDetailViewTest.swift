@@ -68,7 +68,7 @@ final class DiaryDetailViewTest: XCTestCase {
         await testStore.send(.tappedEditButton) {
             
             // TODO: 編集画面が実装されたら正しい値を入れる
-            $0.path.append(.editDiaryView(.init(contact: .init(id: .init(.zero), name: "sample"))))
+            $0.navigationDestination = .editDiaryView(.init(contact: .init(id: .init(.zero), name: "sample")))
         }
         await testStore.send(.onDisappear)
     }

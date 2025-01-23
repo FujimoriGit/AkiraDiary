@@ -419,7 +419,7 @@ private extension DiaryListFeature {
                                filters: [DiaryListFilterItem]) -> IdentifiedArrayOf<DiaryListItemFeature.State> {
         
         // フィルタリング処理
-        var filteredList = diaryList.filter { item in
+        let filteredList = diaryList.filter { item in
             
             return filters.isEmpty ? true : filters.contains {
                 $0.isMatchFilter(isAchieved: item.isWin,
