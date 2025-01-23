@@ -170,7 +170,7 @@ private extension DiaryListFeature {
                 logger.info("confirmEditItem(id=\(id)).")
                 state.path.append(.editScreen(AddContactFeature.State(contact: .init(id: uuid.callAsFunction(),
                                                                                      name: ""))))
-                return .none
+                return cancelObserver()
                 
             case .alert(.presented(.confirmDeleteItem(deleteItemId: let id))):
                 return deleteDiaryListItem(id)
@@ -199,7 +199,7 @@ private extension DiaryListFeature {
                 
             case .onDisappearView:
                 logger.info("onDisappearView")
-                return .cancel(id: FilterObserveCancellable())
+                return cancelObserver()
                 
                 // 日記項目のComponentのDelegateAction
             case .diaries(.element(let id, let delegateAction)):
@@ -235,13 +235,13 @@ private extension DiaryListFeature {
                 // TODO: グラフ画面表示を実行
                 state.path.append(.graphScreen(AddContactFeature.State(contact: .init(id: uuid.callAsFunction(),
                                                                                       name: ""))))
-                return .none
+                return cancelObserver()
                 
             case .tappedCreateNewDiaryButton:
                 logger.info("tappedCreateNewDiaryButton")
                 // TODO: 日記作成画面表示を実行
                 state.path.append(.createScreen(DiaryCreationFeature.State()))
-                return .none
+                return cancelObserver()
                 
             case .receiveLoadDiaryItems(let items):
                 logger.info("receiveLoadDiaryItems(items: \(items))")
@@ -482,5 +482,10 @@ private extension DiaryListFeature {
         }
         
         return updateTargetState
+    }
+    
+    func cancelObserver() -> Effect<Action> {
+        
+        return .cancel(id: FilterObserveCancellable())
     }
 }
