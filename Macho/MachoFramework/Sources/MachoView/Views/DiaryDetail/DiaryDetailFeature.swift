@@ -56,8 +56,6 @@ struct DiaryDetailFeature {
         
         /// 画面表示時
         case onAppear
-        /// 画面非表示時
-        case onDisappear
         /// 編集ボタン押下時
         case tappedEditButton
         /// 戻るボタン押下時
@@ -90,13 +88,10 @@ struct DiaryDetailFeature {
             case .onAppear:
                 return addObserveDiaryData(state)
                 
-            case .onDisappear:
-                return .cancel(id: DiaryObserveCancellable())
-                
             case .tappedEditButton:
                 // TODO: 編集画面ができたら正しいStateを設定する
                 state.navigationDestination = .editDiaryView(.init(contact: .init(id: .init(.zero), name: "sample")))
-                return .none
+                return .cancel(id: DiaryObserveCancellable())
                 
             case .tappedBackNavigationButton:
                 return .concatenate(
