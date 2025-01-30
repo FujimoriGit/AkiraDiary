@@ -93,7 +93,7 @@ private extension DetailDayOfActivityView {
 
 #Preview {
     let result = ActivityResultOfDay(
-        targetDate: .now,
+        targetDate: .init(year: 2025, month: 1, day: 1),
         activities: [
             .init(id: UUID(), title: "Test1", isAchieved: true),
             .init(id: UUID(), title: "Test2", isAchieved: false)

@@ -11,8 +11,19 @@ struct ActivityResults: Equatable {
     
     private let resultList: [ActivityResultOfDay]
     
-    init(_ diaries: [DiaryData]) {
+    init() {
         
+        resultList = []
+    }
+    
+    init(_ diaries: [DiaryData],
+         periodFilter: ActivityPeriodFilter,
+         trainingTypeFilter: ActivityGraphTrainingTypeFilter) {
+        
+        let diaries = diaries.filter {
+            
+            return periodFilter.isMatch($0) && trainingTypeFilter.isMatch($0)
+        }
         resultList = diaries.reduce(into: [[DiaryData]]()) { partialResult, diary in
             
             let targetDateComponent = Calendar.current.dateComponents([.year, .month, .day], from: diary.date)
@@ -37,18 +48,16 @@ struct ActivityResults: Equatable {
         
         return resultList.reduce(into: [:]) {
             
-            $0.updateValue($1.calendarDecoration,
-                           forKey: Calendar.current.dateComponents([.year, .month, .day],
-                                                                   from: $1.targetDate))
+            $0.updateValue($1.calendarDecoration, forKey: $1.targetDate)
         }
     }
     
     /// 引数の日にちに合致するアクティビティ結果を取得する
-    func getResultOfDay(_ day: DateComponents, calendar: Calendar) -> ActivityResultOfDay? {
+    func getResultOfDay(_ day: DateComponents) -> ActivityResultOfDay? {
         
         return resultList.first {
             
-            return calendar.dateComponents([.year, .month, .day], from: $0.targetDate).isMatchDate(day)
+            return $0.targetDate.isMatchDate(day)
         }
     }
 }

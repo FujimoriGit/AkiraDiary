@@ -8,13 +8,18 @@
 import ComposableArchitecture
 import Foundation
 import SwiftUI
+import Combine
 
 @Reducer
 struct TrainingActivityGraphFeature {
     
     // MARK: - publisher cancellable
     
-    struct Cancellable: Hashable {}
+    enum Cancellable: Hashable, CaseIterable {
+        
+        case observeTrainingType
+        case observeDiaryData
+    }
     
     // MARK: - state definition
     
@@ -50,7 +55,7 @@ struct TrainingActivityGraphFeature {
         /// 表示トレーニングリスト
         var targetTrainingTypeList: [TrainingTypeData] = []
         /// 一日毎のアクティビティ結果
-        var activityResultList: ActivityResults = .init([])
+        var activityResultList: ActivityResults = .init()
         
         // MARK: Child Feature
         
@@ -83,14 +88,12 @@ struct TrainingActivityGraphFeature {
         case didSelectActivityPeriodMenu(ActivityPeriod)
         /// グラフ表示対象のトレーニング種目選択ボタン押下時
         case tappedTargetTrainingTypeMenu
-        /// グラフ表示開始日付のメニュー選択時
-        case tappedDayOfCalendar(Date)
-        /// アクティビティのセルタップ時
-        case tappedActivityCell
         /// フィルター領域をドラッグした時
         case onDragEndedFilterArea(result: DragGestureResult)
         /// フィルター領域のトグルボタンタップ時
         case tappedFilterDisplayButton
+        /// 戻るボタン押下時
+        case tappedNavigationBackButton
         
         // MARK: Effect Event
         
@@ -141,10 +144,11 @@ struct TrainingActivityGraphFeature {
                 return .none
                 
             case .popup(.presented(.selectTraining(.childAction(
-                    .delegate(.selectedTrainingTypeList(let selectedTrainingTypeList))
-                )))):
+                .delegate(.selectedTrainingTypeList(let selectedTrainingTypeList))
+            )))):
                 state.targetTrainingTypeList = selectedTrainingTypeList
-                defaultAppStorage.setStringArray(selectedTrainingTypeList.map(\.id.uuidString),
+                let trainingTypeFilter = ActivityGraphTrainingTypeFilter(trainingTypeList: selectedTrainingTypeList)
+                defaultAppStorage.setStringArray(trainingTypeFilter.selectedIdList,
                                                  .targetTrainingTypeList)
                 return loadActivityResult()
                 
@@ -165,7 +169,7 @@ struct TrainingActivityGraphFeature {
                 return buildEffectWhenAppear()
                 
             case .onDisappear:
-                return .cancel(id: Cancellable())
+                return cancelObserver()
                 
             case .didSelectActivityStartPeriodMenu(let selectDate):
                 defaultAppStorage.setDouble(selectDate.timeIntervalSince1970, .activityStartPeriod)
@@ -183,14 +187,6 @@ struct TrainingActivityGraphFeature {
                 )
                 return .none
                 
-            case .tappedDayOfCalendar:
-                // TODO: 未実装
-                return .none
-                
-            case .tappedActivityCell:
-                // TODO: 未実装
-                return .none
-                
             case .onDragEndedFilterArea(let result):
                 state.isShowingFilter = result.isUpGesture
                 return .none
@@ -199,25 +195,28 @@ struct TrainingActivityGraphFeature {
                 state.isShowingFilter.toggle()
                 return .none
                 
+            case .tappedNavigationBackButton:
+                return cancelObserver()
+                
             case .didReceiveDiaryData(let diaries):
                 state.updateActivityResults(diaries)
                 return .none
                 
             case .didReceiveDiaryDataForShowingDetail(let diary):
                 state.navigationDestination = .detailScreen(.init(diary: diary))
-                return .none
+                return cancelObserver()
                 
             case .didReceiveTrainingTypeList(let trainingTypeList):
-                let selectedIds = defaultAppStorage.getStringArray(.targetTrainingTypeList)
-                state.targetTrainingTypeList = getSelectedTrainingTypeFilters(
-                    trainingTypeList: trainingTypeList,
-                    selectedIdList: selectedIds
+                let trainingTypeIdList = defaultAppStorage.getStringArray(.targetTrainingTypeList)
+                let trainingTypeFilter = ActivityGraphTrainingTypeFilter(
+                    selectedIdList: trainingTypeIdList
                 )
+                state.targetTrainingTypeList = trainingTypeFilter.getSelectedTrainingTypeList(trainingTypeList)
                 return loadActivityResult()
                 
             case .calendar(.delegate(.selectedDay(let day))):
                 guard let day,
-                      let result = state.activityResultList.getResultOfDay(day, calendar: calendar) else {
+                      let result = state.activityResultList.getResultOfDay(day) else {
                     
                     logger.debug("Nothing activity result in scope period.")
                     return .none
@@ -264,10 +263,12 @@ private extension TrainingActivityGraphFeature {
     func setupStateOnAppear(_ current: State) -> State {
         
         var currentState = current
-        let startPeriodDate = Date(timeIntervalSince1970: defaultAppStorage.getDouble(.activityStartPeriod))
-        let activityPeriod = ActivityPeriod(rawValue: defaultAppStorage.getInt(.activityPeriod))
-        currentState.updateStartPeriodDate(startPeriodDate)
-        currentState.updatePeriod(activityPeriod ?? currentState.activityPeriod)
+        guard let periodFilter = ActivityPeriodFilter(
+            timestamp: defaultAppStorage.getDouble(.activityStartPeriod),
+            period: defaultAppStorage.getInt(.activityPeriod)
+        ) else { return current }
+        currentState.updatePeriodFilter(periodFilter)
+        
         return currentState
     }
     
@@ -278,18 +279,22 @@ private extension TrainingActivityGraphFeature {
                 
                 await send(.didReceiveTrainingTypeList(trainingTypeApi.fetchAll()))
             },
-            .publisher {
-                
-                diaryListFetchApi.observeDiaryList()
-                    .map { .didReceiveDiaryData($0) }
-            }
-                .cancellable(id: Cancellable()),
-            .publisher {
-                
-                trainingTypeApi.getPublisher()
-                    .map { .didReceiveTrainingTypeList($0) }
-            }
-                .cancellable(id: Cancellable())
+            .merge(
+                .publisher {
+                    
+                    diaryListFetchApi.observeDiaryList()
+                        .receive(on: DispatchQueue.main)
+                        .map { .didReceiveDiaryData($0) }
+                }
+                    .cancellable(id: Cancellable.observeDiaryData),
+                .publisher {
+                    
+                    trainingTypeApi.getPublisher()
+                        .receive(on: DispatchQueue.main)
+                        .map { .didReceiveTrainingTypeList($0) }
+                }
+                    .cancellable(id: Cancellable.observeTrainingType)
+            )
         ])
     }
     
@@ -301,15 +306,6 @@ private extension TrainingActivityGraphFeature {
         }
     }
     
-    func getSelectedTrainingTypeFilters(trainingTypeList: [TrainingTypeData],
-                                        selectedIdList: [String]) -> [TrainingTypeData] {
-        
-        return trainingTypeList.filter {
-            
-            return selectedIdList.contains($0.id.uuidString)
-        }
-    }
-    
     func fetchDiaryDataById(_ diaryId: UUID) -> Effect<Action> {
         
         return .run { send in
@@ -318,5 +314,10 @@ private extension TrainingActivityGraphFeature {
                 .first(where: { $0.id == diaryId }) else { return }
             await send(.didReceiveDiaryDataForShowingDetail(diaryData))
         }
+    }
+    
+    func cancelObserver() -> Effect<Action> {
+        
+        return .merge(Cancellable.allCases.map { .cancel(id: $0) })
     }
 }

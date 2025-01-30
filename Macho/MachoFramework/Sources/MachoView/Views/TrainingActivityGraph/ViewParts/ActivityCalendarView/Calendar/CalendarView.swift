@@ -55,35 +55,17 @@ struct CalendarView: UIViewRepresentable {
     
     func updateUIView(_ uiView: UICalendarView, context: Context) {
                 
-        // update available date range
+        // update available date range and visible date
         
-        // 変更後の表示可能期間が現在の表示日から外れている場合、そのまま表示可能期間を設定するとクラッシュするため
-        // 現在の表示日を変更後の表示可能期間内に収まるように更新する
-        if let visibleDate = calendar.date(from: uiView.visibleDateComponents),
-           !interval.contains(visibleDate) {
-            
-            let newVisibleDate = visibleDate < interval.start ? interval.start : interval.end
-            
-            // 変更後の表示日が現在の表示可能期間外の場合、そのまま表示日を設定するとクラッシュするため、
-            // 現在の表示可能期間を変更前の表示期間〜変更後の表示期間となるようにする
-            if !uiView.availableDateRange.contains(newVisibleDate) {
-                
-                let start = min(visibleDate, newVisibleDate)
-                let end = max(visibleDate, newVisibleDate)
-                uiView.availableDateRange = .init(start: start, end: end)
-            }
-            uiView.visibleDateComponents = calendar.dateComponents([.year, .month], from: newVisibleDate)
-        }
-        
-        uiView.availableDateRange = interval
-        
-        // update visible date
-        
-        if let selectVisibleDate = calendar.date(from: initialDate),
-           interval.contains(selectVisibleDate) {
-            
-            uiView.setVisibleDateComponents(initialDate, animated: true)
-        }
+        let selectionRange = CalendarSelectionRange(
+            visibleComponents: uiView.visibleDateComponents,
+            availableDateRange: uiView.availableDateRange,
+            calendar: calendar
+        )
+        updateSelectionRange(
+            uiView,
+            events: selectionRange.makeSelectionRangeUpdateEvents(interval, initialDate)
+        )
         
         // update locale
         
@@ -98,6 +80,29 @@ struct CalendarView: UIViewRepresentable {
         let decorator = context.coordinator
         decorator.componentsDecorationDic = decorationDic
         uiView.delegate = decorator
-        uiView.reloadDecorations(forDateComponents: decorationDic.keys.map(\.self), animated: true)
+        uiView.reloadDecorations(forDateComponents: decorationDic.keys.map(\.self),
+                                 animated: true)
+    }
+}
+
+private extension CalendarView {
+    
+    func updateSelectionRange(_ calendar: UICalendarView,
+                              events: [CalendarSelectionRange.UpdateEvent]) {
+        
+        for event in events {
+            
+            switch event {
+                
+            case .visibleDateComponents(let value):
+                calendar.visibleDateComponents = value
+                
+            case .visibleDateComponentsWithAnimation(let value):
+                calendar.setVisibleDateComponents(value, animated: true)
+                
+            case .availableDateRange(let value):
+                calendar.availableDateRange = value
+            }
+        }
     }
 }

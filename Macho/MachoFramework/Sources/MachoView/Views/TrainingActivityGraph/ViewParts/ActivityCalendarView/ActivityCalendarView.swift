@@ -77,7 +77,10 @@ struct ActivityCalendarView: View {
               tags: [],
               startTime: nil,
               endTime: nil)
-    ])
+    ],
+                                          periodFilter: .init(startPeriodDate: interval.start,
+                                                              period: .month),
+                                          trainingTypeFilter: .init(selectedIdList: []))
     
     ActivityCalendarView(store: Store(initialState: .init(
         displayInterval: interval,

@@ -11,6 +11,13 @@ import Foundation
 
 extension TrainingActivityGraphFeature.State {
     
+    mutating func updatePeriodFilter(_ filter: ActivityPeriodFilter) {
+        
+        activityStartPeriod = filter.startPeriodDate
+        activityPeriod = filter.period
+        updateDisplayInterval(startPeriod: activityStartPeriod, period: activityPeriod)
+    }
+    
     mutating func updateStartPeriodDate(_ date: Date) {
         
         activityStartPeriod = date
@@ -25,18 +32,27 @@ extension TrainingActivityGraphFeature.State {
     
     mutating func updateActivityResults(_ diaries: [DiaryData]) {
         
-        activityResultList = .init(diaries)
+        activityResultList = .init(diaries,
+                                   periodFilter: periodFilter,
+                                   trainingTypeFilter: trainingTypeFilter)
         calendar.decorationDic = activityResultList.buildCalendarDecorator()
     }
 }
 
 private extension TrainingActivityGraphFeature.State {
     
+    var periodFilter: ActivityPeriodFilter { .init(startPeriodDate: activityStartPeriod,
+                                                   period: activityPeriod) }
+    
+    var trainingTypeFilter: ActivityGraphTrainingTypeFilter {
+        
+        return .init(trainingTypeList: targetTrainingTypeList)
+    }
+    
     mutating func updateDisplayInterval(startPeriod: Date, period: ActivityPeriod) {
         
         guard let displayInterval = period.getDateInterval(startPeriod) else {
             
-            assertionFailure("Failed get dateInterval.")
             return
         }
         calendar.displayInterval = displayInterval

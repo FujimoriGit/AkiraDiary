@@ -70,7 +70,16 @@ extension DetailDayOfActivityFeature.State {
     
     init(_ result: ActivityResultOfDay) {
         
-        targetDayStr = result.targetDate.formatted(.date)
+        let year = result.targetDate.year
+        let month = result.targetDate.month
+        let day = result.targetDate.day
+        
+        if year == nil || month == nil || day == nil {
+            
+            assertionFailure("Invalid date component.")
+        }
+        
+        targetDayStr = "\(year ?? 0)/\(month ?? 0)/\(day ?? 0)"
         activities = result.activities
         isAchieved = result.isAchieved
     }

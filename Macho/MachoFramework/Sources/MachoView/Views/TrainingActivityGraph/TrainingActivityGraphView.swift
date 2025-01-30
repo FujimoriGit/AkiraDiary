@@ -65,26 +65,27 @@ struct TrainingActivityGraphView: View {
                 .padding(.horizontal, 16)
             }
         }
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationTitle("Activity")
-        .fullScreenCover(item: $store.scope(state: \.popup,
-                                            action: \.popup)) {
-            switch $0.case {
-                
-            case .selectTraining(let store):
-                PopUpView<SelectTrainingTypeContentView, SelectTrainingTypeContentFeature>(store: store)
-                
-            case .detailDayOfActivity(let store):
-                PopUpView<DetailDayOfActivityView, DetailDayOfActivityFeature>(store: store)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                NavigationButton(.back) {
+                    store.send(.tappedNavigationBackButton)
+                }
             }
         }
-                                            .transaction { $0.disablesAnimations = true }
-                                            .onAppear {
-                                                store.send(.onAppear)
-                                            }
-                                            .navigationDestination(item: $store.scope(state: \.navigationDestination?.detailScreen, action: \.navigationDestination.detailScreen)) {
-                                                DiaryDetailView(store: $0)
-                                            }
+        .navigationBarBackButtonHidden()
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("Activity")
+        .navigationDestination(item: $store.scope(state: \.navigationDestination?.detailScreen,
+                                                  action: \.navigationDestination.detailScreen)) {
+            DiaryDetailView(store: $0)
+        }
+        .fullScreenCover(item: $store.scope(state: \.popup, action: \.popup)) {
+            createPopupView($0.case)
+        }
+        .transaction { $0.disablesAnimations = true }
+        .onAppear {
+            store.send(.onAppear)
+        }
     }
 }
 
@@ -203,6 +204,25 @@ private extension TrainingActivityGraphView {
                 }
             }
             .scrollIndicators(.hidden)
+        }
+    }
+    
+    @ViewBuilder
+    func createPopupView(_ storeCase: TrainingActivityGraphFeature.PopUpDestination.CaseScope) -> some View {
+        
+        switch storeCase {
+            
+        case .selectTraining(let store):
+            PopUpView<
+                SelectTrainingTypeContentView,
+                SelectTrainingTypeContentFeature
+            >(store: store)
+            
+        case .detailDayOfActivity(let store):
+            PopUpView<
+                DetailDayOfActivityView,
+                DetailDayOfActivityFeature
+            >(store: store)
         }
     }
 }

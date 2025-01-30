@@ -10,7 +10,7 @@ import Foundation
 struct ActivityResultOfDay: Equatable {
     
     /// 対象日付
-    let targetDate: Date
+    let targetDate: DateComponents
     /// 対象日付の日記
     let activities: [ActivityEvent]
     /// 目標達成したかどうか
@@ -33,8 +33,8 @@ extension ActivityResultOfDay {
             assertionFailure("Empty diaries.")
         }
         
-        // swiftlint:disable:next force_unwrapping
-        targetDate = dayOfdiaries.first!.date
+        targetDate = Calendar.current.dateComponents([.year, .month, .day],
+                                                     from: dayOfdiaries[0].date)
         activities = dayOfdiaries.map { .init(id: $0.id,
                                               title: $0.title,
                                               isAchieved: $0.isAchieved) }
