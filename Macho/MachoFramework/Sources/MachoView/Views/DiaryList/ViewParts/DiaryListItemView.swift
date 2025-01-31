@@ -74,8 +74,7 @@ private extension DiaryListItemView {
                     .frame(width: winLoseLabelTrailingPadding)
                 VStack(spacing: .zero) {
                     createTopContents(title: store.title,
-                                      date: store.date.toString(.init(date: .jpGregorian),
-                                                                isOmissionTens: true))
+                                      date: store.date.formatted(.date))
                     Spacer()
                         .frame(height: titlePaddingBottom)
                     createMessageContent(message: store.message)
@@ -90,10 +89,8 @@ private extension DiaryListItemView {
     }
     
     func createWinLoseIcon(isWin: Bool) -> some View {
-        Text(isWin ? "Win" : "Lose")
-            .font(.system(size: winLoseLabelFontSize,
-                          weight: .heavy))
-            .foregroundStyle(isWin ? Color(asset: CustomColor.winColor) : Color(asset: CustomColor.loseColor))
+        AchieveIconView(isAchieved: isWin,
+                        size: winLoseLabelFontSize)
     }
     
     func createTopContents(title: String, date: String) -> some View {
@@ -135,22 +132,25 @@ private extension DiaryListItemView {
 // MARK: - preview block
 
 #Preview {
+    let diaryData = DiaryData(id: UUID(),
+                              date: Date(),
+                              title: "sample", mainText: "sample main text",
+                              goals: [TrainingContentData(id: UUID(),
+                                                          trainingType: .init(id: UUID(),
+                                                                              name: "腹筋"),
+                                                          goalNumberOfSets: 3,
+                                                          goalSetCount: 3,
+                                                          actualNumberOfSets: 3,
+                                                          actualSetCount: 3)],
+                              tags: [TrainingTagData(id: UUID(), tagName: "xxx")],
+                              startTime: Date(),
+                              endTime: Date())
     ScrollView {
         LazyVStack(spacing: .zero) {
-            DiaryListItemView(store: Store(initialState: DiaryListItemFeature.State(title: "2024/1/1",
-                                                                                    message: "Test Messag 1",
-                                                                                    date: Date(),
-                                                                                    isWin: false,
-                                                                                    trainingList: [],
-                                                                                    tagList: [])) {
+            DiaryListItemView(store: Store(initialState: DiaryListItemFeature.State(diaryData)) {
                 DiaryListItemFeature()
             })
-            DiaryListItemView(store: Store(initialState: DiaryListItemFeature.State(title: "2024/1/2",
-                                                                                    message: "Test Messag 2",
-                                                                                    date: Date(),
-                                                                                    isWin: true,
-                                                                                    trainingList: [],
-                                                                                    tagList: [])) {
+            DiaryListItemView(store: Store(initialState: DiaryListItemFeature.State(diaryData)) {
                 DiaryListItemFeature()
             })
         }

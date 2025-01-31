@@ -24,104 +24,48 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                                 goalNumberOfSets: 3,
                                                                 goalSetCount: 3,
                                                                 actualNumberOfSets: 3,
-                                                                actualSetCount: 3,
-                                                                startTime: getSelectDate(year: 2024,
-                                                                                         month: 6,
-                                                                                         day: 1,
-                                                                                         hour: 10),
-                                                                endTime: getSelectDate(year: 2024,
-                                                                                       month: 6,
-                                                                                       day: 1,
-                                                                                       hour: 18))
+                                                                actualSetCount: 3)
     private static let benchPressTrainingContent = TrainingContentData(id: UUID(),
                                                                        trainingType: absTraining,
                                                                        goalNumberOfSets: 3,
                                                                        goalSetCount: 3,
                                                                        actualNumberOfSets: 1,
-                                                                       actualSetCount: 1,
-                                                                       startTime: getSelectDate(year: 2024,
-                                                                                                month: 6,
-                                                                                                day: 2,
-                                                                                                hour: 14),
-                                                                       endTime: getSelectDate(year: 2024,
-                                                                                              month: 6,
-                                                                                              day: 2,
-                                                                                              hour: 20))
+                                                                       actualSetCount: 1)
     
     private static let pushUpTrainingContent = TrainingContentData(id: UUID(),
                                                                    trainingType: pushUpTraining,
                                                                    goalNumberOfSets: 3,
                                                                    goalSetCount: 3,
                                                                    actualNumberOfSets: 1,
-                                                                   actualSetCount: 1,
-                                                                   startTime: getSelectDate(year: 2024,
-                                                                                            month: 6,
-                                                                                            day: 3,
-                                                                                            hour: 9),
-                                                                   endTime: getSelectDate(year: 2024,
-                                                                                          month: 6,
-                                                                                          day: 3,
-                                                                                          hour: 10))
+                                                                   actualSetCount: 1)
     
     private static let absTrainingContentAtThreeDay = TrainingContentData(id: UUID(),
                                                                           trainingType: absTraining,
                                                                           goalNumberOfSets: 3,
                                                                           goalSetCount: 3,
                                                                           actualNumberOfSets: 3,
-                                                                          actualSetCount: 3,
-                                                                          startTime: getSelectDate(year: 2024,
-                                                                                                   month: 6,
-                                                                                                   day: 3,
-                                                                                                   hour: 9),
-                                                                          endTime: getSelectDate(year: 2024,
-                                                                                                 month: 6,
-                                                                                                 day: 3,
-                                                                                                 hour: 10))
+                                                                          actualSetCount: 3)
     
     private static let pushUpTrainingContentAtFourDay = TrainingContentData(id: UUID(),
                                                                             trainingType: pushUpTraining,
                                                                             goalNumberOfSets: 3,
                                                                             goalSetCount: 3,
                                                                             actualNumberOfSets: 1,
-                                                                            actualSetCount: 1,
-                                                                            startTime: getSelectDate(year: 2024,
-                                                                                                     month: 6,
-                                                                                                     day: 4,
-                                                                                                     hour: 9),
-                                                                            endTime: getSelectDate(year: 2024,
-                                                                                                   month: 6,
-                                                                                                   day: 4,
-                                                                                                   hour: 10))
+                                                                            actualSetCount: 1)
     
     private static let absTrainingContentAtFourDay = TrainingContentData(id: UUID(),
                                                                          trainingType: absTraining,
                                                                          goalNumberOfSets: 3,
                                                                          goalSetCount: 3,
                                                                          actualNumberOfSets: 3,
-                                                                         actualSetCount: 3,
-                                                                         startTime: getSelectDate(year: 2024,
-                                                                                                  month: 6,
-                                                                                                  day: 4,
-                                                                                                  hour: 9),
-                                                                         endTime: getSelectDate(year: 2024,
-                                                                                                month: 6,
-                                                                                                day: 4,
-                                                                                                hour: 10))
+                                                                         actualSetCount: 3)
     
     private static let absTrainingContentAtFiveDay = TrainingContentData(id: UUID(),
                                                                          trainingType: absTraining,
                                                                          goalNumberOfSets: 3,
                                                                          goalSetCount: 3,
                                                                          actualNumberOfSets: 3,
-                                                                         actualSetCount: 3,
-                                                                         startTime: getSelectDate(year: 2024,
-                                                                                                  month: 6,
-                                                                                                  day: 5,
-                                                                                                  hour: 9),
-                                                                         endTime: getSelectDate(year: 2024,
-                                                                                                month: 6,
-                                                                                                day: 5,
-                                                                                                hour: 10))
+                                                                         actualSetCount: 3)
     
     private static let benchPressTrainingContentAtFiveDay = TrainingContentData(
         id: UUID(),
@@ -129,47 +73,21 @@ final class TrainingActivityGraphViewTest: XCTestCase {
         goalNumberOfSets: 3,
         goalSetCount: 3,
         actualNumberOfSets: 1,
-        actualSetCount: 1,
-        startTime: getSelectDate(year: 2024,
-                                 month: 6,
-                                 day: 5,
-                                 hour: 9),
-        endTime: getSelectDate(year: 2024,
-                               month: 6,
-                               day: 5,
-                               hour: 10)
-    )
+        actualSetCount: 1)
     
     private static let absTrainingContentOfNewest = TrainingContentData(id: UUID(),
                                                                         trainingType: absTraining,
                                                                         goalNumberOfSets: 3,
                                                                         goalSetCount: 3,
                                                                         actualNumberOfSets: 3,
-                                                                        actualSetCount: 3,
-                                                                        startTime: getSelectDate(year: 2025,
-                                                                                                 month: 6,
-                                                                                                 day: 30,
-                                                                                                 hour: 10),
-                                                                        endTime: getSelectDate(year: 2025,
-                                                                                               month: 6,
-                                                                                               day: 30,
-                                                                                               hour: 18))
+                                                                        actualSetCount: 3)
     private static let benchPressTrainingContentOfNewest = TrainingContentData(
         id: UUID(),
         trainingType: benchPressTraining,
         goalNumberOfSets: 3,
         goalSetCount: 3,
         actualNumberOfSets: 1,
-        actualSetCount: 1,
-        startTime: getSelectDate(year: 2025,
-                                 month: 6,
-                                 day: 30,
-                                 hour: 14),
-        endTime: getSelectDate(year: 2025,
-                               month: 6,
-                               day: 30,
-                               hour: 20)
-    )
+        actualSetCount: 1)
     
     
     private static let sampleDiaryData = DiaryData(id: UUID(),
@@ -179,7 +97,15 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                    title: "sampleDiaryData",
                                                    mainText: "sampleDiaryData message",
                                                    goals: [absTrainingContent],
-                                                   tags: [])
+                                                   tags: [],
+                                                   startTime: getSelectDate(year: 2024,
+                                                                            month: 6,
+                                                                            day: 1,
+                                                                            hour: 10),
+                                                   endTime: getSelectDate(year: 2024,
+                                                                          month: 6,
+                                                                          day: 1,
+                                                                          hour: 18))
     
     private static let sampleDiaryData2 = DiaryData(id: UUID(),
                                                     date: getSelectDate(year: 2024,
@@ -188,7 +114,15 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                     title: "sampleDiaryData2",
                                                     mainText: "sampleDiaryData2 message",
                                                     goals: [benchPressTrainingContent],
-                                                    tags: [])
+                                                    tags: [],
+                                                    startTime: getSelectDate(year: 2024,
+                                                                             month: 6,
+                                                                             day: 2,
+                                                                             hour: 14),
+                                                    endTime: getSelectDate(year: 2024,
+                                                                           month: 6,
+                                                                           day: 2,
+                                                                           hour: 20))
     
     private static let sampleDiaryData3 = DiaryData(id: UUID(),
                                                     date: getSelectDate(year: 2025,
@@ -200,7 +134,15 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                         absTrainingContentOfNewest,
                                                         benchPressTrainingContentOfNewest
                                                     ],
-                                                    tags: [])
+                                                    tags: [],
+                                                    startTime: getSelectDate(year: 2025,
+                                                                             month: 6,
+                                                                             day: 30,
+                                                                             hour: 10),
+                                                    endTime: getSelectDate(year: 2025,
+                                                                           month: 6,
+                                                                           day: 30,
+                                                                           hour: 18))
     
     private static let sampleDiaryData4 = DiaryData(id: UUID(),
                                                     date: getSelectDate(year: 2024,
@@ -212,7 +154,15 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                         pushUpTrainingContent,
                                                         absTrainingContentAtThreeDay
                                                     ],
-                                                    tags: [])
+                                                    tags: [],
+                                                    startTime: getSelectDate(year: 2024,
+                                                                             month: 6,
+                                                                             day: 3,
+                                                                             hour: 9),
+                                                    endTime: getSelectDate(year: 2024,
+                                                                           month: 6,
+                                                                           day: 3,
+                                                                           hour: 10))
     
     private static let sampleDiaryData5 = DiaryData(id: UUID(),
                                                     date: getSelectDate(year: 2024,
@@ -223,7 +173,15 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                     goals: [
                                                         pushUpTrainingContentAtFourDay,
                                                     ],
-                                                    tags: [])
+                                                    tags: [],
+                                                    startTime: getSelectDate(year: 2024,
+                                                                             month: 6,
+                                                                             day: 4,
+                                                                             hour: 9),
+                                                    endTime: getSelectDate(year: 2024,
+                                                                           month: 6,
+                                                                           day: 4,
+                                                                           hour: 10))
     
     private static let sampleDiaryData6 = DiaryData(id: UUID(),
                                                     date: getSelectDate(year: 2024,
@@ -234,7 +192,15 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                     goals: [
                                                         absTrainingContentAtFourDay,
                                                     ],
-                                                    tags: [])
+                                                    tags: [],
+                                                    startTime: getSelectDate(year: 2024,
+                                                                             month: 6,
+                                                                             day: 4,
+                                                                             hour: 9),
+                                                    endTime: getSelectDate(year: 2024,
+                                                                           month: 6,
+                                                                           day: 4,
+                                                                           hour: 10))
     
     private static let sampleDiaryData7 = DiaryData(id: UUID(),
                                                     date: getSelectDate(year: 2024,
@@ -243,7 +209,15 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                     title: "sampleDiaryData7",
                                                     mainText: "sampleDiaryData7 message",
                                                     goals: [absTrainingContentAtFiveDay],
-                                                    tags: [])
+                                                    tags: [],
+                                                    startTime: getSelectDate(year: 2024,
+                                                                             month: 6,
+                                                                             day: 5,
+                                                                             hour: 9),
+                                                    endTime: getSelectDate(year: 2024,
+                                                                           month: 6,
+                                                                           day: 5,
+                                                                           hour: 10))
     
     private static let sampleDiaryData8 = DiaryData(id: UUID(),
                                                     date: getSelectDate(year: 2024,
@@ -252,7 +226,15 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                     title: "sampleDiaryData8",
                                                     mainText: "sampleDiaryData8 message",
                                                     goals: [benchPressTrainingContentAtFiveDay],
-                                                    tags: [])
+                                                    tags: [],
+                                                    startTime: getSelectDate(year: 2024,
+                                                                             month: 6,
+                                                                             day: 5,
+                                                                             hour: 9),
+                                                    endTime: getSelectDate(year: 2024,
+                                                                           month: 6,
+                                                                           day: 5,
+                                                                           hour: 10))
 }
 
 extension TrainingActivityGraphViewTest {

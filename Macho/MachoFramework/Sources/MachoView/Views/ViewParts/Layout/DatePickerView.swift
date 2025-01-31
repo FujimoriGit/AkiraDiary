@@ -19,7 +19,7 @@ struct DatePickerView: View {
     }
     
     var body: some View {
-        Text(date.toString(.init(date: .jpGregorian)))
+        Text(date.formatted(.localeDateTime))
             .font(.system(size: titleFontSize))
             .foregroundStyle(Color(asset: CustomColor.appPrimaryTextColor))
             .overlay {

@@ -5,6 +5,7 @@
 //  Created by 佐藤汰一 on 2024/04/06.
 //
 
+import Combine
 import ComposableArchitecture
 import Foundation
 import RealmHelper
@@ -21,6 +22,9 @@ struct DiaryClient {
     /// 日記リストの情報を削除する
     /// - Parameter deleteItem: 削除対象の日記ID
     let deleteItem: (_ deleteItem: UUID) async throws(Self.Error) -> Void
+    
+    /// 日記リストの監視を開始して監視用のPublisherを返す
+    let observeDiaryList: () -> AnyPublisher<[DiaryData], Never>
     
     enum Error: Swift.Error {
         
@@ -46,6 +50,9 @@ extension DiaryClient: DependencyKey {
         return []
     } deleteItem: { _ in
         // nop
+    } observeDiaryList: {
+        
+        return PassthroughSubject<[DiaryData], Never>().eraseToAnyPublisher()
     }
     
     /// デフォルトのTest時のモック処理
@@ -58,6 +65,9 @@ extension DiaryClient: DependencyKey {
         return []
     } deleteItem: { _ in
         // nop
+    } observeDiaryList: {
+        
+        return PassthroughSubject<[DiaryData], Never>().eraseToAnyPublisher()
     }
     
     static func createCustomValue(_ realm: RealmAccessible = RealmAccessor()) -> DiaryClient {
@@ -75,6 +85,9 @@ extension DiaryClient: DependencyKey {
                 
                 throw Error.failedDeletingItem(target: target)
             }
+        } observeDiaryList: {
+            
+            return getObserve(realm)
         }
     }
 }
@@ -106,6 +119,13 @@ private extension DiaryClient {
             
             return diary.id == target
         }
+    }
+    
+    static func getObserve(_ realm: RealmAccessible) -> AnyPublisher<[DiaryData], Never> {
+        
+        let executor = DiaryData.executor
+        executor.startObservation(realm)
+        return executor.getPublisher()
     }
 }
 
