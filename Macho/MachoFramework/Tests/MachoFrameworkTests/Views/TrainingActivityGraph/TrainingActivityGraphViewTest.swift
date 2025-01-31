@@ -68,24 +68,13 @@ final class TrainingActivityGraphViewTest: XCTestCase {
         
         await testStore.receive(\.didReceiveDiaryData) {
             
-            let periodFilter = ActivityPeriodFilter(startPeriodDate: initialStartPeriod,
-                                                    period: initialPeriod)
-            let trainingTypeFilter = ActivityGraphTrainingTypeFilter(trainingTypeList: initialSelectedTrainingTypeList)
-            $0.activityResultList = .init([expectedFetchDiaryData1],
-                                          periodFilter: periodFilter,
-                                          trainingTypeFilter: trainingTypeFilter)
-            
-            let decorationResultOfDay = ActivityResultOfDay(
-                targetDate: .createDay(year: 2024, month: 7, day: 1),
-                activities: [
-                    .init(id: expectedFetchDiaryData1.id,
-                          title: expectedFetchDiaryData1.title,
-                          isAchieved: expectedFetchDiaryData1.isAchieved)
-                ]
+            $0.activityResultList = self.createExpectedActivityResults(
+                [expectedFetchDiaryData1],
+                initialStartPeriod,
+                initialPeriod,
+                initialSelectedTrainingTypeList
             )
-            $0.calendar.decorationDic = [
-                .createDay(year: 2024, month: 7, day: 1): .init(activityResult: decorationResultOfDay)
-            ]
+            $0.calendar.decorationDic = self.createExpectedDecorationDic(expectedFetchDiaryData1)
         }
         
         // 後始末
@@ -277,13 +266,12 @@ final class TrainingActivityGraphViewTest: XCTestCase {
         
         await testStore.receive(\.didReceiveDiaryData) {
             
-            $0.activityResultList = .init(
+            $0.activityResultList = self.createExpectedActivityResults(
                 [displayDiaryData, notDisplayDiaryData],
-                periodFilter: .init(startPeriodDate: selectStartPeriodDate,
-                                    period: initialPeriod),
-                trainingTypeFilter: .init(trainingTypeList: [])
+                selectStartPeriodDate,
+                initialPeriod,
+                []
             )
-            
             $0.calendar.decorationDic = self.createExpectedDecorationDic(displayDiaryData)
         }
         
@@ -339,11 +327,11 @@ final class TrainingActivityGraphViewTest: XCTestCase {
         
         await testStore.receive(\.didReceiveDiaryData) {
             
-            $0.activityResultList = .init(
+            $0.activityResultList = self.createExpectedActivityResults(
                 [displayDiaryData, notDisplayDiaryData],
-                periodFilter: .init(startPeriodDate: initialStartPeriod,
-                                    period: selectedActivityPeriod),
-                trainingTypeFilter: .init(trainingTypeList: [])
+                initialStartPeriod,
+                selectedActivityPeriod,
+                []
             )
             $0.calendar.decorationDic = self.createExpectedDecorationDic(displayDiaryData)
         }
@@ -424,11 +412,11 @@ final class TrainingActivityGraphViewTest: XCTestCase {
         
         await testStore.receive(\.didReceiveDiaryData) {
             
-            $0.activityResultList = .init(
+            $0.activityResultList = self.createExpectedActivityResults(
                 [displayDiaryData, notDisplayDiaryData],
-                periodFilter: .init(startPeriodDate: initialStartPeriod,
-                                    period: initialPeriod),
-                trainingTypeFilter: .init(trainingTypeList: selectedTrainingTypeList)
+                initialStartPeriod,
+                initialPeriod,
+                selectedTrainingTypeList
             )
             $0.calendar.decorationDic = self.createExpectedDecorationDic(displayDiaryData)
         }
@@ -436,6 +424,21 @@ final class TrainingActivityGraphViewTest: XCTestCase {
         // UserDefaultsにグラフ表示期間の設定が正しく保存されているか確認
         XCTAssertEqual(selectedTrainingTypeList.map { $0.id.uuidString },
                        testUserDefaults.getStringArray(.targetTrainingTypeList))
+    }
+    
+    func test_戻るボタンを押下すると前画面へ戻る() async throws {
+        
+        let isDismissInvoked = LockIsolated(false)
+        let testStore = TestStore(initialState: .init(),
+                                  reducer: { TrainingActivityGraphFeature() },
+                                  withDependencies: {
+            
+            $0.dismiss = .init { isDismissInvoked.setValue(true) }
+        })
+        
+        await testStore.send(.tappedNavigationBackButton)
+        
+        XCTAssertTrue(isDismissInvoked.value)
     }
     
     // MARK: - 異常系
@@ -501,6 +504,19 @@ private extension TrainingActivityGraphViewTest {
         return [
             resultDateComponents: .init(activityResult: decorationResultOfDay)
         ]
+    }
+    
+    func createExpectedActivityResults(_ expectedDiaries: [DiaryData],
+                                       _ expectedStartPeriodDate: Date,
+                                       _ expectedPeriod: ActivityPeriod,
+                                       _ expectedTrainingFilter: [TrainingTypeData]) -> ActivityResults {
+        
+        return .init(
+            expectedDiaries,
+            periodFilter: .init(startPeriodDate: expectedStartPeriodDate,
+                                period: expectedPeriod),
+            trainingTypeFilter: .init(trainingTypeList: expectedTrainingFilter)
+        )
     }
 }
 

@@ -196,7 +196,13 @@ struct TrainingActivityGraphFeature {
                 return .none
                 
             case .tappedNavigationBackButton:
-                return cancelObserver()
+                return .merge(
+                    cancelObserver(),
+                    .run { _ in
+                        
+                        await dismiss()
+                    }
+                )
                 
             case .didReceiveDiaryData(let diaries):
                 state.updateActivityResults(diaries)
