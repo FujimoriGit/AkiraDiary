@@ -17,10 +17,6 @@ struct TrainingActivityGraphView: View {
     
     // MARK: - layout property
     
-    // MARK: font
-    
-    private let filterTitleFontSize: CGFloat = 14
-    
     // MARK: size
     
     private let filterToggleIconSize: CGFloat = 30
@@ -28,12 +24,6 @@ struct TrainingActivityGraphView: View {
     
     // MARK: space
     
-    private let filterContentBottomMargin: CGFloat = 20
-    private let trainingTypeListLeadingMargin: CGFloat = 30
-    private let trainingTypeListSpace: CGFloat = 8
-    private let contentHorizontalPadding: CGFloat = 16
-    private let filterTitleBottomPadding: CGFloat = 16
-    private let filterItemRowSpace: CGFloat = 10
     private let filterButtonPadding: CGFloat = 4
     private let buttonPadding: CGFloat = 8
     
@@ -59,10 +49,11 @@ struct TrainingActivityGraphView: View {
                 .frame(maxWidth: .infinity)
             ScrollView {
                 LazyVStack(spacing: .zero) {
-                    ActivityCalendarView(store: store.scope(state: \.calendar, action: \.calendar))
+                    ActivityCalendarView(store: store.scope(state: \.calendar,
+                                                            action: \.calendar))
                 }
                 .frame(maxHeight: .infinity)
-                .padding(.horizontal, 16)
+                .padding(.horizontal, Space.medium.rawValue)
             }
         }
         .toolbar {
@@ -96,24 +87,23 @@ private extension TrainingActivityGraphView {
             if store.isShowingFilter {
                 VStack(alignment: .leading, spacing: .zero) {
                     Text("Filter")
-                        .font(.system(size: filterTitleFontSize,
-                                      weight: .bold))
+                        .font(.macho(.subTitle))
                     Spacer()
-                        .frame(maxHeight: filterTitleBottomPadding)
-                    VStack(spacing: filterItemRowSpace) {
+                        .frame(maxHeight: Space.medium.rawValue)
+                    VStack(spacing: Space.small.rawValue) {
                         createStartActivityPeriodDateFilterRow()
                         createActivityPeriodFilterRow()
                         createTrainingTypeFilterRow()
                     }
                 }
-                .padding(.horizontal, contentHorizontalPadding)
+                .padding(.horizontal, Space.medium.rawValue)
                 .transition(
                     .move(edge: .top)
                     .combined(with: .opacity)
                 )
             }
             Spacer()
-                .frame(maxHeight: filterContentBottomMargin)
+                .frame(maxHeight: Space.large.rawValue)
             Button {
                 store.send(.tappedFilterDisplayButton,
                            animation: .spring)
@@ -142,8 +132,10 @@ private extension TrainingActivityGraphView {
         .gesture(
             DragGesture()
                 .onEnded {
-                    store.send(.onDragEndedFilterArea(result: .init(startLocation: $0.startLocation,
-                                                                    currentLocation: $0.location)),
+                    store.send(.onDragEndedFilterArea(result: .init(
+                        startLocation: $0.startLocation,
+                        currentLocation: $0.location
+                    )),
                                animation: .spring)
                 }
         )
@@ -152,16 +144,17 @@ private extension TrainingActivityGraphView {
     func createStartActivityPeriodDateFilterRow() -> some View {
         HStack {
             Text("表示開始日時")
-                .font(.system(size: filterTitleFontSize))
+                .font(.macho(.subTitle))
             Spacer()
-            DatePickerView(date: $store.activityStartPeriod.sending(\.didSelectActivityStartPeriodMenu))
+            DatePickerView(date: $store.activityStartPeriod.sending(\.didSelectActivityStartPeriodMenu),
+                           titleFont: .macho(.subTitle))
         }
     }
     
     func createActivityPeriodFilterRow() -> some View {
         HStack(spacing: .zero) {
             Text("表示開始期間")
-                .font(.system(size: filterTitleFontSize))
+                .font(.macho(.subTitle))
             Spacer()
             Menu {
                 ForEach(ActivityPeriod.allCases, id: \.self) { period in
@@ -173,7 +166,7 @@ private extension TrainingActivityGraphView {
                 }
             } label: {
                 Text(store.currentActivityPeriodTitle)
-                    .font(.system(size: filterTitleFontSize))
+                    .font(.macho(.subTitle))
                     .padding(filterButtonPadding)
             }
             .frameButtonStyle(frameWidth: .zero)
@@ -186,16 +179,16 @@ private extension TrainingActivityGraphView {
                 store.send(.tappedTargetTrainingTypeMenu)
             } label: {
                 Text("種目")
-                    .font(.system(size: filterTitleFontSize))
+                    .font(.macho(.subTitle))
                     .padding(filterButtonPadding)
             }
             .frameButtonStyle(frameWidth: .zero)
-            Spacer(minLength: trainingTypeListLeadingMargin)
+            Spacer(minLength: Space.large.rawValue)
             ScrollView(.horizontal) {
-                HStack(spacing: trainingTypeListSpace) {
+                HStack(spacing: Space.small.rawValue) {
                     ForEach(store.selectingTrainingTypeNameList, id: \.self) {
                         Text($0)
-                            .font(.system(size: filterTitleFontSize))
+                            .font(.macho(.subTitle))
                             .padding(buttonPadding)
                             .foregroundStyle(Color(asset: CustomColor.fillButtonForegroundColor))
                             .background(.black)

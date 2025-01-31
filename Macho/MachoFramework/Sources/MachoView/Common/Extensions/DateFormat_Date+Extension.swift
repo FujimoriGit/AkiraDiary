@@ -27,6 +27,8 @@ extension Date {
         
         /// yyyy/MM/dd
         case date
+        /// yyyy年MM月dd日
+        case localDate
         /// yyyy年MM月dd日 hh:mm:SS
         case localeDateTime
         
@@ -47,6 +49,9 @@ extension Date {
             case .date:
                 return .numeric
                 
+            case .localDate:
+                return .abbreviated
+                
             case .localeDateTime:
                 return .abbreviated
             }
@@ -57,6 +62,9 @@ extension Date {
             switch self {
                 
             case .date:
+                return .omitted
+                
+            case .localDate:
                 return .omitted
                 
             case .localeDateTime:

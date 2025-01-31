@@ -31,28 +31,24 @@ struct DetailDayOfActivityView: PopUpableContentView {
     
     var body: some View {
         VStack(spacing: .zero) {
-            HStack(spacing: .zero) {
+            HStack(alignment: .top, spacing: .zero) {
                 createTitle()
+                    .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity,
                            alignment: .leading)
-                Button {
+                PopUpCloseButton {
                     store.send(.tappedCloseButton)
-                } label: {
-                    Image(systemName: "xmark.circle")
-                        .resizable()
-                        .frame(width: 25, height: 25)
-                        .padding(8)
                 }
-                .frameButtonStyle(frameWidth: .zero)
             }
             Spacer()
-                .frame(maxHeight: 24)
-            VStack(alignment: .leading, spacing: 8) {
+                .frame(maxHeight: Space.large.rawValue)
+            VStack(alignment: .leading,
+                   spacing: Space.small.rawValue) {
                 ForEach(store.activities, id: \.id) {
                     createActivityButton($0)
                 }
             }
-            .padding(.leading, 16)
+            .padding(.leading, Space.medium.rawValue)
         }
     }
 }
@@ -63,7 +59,8 @@ private extension DetailDayOfActivityView {
     
     func createTitle() -> some View {
         Label {
-            Text("アクティビティの詳細(\(store.targetDayStr))")
+            Text("詳細(\(store.targetDayStr))")
+                .font(.macho(.subTitle))
                 .multilineTextAlignment(.leading)
         } icon: {
             createAchievedIcon(store.isAchieved)
@@ -74,9 +71,10 @@ private extension DetailDayOfActivityView {
         Button {
             store.send(.delegate(.tappedActivityArea(diaryId: activity.id)))
         } label: {
-            HStack(spacing: 16) {
+            HStack(spacing: Space.medium.rawValue) {
                 createAchievedIcon(activity.isAchieved)
                 Text(activity.title)
+                    .font(.macho(.description))
                 Spacer()
             }
             .frame(maxWidth: .infinity)
@@ -108,6 +106,9 @@ private extension DetailDayOfActivityView {
             reducer: {
                 
                 PopUpFeature<DetailDayOfActivityFeature>()
+            }, withDependencies: {
+                
+                $0.dismiss = .init({})
             }
         )
     )
