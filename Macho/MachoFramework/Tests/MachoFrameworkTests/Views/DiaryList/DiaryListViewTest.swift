@@ -12,6 +12,7 @@ import XCTest
 
 @testable import MachoView
 
+@MainActor
 final class DiaryListViewTests: XCTestCase {
     
     enum TestError: Error {
@@ -24,7 +25,6 @@ final class DiaryListViewTests: XCTestCase {
     /// # 確認仕様
     /// - 日記項目のスワイプアクションで削除を選択したら削除確認のアラートが表示されること
     /// - 日記項目のスワイプアクションで編集を選択したら編集確認のアラートが表示されること
-    @MainActor
     func testAlert() async {
         
         let diariesState: IdentifiedArray<UUID, DiaryListItemFeature.State> = [
@@ -59,7 +59,6 @@ final class DiaryListViewTests: XCTestCase {
     ///   - ロード状態に更新する
     ///   - 日記の追加取得を行うこと
     /// - 一番上前スクロールした場合、スクロール状態をスクロールしていない状態に更新する
-    @MainActor
     func testScrollBouncedDiaryList() async {
         
         let initialDiary1 = DiaryListItemFeature.State(Self.getTestDiaryData(date: Self.secondDiaryDate))
@@ -126,7 +125,6 @@ final class DiaryListViewTests: XCTestCase {
     /// - 画面表示時に以下を行う
     ///   - フィルターを取得する
     ///   - 日記リストの取得を行う
-    @MainActor
     func testOnAppearView() async {
         
         let expectedItem = DiaryListItemFeature.State(Self.getTestDiaryData(date: Self.fistDiaryDate,
@@ -170,7 +168,6 @@ final class DiaryListViewTests: XCTestCase {
     }
     
     /// 日記リストを保持している状態で画面表示時した時のケース
-    @MainActor
     func testOnAppearViewWithAlreadyHasItems() async {
         
         let initialFirstItem = DiaryListItemFeature.State(Self.getTestDiaryData(date: Self.fistDiaryDate))
@@ -242,7 +239,6 @@ final class DiaryListViewTests: XCTestCase {
     ///
     /// # 仕様確認
     /// - フィルターに一つ以上合致しない日記リストは表示しない
-    @MainActor
     func testOnAppearViewWithNoHitsFilter() async {
         
         let benchPressWinItem = Self.getTestDiaryData(date: Self.fistDiaryDate, training: Self.benchPress)
@@ -303,7 +299,6 @@ final class DiaryListViewTests: XCTestCase {
     ///
     /// # 仕様確認
     /// - 日記リストのセルをタップしたら日記した日記情報の詳細画面に遷移する
-    @MainActor
     func testTappedDiaryItem() async throws {
                 
         let diariesState: IdentifiedArray<UUID, DiaryListItemFeature.State> = [
@@ -329,7 +324,6 @@ final class DiaryListViewTests: XCTestCase {
     /// # 仕様確認
     /// - 日記リストのスワイプアクションで削除を選択すると削除確認アラートが表示されること
     /// - 削除アラートで削除を選択したとき、選択した日記が日記リストから削除されること
-    @MainActor
     func testTappedDeleteItem() async {
         
         let diariesState: IdentifiedArray<UUID, DiaryListItemFeature.State> = [
@@ -397,7 +391,6 @@ final class DiaryListViewTests: XCTestCase {
     /// # 仕様確認
     /// - 日記リストのスワイプアクションで編集を選択すると編集確認アラートが表示されること
     /// - 編集を選択すると選択した日記の編集画面に遷移する
-    @MainActor
     func testTappedEditItem() async throws {
         
         let diariesState: IdentifiedArray<UUID, DiaryListItemFeature.State> = [
@@ -434,7 +427,6 @@ final class DiaryListViewTests: XCTestCase {
     ///
     /// # 仕様確認
     /// - 日記作成ボタンを押下すると、日記作成画面に遷移する
-    @MainActor
     func testTappedAddDiaryButton() async throws {
         
         let store = TestStore(
@@ -458,7 +450,6 @@ final class DiaryListViewTests: XCTestCase {
     ///
     /// # 仕様確認
     /// - グラフボタンを押下するとグラフ画面に遷移する
-    @MainActor
     func testTappedGraphButton() async throws {
         
         let store = TestStore(
@@ -488,7 +479,6 @@ final class DiaryListViewTests: XCTestCase {
     /// - フィルター画面の閉じるボタンを押下されると、リスト画面に戻る
     /// - フィルターを全て削除すると、フィルター適用前の日記が全て表示される
     /// - リスト画面が非表示になると、フィルター監視を終了する
-    @MainActor
     func testTappedFilterButton() async throws {
         
         let expectedItems = IdentifiedArray(uniqueElements: [DiaryListItemFeature.State(Self.getTestDiaryData(date: Self.fistDiaryDate, isWin: false, training: Self.plunk)),])
@@ -590,6 +580,24 @@ final class DiaryListViewTests: XCTestCase {
         
         // 画面非表示
         await store.send(.onDisappearView)
+    }
+    
+    func test_グラフ画面で日記が存在しなアラートのボタン押下を検知したら日記作成画面へ遷移する() async throws {
+        
+        let testStore = TestStore(
+            initialState: DiaryListFeature.State(path: .init([.graphScreen(.init())])),
+            reducer: { DiaryListFeature() }
+        )
+        
+        guard let targetPathId = testStore.state.path.ids.first else {
+            
+            XCTFail()
+            return
+        }
+        await testStore.send(.path(.element(id: targetPathId, action: .graphScreen(.delegate(.tappedEmptyDiaryAlertButton))))) {
+            
+            $0.path = .init([.createScreen(.init())])
+        }
     }
 }
 

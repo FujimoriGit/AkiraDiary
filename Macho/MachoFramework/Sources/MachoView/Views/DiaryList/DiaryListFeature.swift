@@ -53,7 +53,7 @@ struct DiaryListFeature: Sendable {
             // バウンスしているかつ、ロード中でない場合は日記リストの追加取得が行える状態と判断する
             return trackableList.isBouncedAtBottom && !viewState.isLoadingDiaries
         }
-        
+                
         struct ViewState: Equatable {
             
             /// スクロール中かどうか
@@ -168,8 +168,7 @@ private extension DiaryListFeature {
             case .alert(.presented(.confirmEditItem(targetId: let id))):
                 // TODO: 編集画面への遷移を実装する
                 logger.info("confirmEditItem(id=\(id)).")
-                state.path.append(.editScreen(AddContactFeature.State(contact: .init(id: uuid.callAsFunction(),
-                                                                                     name: ""))))
+                state.path = .toEditScreenPath
                 return .none
                 
             case .alert(.presented(.confirmDeleteItem(deleteItemId: let id))):
@@ -183,7 +182,11 @@ private extension DiaryListFeature {
                     
                     state.destination = nil
                 }
+                return .none
                 
+            case .path(.element(id: state.path.ids.last,
+                                action: .graphScreen(.delegate(.tappedEmptyDiaryAlertButton)))):
+                state.path = .toCreationScreenPath
                 return .none
                 
             case .destination:
@@ -232,13 +235,12 @@ private extension DiaryListFeature {
                 
             case .tappedGraphButton:
                 logger.info("tappedGraphButton")
-                state.path.append(.graphScreen(.init()))
+                state.path = .toGraphScreenPath
                 return .none
                 
             case .tappedCreateNewDiaryButton:
                 logger.info("tappedCreateNewDiaryButton")
-                // TODO: 日記作成画面表示を実行
-                state.path.append(.createScreen(DiaryCreationFeature.State()))
+                state.path = .toCreationScreenPath
                 return .none
                 
             case .receiveLoadDiaryItems(let items):
@@ -278,7 +280,7 @@ private extension DiaryListFeature {
 extension DiaryListFeature {
     
     @Reducer(state: .equatable, action: .equatable)
-    enum Path: Equatable {
+    enum Path {
         
         // 日記編集画面
         case editScreen(AddContactFeature)
@@ -288,29 +290,6 @@ extension DiaryListFeature {
         case graphScreen(TrainingActivityGraphFeature)
         // 詳細画面
         case detailScreen(DiaryDetailFeature)
-        
-        var id: Int {
-            
-            switch self {
-                
-            case .editScreen:
-                return 0
-                
-            case .createScreen:
-                return 1
-                
-            case .graphScreen:
-                return 2
-                
-            case .detailScreen:
-                return 3
-            }
-        }
-        
-        static func == (lhs: DiaryListFeature.Path, rhs: DiaryListFeature.Path) -> Bool {
-            
-            return lhs.id == rhs.id
-        }
     }
 }
 
@@ -464,7 +443,7 @@ private extension DiaryListFeature {
         case .tappedDiaryItem:
             if let diary = state.diaries.first(where: { $0.id == id }) {
                 
-                updateTargetState.path.append(.detailScreen(.init(diary: diary.entity)))
+                updateTargetState.path = .getToDetailScreenPath(diary.entity)
             }
             
         case .deleteItemSwipeAction:

@@ -104,10 +104,20 @@ struct TrainingActivityGraphFeature {
         /// 保存しているトレーニング種目取得時
         case didReceiveTrainingTypeList([TrainingTypeData])
         
+        // MARK: Delegate
+        
+        case delegate(Delegate)
+        
         // MARK: Child Feature
         
         /// カレンダーコンポーネントのイベント
         case calendar(ActivityCalendarFeature.Action)
+        
+        enum Delegate: Equatable {
+            
+            /// 日記データが存在しないアラートのボタンを押下した
+            case tappedEmptyDiaryAlertButton
+        }
         
         enum Alert: Equatable {
             
@@ -126,21 +136,30 @@ struct TrainingActivityGraphFeature {
     
     // MARK: - reduce definition
     
-    // swiftlint:disable:next closure_body_length
     var body: some ReducerOf<Self> {
         
         Scope(state: \.calendar, action: \.calendar) {
             
             ActivityCalendarFeature()
         }
+        // swiftlint:disable:next closure_body_length
         Reduce { state, action in
             
             logger.info("action: \(action)")
             
             switch action {
                 
+            case .alert(.presented(.emptyActivityData)):
+                state.alert = nil
+                return .run { send in
+                    
+                    await send(.delegate(.tappedEmptyDiaryAlertButton))
+                }
+                
             case .alert:
-                // TODO: 未実装
+                return .none
+                
+            case .delegate:
                 return .none
                 
             case .popup(.presented(.selectTraining(.childAction(
@@ -205,6 +224,14 @@ struct TrainingActivityGraphFeature {
                 )
                 
             case .didReceiveDiaryData(let diaries):
+                if diaries.isEmpty {
+                    
+                    state.alert = .createAlertState(
+                        .emptyDiaryItemAlert,
+                        firstButtonHandler: .emptyActivityData
+                    )
+                    return .none
+                }
                 state.updateActivityResults(diaries)
                 return .none
                 
