@@ -6,3 +6,6 @@ DerivedData/
 .swiftpm/configuration/registries.json
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
 .netrc
+
+# FirebaseのAPIキーが格納されている秘匿情報なので、リポジトリには公開しない
+GoogleService-Info.plist

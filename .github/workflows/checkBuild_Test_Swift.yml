@@ -19,6 +19,7 @@ env:
   # チェックアウト
   DEVELOPER_DIR: /Applications/Xcode_16.1.app
   WORKSPACE_DIR: ./Macho/Macho.xcworkspace
+  GOOGLE_SERVICE_INFO_PLIST_PATH: ./Macho/Macho/GoogleService-Info.plist
 
 jobs:
   build:
@@ -64,6 +65,11 @@ jobs:
           path: SourcePackages
           key: ${{ runner.os }}-spm-${{ hashFiles('*.xcodeproj/project.xcworkspace/ xcshareddata/swiftpm/Package.resolved') }}
           restore-keys: ${{ runner.os }}-spm-
+
+      # FirebaseのInfo.plistを復元
+      - name: decode Info.plist for firebase
+        run: |
+          echo ${{ secrets.FIREBASE_INFO }} | base64 -o ${{ env.GOOGLE_SERVICE_INFO_PLIST_PATH }} -D
 
       # ビルド
       - name: Xcode build
