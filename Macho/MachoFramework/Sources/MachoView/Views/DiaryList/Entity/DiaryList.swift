@@ -9,7 +9,7 @@
 
 import Foundation
 
-struct DiaryList {
+struct DiaryList: Equatable {
     
     let elements: [DiaryListItemFeature.State]
     var hasElements: Bool {
@@ -17,10 +17,10 @@ struct DiaryList {
         return !elements.isEmpty
     }
     
-    func getFilteredList(filters: [DiaryListFilterItem]) -> [DiaryListItemFeature.State] {
+    func getFilteredList(filters: [DiaryListFilterItem]) -> Self {
         
-        if filters.isEmpty { return elements }
-        return elements.filter { item in
+        if filters.isEmpty { return self }
+        let filteredElements = elements.filter { item in
             
             return filters.contains {
                 
@@ -29,11 +29,8 @@ struct DiaryList {
                                         tagList: item.tagList)
             }
         }
-    }
-    
-    func hasDisplayElements(_ displayElements: [DiaryListItemFeature.State]) -> Bool {
         
-        return !displayElements.isEmpty
+        return .init(elements: filteredElements)
     }
 }
 

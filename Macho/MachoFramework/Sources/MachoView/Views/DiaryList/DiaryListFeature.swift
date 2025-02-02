@@ -340,10 +340,12 @@ private extension DiaryListFeature {
         
         var updatedState = currentState
         updatedState.diaries = .init(uniqueElements: updatedList.elements)
+        
+        let filteredDiaryList = updatedList.getFilteredList(filters: currentState.currentFilters)
         updatedState.filteredDiaries = .init(
-            uniqueElements: updatedList.getFilteredList(filters: currentState.currentFilters)
+            uniqueElements: filteredDiaryList.elements
         )
-        updatedState.viewState.hasDiaryItems = updatedList.hasDisplayElements(updatedState.filteredDiaries.elements)
+        updatedState.viewState.hasDiaryItems = filteredDiaryList.hasElements
         return updatedState
     }
     
