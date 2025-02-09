@@ -153,10 +153,6 @@ final class DiaryListViewTests: XCTestCase {
             $0.viewState.isLoadingDiaries = false
             $0.viewState.hasDiaryItems = true
         }
-        
-        // 後始末
-        
-        await store.send(.onDisappearView)
     }
     
     /// 日記リストを保持している状態で画面表示時した時のケース
@@ -208,9 +204,6 @@ final class DiaryListViewTests: XCTestCase {
             $0.viewState.isLoadingDiaries = false
             $0.viewState.hasDiaryItems = true
         }
-        
-        // 後始末
-        await store.send(.onDisappearView)
     }
     
     /// フィルターにヒットする日記がないケース
@@ -268,9 +261,6 @@ final class DiaryListViewTests: XCTestCase {
             // 日記リストがあるかどうかのフラグ更新
             $0.viewState.hasDiaryItems = false
         }
-        
-        // 画面非表示
-        await store.send(.onDisappearView)
     }
     
     /// 日記リストをタップした時のケース
@@ -456,7 +446,7 @@ final class DiaryListViewTests: XCTestCase {
         await store.send(.tappedFilterButton) {
             
             // フィルター画面を宛先に追加
-            $0.destination = .filterScreen(DiaryListFilterFeature.State())
+            $0.destination = .init(childState: .init())
         }
     }
     
@@ -465,46 +455,24 @@ final class DiaryListViewTests: XCTestCase {
         // 準備
         
         let initialDiaryItem = DiaryListItemFeature.State(.create())
-        let receivedFilters = [DiaryListFilterItem(target: .achievement, filterItemId: Self.achievementId, value: "達成していない")]
-        let filterPublisher = PassthroughSubject<[DiaryListFilterItem], Never>()
-        
+        let initialFilters = [
+            DiaryListFilterItem(target: .achievement,
+                                filterItemId: Self.achievementId,
+                                value: "達成していない")
+        ]
         let testState = DiaryListFeature.State(
-            destination: .filterScreen(.init()),
+            destination: .init(childState: .init(viewState: .init(currentFilters: .init(uniqueElements: [])))),
             filteredDiaries: .init(),
             diaries: .init(uniqueElements: [initialDiaryItem]),
-            viewState: .init(hasDiaryItems: false)
+            viewState: .init(hasDiaryItems: false),
+            currentFilters: initialFilters
         )
         let store = TestStore(initialState: testState,
-                              reducer: { DiaryListFeature() }) {
-            
-            let receivedFilters = [DiaryListFilterItem(target: .achievement,
-                                                       filterItemId: Self.achievementId,
-                                                       value: "達成していない")]
-            $0.diaryListFilterApi = .createCustomValue(getFilterMockRealm(receivedFilters)) {
-                
-                return filterPublisher.eraseToAnyPublisher()
-            }
-            $0.date = DateGenerator({ Date() })
-        }
-        
-        await store.send(.onAppearView) {
-            
-            $0.viewState.isLoadingDiaries = true
-        }
-        
-        await store.receive(\.receiveLoadDiaryListFilter) {
-            
-            $0.currentFilters = receivedFilters
-        }
-        
-        await store.receive(\.receiveLoadDiaryItems) {
-            
-            $0.viewState.isLoadingDiaries = false
-        }
+                              reducer: { DiaryListFeature() })
         
         // 実行
         
-        filterPublisher.send([])
+        await store.send(.destination(.presented(.childAction(.delegate(.confirmedFilter([]))))))
         
         // 検証
         
@@ -514,13 +482,9 @@ final class DiaryListViewTests: XCTestCase {
             $0.filteredDiaries = .init(uniqueElements: [initialDiaryItem])
             $0.viewState.hasDiaryItems = true
         }
-        
-        // 後始末
-        
-        await store.send(.onDisappearView)
     }
     
-    func test_グラフ画面で日記が存在しなアラートのボタン押下を検知したら日記作成画面へ遷移する() async throws {
+    func test_グラフ画面で日記が存在しないアラートのボタン押下を検知したら日記作成画面へ遷移する() async throws {
         
         let testStore = TestStore(
             initialState: DiaryListFeature.State(path: .init([.graphScreen(.init())])),

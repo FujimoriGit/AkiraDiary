@@ -12,35 +12,40 @@ import XCTest
 
 @testable import MachoView
 
+@MainActor
 final class DiaryListFilterViewTest: XCTestCase {
     
     private static let notAchievementId = UUID(DiaryListFilterTarget.achievement.num)
     private static let achievementId = UUID(DiaryListFilterTarget.achievement.num)
-    private static let absTrainingId = UUID()
-    private static let dumbbellPressTrainingId = UUID()
-    private static let fineTagId = UUID()
-    private static let rainTagId = UUID()
     
     // DBに保存されているトレーニング種目のリスト
     private static let expectedSelectableTrainingValues: [TrainingTypeEntity] = [
-        TrainingTypeEntity(id: absTrainingId, name: "腹筋"),
-        TrainingTypeEntity(id: dumbbellPressTrainingId, name: "ダンベルプレス")
+        .abs,
+        .benchPress
     ]
     
     // DBに保存されているタグのリスト
     private static let expectedSelectableTagValues: [TrainingTagEntity] = [
-        TrainingTagEntity(id: fineTagId, tagName: "元気"),
-        TrainingTagEntity(id: rainTagId, tagName: "雨")
+        .fine,
+        .unfine
     ]
     
     // 設定可能フィルターの期待値
     private static let expectedSelectableFilterValues: [DiaryListFilterItem] = [
         DiaryListFilterItem(target: .achievement, filterItemId: notAchievementId, value: "達成していない"),
         DiaryListFilterItem(target: .achievement, filterItemId: achievementId, value: "達成している"),
-        DiaryListFilterItem(target: .trainingType, filterItemId: absTrainingId, value: "腹筋"),
-        DiaryListFilterItem(target: .trainingType, filterItemId: dumbbellPressTrainingId, value: "ダンベルプレス"),
-        DiaryListFilterItem(target: .tag, filterItemId: fineTagId, value: "元気"),
-        DiaryListFilterItem(target: .tag, filterItemId: rainTagId, value: "雨")
+        DiaryListFilterItem(target: .trainingType,
+                            filterItemId: TrainingTypeEntity.abs.id,
+                            value: TrainingTypeEntity.abs.name),
+        DiaryListFilterItem(target: .trainingType,
+                            filterItemId: TrainingTypeEntity.benchPress.id,
+                            value: TrainingTypeEntity.benchPress.name),
+        DiaryListFilterItem(target: .tag,
+                            filterItemId: TrainingTagEntity.fine.id,
+                            value: TrainingTagEntity.fine.tagName),
+        DiaryListFilterItem(target: .tag,
+                            filterItemId: TrainingTagEntity.unfine.id,
+                            value: TrainingTagEntity.unfine.tagName)
     ]
     
     // DBからのタグ取得をモックしたRealm
@@ -48,31 +53,15 @@ final class DiaryListFilterViewTest: XCTestCase {
     // DBからのトレーニング種別取得をモックしたRealm
     private static let trainingTypeMockRealm = RealmAccessorMock(fetchEntity: expectedSelectableTrainingValues)
     
-    // フィルター画面表示時のケース
-    @MainActor
-    func testAppearView() async throws {
-        
-        // dismiss確認用のオブジェクト生成
-        let isDismissInvoked = LockIsolated(false)
+    func test_画面表示時選択可能なフィルターと現在適用されているフィルターを画面に反映させる() async throws {
         
         // Viewで受信するフィルターの期待値生成
         let expectedReceiveFilters = IdentifiedArrayOf(uniqueElements: [
-            DiaryListFilterItem(target: .achievement, filterItemId: Self.achievementId, value: "達成している"),
-            DiaryListFilterItem(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋")
+            Self.expectedSelectableFilterValues[1],
+            Self.expectedSelectableFilterValues[2]
         ])
         
-        // realmのモックオブジェクト生成
-        let mockRealm = RealmAccessorMock(fetchEntity: [
-            DiaryListFilterEntity(id: Self.achievementId.uuidString + String(DiaryListFilterTarget.achievement.num),
-                                  filterTarget: DiaryListFilterTarget.achievement.rawValue,
-                                  filterId: Self.achievementId,
-                                  filterValue: "達成している"),
-            DiaryListFilterEntity(id: Self.absTrainingId.uuidString + String(DiaryListFilterTarget.trainingType.num),
-                                  filterTarget: DiaryListFilterTarget.trainingType.rawValue,
-                                  filterId: Self.absTrainingId,
-                                  filterValue: "腹筋")
-        ])
-        
+        let mockRealm = RealmAccessorMock(fetchEntity: expectedReceiveFilters.elements.map(\.entity))
         let testStore = TestStore(initialState: DiaryListFilterFeature.State()) {
             
             DiaryListFilterFeature()
@@ -81,8 +70,10 @@ final class DiaryListFilterViewTest: XCTestCase {
             $0.diaryListFilterApi = .createCustomValue(mockRealm)
             $0.trainingTypeApi = .createCustomValue(Self.trainingTypeMockRealm)
             $0.trainingTagApi = .createCustomValue(Self.tagMockRealm)
-            $0.dismiss = DismissEffect { isDismissInvoked.setValue(true) }
+            $0.dismiss = DismissEffect {}
         }
+        
+        // 実行
         
         await testStore.send(.onAppear)
         await testStore.receive(.receiveFetchSelectableFilterRes(Self.expectedSelectableFilterValues)) {
@@ -94,241 +85,243 @@ final class DiaryListFilterViewTest: XCTestCase {
             $0.currentFilters = expectedReceiveFilters
         }
         
-        await testStore.send(.tappedOutsideArea)
-        XCTAssertTrue(isDismissInvoked.value)
+        // 後始末
+        
+        await cleaningForEndOfTest(testStore)
+    }
+    
+    func test_閉じるボタンを押下すると現在設定しているフィルターを親画面に伝えて画面を閉じる() async throws {
+                
+        let settingFilters = IdentifiedArrayOf(uniqueElements: [
+            Self.expectedSelectableFilterValues[1],
+            Self.expectedSelectableFilterValues[2]
+        ])
+        
+        let testStore = TestStore(initialState: .init(viewState: .init(currentFilters: settingFilters))) {
+            
+            DiaryListFilterFeature()
+        }
+        
+        // 実行
+        
+        await testStore.send(.tappedCloseButton)
+        
+        // 検証
+        
+        await testStore.receive(\.willDismiss)
+        await testStore.receive(.delegate(.confirmedFilter(settingFilters.elements)))
     }
     
     // フィルター種別の削除ボタン押下時のケース
-    @MainActor
-    func testTappedFilterTypeDeleteButton() async throws {
+    func test_フィルター種別の削除ボタンを押下すると選択したフィルター種別に該当するフィルター項目を全て未選択状態にする() async throws {
         
-        let isDismissInvoked = LockIsolated(false)
-        
-        let expectedFilters = IdentifiedArrayOf(uniqueElements: [
-            DiaryListFilterItem(target: .achievement, filterItemId: Self.achievementId, value: "達成している"),
+        let allFilter = IdentifiedArrayOf(uniqueElements: [
+            Self.expectedSelectableFilterValues[1],
+            Self.expectedSelectableFilterValues[2],
+            Self.expectedSelectableFilterValues[3]
         ])
         
-        let fetchFilters = IdentifiedArrayOf(uniqueElements: [
-            DiaryListFilterItem(target: .achievement, filterItemId: Self.achievementId, value: "達成している"),
-            DiaryListFilterItem(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋"),
-            DiaryListFilterItem(target: .trainingType, filterItemId: Self.dumbbellPressTrainingId, value: "ダンベルプレス")
+        let expectedFilters = IdentifiedArrayOf(uniqueElements: [
+            Self.expectedSelectableFilterValues[1]
         ])
         
         let testPublisher = PassthroughSubject<[DiaryListFilterItem], Never>()
-        
-        // realmのモックオブジェクト生成
-        let mockRealm = RealmAccessorMock(fetchEntity: [
-            DiaryListFilterEntity(id: Self.achievementId.uuidString + String(DiaryListFilterTarget.achievement.num),
-                                  filterTarget: DiaryListFilterTarget.achievement.rawValue,
-                                  filterId: Self.achievementId,
-                                  filterValue: "達成している"),
-            DiaryListFilterEntity(id: Self.absTrainingId.uuidString + String(DiaryListFilterTarget.trainingType.num),
-                                  filterTarget: DiaryListFilterTarget.trainingType.rawValue,
-                                  filterId: Self.absTrainingId,
-                                  filterValue: "腹筋"),
-            DiaryListFilterEntity(id: Self.dumbbellPressTrainingId.uuidString + String(DiaryListFilterTarget.trainingType.num),
-                                  filterTarget: DiaryListFilterTarget.trainingType.rawValue,
-                                  filterId: Self.dumbbellPressTrainingId,
-                                  filterValue: "ダンベルプレス")
-        ], expectedDeleteResult: {
+        let mockRealm = RealmAccessorMock<DiaryListFilterData>(
+            fetchEntity: allFilter.elements.map(\.entity),
+            expectedDeleteResult: {
             
             // 削除後のフィルターリストをPublisherに送信
             testPublisher.send(expectedFilters.elements)
             return true
         })
         
-        let testStore = TestStore(initialState: DiaryListFilterFeature.State()) {
-            
-            DiaryListFilterFeature()
-        } withDependencies: {
-            
-            $0.diaryListFilterApi = .createCustomValue(mockRealm) { testPublisher.eraseToAnyPublisher() }
-            $0.trainingTypeApi = .createCustomValue(Self.trainingTypeMockRealm)
-            $0.trainingTagApi = .createCustomValue(Self.tagMockRealm)
-            $0.dismiss = DismissEffect { isDismissInvoked.setValue(true) }
-        }
+        let testStore = await setupTestStoreWithBeforeAppeared(
+            mockFilterApi: .createCustomValue(mockRealm) { testPublisher.eraseToAnyPublisher() },
+            initialFilters: allFilter
+        )
         
-        await testStore.send(.onAppear)
-        await testStore.receive(.receiveFetchSelectableFilterRes(Self.expectedSelectableFilterValues)) {
-            
-            $0.selectableFilterValues = Self.expectedSelectableFilterValues
-        }
-        await testStore.receive(.receiveDidChangeFilterItems(fetchFilters.map { $0 })) {
-            
-            $0.currentFilters = fetchFilters
-        }
+        // 実行
         
         await testStore.send(.tappedFilterTypeDeleteButton(target: .trainingType))
         
-        await testStore.receive(.receiveDidChangeFilterItems(expectedFilters.map { $0 })) {
+        // 検証
+        
+        await testStore.receive(\.receiveDidChangeFilterItems) {
             
             $0.currentFilters = expectedFilters
         }
         
-        await testStore.send(.tappedOutsideArea)
-        XCTAssertTrue(isDismissInvoked.value)
+        // 後始末
+        
+        await cleaningForEndOfTest(testStore)
     }
     
-    // フィルター項目の削除ボタン押下時のケース
-    @MainActor
-    func testTappedFilterItemDeleteButton() async throws {
-        
-        let isDismissInvoked = LockIsolated(false)
+    func test_フィルター項目の削除ボタン押下で選択したフィルター項目を未選択状態にする() async throws {
+                
+        let allFilter = IdentifiedArrayOf(uniqueElements: [
+            Self.expectedSelectableFilterValues[1],
+            Self.expectedSelectableFilterValues[2],
+            Self.expectedSelectableFilterValues[3]
+        ])
         
         let expectedFilters = IdentifiedArrayOf(uniqueElements: [
-            DiaryListFilterItem(target: .achievement, filterItemId: Self.achievementId, value: "達成している"),
-            DiaryListFilterItem(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋")
+            Self.expectedSelectableFilterValues[1],
+            Self.expectedSelectableFilterValues[2]
         ])
-        
-        let fetchFilters = IdentifiedArrayOf(uniqueElements: [
-            DiaryListFilterItem(target: .achievement, filterItemId: Self.achievementId, value: "達成している"),
-            DiaryListFilterItem(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋"),
-            DiaryListFilterItem(target: .trainingType, filterItemId: Self.dumbbellPressTrainingId, value: "ダンベルプレス")
-        ])
-        
-        let deleteFilter = DiaryListFilterItem(target: .trainingType, filterItemId: Self.dumbbellPressTrainingId, value: "ダンベルプレス")
         
         let testPublisher = PassthroughSubject<[DiaryListFilterItem], Never>()
-        
-        // realmのモックオブジェクト生成
-        let mockRealm = RealmAccessorMock(fetchEntity: [
-            DiaryListFilterEntity(id: Self.achievementId.uuidString + String(DiaryListFilterTarget.achievement.num),
-                                  filterTarget: DiaryListFilterTarget.achievement.rawValue,
-                                  filterId: Self.achievementId,
-                                  filterValue: "達成している"),
-            DiaryListFilterEntity(id: Self.absTrainingId.uuidString + String(DiaryListFilterTarget.trainingType.num),
-                                  filterTarget: DiaryListFilterTarget.trainingType.rawValue,
-                                  filterId: Self.absTrainingId,
-                                  filterValue: "腹筋"),
-            DiaryListFilterEntity(id: Self.dumbbellPressTrainingId.uuidString + String(DiaryListFilterTarget.trainingType.num),
-                                  filterTarget: DiaryListFilterTarget.trainingType.rawValue,
-                                  filterId: Self.dumbbellPressTrainingId,
-                                  filterValue: "ダンベルプレス")
-        ], expectedDeleteResult: {
+        let mockRealm = RealmAccessorMock<DiaryListFilterData>(
+            fetchEntity: allFilter.elements.map { .init(id: $0.id, filterTarget: $0.target.rawValue, filterId: $0.filterItemId, filterValue: $0.value) },
+            expectedDeleteResult: {
             
             // 削除後のフィルターリストをPublisherに送信
             testPublisher.send(expectedFilters.elements)
             return true
         })
         
-        let testStore = TestStore(initialState: DiaryListFilterFeature.State()) {
-            
-            DiaryListFilterFeature()
-        } withDependencies: {
-            
-            $0.diaryListFilterApi = .createCustomValue(mockRealm) { testPublisher.eraseToAnyPublisher() }
-            $0.trainingTypeApi = .createCustomValue(Self.trainingTypeMockRealm)
-            $0.trainingTagApi = .createCustomValue(Self.tagMockRealm)
-            $0.dismiss = DismissEffect { isDismissInvoked.setValue(true) }
-        }
+        let testStore = await setupTestStoreWithBeforeAppeared(
+            mockFilterApi: .createCustomValue(mockRealm) { testPublisher.eraseToAnyPublisher() },
+            initialFilters: allFilter
+        )
         
-        await testStore.send(.onAppear)
-        await testStore.receive(.receiveFetchSelectableFilterRes(Self.expectedSelectableFilterValues)) {
-            
-            $0.selectableFilterValues = Self.expectedSelectableFilterValues
-        }
-        await testStore.receive(.receiveDidChangeFilterItems(fetchFilters.map { $0 })) {
-            
-            $0.currentFilters = fetchFilters
-        }
+        // 実行
         
+        let deleteFilter = Self.expectedSelectableFilterValues[3]
         await testStore.send(.tappedFilterItemDeleteButton(filter: deleteFilter))
-        
-        await testStore.receive(.receiveDidChangeFilterItems(expectedFilters.map { $0 })) {
+        await testStore.receive(\.receiveDidChangeFilterItems) {
             
             $0.currentFilters = expectedFilters
         }
         
-        await testStore.send(.tappedOutsideArea)
-        XCTAssertTrue(isDismissInvoked.value)
+        // 後始末
+        
+        await cleaningForEndOfTest(testStore)
     }
     
-    // フィルターメニュー項目のボタン押下時のケース(フィルターが追加される)
-    @MainActor
-    func testTappedFilterMenuItemButton() async throws {
+    func test_複数選択可能なフィルターのメニューからフィルター項目を選択するとそのフィルター項目を適用状態にする() async throws {
         
-        let isDismissInvoked = LockIsolated(false)
-        
-        let addFilter = DiaryListFilterItem(target: .trainingType, filterItemId: Self.dumbbellPressTrainingId, value: "ダンベルプレス")
-        let updateFilter = DiaryListFilterItem(target: .achievement, filterItemId: Self.achievementId, value: "達成していない")
-        
-        let addedExpectedFilters = IdentifiedArrayOf(uniqueElements: [
-            DiaryListFilterItem(target: .achievement, filterItemId: Self.achievementId, value: "達成している"),
-            DiaryListFilterItem(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋"),
-            DiaryListFilterItem(target: .trainingType, filterItemId: Self.dumbbellPressTrainingId, value: "ダンベルプレス")
+        let allFilter = IdentifiedArrayOf(uniqueElements: [
+            Self.expectedSelectableFilterValues[1],
+            Self.expectedSelectableFilterValues[2]
         ])
         
-        let updatedExpectedFilters = IdentifiedArrayOf(uniqueElements: [
-            DiaryListFilterItem(target: .achievement, filterItemId: Self.achievementId, value: "達成していない"),
-            DiaryListFilterItem(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋"),
-            DiaryListFilterItem(target: .trainingType, filterItemId: Self.dumbbellPressTrainingId, value: "ダンベルプレス")
+        let expectedFilters = IdentifiedArrayOf(uniqueElements: [
+            Self.expectedSelectableFilterValues[1],
+            Self.expectedSelectableFilterValues[2],
+            Self.expectedSelectableFilterValues[3]
+        ])
+
+        let testPublisher = PassthroughSubject<[DiaryListFilterItem], Never>()
+        let mockRealm = RealmAccessorMock<DiaryListFilterData>(
+            fetchEntity: allFilter.elements.map { .init(id: $0.id, filterTarget: $0.target.rawValue, filterId: $0.filterItemId, filterValue: $0.value) },
+            expectedInsertResult: { _ in
+                
+                testPublisher.send(expectedFilters.elements)
+                return true
+            })
+        
+        let testStore = await setupTestStoreWithBeforeAppeared(
+            mockFilterApi: .createCustomValue(mockRealm) { testPublisher.eraseToAnyPublisher() },
+            initialFilters: allFilter
+        )
+        
+        // 実行
+        
+        let addFilter = Self.expectedSelectableFilterValues[3]
+        await testStore.send(.tappedFilterMenuItem(filter: addFilter))
+        await testStore.receive(\.receiveDidChangeFilterItems) {
+            
+            $0.currentFilters = expectedFilters
+        }
+                
+        // 後始末
+        
+        await cleaningForEndOfTest(testStore)
+    }
+    
+    func test_単一選択可能なフィルター種別のメニューからフィルター項目を選択するとフィルター項目の値を選択した値に更新する() async throws {
+        
+        let allFilter = IdentifiedArrayOf(uniqueElements: [
+            Self.expectedSelectableFilterValues[1]
         ])
         
-        let fetchFilters = IdentifiedArrayOf(uniqueElements: [
-            DiaryListFilterItem(target: .achievement, filterItemId: Self.achievementId, value: "達成している"),
-            DiaryListFilterItem(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋"),
+        let expectedFilters = IdentifiedArrayOf(uniqueElements: [
+            Self.expectedSelectableFilterValues[0]
         ])
         
         let testPublisher = PassthroughSubject<[DiaryListFilterItem], Never>()
+        let mockRealm = RealmAccessorMock<DiaryListFilterData>(
+            fetchEntity: allFilter.elements.map { .init(id: $0.id, filterTarget: $0.target.rawValue, filterId: $0.filterItemId, filterValue: $0.value) },
+            expectedUpdateResult: { _, _ in
+                
+                testPublisher.send(expectedFilters.elements)
+                return true
+            })
         
-        // realmのモックオブジェクト生成
-        let mockRealm = RealmAccessorMock(fetchEntity: [
-            DiaryListFilterEntity(id: Self.achievementId.uuidString + String(DiaryListFilterTarget.achievement.num),
-                                  filterTarget: DiaryListFilterTarget.achievement.rawValue,
-                                  filterId: Self.achievementId,
-                                  filterValue: "達成している"),
-            DiaryListFilterEntity(id: Self.absTrainingId.uuidString + String(DiaryListFilterTarget.trainingType.num),
-                                  filterTarget: DiaryListFilterTarget.trainingType.rawValue,
-                                  filterId: Self.absTrainingId,
-                                  filterValue: "腹筋")
-        ], expectedInsertResult: { _ in
+        let testStore = await setupTestStoreWithBeforeAppeared(
+            mockFilterApi: .createCustomValue(mockRealm) { testPublisher.eraseToAnyPublisher() },
+            initialFilters: allFilter
+        )
+        
+        // 実行
+        
+        let updateFilter = Self.expectedSelectableFilterValues[0]
+        await testStore.send(.tappedFilterMenuItem(filter: updateFilter))
+        await testStore.receive(\.receiveDidChangeFilterItems) {
             
-            testPublisher.send(addedExpectedFilters.elements)
-            return true
-        }, expectedUpdateResult: { _, _ in
-            
-            testPublisher.send(updatedExpectedFilters.elements)
-            return true
-        })
+            $0.currentFilters = expectedFilters
+        }
+        
+        // 後始末
+        
+        await cleaningForEndOfTest(testStore)
+    }
+}
+
+private extension DiaryListFilterViewTest {
+    
+    func cleaningForEndOfTest(_ testStore: TestStoreOf<DiaryListFilterFeature>) async {
+        
+        await testStore.send(.tappedCloseButton)
+        await testStore.receive(\.willDismiss)
+        await testStore.receive(\.delegate)
+    }
+    
+    // 画面表示後のTestStoreをセットアップする
+    func setupTestStoreWithBeforeAppeared(mockFilterApi: DiaryListFilterClient,
+                                          initialFilters: IdentifiedArrayOf<DiaryListFilterItem>) async -> TestStoreOf<DiaryListFilterFeature> {
         
         let testStore = TestStore(initialState: DiaryListFilterFeature.State()) {
             
             DiaryListFilterFeature()
         } withDependencies: {
             
-            $0.diaryListFilterApi = .createCustomValue(mockRealm) { testPublisher.eraseToAnyPublisher() }
+            $0.diaryListFilterApi = mockFilterApi
             $0.trainingTypeApi = .createCustomValue(Self.trainingTypeMockRealm)
             $0.trainingTagApi = .createCustomValue(Self.tagMockRealm)
-            $0.dismiss = DismissEffect { isDismissInvoked.setValue(true) }
         }
         
         await testStore.send(.onAppear)
-        await testStore.receive(.receiveFetchSelectableFilterRes(Self.expectedSelectableFilterValues)) {
+        await testStore.receive(\.receiveFetchSelectableFilterRes) {
             
             $0.selectableFilterValues = Self.expectedSelectableFilterValues
         }
-        await testStore.receive(.receiveDidChangeFilterItems(fetchFilters.map { $0 })) {
+        await testStore.receive(\.receiveDidChangeFilterItems) {
             
-            $0.currentFilters = fetchFilters
+            $0.currentFilters = initialFilters
         }
         
-        await testStore.send(.tappedFilterMenuItem(filter: addFilter))
-        await testStore.receive(.receiveDidChangeFilterItems(addedExpectedFilters.map { $0 })) {
-            
-            $0.currentFilters = addedExpectedFilters
-        }
+        return testStore
+    }
+}
+
+fileprivate extension DiaryListFilterItem {
+    
+    var entity: DiaryListFilterData {
         
-        await testStore.send(.tappedFilterMenuItem(filter: addFilter))
-        
-        await testStore.send(.tappedFilterMenuItem(filter: updateFilter))
-        await testStore.receive(.receiveDidChangeFilterItems(updatedExpectedFilters.map { $0 })) {
-            
-            $0.currentFilters = updatedExpectedFilters
-        }
-        
-        await testStore.send(.tappedFilterMenuItem(filter: updateFilter))
-        
-        await testStore.send(.tappedCloseButton)
-        XCTAssertTrue(isDismissInvoked.value)
+        return .init(id: id,
+                     filterTarget: target.rawValue,
+                     filterId: filterItemId,
+                     filterValue: value)
     }
 }

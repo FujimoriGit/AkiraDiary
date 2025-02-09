@@ -11,11 +11,6 @@ import Foundation
 @Reducer
 struct DiaryListFeature: Sendable {
     
-    // MARK: - Cancellable
-    
-    // フィルターテーブル監視のCancellable
-    struct FilterObserveCancellable: Hashable {}
-    
     // MARK: - State
     
     @ObservableState
@@ -24,7 +19,7 @@ struct DiaryListFeature: Sendable {
         // MARK: Presents States
         
         @Presents var alert: AlertState<Action.Alert>?
-        @Presents var destination: Destination.State?
+        @Presents var destination: PopUpFeature<DiaryListFilterFeature>.State?
         
         // MARK: Navigation States
         
@@ -74,7 +69,8 @@ struct DiaryListFeature: Sendable {
         /// アラートの表示
         case alert(PresentationAction<Alert>)
         /// モーダル遷移による画面表示
-        case destination(PresentationAction<Destination.Action>)
+//        case destination(PresentationAction<Destination.Action>)
+        case destination(PresentationAction<PopUpFeature<DiaryListFilterFeature>.Action>)
         
         // MARK: Navigation Action
         
@@ -91,8 +87,6 @@ struct DiaryListFeature: Sendable {
         
         /// 画面表示時のアクション
         case onAppearView
-        /// 画面非表示時のアクション
-        case onDisappearView
         /// フィルターボタン押下時のアクション
         case tappedFilterButton
         /// グラフボタン押下時のアクション
@@ -148,8 +142,10 @@ struct DiaryListFeature: Sendable {
                 DiaryListItemFeature()
             }
             .forEach(\.path, action: \.path)
-            .ifLet(\.$destination, action: \.destination)
             .ifLet(\.$alert, action: \.alert)
+            .ifLet(\.$destination, action: \.destination) {
+                PopUpFeature<DiaryListFilterFeature>()
+            }
     }
 }
 
@@ -177,12 +173,11 @@ private extension DiaryListFeature {
             case .alert:
                 return .none
                 
-            case let .destination(.presented(.filterScreen(delegate))):
-                if needDismissFilterView(delegate) {
+            case .destination(.presented(.childAction(.delegate(.confirmedFilter(let filters))))):
+                return .run { send in
                     
-                    state.destination = nil
+                    await send(.receiveLoadDiaryListFilter(filters: filters))
                 }
-                return .none
                 
             case .destination:
                 return .none
@@ -199,10 +194,6 @@ private extension DiaryListFeature {
                 logger.info("onAppearView")
                 state.viewState.isLoadingDiaries = true
                 return initialLoadDiaryListInfo()
-                
-            case .onDisappearView:
-                logger.info("onDisappearView")
-                return .cancel(id: FilterObserveCancellable())
                 
                 // 日記項目のComponentのDelegateAction
             case .diaries(.element(let id, let delegateAction)):
@@ -226,7 +217,7 @@ private extension DiaryListFeature {
                 return .none
                 
             case .tappedFilterButton:
-                state.destination = .filterScreen(.init())
+                state.destination = .init(childState: .init())
                 return .none
                 
             case .tappedGraphButton:
@@ -286,18 +277,6 @@ extension DiaryListFeature {
     }
 }
 
-// MARK: - Presentation Destination Definition
-
-extension DiaryListFeature {
-    
-    @Reducer(state: .equatable, action: .equatable)
-    enum Destination {
-        
-        // フィルター画面
-        case filterScreen(DiaryListFilterFeature)
-    }
-}
-
 // MARK: - Private Methods
 
 private extension DiaryListFeature {
@@ -312,14 +291,7 @@ private extension DiaryListFeature {
                 let currentFilterList = await diaryListFilterApi.fetchFilterList()
                 await send(.receiveLoadDiaryListFilter(filters: currentFilterList))
             },
-            loadDiaryListItem(date.now),
-            .publisher {
-                
-                return diaryListFilterApi.getFilterListObserver()
-                    .receive(on: DispatchQueue.main)
-                    .map { .receiveLoadDiaryListFilter(filters: $0) }
-            }
-                .cancellable(id: FilterObserveCancellable())
+            loadDiaryListItem(date.now)
         )
     }
     
@@ -347,18 +319,6 @@ private extension DiaryListFeature {
         )
         updatedState.viewState.hasDiaryItems = filteredDiaryList.hasElements
         return updatedState
-    }
-    
-    func needDismissFilterView(_ delegate: DiaryListFilterFeature.Action) -> Bool {
-        
-        switch delegate {
-            
-        case .tappedOutsideArea, .tappedCloseButton:
-            return true
-            
-        default:
-            return false
-        }
     }
     
     func deleteDiaryListItem(_ id: UUID) -> Effect<DiaryListFeature.Action> {

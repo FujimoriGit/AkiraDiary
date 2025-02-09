@@ -9,7 +9,7 @@ import ComposableArchitecture
 import Foundation
 
 @Reducer
-struct DiaryListFilterFeature {
+struct DiaryListFilterFeature: PopUpableContentFeature {
     
     // フィルターテーブル監視のCancellable
     struct FilterObserveCancellable: Hashable {}
@@ -40,14 +40,12 @@ struct DiaryListFilterFeature {
         }
     }
     
-    enum Action: Equatable {
+    enum Action: Equatable, PopUpableContentAction {
         
         // MARK: Event Action
         
         /// 画面表示
         case onAppear
-        /// ダイアログ外の領域タップ
-        case tappedOutsideArea
         /// 閉じるボタンタップ
         case tappedCloseButton
         /// フィルター種別の削除ボタンタップ
@@ -56,6 +54,8 @@ struct DiaryListFilterFeature {
         case tappedFilterItemDeleteButton(filter: DiaryListFilterItem)
         /// フィルターメニューの項目タップ
         case tappedFilterMenuItem(filter: DiaryListFilterItem)
+        /// 画面非表示前
+        case willDismiss
         
         // MARK: Effect Action
         
@@ -63,12 +63,25 @@ struct DiaryListFilterFeature {
         case receiveDidChangeFilterItems([DiaryListFilterItem])
         /// 選択可能なフィルターの値取得完了
         case receiveFetchSelectableFilterRes([DiaryListFilterItem])
+        
+        // MARK: Delegate Action
+        
+        case delegate(Delegate)
+        
+        enum Delegate: Equatable {
+            
+            case confirmedFilter([DiaryListFilterItem])
+        }
+        
+        static var willDismissAction: Self {
+            
+            return .willDismiss
+        }
     }
     
     @Dependency(\.diaryListFilterApi) var diaryListFilterApi
     @Dependency(\.trainingTypeApi) var trainingTypeApi
     @Dependency(\.trainingTagApi) var trainingTagApi
-    @Dependency(\.dismiss) var dismiss
     
     var body: some ReducerOf<Self> {
         
@@ -80,12 +93,7 @@ struct DiaryListFilterFeature {
                 logger.info("onAppear")
                 return initialLoadFilterInfo()
                 
-            case .tappedOutsideArea:
-                logger.info("tappedOutsideArea")
-                return callDismiss()
-                
             case .tappedCloseButton:
-                logger.info("tappedCloseButton")
                 return callDismiss()
                 
             case .tappedFilterTypeDeleteButton(let type):
@@ -105,6 +113,16 @@ struct DiaryListFilterFeature {
                     await addFilter(currentFilters: state.currentFilters, targetFilter: filter)
                 }
                 
+            case .willDismiss:
+                logger.info("willDismiss")
+                return .concatenate(
+                    .cancel(id: FilterObserveCancellable()),
+                    .run { [filters = state.currentFilters.elements] send in
+                        
+                        await send(.delegate(.confirmedFilter(filters)))
+                    }
+                )
+                
             case .receiveDidChangeFilterItems(let currentFilters):
                 logger.info("receiveDidChangeFilterItems(currentFilters: \(currentFilters))")
                 state.currentFilters = IdentifiedArray(uniqueElements: currentFilters)
@@ -113,6 +131,9 @@ struct DiaryListFilterFeature {
             case .receiveFetchSelectableFilterRes(let selectableFilterValues):
                 logger.info("receiveFetchSelectableFilterRes(selectableFilterValues: \(selectableFilterValues))")
                 state.selectableFilterValues = selectableFilterValues
+                return .none
+                
+            case .delegate:
                 return .none
             }
         }
@@ -235,9 +256,6 @@ private extension DiaryListFilterFeature {
     /// フィルター画面終了時の終了時の処理
     func callDismiss() -> Effect<DiaryListFilterFeature.Action> {
         
-        return Effect.concatenate(
-            .cancel(id: FilterObserveCancellable()),
-            .run { _ in await self.dismiss() }
-        )
+        return .run { await $0(.willDismiss) }
     }
 }
