@@ -164,7 +164,7 @@ private extension DiaryListFeature {
             case .alert(.presented(.confirmEditItem(targetId: let id))):
                 // TODO: 編集画面への遷移を実装する
                 logger.info("tapped edit button(id=\(id)).")
-                state.path = .toEditScreenPath
+                state.path = .getToEditScreenPath()
                 return .none
                 
             case .alert(.presented(.confirmDeleteItem(deleteItemId: let id))):
@@ -184,7 +184,7 @@ private extension DiaryListFeature {
                 
             case .path(.element(id: state.path.ids.last,
                                 action: .graphScreen(.delegate(.tappedEmptyDiaryAlertButton)))):
-                state.path = .toCreationScreenPath
+                state.path = .getToCreationScreenPath()
                 return .none
                 
             case .path:
@@ -221,11 +221,11 @@ private extension DiaryListFeature {
                 return .none
                 
             case .tappedGraphButton:
-                state.path = .toGraphScreenPath
+                state.path = .getToGraphScreenPath()
                 return .none
                 
             case .tappedCreateNewDiaryButton:
-                state.path = .toCreationScreenPath
+                state.path = .getToCreationScreenPath()
                 return .none
                 
             case .receiveLoadDiaryItems(let fetchedDiaries):

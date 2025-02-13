@@ -49,7 +49,7 @@ struct TrainingActivityGraphFeature {
         
         var isShowingFilter = true
         /// グラフ表示開始日付
-        var activityStartPeriod: Date = .now
+        var activityStartPeriod: Date = .distantPast
         /// グラフ表示期間
         var activityPeriod: ActivityPeriod = .week
         /// 表示トレーニングリスト
@@ -59,7 +59,8 @@ struct TrainingActivityGraphFeature {
         
         // MARK: Child Feature
         
-        var calendar = ActivityCalendarFeature.State(displayInterval: .init(start: .now, end: .now),
+        var calendar = ActivityCalendarFeature.State(displayInterval: .init(start: .distantPast,
+                                                                            end: .distantFuture),
                                                      decorationDic: [:])
     }
     

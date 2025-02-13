@@ -12,9 +12,14 @@ import Foundation
 
 extension StackState where Element == DiaryListFeature.Path.State {
     
-    static let toCreationScreenPath: Self = .init([.createScreen(.init())])
-    static let toEditScreenPath: Self = .init([.editScreen(.init(contact: .init(id: UUID(), name: "")))])
-    static let toGraphScreenPath: Self = .init([.graphScreen(.init())])
+    static func getToCreationScreenPath() -> Self { .init([.createScreen(.init())]) }
+    
+    static func getToEditScreenPath() -> Self {
+        
+        .init([.editScreen(.init(contact: .init(id: UUID(), name: "")))])
+    }
+    
+    static func getToGraphScreenPath() -> Self { .init([.graphScreen(.init())]) }
     
     static func getToDetailScreenPath(_ diary: DiaryData) -> Self {
         
