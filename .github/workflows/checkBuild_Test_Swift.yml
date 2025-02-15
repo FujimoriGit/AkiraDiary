@@ -57,6 +57,8 @@ jobs:
       - name: danger run
         run: swift run danger-swift ci --cwd ../ --base BR_develop-1.0
         working-directory: ./Danger
+        env:
+          GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_TOKEN }}
 
       # Rudy製ライブラリのキャッシュ
       - name: Cache Gems
