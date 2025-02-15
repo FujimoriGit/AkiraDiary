@@ -47,6 +47,14 @@ jobs:
         run: ../scripts/run_danger.sh
         working-directory: ./Danger
 
+      - name: swift build
+        run: swift build
+        working-directory: ./Danger
+
+      - name: danger run
+        run: swift run danger-swift ci --cwd ../ --base BR_develop-1.0
+        working-directory: ./Danger
+
       # Rudy製ライブラリのキャッシュ
       - name: Cache Gems
         uses: actions/cache@v4.1.1
