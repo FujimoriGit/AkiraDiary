@@ -47,6 +47,9 @@ jobs:
       #   run: ../scripts/run_danger.sh
       #   working-directory: ./Danger
 
+      - name: install js danger
+        run: npm install -g danger
+
       - name: swift build
         run: swift build
         working-directory: ./Danger
