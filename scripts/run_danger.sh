@@ -2,9 +2,6 @@
 
 set -e  # エラー発生時に即時終了
 
-# Dangerのスクリプトディレクトリへ移動
-cd ./Danger
-
 echo "Danger のセットアップを開始します..."
 
 # npm による danger のインストール
