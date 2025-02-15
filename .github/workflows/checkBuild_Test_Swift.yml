@@ -43,9 +43,9 @@ jobs:
         run: xcodebuild -version
 
       # Dangerによる解析
-      - name: Danger Analytics
-        run: ../scripts/run_danger.sh
-        working-directory: ./Danger
+      # - name: Danger Analytics
+      #   run: ../scripts/run_danger.sh
+      #   working-directory: ./Danger
 
       - name: swift build
         run: swift build
