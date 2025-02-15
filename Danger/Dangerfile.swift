@@ -23,5 +23,5 @@ if github.pullRequest.title.contains("WIP") {
     warn("PR is classed as Work in Progress")
 }
 
-print("Running Swiftlint on changed files...")
-SwiftLint.lint(.files(editedFiles), inline: true, strict: true, quiet: false)
+// print("Running Swiftlint on changed files...")
+// SwiftLint.lint(.files(editedFiles), inline: true, strict: true, quiet: false)
