@@ -1,0 +1,177 @@
+{
+  "originHash" : "2fdf7bf774c6f5ce1e02f4b71b3e78d63c6ab8fd8e851309fada23772e5829a9",
+  "pins" : [
+    {
+      "identity" : "collectionconcurrencykit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JohnSundell/CollectionConcurrencyKit.git",
+      "state" : {
+        "revision" : "b4f23e24b5a1bff301efc5e70871083ca029ff95",
+        "version" : "0.2.0"
+      }
+    },
+    {
+      "identity" : "cryptoswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/krzyzanowskim/CryptoSwift.git",
+      "state" : {
+        "revision" : "729e01bc9b9dab466ac85f21fb9ee2bc1c61b258",
+        "version" : "1.8.4"
+      }
+    },
+    {
+      "identity" : "danger-swift-coverage",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/f-meloni/danger-swift-coverage.git",
+      "state" : {
+        "revision" : "6a21a6e595e2b13443428942ce128b3ba6b827ee",
+        "version" : "1.2.1"
+      }
+    },
+    {
+      "identity" : "danger-swift-eda",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/yumemi-inc/danger-swift-eda.git",
+      "state" : {
+        "revision" : "632f117938a4523a29e9a09db288800681314b3e",
+        "version" : "0.3.0"
+      }
+    },
+    {
+      "identity" : "danger-swift-shoki",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/yumemi-inc/danger-swift-shoki/",
+      "state" : {
+        "revision" : "a15a88f87e6158856aed52bd1c4350b8aa386035",
+        "version" : "0.3.0"
+      }
+    },
+    {
+      "identity" : "danger-swift-xcodesummary",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/f-meloni/danger-swift-xcodesummary.git",
+      "state" : {
+        "revision" : "289d5136cead3d4b1eae509acc3f0b044252fc6c",
+        "version" : "1.2.1"
+      }
+    },
+    {
+      "identity" : "dangerswifthammer",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/el-hoshino/DangerSwiftHammer",
+      "state" : {
+        "revision" : "a02ba82fdfb9cdcf5634916018f7896af0678388",
+        "version" : "0.2.2"
+      }
+    },
+    {
+      "identity" : "logger",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/shibapm/Logger",
+      "state" : {
+        "revision" : "53c3ecca5abe8cf46697e33901ee774236d94cce",
+        "version" : "0.2.3"
+      }
+    },
+    {
+      "identity" : "octokit.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nerdishbynature/octokit.swift",
+      "state" : {
+        "revision" : "cd108b387782d8509e64e298cf4800dc47fc40ae",
+        "version" : "0.14.0"
+      }
+    },
+    {
+      "identity" : "requestkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nerdishbynature/RequestKit.git",
+      "state" : {
+        "revision" : "e4d905fed938807e36d87f28375f88b7c1c26840",
+        "version" : "3.3.0"
+      }
+    },
+    {
+      "identity" : "sourcekitten",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jpsim/SourceKitten.git",
+      "state" : {
+        "revision" : "fd4df99170f5e9d7cf9aa8312aa8506e0e7a44e7",
+        "version" : "0.35.0"
+      }
+    },
+    {
+      "identity" : "swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/danger/swift.git",
+      "state" : {
+        "revision" : "bb4faf2c5613960b3de954c631cedd4dc63c3fef",
+        "version" : "3.21.1"
+      }
+    },
+    {
+      "identity" : "swift-argument-parser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-argument-parser.git",
+      "state" : {
+        "revision" : "41982a3656a71c768319979febd796c6fd111d5c",
+        "version" : "1.5.0"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax.git",
+      "state" : {
+        "revision" : "cb53fa1bd3219b0b23ded7dfdd3b2baff266fd25",
+        "version" : "600.0.0"
+      }
+    },
+    {
+      "identity" : "swiftlint",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/realm/SwiftLint",
+      "state" : {
+        "revision" : "eba420f77846e93beb98d516b225abeb2fef4ca2",
+        "version" : "0.58.2"
+      }
+    },
+    {
+      "identity" : "swiftytexttable",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/scottrhoyt/SwiftyTextTable.git",
+      "state" : {
+        "revision" : "c6df6cf533d120716bff38f8ff9885e1ce2a4ac3",
+        "version" : "0.9.0"
+      }
+    },
+    {
+      "identity" : "swxmlhash",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/drmohundro/SWXMLHash.git",
+      "state" : {
+        "revision" : "a853604c9e9a83ad9954c7e3d2a565273982471f",
+        "version" : "7.0.2"
+      }
+    },
+    {
+      "identity" : "version",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mxcl/Version",
+      "state" : {
+        "revision" : "303a0f916772545e1e8667d3104f83be708a723c",
+        "version" : "2.1.0"
+      }
+    },
+    {
+      "identity" : "yams",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jpsim/Yams.git",
+      "state" : {
+        "revision" : "db9ff235cf800bc657c3ed0961078fc231d0f28b",
+        "version" : "5.2.0"
+      }
+    }
+  ],
+  "version" : 3
+}
