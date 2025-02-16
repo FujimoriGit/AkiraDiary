@@ -12,6 +12,8 @@ import RealmHelper
 
 struct TrainingTagClient {
 
+    
+    
     /// タグの登録
     var add: (TrainingTagData) async -> Bool
     /// タグの更新
@@ -60,16 +62,14 @@ extension TrainingTagClient: DependencyKey {
         ]
         
         return tagNames.map { TrainingTagEntity(id: UUID(), tagName: $0) }
-    } getTrainingTagPublisher: {
-        
-        return PassthroughSubject<[TrainingTagEntity], Never>().eraseToAnyPublisher()
-    }
+    } getTrainingTagPublisher: { return PassthroughSubject<[TrainingTagEntity], Never>().eraseToAnyPublisher() }
     
     static func createCustomValue(_ realm: RealmAccessible = RealmAccessor(),
                                   publisher: (() -> AnyPublisher<[TrainingTagEntity], Never>)? = nil) -> TrainingTagClient {
 
         return TrainingTagClient {
             
+            var value = 3
             return await addTags(realm, tag: $0)
         } updateTag: {
             
