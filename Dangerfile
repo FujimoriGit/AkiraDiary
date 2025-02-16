@@ -6,3 +6,9 @@ warn("PR大きすぎるよ！500行以下にしてもらえるとレビュワー
 warn("PRのタイトルが短すぎるよ！5行以上にしてね！🐶") if github.pr_title.length < 5
 warn("PRの説明が短すぎるよ！レビュアーが見て分かる説明を書いてね！🦈") if github.pr_body.length < 100
 warn("PRにassigneeが設定されてないよ！👹") unless github.pr_json["assignee"]
+
+# PRで出た差分以外の部分に関しては無視する設定
+github.dismiss_out_of_range_messages
+# SwiftLintの設定
+swiftlint.config_file = 'Macho/MachoFramework/Sources/.swiftlint.yml'
+swiftlint.lint_files inline_mode: true
