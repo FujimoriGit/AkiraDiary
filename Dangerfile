@@ -11,6 +11,4 @@ warn("PRにassigneeが設定されてないよ！👹") unless github.pr_json["a
 github.dismiss_out_of_range_messages
 # SwiftLintの設定
 swiftlint.config_file = 'Macho/MachoFramework/Sources/.swiftlint.yml'
-swiftlint.directory = "Macho/MachoFramework/Sources/"
-# swiftlint.binary_path = ''
-# swiftlint.lint_files inline_mode: true
+swiftlint.binary_path = 'Macho/MachoFramework/.build/artifacts/swiftlintplugins/SwiftLintBinary/SwiftLintBinary.artifactbundle/swiftlint-0.56.1-macos/bin/swiftlint'
