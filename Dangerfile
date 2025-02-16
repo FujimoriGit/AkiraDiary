@@ -2,5 +2,7 @@
 # including in a project's CHANGELOG for example
 declared_trivial = github.pr_title.include? "#trivial"
 
-# Warn when there is a big PR
-warn("Big PR") if git.lines_of_code > 500
+warn("PR大きすぎるよ！500行以下にしてもらえるとレビュワーが泣いて喜びます！😺") if git.lines_of_code > 500
+warn("PRのタイトルが短すぎるよ！5行以上にしてね！🐶") if github.pr_title.length < 5
+warn("PRの説明が短すぎるよ！レビュアーが見て分かる説明を書いてね！🦈") if github.pr_body.length < 100
+warn("PRにassigneeが設定されてないよ！👹") unless github.pr_json["assignee"]
