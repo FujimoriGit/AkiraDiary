@@ -10,5 +10,6 @@ warn("PRにassigneeが設定されてないよ！👹") unless github.pr_json["a
 # PRで出た差分以外の部分に関しては無視する設定
 github.dismiss_out_of_range_messages
 # SwiftLintの設定
+swiftlint.lint_files
 swiftlint.config_file = 'Macho/MachoFramework/Sources/.swiftlint.yml'
 swiftlint.binary_path = 'Macho/MachoFramework/.build/artifacts/swiftlintplugins/SwiftLintBinary/SwiftLintBinary.artifactbundle/swiftlint-0.56.1-macos/bin/swiftlint'
