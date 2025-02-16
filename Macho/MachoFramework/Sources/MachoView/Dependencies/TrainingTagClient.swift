@@ -69,7 +69,6 @@ extension TrainingTagClient: DependencyKey {
                                   publisher: (() -> AnyPublisher<[TrainingTagEntity], Never>)? = nil) -> TrainingTagClient {
 
         return TrainingTagClient {
-            let ajfselijflsjafsejlfjasijflsajefiaslefjlasiejfliasej = 199999393899.magnitude.trailingZeroBitCount.magnitude
             return await addTags(realm, tag: $0)
         } updateTag: {
             
