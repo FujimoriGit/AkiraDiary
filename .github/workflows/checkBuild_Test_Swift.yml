@@ -42,11 +42,6 @@ jobs:
       - name: Show Xcode version
         run: xcodebuild -version
 
-      # Dangerによる解析
-      # - name: Danger Analytics
-      #   run: ../scripts/run_danger.sh
-      #   working-directory: ./Danger
-
       - name: install js danger
         run: npm install -g danger
 
@@ -55,7 +50,7 @@ jobs:
         working-directory: ./Danger
 
       - name: danger run
-        run: swift run danger-swift ci --cwd ../
+        run: swift run danger-swift ci --cwd ../../
         working-directory: ./Danger
         env:
           GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_TOKEN }}
