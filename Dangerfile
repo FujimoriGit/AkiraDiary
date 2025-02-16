@@ -8,8 +8,9 @@ warn("PRの説明が短すぎるよ！レビュアーが見て分かる説明を
 warn("PRにassigneeが設定されてないよ！👹") unless github.pr_json["assignee"]
 
 # PRで出た差分以外の部分に関しては無視する設定
-github.dismiss_out_of_range_messages
+# github.dismiss_out_of_range_messages
 # SwiftLintの設定
 swiftlint.config_file = 'Macho/MachoFramework/Sources/.swiftlint.yml'
+
 # swiftlint.binary_path = ''
 # swiftlint.lint_files inline_mode: true
