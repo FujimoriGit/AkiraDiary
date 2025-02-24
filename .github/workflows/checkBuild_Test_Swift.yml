@@ -42,19 +42,6 @@ jobs:
       - name: Show Xcode version
         run: xcodebuild -version
 
-      - name: install js danger
-        run: npm install -g danger
-
-      - name: swift build
-        run: swift build
-        working-directory: ./Danger
-
-      - name: danger run
-        run: swift run danger-swift ci --cwd ../../
-        working-directory: ./Danger
-        env:
-          GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_TOKEN }}
-
       # Rudy製ライブラリのキャッシュ
       - name: Cache Gems
         uses: actions/cache@v4.1.1
