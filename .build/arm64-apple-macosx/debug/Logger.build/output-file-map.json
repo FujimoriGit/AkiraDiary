@@ -1,0 +1,11 @@
+{
+  "": {
+    "swift-dependencies": "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Logger.build/master.swiftdeps"
+  },
+  "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/Logger/Sources/Logger/Logger.swift": {
+    "dependencies": "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Logger.build/Logger.d",
+    "object": "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Logger.build/Logger.swift.o",
+    "swiftmodule": "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Logger.build/Logger~partial.swiftmodule",
+    "swift-dependencies": "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Logger.build/Logger.swiftdeps"
+  }
+}
