@@ -5,16 +5,16 @@
 //  Created by 佐藤汰一 on 2024/11/29.
 //
 
-import Combine
+@preconcurrency import Combine
 import Foundation
 import MachoCore
 import RealmHelper
 
 public struct DiaryListFilterEntityRepositoryImpl: RealmUseable, Sendable {
     
-    let realm: Task<RealmAccessible, any Error>
+    let realm: Task<RealmWrapper, any Error>
     
-    public init(realm: Task<RealmAccessible, any Error>) {
+    public init(realm: Task<RealmWrapper, any Error>) {
         
         self.realm = realm
     }
@@ -22,7 +22,7 @@ public struct DiaryListFilterEntityRepositoryImpl: RealmUseable, Sendable {
     public func fetchAll() async -> [DiaryListFilterEntity] {
         
         logger.debug("[In]")
-        return await (getRealm()?.read(where: nil) ?? [])
+        return await (getRealm()?.read() ?? [])
     }
     
     public func add(_ filter: some DiaryListFilterData) async -> Bool {
@@ -45,7 +45,7 @@ public struct DiaryListFilterEntityRepositoryImpl: RealmUseable, Sendable {
         
         logger.debug("[In]")
         guard let realm = await getRealm() else { return nil }
-        return await realm.getEntityChangeObserver()
+        return await realm.readObjectsForObserve(type: DiaryListFilterEntity.self)
     }
 }
 

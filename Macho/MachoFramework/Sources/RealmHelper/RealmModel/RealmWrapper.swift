@@ -7,31 +7,37 @@
 
 import Combine
 import MachoCore
-@preconcurrency import RealmSwift
+import RealmSwift
 
 @RealmActor
-struct RealmWrapper: Sendable {
+public struct RealmWrapper {
     
     private let realm: Realm
     
     // MARK: - RealmActor initialize method
     
-    init(_ config: DbConfiguration) async throws {
+//    init(_ config: DbConfiguration) async throws {
+//        
+//        let configuration = if let fileUrl = config.url {
+//            
+//            Realm.Configuration(fileURL: fileUrl,
+//                                schemaVersion: config.version)
+//        }
+//        else {
+//            
+//            Realm.Configuration(inMemoryIdentifier: config.isOnMemoryId,
+//                                schemaVersion: config.version)
+//        }
+//        
+//        logger.debug("realm config: \(config)")
+//        realm = try await Realm(configuration: configuration,
+//                                actor: RealmActor.shared)
+//        logger.info("Completed setup realm.")
+//    }
+    
+    init(_ realm: Realm) {
         
-        let configuration = if let fileUrl = config.url {
-            
-            Realm.Configuration(fileURL: fileUrl,
-                                schemaVersion: config.version)
-        }
-        else {
-            
-            Realm.Configuration(inMemoryIdentifier: config.isOnMemoryId,
-                                schemaVersion: config.version)
-        }
-        
-        logger.debug("realm config: \(config)")
-        realm = try await Realm(configuration: configuration,
-                                actor: RealmActor.shared)
+        self.realm = realm
         logger.info("Completed setup realm.")
     }
     
@@ -40,7 +46,7 @@ struct RealmWrapper: Sendable {
     /// 任意のデータをRealmDBから取得する
     ///   - type: 取得したいデータの型
     /// - Returns: 引数で指定したデータ型のレコード配列を返す
-    func read<T>() -> [T] where T: BaseRealmEntity {
+    public func read<T>() -> [T] where T: BaseRealmEntity {
         
         let result = realm.objects(T.RealmObject.self)
         return toUnManagedObject(result)
@@ -49,7 +55,7 @@ struct RealmWrapper: Sendable {
     /// RealmDBにデータを保存する
     /// - Parameter records: 保存したいデータの配列
     /// 重複したレコードが存在する場合は更新する
-    func insert<T>(records: [T]) async -> Bool where T: BaseRealmEntity {
+    public func insert<T>(records: [T]) async -> Bool where T: BaseRealmEntity {
         
         let realmRecords = records.map { $0.toRealmObject() }
         return await executeAsyncWrite { [realm = self.realm] in
@@ -63,7 +69,7 @@ struct RealmWrapper: Sendable {
     ///   - type: 更新するデータの型
     ///   - value: 更新するデータの主キーと更新したいカラムをDictionary型で指定する
     /// 重複したレコードが存在する場合は更新する
-    func update<T>(type: T.Type, value: [String: Any]) async -> Bool where T: BaseRealmEntity {
+    public func update<T>(type: T.Type, value: [String: Any]) async -> Bool where T: BaseRealmEntity {
         
         return await executeAsyncWrite { [realm = self.realm] in
             
@@ -75,7 +81,7 @@ struct RealmWrapper: Sendable {
     /// - Parameter records: 削除したいレコードの配列
     /// - Parameter filterHandler: 削除するレコードの条件
     /// - Returns: 削除が成功したかどうか
-    func delete<T>(where filterHandler: @escaping (T) -> Bool) async -> Bool where T: BaseRealmEntity {
+    public func delete<T>(where filterHandler: @escaping (T) -> Bool) async -> Bool where T: BaseRealmEntity {
         
         let targetRecords = realm.objects(T.RealmObject.self)
             .filter {
@@ -91,7 +97,7 @@ struct RealmWrapper: Sendable {
     /// 指定のテーブルのデータを全て削除
     /// - Parameter type: 削除するデータの型
     /// - Returns: 削除が成功したかどうか
-    func deleteAll<T>(type: T.Type) async -> Bool where T: BaseRealmEntity {
+    public func deleteAll<T>(type: T.Type) async -> Bool where T: BaseRealmEntity {
         
         let objects = self.realm.objects(type.RealmObject.self)
         return await executeAsyncWrite { [realm] in
@@ -101,7 +107,7 @@ struct RealmWrapper: Sendable {
     }
     
     /// RealmDBに保存しているすべてのデータを削除
-    func truncateDb() async -> Bool {
+    public func truncateDb() async -> Bool {
         
         return await executeAsyncWrite { [realm = self.realm] in
             
@@ -114,7 +120,7 @@ struct RealmWrapper: Sendable {
     ///   - type: 監視するデータタイプ
     ///   - updateHandler: 変更したRealmデータをStructとして通知するコールバックハンドラ
     /// - Returns: 監視のSubscribeを制御するToken
-    func readObjectsForObserve<T>(type: T.Type) async -> AnyPublisher<[T], Never>
+    public func readObjectsForObserve<T>(type: T.Type) async -> AnyPublisher<[T], Never>
     where T: BaseRealmEntity {
         
         let publisher = RealmObservePublisher<[T]>()

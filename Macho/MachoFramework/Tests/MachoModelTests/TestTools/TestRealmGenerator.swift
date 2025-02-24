@@ -10,7 +10,7 @@ import RealmHelper
 
 struct TestRealmGenerator {
     
-    static func setupRealm(_ caseName: String) -> Task<RealmAccessible, Error> {
+    static func setupRealm(_ caseName: String) -> Task<RealmWrapper, Error> {
         
         let config = DbConfiguration(isOnMemoryId: caseName, version: 1)
         return RealmFactory.create(config: config)

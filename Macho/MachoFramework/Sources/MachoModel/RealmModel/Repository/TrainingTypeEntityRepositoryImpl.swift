@@ -11,16 +11,16 @@ import RealmHelper
 
 public struct TrainingTypeEntityRepositoryImpl: RealmUseable, Sendable {
     
-    let realm: Task<RealmAccessible, any Error>
+    let realm: Task<RealmWrapper, any Error>
     
-    public init(_ realm: Task<RealmAccessible, any Error>) {
+    public init(_ realm: Task<RealmWrapper, any Error>) {
         
         self.realm = realm
     }
     
     public func fetchAll() async -> [TrainingTypeEntity] {
         
-        return await (getRealm()?.read(where: nil) ?? [])
+        return await (getRealm()?.read() ?? [])
     }
     
     public func insert(_ entity: some TrainingTypeData) async -> Bool {

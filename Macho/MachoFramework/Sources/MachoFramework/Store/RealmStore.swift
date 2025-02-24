@@ -13,7 +13,7 @@ final class RealmStore: Sendable {
     
     static let shared = RealmStore()
     
-    let realm: Task<RealmAccessible, Error>
+    let realm: Task<RealmWrapper, Error>
     
     init() {
         
@@ -33,5 +33,6 @@ final class RealmStore: Sendable {
         let config = DbConfiguration(url: dir.appending(path: "db.realm"),
                                      version: 1)
         realm = RealmFactory.create(config: config)
+        logger.info("Created realm instance: \(config)")
     }
 }

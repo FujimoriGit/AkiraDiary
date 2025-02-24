@@ -9,14 +9,14 @@ import RealmHelper
 
 protocol RealmUseable {
     
-    var realm: Task<RealmAccessible, Error> { get }
+    var realm: Task<RealmWrapper, Error> { get }
     
-    func getRealm() async -> RealmAccessible?
+    func getRealm() async -> RealmWrapper?
 }
 
 extension RealmUseable {
     
-    func getRealm() async -> RealmAccessible? {
+    func getRealm() async -> RealmWrapper? {
         
         do {
             
