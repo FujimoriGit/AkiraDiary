@@ -11,8 +11,8 @@
     }
   },
   "generatedSourceTargetSet" : [
-    "SwiftLintCommandPlugin",
-    "SwiftLintBuildToolPlugin"
+    "SwiftLintBuildToolPlugin",
+    "SwiftLintCommandPlugin"
   ],
   "pluginDescriptions" : [
     {

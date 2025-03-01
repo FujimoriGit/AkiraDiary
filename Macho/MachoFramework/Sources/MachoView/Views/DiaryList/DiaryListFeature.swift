@@ -162,6 +162,7 @@ struct DiaryListFeature: Sendable {
 private extension DiaryListFeature {
     
     // swiftlint:disable:next function_body_length
+    // swiftlint:disable:next cyclomatic_complexity
     func createActionHandler() -> some ReducerOf<Self> {
         
         // swiftlint:disable:next closure_body_length
