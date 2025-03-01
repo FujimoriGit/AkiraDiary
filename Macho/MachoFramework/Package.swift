@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "MachoFramework",
-    platforms: [.macOS(.v12),.iOS(.v17)],
+    platforms: [.iOS(.v17)],
     products: [
         .library(
             name: "MachoFramework",
