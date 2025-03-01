@@ -42,6 +42,10 @@ jobs:
       - name: Show Xcode version
         run: xcodebuild -version
 
+      # xcbeautifyをインストール
+      - name: Install xcbeautify
+        run: brew install xcbeautify
+
       # Rudy製ライブラリのキャッシュ
       - name: Cache Gems
         uses: actions/cache@v4.1.1
@@ -66,19 +70,17 @@ jobs:
           restore-keys: ${{ runner.os }}-spm-
 
       # ビルド
-      - name: Xcode build
+      - name: Xcode Resolve Package Dependencies
         run: set -o pipefail &&
           xcodebuild
           -workspace ${WORKSPACE_DIR}
           -scheme Macho
-          -destination 'platform=iOS Simulator,OS=18.1,name=iPhone 16 Pro'
           -configuration Debug
           -clonedSourcePackagesDirPath SourcePackages
           -skipPackagePluginValidation
           -skipMacroValidation
           -scmProvider xcode
-          clean build |
-          bundle exec xcpretty
+          -resolvePackageDependencies
 
       # 単体テストの実行
       - name: Xcode test
@@ -94,10 +96,4 @@ jobs:
           -skip-testing MachoUITests
           -clonedSourcePackagesDirPath SourcePackages
           clean test |
-          bundle exec xcpretty --report html
-
-      - name: Upload test result
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results
-          path: build/reports
+          xcbeautify --renderer github-actions
