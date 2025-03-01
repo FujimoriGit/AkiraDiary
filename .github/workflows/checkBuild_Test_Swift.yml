@@ -46,20 +46,9 @@ jobs:
       - name: Install xcbeautify
         run: brew install xcbeautify
 
-      # Rudy製ライブラリのキャッシュ
-      - name: Cache Gems
-        uses: actions/cache@v4.1.1
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-gems-
-
-      # Rudy製ライブラリのインストール
-      - name: Install Bundled Gems
-        run: |
-          bundle config path vendor/bundle
-          bundle install --jobs 4 --retry 3
+      # DangerJSをインストール
+      - name: Install Dnager JS
+        run: npm install -g danger
 
       # SPMのライブラリのキャッシュ
       - name: Cache Swift Packages
@@ -95,5 +84,11 @@ jobs:
           -scmProvider xcode
           -skip-testing MachoUITests
           -clonedSourcePackagesDirPath SourcePackages
+          -resultBundlePath 'Build/test.xcresult'
+          -enableCodeCoverage YES
           clean test |
           xcbeautify --renderer github-actions
+
+      # テスト結果の確認
+      - name: Check Test Coverage
+        run: swift run danger-swift ci --dangerfile Dangerfile_after_build.swift

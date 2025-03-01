@@ -12,6 +12,8 @@ if let github = danger.github {
     if (github.pullRequest.changedFiles ?? 0) >= 500 {
         warn("PRの変更行が多すぎます。500行以内にしてね！理想は400行！")
     }
+    
+    message("PRの変更行は\(String(describing: danger.github.pullRequest.changedFiles))行です。")
 }
 
 // SwiftLintのレビュー

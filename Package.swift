@@ -9,13 +9,17 @@ let package = Package(
     products: [.library(name: "DangerDeps", type: .dynamic, targets: ["Dangerfile"])],
     dependencies: [
         .package(url: "https://github.com/danger/swift.git", exact: "3.21.1"),
+        .package(url: "https://github.com/f-meloni/danger-swift-xcodesummary", from: "1.2.1"),
+        .package(url: "https://github.com/f-meloni/danger-swift-coverage", from: "1.2.1"),
         .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins", exact: "0.58.0")
     ],
     targets: [
         .target(
             name: "Dangerfile",
             dependencies: [
-                .product(name: "Danger", package: "swift")
+                .product(name: "Danger", package: "swift"),
+                .product(name: "DangerXCodeSummary", package: "danger-swift-xcodesummary"),
+                .product(name: "DangerSwiftCoverage", package: "danger-swift-coverage")
             ]
         ),
     ]
