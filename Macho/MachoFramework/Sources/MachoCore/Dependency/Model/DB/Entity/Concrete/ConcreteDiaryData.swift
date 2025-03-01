@@ -8,7 +8,7 @@
 import Foundation
 
 public struct ConcreteDiaryData: DiaryData {
-        
+    
     public typealias GoalType = ConcreteTrainingContentData
     public typealias TagType = ConcreteTrainingTagData
     
@@ -18,13 +18,22 @@ public struct ConcreteDiaryData: DiaryData {
     public let mainText: String
     public let goals: [GoalType]
     public let tags: [TagType]
+    public let startTime: Date?
+    public let endTime: Date?
+    /// 全ての目標を達成したかどうか
+    public var isAchieved: Bool {
+        
+        return !goals.contains { !$0.isAchieved }
+    }
     
     public init(id: UUID,
                 date: Date,
                 title: String,
                 mainText: String,
                 goals: [GoalType],
-                tags: [TagType]) {
+                tags: [TagType],
+                startTime: Date?,
+                endTime: Date?) {
         
         self.id = id
         self.date = date
@@ -32,5 +41,7 @@ public struct ConcreteDiaryData: DiaryData {
         self.mainText = mainText
         self.goals = goals
         self.tags = tags
+        self.startTime = startTime
+        self.endTime = endTime
     }
 }

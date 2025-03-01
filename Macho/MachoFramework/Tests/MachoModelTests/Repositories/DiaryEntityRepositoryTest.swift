@@ -50,17 +50,17 @@ struct DiaryEntityRepositoryTest {
                                                                      goalSetCount: goalSet,
                                                                      actualNumberOfSets: actualNumOfSet,
                                                                      actualSetCount: actualSet,
-                                                                     startTime: nil,
-                                                                     endTime: nil,
                                                                      isAchieved: (actualNumOfSet >= goalNumOfSet && actualSet >= goalSet) || actualSet > goalSet)
                                        ],
-                                       tags: [Self.sampleTag1])
+                                       tags: [Self.sampleTag1],
+                                       startTime: nil,
+                                       endTime: nil)
         
         #expect(await testRepository.insertOrUpdate(entity),
                 "assert insert proc is successed.")
         
         let result = await testRepository.fetchAll()
-        assertDiaryData(expected: entity, actual: result.first)
+        #expect([entity] == result)
         
         print("Complete Test: case(\(#function)).")
     }
@@ -93,11 +93,11 @@ struct DiaryEntityRepositoryTest {
                                                             goalSetCount: 3,
                                                             actualNumberOfSets: 3,
                                                             actualSetCount: 3,
-                                                            startTime: nil,
-                                                            endTime: nil,
                                                             isAchieved: true)
                               ],
-                              tags: [Self.sampleTag1])
+                              tags: [Self.sampleTag1],
+                              startTime: nil,
+                              endTime: nil)
         }
         
         let realm = TestRealmGenerator.setupRealm("observe_diary_entity_realm_\(testArg.id.uuidString)")
@@ -110,7 +110,7 @@ struct DiaryEntityRepositoryTest {
         
         let insetTask = Task {
             
-            var result: [[DiaryEntity]] = []
+            var result: [[ConcreteDiaryData]] = []
             
             for i in 1...insertDiaries.count {
                 
@@ -134,7 +134,8 @@ struct DiaryEntityRepositoryTest {
         for index in insertDiaries.indices {
             
             expectedOutputs.append(insertDiaries[index])
-            assertDiariesArray(expected: expectedOutputs, actual: observedOutputs[index])
+            
+            #expect(expectedOutputs == observedOutputs[index])
         }
         
         let expectedDeleteDiaries = testArg.deleteTargetIds.filter { deleteId in
@@ -144,7 +145,7 @@ struct DiaryEntityRepositoryTest {
         
         let deleteTask = Task {
             
-            var result: [[DiaryEntity]] = []
+            var result: [[ConcreteDiaryData]] = []
             for i in 1...expectedDeleteDiaries.count {
                 
                 print("Waiting delete event: \(i) / \(expectedDeleteDiaries.count)")
@@ -176,30 +177,12 @@ struct DiaryEntityRepositoryTest {
         for deleteDiary in expectedDeleteDiaries {
             
             expectedDeletedOutputs.removeAll { $0.id == deleteDiary }
-            assertDiariesArray(expected: expectedDeletedOutputs,
-                               actual: observedDeletedOutputs.removeFirst())
+            #expect(expectedDeletedOutputs == observedDeletedOutputs.removeFirst())
         }
         
         #expect(observedDeletedOutputs.isEmpty, "check all delete diary in expected.")
         
         print("Complete Test case\(#function): \(String(describing: observeValues))")
-    }
-}
-
-private extension DiaryEntityRepositoryTest {
-    
-    func assertDiaryData(expected: ConcreteDiaryData, actual: DiaryEntity?) {
-        
-        let expectedData = DiaryEntity(expected)
-        #expect(expectedData == actual)
-    }
-    
-    func assertDiariesArray(expected: [ConcreteDiaryData], actual: [DiaryEntity]) {
-        
-        for index in expected.indices {
-            
-            assertDiaryData(expected: expected[index], actual: actual[index])
-        }
     }
 }
 

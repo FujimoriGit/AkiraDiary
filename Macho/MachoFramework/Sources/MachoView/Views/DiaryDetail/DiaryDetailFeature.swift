@@ -5,9 +5,10 @@
 //  Created by 佐藤汰一 on 2024/10/19.
 //
 
-import Combine
+@preconcurrency import Combine
 import ComposableArchitecture
 import Foundation
+import MachoCore
 
 @Reducer
 struct DiaryDetailFeature {
@@ -37,7 +38,7 @@ struct DiaryDetailFeature {
         /// 日記のメッセージ
         private(set) var message: String
         /// 日記のタグ
-        private(set) var tags: [TrainingTagData]
+        private(set) var tags: [ConcreteTrainingTagData]
         /// 日記に設定したトレーニングの総合結果
         private(set) var totalResult: TotalTrainingResult
         /// 日記に設定したトレーニング種目毎の結果
@@ -46,7 +47,7 @@ struct DiaryDetailFeature {
     
     // MARK: - Action
     
-    enum Action: Equatable {
+    enum Action: Equatable, Sendable {
         
         // MARK: Navigation Action
         
@@ -66,12 +67,26 @@ struct DiaryDetailFeature {
         // MARK: Effect Action
         
         /// 日記の取得副作用
-        case didReceivedDiary(DiaryData)
+        case didReceivedDiary(ConcreteDiaryData)
+        /// 監視イベント
+        case observePublisher(PublisherEvent)
+        
+        @CasePathable
+        enum PublisherEvent: Equatable, Sendable {
+            
+            /// 日記の監視
+            case observeDiaryList(AnyPublisher<[ConcreteDiaryData], Never>)
+            
+            static func == (lhs: Self, rhs: Self) -> Bool {
+                
+                return lhs.is(\.observeDiaryList) == rhs.is(\.observeDiaryList)
+            }
+        }
     }
     
     // MARK: - Dependency
     
-    @Dependency(\.diaryListFetchApi) var diaryListItemApi
+    @Dependency(\.diaryEntityClient) var diaryListItemApi
     @Dependency(\.dismiss) var dismiss
     
     // MARK: - Reducer
@@ -88,7 +103,11 @@ struct DiaryDetailFeature {
                 return .none
                 
             case .onAppear:
-                return addObserveDiaryData(state)
+                return .run { send in
+                    
+                    guard let publisher = await diaryListItemApi.getDiaryObserver() else { return }
+                    await send(.observePublisher(.observeDiaryList(publisher)))
+                }
                 
             case .onDisappear:
                 return .cancel(id: DiaryObserveCancellable())
@@ -110,6 +129,9 @@ struct DiaryDetailFeature {
             case .didReceivedDiary(let diary):
                 state.updateDiary(diary)
                 return .none
+                
+            case .observePublisher(.observeDiaryList(let publisher)):
+                return addObserveDiaryData(publisher: publisher, targetId: state.diaryId)
             }
         }
         .forEach(\.path, action: \.path)
@@ -146,11 +168,13 @@ extension DiaryDetailFeature {
 
 private extension DiaryDetailFeature {
     
-    func addObserveDiaryData(_ state: State) -> EffectOf<Self> {
+    func addObserveDiaryData(publisher: AnyPublisher<[ConcreteDiaryData], Never>,
+                             targetId: UUID) -> EffectOf<Self> {
         
         return .publisher {
-            diaryListItemApi.observeDiaryList()
-                .compactMap { $0.first { $0.id == state.diaryId } }
+            
+            publisher
+                .compactMap { $0.first { $0.id == targetId } }
                 .map { Action.didReceivedDiary($0) }
                 .eraseToAnyPublisher()
         }
@@ -160,7 +184,7 @@ private extension DiaryDetailFeature {
 
 extension DiaryDetailFeature.State {
     
-    init(diary: DiaryData) {
+    init(diary: ConcreteDiaryData) {
         
         diaryId = diary.id
         title = diary.title
@@ -170,7 +194,7 @@ extension DiaryDetailFeature.State {
         trainings = diary.goals.map { TrainingTypeResult($0) }
     }
     
-    mutating func updateDiary(_ diary: DiaryData) {
+    mutating func updateDiary(_ diary: ConcreteDiaryData) {
         
         title = diary.title
         message = diary.mainText

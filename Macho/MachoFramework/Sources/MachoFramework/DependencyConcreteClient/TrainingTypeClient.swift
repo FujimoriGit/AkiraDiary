@@ -16,5 +16,12 @@ extension TrainingTypeClient: DependencyKey {
     public static let liveValue = TrainingTypeClient {
         
         return await repository.fetchAll()
+    } add: {
+        
+        return await repository.insert($0)
+    } getObserve: {
+        
+        return await repository.getObserver()
     }
+
 }

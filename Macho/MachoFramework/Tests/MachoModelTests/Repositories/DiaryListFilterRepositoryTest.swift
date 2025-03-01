@@ -41,18 +41,24 @@ struct DiaryListFilterRepositoryTest {
                                                         filterValue: "腹筋")
         
         #expect(await testRepository.add(initialFilter), "check insert proc is successed.")
-        assertFilter([initialFilter], await testRepository.fetchAll())
+        
+        let fetchResultAfterAdd = await testRepository.fetchAll()
+        #expect([initialFilter] == fetchResultAfterAdd)
         
         let updateTargetFilter = ConcreteDiaryListFilterData(id: initialFilter.id,
                                                         filterTarget: updateFilter.filterTarget,
                                                         filterId: updateFilter.filterId,
                                                         filterValue: updateFilter.filterValue)
         #expect(await testRepository.add(updateTargetFilter), "check update proc is successed.")
-        assertFilter([updateTargetFilter], await testRepository.fetchAll())
+        
+        let fetchResultAfterUpdate =  await testRepository.fetchAll()
+        #expect([updateTargetFilter] == fetchResultAfterUpdate)
         
         #expect(await testRepository.deleteFilters([updateTargetFilter]), "check delete proc is successed.")
-        assertFilter([], await testRepository.fetchAll())
         
+        let fetchResultAfterDelete = await testRepository.fetchAll()
+        #expect([] == fetchResultAfterDelete)
+
         print("Complete DiaryListFilterRepositoryTest.entityIoTest")
     }
     
@@ -93,7 +99,7 @@ struct DiaryListFilterRepositoryTest {
                 let currentCount = index + 1
                 print("Waiting insert event: \(currentCount) / \(insertEntities.count)")
                 let output = await observeValues?.next() ?? []
-                assertFilter(expectedOutput, output)
+                #expect(expectedOutput == output)
                 print("Received insert event: \(currentCount) / \(insertEntities.count), output: \(output)")
             }
         }
@@ -132,7 +138,7 @@ struct DiaryListFilterRepositoryTest {
                 let currentCount = index + 1
                 print("Waiting update event: \(currentCount) / \(updateEntities.count)")
                 let updatedOutput = await observeValues?.next() ?? []
-                assertFilter(expectedOutput, updatedOutput)
+                #expect(expectedOutput == updatedOutput)
                 print("Received update event: \(currentCount) / \(updateEntities.count), output: \(updatedOutput)")
             }
             
@@ -163,7 +169,7 @@ struct DiaryListFilterRepositoryTest {
                 let currentCount = index + 1
                 print("Waiting delete event: \(currentCount) / \(deleteEntities.count)")
                 let actualOutput = await observeValues?.next() ?? []
-                assertFilter(expectedOutput, actualOutput)
+                #expect(expectedOutput == actualOutput)
                 print("Received update event: \(currentCount) / \(deleteEntities.count), output: \(actualOutput)")
             }
         }
@@ -176,14 +182,6 @@ struct DiaryListFilterRepositoryTest {
         await deleteTask.value
         
         print("Complete DiaryListFilterRepositoryTest.observeEntityTest")
-    }
-}
-
-private extension DiaryListFilterRepositoryTest {
-    
-    func assertFilter(_ expect: [ConcreteDiaryListFilterData], _ actual: [DiaryListFilterEntity]) {
-        
-        #expect(expect.map { DiaryListFilterEntity($0) } == actual, "assertFilter")
     }
 }
 

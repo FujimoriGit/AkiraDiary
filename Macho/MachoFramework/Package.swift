@@ -88,7 +88,7 @@ let package = Package(
         .testTarget(
             name: "MachoViewTests",
             dependencies: [
-                "MachoView",
+                "MachoFramework"
             ]),
         .testTarget(
             name: "MachoModelTests",

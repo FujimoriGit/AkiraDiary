@@ -19,13 +19,14 @@ public struct DiaryEntityRepositoryImpl: RealmUseable, Sendable {
         self.realm = realm
     }
     
-    public func fetchAll() async -> [DiaryEntity] {
+    public func fetchAll() async -> [ConcreteDiaryData] {
         
         logger.debug("[In]")
-        return await (getRealm()?.read() ?? [])
+        return await ((getRealm()?.read() ?? []) as [DiaryEntity])
+            .map { .init(entity: $0) }
     }
     
-    public func insertOrUpdate(_ diary: some DiaryData) async -> Bool {
+    public func insertOrUpdate(_ diary: ConcreteDiaryData) async -> Bool {
         
         logger.debug("[In] diary: \(diary)")
         return await getRealm()?.insert(records: [DiaryEntity(diary)]) ?? false
@@ -38,10 +39,12 @@ public struct DiaryEntityRepositoryImpl: RealmUseable, Sendable {
             .delete { (entity: DiaryEntity) in entity.id == id } ?? false
     }
     
-    public func getDiaryObserver() async -> AnyPublisher<[DiaryEntity], Never>? {
+    public func getDiaryObserver() async -> AnyPublisher<[ConcreteDiaryData], Never>? {
         
         logger.debug("[In]")
         guard let realm = await getRealm() else { return nil }
         return await realm.readObjectsForObserve(type: DiaryEntity.self)
+            .map { $0.map { ConcreteDiaryData(entity: $0) } }
+            .eraseToAnyPublisher()
     }
 }

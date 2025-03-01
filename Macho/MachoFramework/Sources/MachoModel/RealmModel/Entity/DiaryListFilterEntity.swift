@@ -74,3 +74,13 @@ public class DiaryListFilterRealmObject: Object {
     }
 }
  
+extension ConcreteDiaryListFilterData {
+    
+    init(entity: DiaryListFilterEntity) {
+        
+        self.init(id: entity.id,
+                  filterTarget: entity.filterTarget,
+                  filterId: entity.filterId,
+                  filterValue: entity.filterValue)
+    }
+}

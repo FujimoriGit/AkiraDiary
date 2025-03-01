@@ -11,6 +11,7 @@ import RealmHelper
 import XCTest
 
 @testable import MachoView
+@testable import MachoCore
 
 final class DiaryDetailViewTest: XCTestCase {
     
@@ -26,19 +27,22 @@ final class DiaryDetailViewTest: XCTestCase {
         // dismiss確認用のオブジェクト生成
         let isDismissInvoked = LockIsolated(false)
         // 日記監視を制御するPublisher生成
-        let diaryPublisher = PassthroughSubject<[DiaryData], Never>()
+        let mockRealm = try await RealmTestHelper.getMockRealm()
+        let mockClient = DiaryEntityClient.getMockClient(realm: mockRealm)
         
         let testStore = TestStore(initialState: DiaryDetailFeature.State(diary: Self.sampleDiaryEntity1),
                                   reducer: { DiaryDetailFeature() },
                                   withDependencies: {
-            $0.diaryListFetchApi = createMockDiaryClient(diaryPublisher.eraseToAnyPublisher())
+            $0.diaryEntityClient = mockClient
             $0.dismiss = .init { isDismissInvoked.setValue(true) }
         })
         
         await testStore.send(.onAppear)
+        await testStore.receive(\.observePublisher)
         
         // 監視対象と対象外の日記更新
-        diaryPublisher.send([Self.updatedSampleDiaryEntity1, Self.sampleDiaryEntity2])
+        let addResult = await mockClient.add(Self.updatedSampleDiaryEntity1)
+        XCTAssertTrue(addResult)
         
         await testStore.receive(\.didReceivedDiary) {
             
@@ -58,13 +62,18 @@ final class DiaryDetailViewTest: XCTestCase {
     @MainActor
     func testOnTappedEdit() async throws {
         
+        let mockRealm = try await RealmTestHelper.getMockRealm()
+        let mockClient = DiaryEntityClient.getMockClient(realm: mockRealm)
         let testStore = TestStore(initialState: DiaryDetailFeature.State(diary: Self.sampleDiaryEntity1),
                                   reducer: { DiaryDetailFeature() },
                                   withDependencies: {
-            $0.diaryListFetchApi = createMockDiaryClient(PassthroughSubject<[DiaryData], Never>().eraseToAnyPublisher())
+            
+            $0.diaryEntityClient = mockClient
         })
         
         await testStore.send(.onAppear)
+        await testStore.receive(\.observePublisher)
+        
         await testStore.send(.tappedEditButton) {
             
             // TODO: 編集画面が実装されたら正しい値を入れる
@@ -81,25 +90,27 @@ final class DiaryDetailViewTest: XCTestCase {
     @MainActor
     func testOnTappedShowMoreMessage() async throws {
         
-        // 日記監視を制御するPublisher生成
-        let diaryPublisher = PassthroughSubject<[DiaryData], Never>()
         // dismiss確認用のオブジェクト生成
         let isDismissInvoked = LockIsolated(false)
+        
+        let mockRealm = try await RealmTestHelper.getMockRealm()
+        let mockClient = DiaryEntityClient.getMockClient(realm: mockRealm)
         
         let testStore = TestStore(initialState: DiaryDetailFeature.State(diary: Self.sampleDiaryEntity1),
                                   reducer: { DiaryDetailFeature() },
                                   withDependencies: {
-            $0.diaryListFetchApi = createMockDiaryClient(diaryPublisher.eraseToAnyPublisher())
+            
+            $0.diaryEntityClient = mockClient
             $0.dismiss = .init { isDismissInvoked.setValue(true) }
         })
         
         await testStore.send(.onAppear)
+        await testStore.receive(\.observePublisher)
         
         // 監視対象と異なる日記が更新する
-        diaryPublisher.send([Self.sampleDiaryEntity1, Self.sampleDiaryEntity2])
-        
-        await testStore.receive(\.didReceivedDiary)
-        
+        let addResult = await mockClient.add(Self.sampleDiaryEntity2)
+        XCTAssertTrue(addResult)
+                
         await testStore.send(.onDisappear)
         
         // dismissしていないか確認
@@ -107,62 +118,53 @@ final class DiaryDetailViewTest: XCTestCase {
     }
 }
 
-// MARK: - Test utility method {
-
-private extension DiaryDetailViewTest {
-    
-    func createMockDiaryClient(_ diaryPublisher: AnyPublisher<[DiaryData], Never>) -> DiaryClient {
-        
-        let mockRealm = RealmAccessorMock(expectedNotification: diaryPublisher)
-        return .createCustomValue(mockRealm)
-    }
-}
-
 // MARK: - Test Entity Definition
 
 private extension DiaryDetailViewTest {
     
-    static let sampleDiaryGoal1 = TrainingContentData(id: UUID(),
-                                                      trainingType: TrainingTypeEntity(id: UUID(), name: "腹筋"),
-                                                      goalNumberOfSets: 3,
-                                                      goalSetCount: 3,
-                                                      actualNumberOfSets: 3,
-                                                      actualSetCount: 3)
-    static let sampleDiaryGoal2 = TrainingContentData(id: UUID(),
-                                                      trainingType: TrainingTypeEntity(id: UUID(), name: "ベンチプレス"),
-                                                      goalNumberOfSets: 2,
-                                                      goalSetCount: 1,
-                                                      actualNumberOfSets: 1,
-                                                      actualSetCount: 1)
+    static let sampleDiaryGoal1 = ConcreteTrainingContentData(id: UUID(),
+                                                              trainingType: ConcreteTrainingTypeData(id: UUID(), name: "腹筋"),
+                                                              goalNumberOfSets: 3,
+                                                              goalSetCount: 3,
+                                                              actualNumberOfSets: 3,
+                                                              actualSetCount: 3,
+                                                              isAchieved: true)
+    static let sampleDiaryGoal2 = ConcreteTrainingContentData(id: UUID(),
+                                                              trainingType: ConcreteTrainingTypeData(id: UUID(), name: "ベンチプレス"),
+                                                              goalNumberOfSets: 2,
+                                                              goalSetCount: 1,
+                                                              actualNumberOfSets: 1,
+                                                              actualSetCount: 1,
+                                                              isAchieved: false)
     
-    static let sampleDiaryTag1 = TrainingTagEntity(id: UUID(), tagName: "tag1")
-    static let sampleDiaryTag2 = TrainingTagEntity(id: UUID(), tagName: "tag2")
+    static let sampleDiaryTag1 = ConcreteTrainingTagData(id: UUID(), tagName: "tag1")
+    static let sampleDiaryTag2 = ConcreteTrainingTagData(id: UUID(), tagName: "tag2")
     
     static let sampleDiaryEntity1Id = UUID()
     static let sampleDiaryEntity2Id = UUID()
     
-    static let sampleDiaryEntity1 = DiaryEntity(id: sampleDiaryEntity1Id,
-                                                date: Date(),
-                                                title: "sample1",
-                                                mainText: "sample1 message",
-                                                goals: [sampleDiaryGoal1],
-                                                tags: [sampleDiaryTag1],
-                                                startTime: Date(),
-                                                endTime: nil)
-    static let updatedSampleDiaryEntity1 = DiaryEntity(id: sampleDiaryEntity1Id,
-                                                       date: Date(),
-                                                       title: "updated_sample1",
-                                                       mainText: "updated_sample1 message",
-                                                       goals: [sampleDiaryGoal1],
-                                                       tags: [sampleDiaryTag1],
-                                                       startTime: Date(),
-                                                       endTime: nil)
-    static let sampleDiaryEntity2 = DiaryEntity(id: sampleDiaryEntity2Id,
-                                                date: Date(),
-                                                title: "sample2",
-                                                mainText: "sample2 message",
-                                                goals: [sampleDiaryGoal2],
-                                                tags: [sampleDiaryTag2],
-                                                startTime: Date(),
-                                                endTime: nil)
+    static let sampleDiaryEntity1 = ConcreteDiaryData(id: sampleDiaryEntity1Id,
+                                                      date: Date(),
+                                                      title: "sample1",
+                                                      mainText: "sample1 message",
+                                                      goals: [sampleDiaryGoal1],
+                                                      tags: [sampleDiaryTag1],
+                                                      startTime: Date(),
+                                                      endTime: nil)
+    static let updatedSampleDiaryEntity1 = ConcreteDiaryData(id: sampleDiaryEntity1Id,
+                                                             date: Date(),
+                                                             title: "updated_sample1",
+                                                             mainText: "updated_sample1 message",
+                                                             goals: [sampleDiaryGoal1],
+                                                             tags: [sampleDiaryTag1],
+                                                             startTime: Date(),
+                                                             endTime: nil)
+    static let sampleDiaryEntity2 = ConcreteDiaryData(id: sampleDiaryEntity2Id,
+                                                      date: Date(),
+                                                      title: "sample2",
+                                                      mainText: "sample2 message",
+                                                      goals: [sampleDiaryGoal2],
+                                                      tags: [sampleDiaryTag2],
+                                                      startTime: Date(),
+                                                      endTime: nil)
 }

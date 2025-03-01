@@ -5,20 +5,22 @@
 //  Created by Daiki Fujimori on 2024/01/07
 //
 
+@preconcurrency import Combine
 import ComposableArchitecture
+import MachoCore
 import SwiftUI
 
 struct Tag: Equatable, Identifiable {
     
     var id: UUID { entity.id }
-    let entity: TrainingTagData
+    let entity: ConcreteTrainingTagData
     var isSelected = false
 }
 
 struct Goal: Equatable, Identifiable {
     
     let id: UUID
-    var trainingType: TrainingTypeData
+    var trainingType: ConcreteTrainingTypeData
     var numberOfSets: Int
     var setCount: Int
 }
@@ -49,7 +51,7 @@ struct DiaryCreationFeature: Sendable {
         
         case onAppear
         case didChangeTags
-        case fetchedTags([TrainingTagData])
+        case fetchedTags([ConcreteTrainingTagData])
         case titleTextChange(String)
         case messageTextChange(String)
         case trainingStartButtonTapped
@@ -61,10 +63,22 @@ struct DiaryCreationFeature: Sendable {
         case tappedAddingGoalButton
         case deletedGoal(Goal)
         case editingGoal(Goal)
+        case observePublisher(PublisherEvent)
+        
+        @CasePathable
+        enum PublisherEvent: Equatable {
+            
+            case observeTags(AnyPublisher<[ConcreteTrainingTagData], Never>)
+            
+            static func == (lhs: DiaryCreationFeature.Action.PublisherEvent, rhs: DiaryCreationFeature.Action.PublisherEvent) -> Bool {
+                
+                return lhs.is(\.observeTags) == rhs.is(\.observeTags)
+            }
+        }
     }
     
-    @Dependency(\.trainingTagApi) var trainingTagApi
-    @Dependency(\.diaryListFetchApi) var diaryListFetchApi
+    @Dependency(\.trainingTagClient) var trainingTagApi
+    @Dependency(\.diaryEntityClient) var diaryListFetchApi
     @Dependency(\.dismiss) var dismiss
     
     // MARK: - body
@@ -78,12 +92,11 @@ struct DiaryCreationFeature: Sendable {
             case .onAppear:
                 logger.debug("onAppear")
                 return .concatenate(
-                    .publisher {
-                         
-                        return trainingTagApi.getTrainingTagPublisher()
-                            .receive(on: DispatchQueue.main)
-                            .map { .fetchedTags($0) }
-                    }.cancellable(id: TrainingTagsSubscriber()),
+                    .run { send in
+                      
+                        guard let publisher = await trainingTagApi.getObserve() else { return }
+                        await send(.observePublisher(.observeTags(publisher)))
+                    },
                     fetchTags()
                 )
                 
@@ -173,6 +186,15 @@ struct DiaryCreationFeature: Sendable {
                                                                   isEnableSaveButton: true))
                 return .none
                 
+            case .observePublisher(.observeTags(let publisher)):
+                return .publisher {
+                    
+                    return publisher
+                        .receive(on: DispatchQueue.main)
+                        .map { .fetchedTags($0) }
+                }
+                .cancellable(id: TrainingTagsSubscriber())
+                
             case .destination(.presented(.addGoal(.delegate(.saveGoal(let goal))))):
                 guard let index = state.goals.firstIndex(where: { $0.trainingType == goal.trainingType }) else {
                     
@@ -184,7 +206,7 @@ struct DiaryCreationFeature: Sendable {
                 state.isEnableStartButton = isEnableStartButton(state: state)
                 return .none
                 
-            case .destination:
+            case .destination, .observePublisher:
                 return .none
             }
         }
@@ -201,7 +223,6 @@ private extension DiaryCreationFeature {
         return .run { send in
             
             let tags = await trainingTagApi.fetchAll()
-            
             await send(.fetchedTags(tags))
         }
     }
@@ -212,30 +233,31 @@ private extension DiaryCreationFeature {
         _ = await diaryListFetchApi.add(diary)
     }
     
-    func createDiary(state: State) -> DiaryData {
+    func createDiary(state: State) -> ConcreteDiaryData {
         
         let startDate = Date()
         
         let goals = state.goals.map {
             
-            TrainingContentData(id: $0.id,
-                                trainingType: $0.trainingType,
-                                goalNumberOfSets: $0.numberOfSets,
-                                goalSetCount: $0.setCount,
-                                actualNumberOfSets: nil,
-                                actualSetCount: nil)
+            ConcreteTrainingContentData(id: $0.id,
+                                        trainingType: $0.trainingType,
+                                        goalNumberOfSets: $0.numberOfSets,
+                                        goalSetCount: $0.setCount,
+                                        actualNumberOfSets: nil,
+                                        actualSetCount: nil,
+                                        isAchieved: false)
         }
         
         let tags = state.tags.map { $0.entity }
         
-        return DiaryData(id: UUID(),
-                         date: startDate,
-                         title: state.titleText,
-                         mainText: state.messageText,
-                         goals: goals,
-                         tags: tags,
-                         startTime: startDate,
-                         endTime: nil)
+        return ConcreteDiaryData(id: UUID(),
+                                 date: startDate,
+                                 title: state.titleText,
+                                 mainText: state.messageText,
+                                 goals: goals,
+                                 tags: tags,
+                                 startTime: startDate,
+                                 endTime: nil)
     }
     
     func cancelChangesetObserve() -> Effect<Self.Action> {
@@ -254,26 +276,9 @@ private extension DiaryCreationFeature {
 extension DiaryCreationFeature {
     
     @Reducer(state: .equatable, action: .equatable)
-    enum Destination: Equatable {
+    enum Destination {
         
         case addTag(AddTagFeature)
         case addGoal(AddGoalFeature)
-        
-        var id: Int {
-            
-            switch self {
-                
-            case .addTag:
-                return 0
-                
-            case .addGoal:
-                return 1
-            }
-        }
-        
-        static func == (lhs: DiaryCreationFeature.Destination, rhs: DiaryCreationFeature.Destination) -> Bool {
-            
-            return lhs.id == rhs.id
-        }
     }
 }

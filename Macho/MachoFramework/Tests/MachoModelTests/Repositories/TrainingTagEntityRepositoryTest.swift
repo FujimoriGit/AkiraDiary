@@ -33,19 +33,15 @@ struct TrainingTagEntityRepositoryTest {
         let initialTag = ConcreteTrainingTagData(id: UUID(), tagName: tagName)
         
         #expect(await testRepository.insert(initialTag), "check insert proc is successed.")
-        assertTag([initialTag], await testRepository.fetchAll())
+        
+        let fetchResultBeforeInsert = await testRepository.fetchAll()
+        #expect([initialTag] == fetchResultBeforeInsert)
         
         #expect(await testRepository.delete(initialTag.id), "check delete proc is successed.")
-        assertTag([], await testRepository.fetchAll())
+        
+        let fetchResultBeforeDelete = await testRepository.fetchAll()
+        #expect([] == fetchResultBeforeDelete)
         
         print("Complete TrainingTagEntityRepositoryTest.entityIoTest")
-    }
-}
-
-private extension TrainingTagEntityRepositoryTest {
-    
-    func assertTag(_ expected: [ConcreteTrainingTagData], _ actual: [TrainingTagEntity]) {
-        
-        #expect(expected.map { TrainingTagEntity($0) } == actual)
     }
 }

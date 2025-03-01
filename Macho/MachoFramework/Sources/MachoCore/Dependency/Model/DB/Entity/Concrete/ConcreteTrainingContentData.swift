@@ -17,8 +17,6 @@ public struct ConcreteTrainingContentData: TrainingContentData {
     public let goalSetCount: Int
     public let actualNumberOfSets: Int?
     public let actualSetCount: Int?
-    public let startTime: Date?
-    public let endTime: Date?
     public let isAchieved: Bool
     
     public init(id: UUID,
@@ -27,8 +25,6 @@ public struct ConcreteTrainingContentData: TrainingContentData {
                 goalSetCount: Int,
                 actualNumberOfSets: Int?,
                 actualSetCount: Int?,
-                startTime: Date?,
-                endTime: Date?,
                 isAchieved: Bool) {
         
         self.id = id
@@ -37,8 +33,6 @@ public struct ConcreteTrainingContentData: TrainingContentData {
         self.goalSetCount = goalSetCount
         self.actualNumberOfSets = actualNumberOfSets
         self.actualSetCount = actualSetCount
-        self.startTime = startTime
-        self.endTime = endTime
         self.isAchieved = isAchieved
     }
 }

@@ -7,11 +7,23 @@
 
 import MachoCore
 import XCTest
+@testable import RealmHelper
+@testable import MachoModel
 
 extension TrainingTypeClient {
     
-    static func getMockClient(expectedFetchList: [ConcreteTrainingTypeData] = []) -> TrainingTypeClient {
+    static func getMockClient(realm: RealmWrapper) -> TrainingTypeClient {
         
-        return TrainingTypeClient(fetchAllType: { expectedFetchList })
+        let repository = TrainingTypeEntityRepositoryImpl(Task { realm })
+        return TrainingTypeClient {
+            
+            return await repository.fetchAll()
+        } add: {
+            
+            return await repository.insert($0)
+        } getObserve: {
+            
+            return await repository.getObserver()
+        }
     }
 }

@@ -280,10 +280,9 @@ private extension DiaryListFeature {
                 
                 return .publisher {
                     
-                    publisher.map {
-                        
-                        return .receiveLoadDiaryListFilter(filters: $0)
-                    }
+                    publisher
+                        .dropFirst()
+                        .map { .receiveLoadDiaryListFilter(filters: $0) }
                 }.cancellable(id: FilterObserveCancellable())
             }
         }

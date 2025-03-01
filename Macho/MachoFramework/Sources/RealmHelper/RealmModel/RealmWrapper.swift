@@ -16,25 +16,6 @@ public struct RealmWrapper {
     
     // MARK: - RealmActor initialize method
     
-//    init(_ config: DbConfiguration) async throws {
-//        
-//        let configuration = if let fileUrl = config.url {
-//            
-//            Realm.Configuration(fileURL: fileUrl,
-//                                schemaVersion: config.version)
-//        }
-//        else {
-//            
-//            Realm.Configuration(inMemoryIdentifier: config.isOnMemoryId,
-//                                schemaVersion: config.version)
-//        }
-//        
-//        logger.debug("realm config: \(config)")
-//        realm = try await Realm(configuration: configuration,
-//                                actor: RealmActor.shared)
-//        logger.info("Completed setup realm.")
-//    }
-    
     init(_ realm: Realm) {
         
         self.realm = realm

@@ -20,7 +20,7 @@ struct DiaryListFilterDataConverter {
         }
     }
     
-    static func convertToDiaryListFilterDataList(_ items: [DiaryListFilterItem]) -> [some DiaryListFilterData] {
+    static func convertToDiaryListFilterDataList(_ items: [DiaryListFilterItem]) -> [ConcreteDiaryListFilterData] {
         
         return items.map { ConcreteDiaryListFilterData($0) }
     }

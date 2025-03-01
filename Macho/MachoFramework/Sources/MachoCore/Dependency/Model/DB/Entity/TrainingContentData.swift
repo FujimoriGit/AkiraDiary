@@ -22,10 +22,6 @@ public protocol TrainingContentData: Equatable, Sendable, Identifiable {
     var actualNumberOfSets: Int? { get }
     /// 達成したセット数
     var actualSetCount: Int? { get }
-    /// 開始時間
-    var startTime: Date? { get }
-    /// 終了時間
-    var endTime: Date? { get }
     /// トレーニング達成成否
     var isAchieved: Bool { get }
 }

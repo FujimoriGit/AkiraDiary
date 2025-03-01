@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import MachoCore
 
 struct TrainingTypeResult: Equatable, Identifiable {
     
@@ -50,7 +51,7 @@ struct TrainingTypeResult: Equatable, Identifiable {
     
     // MARK: - initialize method
     
-    init(_ content: TrainingContentData) {
+    init(_ content: ConcreteTrainingContentData) {
         
         id = content.id
         trainingName = content.trainingType?.name ?? "-"

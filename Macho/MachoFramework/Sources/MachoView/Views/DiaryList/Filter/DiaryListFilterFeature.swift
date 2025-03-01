@@ -145,12 +145,6 @@ private extension DiaryListFilterFeature {
             },
             .run { send in
                 
-                let result = await diaryListFilterApi.fetchFilterList()
-                await send(.receiveDidChangeFilterItems(DiaryListFilterDataConverter
-                    .convertToDiaryFilterItemList(result)))
-            },
-            .run { send in
-                
                 guard let publisher = await diaryListFilterApi.getFilterListObserver() else {
                     
                     await send(.startFilterItemsObserver(PassthroughSubject().eraseToAnyPublisher()))
@@ -233,7 +227,7 @@ private extension DiaryListFilterFeature {
         }
         
         // トレーニング種目のフィルター値を追加
-        let trainingTypeList = await trainingTypeApi.fetchAll().map {
+        let trainingTypeList = await trainingTypeApi.fetchAllType().map {
             
             return DiaryListFilterItem(target: .trainingType, filterItemId: $0.id, value: $0.name)
         }

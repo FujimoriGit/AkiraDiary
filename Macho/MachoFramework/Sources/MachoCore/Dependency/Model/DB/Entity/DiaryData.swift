@@ -23,4 +23,10 @@ public protocol DiaryData: Equatable, Sendable, Identifiable {
     var  goals: [GoalType] { get }
     /// タグリスト
     var tags: [TagType] { get }
+    /// 開始時間
+    var startTime: Date? { get }
+    /// 終了時間
+    var endTime: Date? { get }
+    /// 全ての目標を達成したかどうか
+    var isAchieved: Bool { get }
 }

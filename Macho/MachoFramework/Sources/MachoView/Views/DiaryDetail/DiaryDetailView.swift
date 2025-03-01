@@ -6,6 +6,7 @@
 //
 
 import ComposableArchitecture
+import MachoCore
 import SwiftUI
 
 struct DiaryDetailView: View {
@@ -222,24 +223,25 @@ private extension DiaryDetailView {
 // MARK: - preview
 
 #Preview {
-    let goal1 = TrainingContentData(id: UUID(),
-                                    trainingType: TrainingTypeData(id: UUID(), name: "腹筋"),
-                                    goalNumberOfSets: 3,
-                                    goalSetCount: 3,
-                                    actualNumberOfSets: 3,
-                                    actualSetCount: 3)
-    let tag1 = TrainingTagData(id: UUID(), tagName: "XXX")
-    let tag2 = TrainingTagData(id: UUID(), tagName: "ZZZZZZZ")
-    let tag3 = TrainingTagData(id: UUID(), tagName: "UUUUU")
-    let initialDiaryEntity = DiaryData(id: UUID(),
-                                       date: Date(),
-                                       title: "Preview",
-                                       // swiftlint:disable:next line_length
-                                       mainText: "preview sample message\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-                                       goals: [goal1],
-                                       tags: [tag1, tag2, tag3],
-                                       startTime: Date(),
-                                       endTime: Date())
+    let goal1 = ConcreteTrainingContentData(id: UUID(),
+                                            trainingType: ConcreteTrainingTypeData(id: UUID(), name: "腹筋"),
+                                            goalNumberOfSets: 3,
+                                            goalSetCount: 3,
+                                            actualNumberOfSets: 3,
+                                            actualSetCount: 3,
+                                            isAchieved: true)
+    let tag1 = ConcreteTrainingTagData(id: UUID(), tagName: "XXX")
+    let tag2 = ConcreteTrainingTagData(id: UUID(), tagName: "ZZZZZZZ")
+    let tag3 = ConcreteTrainingTagData(id: UUID(), tagName: "UUUUU")
+    let initialDiaryEntity = ConcreteDiaryData(id: UUID(),
+                                               date: Date(),
+                                               title: "Preview",
+                                               // swiftlint:disable:next line_length
+                                               mainText: "preview sample message\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                                               goals: [goal1],
+                                               tags: [tag1, tag2, tag3],
+                                               startTime: Date(),
+                                               endTime: Date())
     DiaryDetailView(store: Store(initialState: DiaryDetailFeature.State(diary: initialDiaryEntity),
                                  reducer: { DiaryDetailFeature() }))
 }

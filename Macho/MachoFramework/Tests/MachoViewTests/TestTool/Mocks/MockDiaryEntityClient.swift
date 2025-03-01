@@ -5,33 +5,28 @@
 //  Created by 佐藤汰一 on 2024/11/29.
 //
 
-@preconcurrency import Combine
 import MachoCore
+import MachoModel
+import RealmHelper
 import XCTest
 
 extension DiaryEntityClient {
     
-    static func getMockClient(expectedFetchList: [ConcreteDiaryData] = [],
-                              expectedDeleteDiaryId: UUID? = nil,
-                              expectedDeleteDiaryResult: Bool = false,
-                              stubObserver: AnyPublisher<[any DiaryData], Never> = PassthroughSubject().eraseToAnyPublisher()) -> DiaryEntityClient {
+    static func getMockClient(realm: RealmWrapper) -> DiaryEntityClient {
         
+        let repository = DiaryEntityRepositoryImpl(Task { realm })
         return DiaryEntityClient {
             
-            return expectedFetchList
-        } deleteDiary: { targetId in
+            return await repository.fetchAll()
+        } add: {
             
-            guard let expectedDeleteDiaryId else {
-                
-                XCTFail("Failed to add filter.")
-                return false
-            }
+            return await repository.insertOrUpdate($0)
+        } deleteDiary: {
             
-            XCTAssertEqual(targetId, expectedDeleteDiaryId)
-            return expectedDeleteDiaryResult
+            return await repository.deleteDiary($0)
         } getDiaryObserver: {
             
-            return stubObserver
+            return await repository.getDiaryObserver()
         }
     }
 }

@@ -36,8 +36,9 @@ struct AddTrainingTypeFeature {
     
     // MARK: - Dependencies
     
-    @Dependency(\.trainingTypeApi) var trainingTypeApi
+    @Dependency(\.trainingTypeClient) var trainingTypeApi
     @Dependency(\.dismiss) var dismiss
+    @Dependency(\.uuid) var uuid
     
     // MARK: - body
     
@@ -76,6 +77,6 @@ private extension AddTrainingTypeFeature {
     
     func saveTrainingType(trainingTypeName: String) async -> Bool {
         
-        return await trainingTypeApi.add(trainingTypeName)
+        return await trainingTypeApi.add(.init(id: uuid(), name: trainingTypeName))
     }
 }

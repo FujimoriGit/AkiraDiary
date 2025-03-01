@@ -5,8 +5,10 @@
 //  Created by Daiki Fujimori on 2024/05/03
 //
 
+@preconcurrency import Combine
 import ComposableArchitecture
 import Foundation
+import MachoCore
 
 @Reducer
 struct AddGoalFeature: Sendable {
@@ -16,10 +18,10 @@ struct AddGoalFeature: Sendable {
     // MARK: - State
     
     @ObservableState
-    struct State: Equatable {
+    struct State: Sendable, Equatable {
         
-        var trainingTypes: [TrainingTypeData] = []
-        var selectedTrainingType: TrainingTypeData?
+        var trainingTypes: [ConcreteTrainingTypeData] = []
+        var selectedTrainingType: ConcreteTrainingTypeData?
         var typeNameBeingAdded: String?
         var numberOfSets = 0
         var setCount = 0
@@ -36,14 +38,27 @@ struct AddGoalFeature: Sendable {
         
         case onAppear
         case didChangeTrainingTypes
-        case fetchedTrainingTypes([TrainingTypeData])
+        case fetchedTrainingTypes([ConcreteTrainingTypeData])
         case cancelButtonTapped
         case delegate(Delegate)
-        case selectedTrainingType(TrainingTypeData)
+        case selectedTrainingType(ConcreteTrainingTypeData)
         case saveButtonTapped
         case setNumberOfSets(Int)
         case setCount(Int)
         case addingTrainingType
+        case observePublisher(PublisherEvent)
+        
+        @CasePathable
+        enum PublisherEvent: Equatable {
+            
+            case observeTrainingType(AnyPublisher<[ConcreteTrainingTypeData], Never>)
+            
+            static func == (lhs: AddGoalFeature.Action.PublisherEvent,
+                            rhs: AddGoalFeature.Action.PublisherEvent) -> Bool {
+                
+                return lhs.is(\.observeTrainingType) == rhs.is(\.observeTrainingType)
+            }
+        }
         
         enum Delegate: Equatable {
             
@@ -53,7 +68,7 @@ struct AddGoalFeature: Sendable {
     
     // MARK: - Dependencies
     
-    @Dependency(\.trainingTypeApi) var trainingTypeApi
+    @Dependency(\.trainingTypeClient) var trainingTypeApi
     @Dependency(\.dismiss) var dismiss
     
     // MARK: - body
@@ -66,12 +81,11 @@ struct AddGoalFeature: Sendable {
                 
             case .onAppear:
                 return .concatenate(
-                    .publisher {
+                    .run { send in
                         
-                        return trainingTypeApi.getPublisher()
-                            .receive(on: DispatchQueue.main)
-                            .map { .fetchedTrainingTypes($0) }
-                    }.cancellable(id: TrainingTypesSubscriber()),
+                        guard let publisher = await trainingTypeApi.getObserve() else { return }
+                        await send(.observePublisher(.observeTrainingType(publisher)))
+                    },
                     fetchTrainingTypes()
                 )
                 
@@ -131,7 +145,16 @@ struct AddGoalFeature: Sendable {
             case .destination:
                 return .none
                 
-            case .delegate:
+            case .observePublisher(.observeTrainingType(let publisher)):
+                return .publisher {
+                    
+                    return publisher
+                        .receive(on: DispatchQueue.main)
+                        .map { .fetchedTrainingTypes($0) }
+                }
+                .cancellable(id: TrainingTypesSubscriber())
+                
+            case .delegate, .observePublisher:
                 return .none
             }
         }
@@ -159,8 +182,7 @@ private extension AddGoalFeature {
         
         return .run { send in
             
-            let trainingTypes = await trainingTypeApi.fetchAll()
-            
+            let trainingTypes = await trainingTypeApi.fetchAllType()
             await send(.fetchedTrainingTypes(trainingTypes))
         }
     }

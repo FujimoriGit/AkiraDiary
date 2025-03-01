@@ -7,6 +7,7 @@
 
 import ComposableArchitecture
 import Foundation
+import MachoCore
 
 @Reducer
 struct TrainingActivityGraphFeature {    
@@ -27,7 +28,7 @@ struct TrainingActivityGraphFeature {
         /// グラフ表示期間
         let activityPeriod: ActivityPeriod
         /// 表示トレーニングリスト
-        let targetTrainingTypeList: [TrainingTypeData]
+        let targetTrainingTypeList: [ConcreteTrainingTypeData]
         /// 一日毎のアクティビティ結果
         let activityResultList: ActivityResults
         
@@ -58,7 +59,7 @@ struct TrainingActivityGraphFeature {
         /// グラフ表示期間のメニュー選択時
         case didSelectActivityPeriodMenu(ActivityPeriod)
         /// グラフ表示開始日付のメニュー選択時
-        case didSelectTargetTrainingTypeMenu([TrainingTypeData])
+        case didSelectTargetTrainingTypeMenu([ConcreteTrainingTypeData])
         /// グラフ表示開始日付のメニュー選択時
         case tappedDayOfCalendar(Date)
         /// アクティビティのセルタップ時
@@ -67,9 +68,9 @@ struct TrainingActivityGraphFeature {
         // MARK: effect event action
         
         /// 日記データを取得時
-        case didReceiveDiaryData([DiaryData])
+        case didReceiveDiaryData([ConcreteDiaryData])
         /// 保存しているトレーニング種目取得時
-        case didReceiveTrainingTypeList([TrainingTypeData])
+        case didReceiveTrainingTypeList([ConcreteTrainingTypeData])
         
         enum Alert: Equatable {
             
@@ -81,8 +82,8 @@ struct TrainingActivityGraphFeature {
     // MARK: private property
     
     @Dependency(\.dismiss) private var dismiss
-    @Dependency(\.diaryListFetchApi) private var diaryListFetchApi
-    @Dependency(\.trainingTypeApi) private var trainingTypeApi
+    @Dependency(\.diaryEntityClient) private var diaryListFetchApi
+    @Dependency(\.trainingTypeClient) private var trainingTypeApi
     @Dependency(\.defaultAppStorage) private var defaultAppStorage
     
     // MARK: - reduce definition

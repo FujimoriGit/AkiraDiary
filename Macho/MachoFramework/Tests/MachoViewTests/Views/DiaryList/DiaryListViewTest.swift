@@ -11,7 +11,9 @@ import XCTest
 
 @testable import MachoCore
 @testable import MachoView
+@testable import RealmHelper
 
+@MainActor
 final class DiaryListViewTests: XCTestCase {
     
     enum TestError: Error {
@@ -24,11 +26,10 @@ final class DiaryListViewTests: XCTestCase {
     /// # 確認仕様
     /// - 日記項目のスワイプアクションで削除を選択したら削除確認のアラートが表示されること
     /// - 日記項目のスワイプアクションで編集を選択したら編集確認のアラートが表示されること
-    @MainActor
     func testAlert() async {
         
         let diariesState: IdentifiedArray<UUID, DiaryListItemFeature.State> = [
-            .init(Self.getTestDiaryData(date: Self.fistDiaryDate)),
+            .init(entity: Self.getTestDiaryData(date: Self.fistDiaryDate)),
          ]
         
         let store = TestStore(
@@ -59,19 +60,13 @@ final class DiaryListViewTests: XCTestCase {
     ///   - ロード状態に更新する
     ///   - 日記の追加取得を行うこと
     /// - 一番上前スクロールした場合、スクロール状態をスクロールしていない状態に更新する
-    @MainActor
-    func testScrollBouncedDiaryList() async {
+    func testScrollBouncedDiaryList() async throws {
         
-        let initialDiary1 = DiaryListItemFeature.State(Self.getTestDiaryData(date: Self.secondDiaryDate))
-        let initialDiary2 = DiaryListItemFeature.State(Self.getTestDiaryData(date: Self.thirdDiaryDate))
-                
-        let expectedAddedItem = DiaryListItemFeature.State(Self.getTestDiaryData(date: Self.fistDiaryDate))
-        
-        let expectedLoadedDiaries = IdentifiedArray(uniqueElements: [
-            expectedAddedItem,
-            initialDiary1,
-            initialDiary2
-        ])
+        let inputDiaries = [
+            Self.getTestDiaryData(date: Self.fistDiaryDate),
+            Self.getTestDiaryData(date: Self.secondDiaryDate),
+            Self.getTestDiaryData(date: Self.thirdDiaryDate)
+        ]
         
         // スクロール画面の表示サイズの高さが800px、スクロールできるサイズの高さが1000pxの状態
         let trackableListState = TrackableListFeature.State(offset: 0,
@@ -79,17 +74,20 @@ final class DiaryListViewTests: XCTestCase {
                                                                                 contentSize: CGSize(width: 400, height: 1000)))
         
         let viewState = DiaryListFeature.State.ViewState(hasDiaryItems: true)
-        let mockDiaryListClient = DiaryEntityClient.getMockClient(expectedFetchList: [expectedAddedDiaryData])
+        
+        let mockRealm = try await RealmTestHelper.getMockRealm()
+        let mockDiaryClient = DiaryEntityClient.getMockClient(realm: mockRealm)
+        await setupDiaryDataList(mockDiaryClient, diaryList: inputDiaries)
         
         let store = TestStore(
             initialState: DiaryListFeature.State(diaries: [
-                initialDiary2,
-                initialDiary1
+                .init(entity: inputDiaries[0]),
+                .init(entity: inputDiaries[1])
             ], trackableList: trackableListState, viewState: viewState), reducer: { DiaryListFeature() }) {
                 
-                $0.diaryEntityClient = mockDiaryListClient
+                $0.diaryEntityClient = mockDiaryClient
             }
-        
+                
         // 300pxスクロールして下にバウンスが発生
         await store.send(.trackableList(TrackableListFeature.Action.onScroll(offset: -300))) {
             
@@ -107,6 +105,9 @@ final class DiaryListViewTests: XCTestCase {
             // 日記リストのロード処理終了
             $0.viewState.isLoadingDiaries = false
             // 日記リストの更新
+            let expectedLoadedDiaries: IdentifiedArrayOf<DiaryListItemFeature.State> = IdentifiedArray(
+                uniqueElements: inputDiaries.map { .init(entity: $0) }
+            )
             $0.diaries = expectedLoadedDiaries
             $0.filteredDiaries = expectedLoadedDiaries
         }
@@ -127,21 +128,23 @@ final class DiaryListViewTests: XCTestCase {
     /// - 画面表示時に以下を行う
     ///   - フィルターを取得する
     ///   - 日記リストの取得を行う
-    @MainActor
-    func testOnAppearView() async {
+    func testOnAppearView() async throws {
         
-        let expectedItem = DiaryListItemFeature.State(Self.getTestDiaryData(date: Self.fistDiaryDate,
-                                                                            isWin: false))
-        let receivedFilters = [DiaryListFilterItem(target: .achievement, filterItemId: Self.achievementId, value: "達成していない")]
-        let receivedFiltersData = receivedFilters.map { ConcreteDiaryListFilterData($0) }
+        let inputDiary = Self.getTestDiaryData(date: Self.fistDiaryDate, isWin: false)
+        let inputFilters = [ConcreteDiaryListFilterData(target: .achievement,
+                                                        filterItemId: Self.achievementId,
+                                                        value: "達成していない")]
         
-        let mockDiaryListClient = DiaryEntityClient.getMockClient(expectedFetchList: [expectedData])
-        let mockDiaryListFilterClient = DiaryListFilterClient.getMockClient(expectedFetchList: receivedFiltersData)
+        let mockRealm = try await RealmTestHelper.getMockRealm()
+        let mockDiaryClient = DiaryEntityClient.getMockClient(realm: mockRealm)
+        let mockDiaryFilterClient = DiaryListFilterClient.getMockClient(realm: mockRealm)
+        await setupDiaryDataList(mockDiaryClient, diaryList: [inputDiary])
+        await setupDiaryFilterList(mockDiaryFilterClient, filterList: inputFilters)
         
         let store = TestStore(initialState: DiaryListFeature.State(), reducer: { DiaryListFeature() }) {
             
-            $0.diaryEntityClient = mockDiaryListClient
-            $0.diaryListFilterClient = mockDiaryListFilterClient
+            $0.diaryEntityClient = mockDiaryClient
+            $0.diaryListFilterClient = mockDiaryFilterClient
             $0.date = DateGenerator({ Date() })
         }
         
@@ -155,13 +158,14 @@ final class DiaryListViewTests: XCTestCase {
         // 日記リストのフィルター取得イベント受信
         await store.receive(\.receiveLoadDiaryListFilter) {
             
-            $0.currentFilters = receivedFilters
+            $0.currentFilters = inputFilters.map { .init(entity: $0) }
         }
         
         // 日記リスト取得イベント受信
         await store.receive(\.receiveLoadDiaryItems) {
             
             // 日記リスト更新
+            let expectedItem = DiaryListItemFeature.State(entity: inputDiary)
             $0.diaries = [expectedItem]
             $0.filteredDiaries = [expectedItem]
             // 日記リスト取得処理終了
@@ -177,40 +181,35 @@ final class DiaryListViewTests: XCTestCase {
     }
     
     /// 日記リストを保持している状態で画面表示時した時のケース
-    @MainActor
-    func testOnAppearViewWithAlreadyHasItems() async {
+    func testOnAppearViewWithAlreadyHasItems() async throws {
         
-        let initialFirstItem = DiaryListItemFeature.State(Self.getTestDiaryData(date: Self.fistDiaryDate))
-        let initialSecondItem = DiaryListItemFeature.State(Self.getTestDiaryData(date: Self.thirdDiaryDate))
-        let expectedItem = DiaryListItemFeature.State(Self.getTestDiaryData(date: Self.secondDiaryDate,
-                                                      isWin: false))
+        let inputDiaryList = [
+            Self.getTestDiaryData(date: Self.fistDiaryDate),
+            Self.getTestDiaryData(date: Self.secondDiaryDate, isWin: false),
+            Self.getTestDiaryData(date: Self.thirdDiaryDate)
+        ]
         
-        let expectedFilteredDiaries = IdentifiedArray(uniqueElements: [
-            initialFirstItem,
-            initialSecondItem
-        ])
+        let inputFilters = [
+            ConcreteDiaryListFilterData(target: .achievement, filterItemId: Self.achievementId, value: "達成していない"),
+            ConcreteDiaryListFilterData(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋")
+        ]
         
-        let expectedLoadedDiaries = IdentifiedArray(uniqueElements: [
-            initialFirstItem,
-            expectedItem,
-            initialSecondItem
-        ])
+        let mockRealm = try await RealmTestHelper.getMockRealm()
+        let mockDiaryClient = DiaryEntityClient.getMockClient(realm: mockRealm)
+        let mockDiaryFilterClient = DiaryListFilterClient.getMockClient(realm: mockRealm)
+        await setupDiaryDataList(mockDiaryClient, diaryList: inputDiaryList)
+        await setupDiaryFilterList(mockDiaryFilterClient, filterList: inputFilters)
         
         let diariesState: IdentifiedArray<UUID, DiaryListItemFeature.State> = [
-            initialSecondItem,
-            initialFirstItem
+            .init(entity: inputDiaryList[0]),
+            .init(entity: inputDiaryList[1])
          ]
         
-        let receivedFilters = [
-            DiaryListFilterItem(target: .achievement, filterItemId: Self.achievementId, value: "達成していない"),
-            DiaryListFilterItem(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋")
-        ]
-                
         let store = TestStore(initialState: DiaryListFeature.State(filteredDiaries: diariesState, diaries: diariesState),
                               reducer: { DiaryListFeature() }) {
             
-            $0.diaryEntityClient = mockDiaryListClient
-            $0.diaryListFilterClient = mockDiaryListFilterClient
+            $0.diaryEntityClient = mockDiaryClient
+            $0.diaryListFilterClient = mockDiaryFilterClient
             $0.date = DateGenerator({ Date() })
         }
         
@@ -224,15 +223,14 @@ final class DiaryListViewTests: XCTestCase {
         // 日記リストのフィルター取得イベント受信
         await store.receive(\.receiveLoadDiaryListFilter) {
             
-            $0.currentFilters = receivedFilters
-            $0.diaries = expectedFilteredDiaries
-            $0.filteredDiaries = expectedFilteredDiaries
+            $0.currentFilters = inputFilters.map { .init(entity: $0) }
         }
         
         // 日記リスト取得イベント受信
         await store.receive(\.receiveLoadDiaryItems) {
             
             // 日記リスト更新
+            let expectedLoadedDiaries: IdentifiedArrayOf<DiaryListItemFeature.State> = IdentifiedArray(uniqueElements: inputDiaryList.map { .init(entity: $0) })
             $0.diaries = expectedLoadedDiaries
             $0.filteredDiaries = expectedLoadedDiaries
             // 日記リスト取得処理終了
@@ -251,31 +249,31 @@ final class DiaryListViewTests: XCTestCase {
     ///
     /// # 仕様確認
     /// - フィルターに一つ以上合致しない日記リストは表示しない
-    @MainActor
-    func testOnAppearViewWithNoHitsFilter() async {
+    func testOnAppearViewWithNoHitsFilter() async throws {
         
-        let benchPressWinItem = Self.getTestDiaryData(date: Self.fistDiaryDate, training: Self.benchPress)
-        let plunkLoseItem = Self.getTestDiaryData(date: Self.thirdDiaryDate, training: Self.plunk)
-        let benchPressLoseItem = Self.getTestDiaryData(date: Self.secondDiaryDate, training: Self.benchPress)
-        
-        let receivedItem = [
-            DiaryListItemFeature.State(benchPressWinItem),
-            DiaryListItemFeature.State(benchPressLoseItem),
-            DiaryListItemFeature.State(plunkLoseItem)
+        let inputDiaryList = [
+            Self.getTestDiaryData(date: Self.fistDiaryDate, training: Self.benchPress),
+            Self.getTestDiaryData(date: Self.secondDiaryDate, training: Self.benchPress),
+            Self.getTestDiaryData(date: Self.thirdDiaryDate, training: Self.plunk)
+        ]
+        let inputFilters = [
+            ConcreteDiaryListFilterData(target: .achievement, filterItemId: Self.achievementId, value: "達成していない"),
+            ConcreteDiaryListFilterData(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋"),
+            ConcreteDiaryListFilterData(target: .trainingType, filterItemId: Self.squatTrainingId, value: "スクワット"),
+            ConcreteDiaryListFilterData(target: .tag, filterItemId: Self.tag2Id, value: "晴れ")
         ]
         
-        let receivedFilters = [
-            DiaryListFilterItem(target: .achievement, filterItemId: Self.achievementId, value: "達成していない"),
-            DiaryListFilterItem(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋"),
-            DiaryListFilterItem(target: .trainingType, filterItemId: Self.squatTrainingId, value: "スクワット"),
-            DiaryListFilterItem(target: .tag, filterItemId: Self.tag2Id, value: "晴れ")
-        ]
+        let mockRealm = try await RealmTestHelper.getMockRealm()
+        let mockDiaryClient = DiaryEntityClient.getMockClient(realm: mockRealm)
+        let mockDiaryFilterClient = DiaryListFilterClient.getMockClient(realm: mockRealm)
+        await setupDiaryDataList(mockDiaryClient, diaryList: inputDiaryList)
+        await setupDiaryFilterList(mockDiaryFilterClient, filterList: inputFilters)
         
         let store = TestStore(initialState: DiaryListFeature.State(),
                               reducer: { DiaryListFeature() }) {
             
-            $0.diaryEntityClient = mockDiaryListClient
-            $0.diaryListFilterClient = mockDiaryListFilterClient
+            $0.diaryEntityClient = mockDiaryClient
+            $0.diaryListFilterClient = mockDiaryFilterClient
             $0.date = DateGenerator({ Date() })
         }
         
@@ -287,15 +285,16 @@ final class DiaryListViewTests: XCTestCase {
         }
         
         // 日記リストのフィルター取得イベント受信
-        await store.receive(.receiveLoadDiaryListFilter(filters: receivedFilters)) {
+        await store.receive(\.receiveLoadDiaryListFilter) {
             
-            $0.currentFilters = receivedFilters
+            $0.currentFilters = inputFilters.map { .init(entity: $0) }
         }
         
         // 日記リスト取得イベント受信
         await store.receive(\.receiveLoadDiaryItems) {
             
             // 日記リスト更新
+            let receivedItem = inputDiaryList.map { DiaryListItemFeature.State(entity: $0) }
             $0.diaries = IdentifiedArray(uniqueElements: receivedItem)
             $0.filteredDiaries = []
             // 日記リスト取得処理終了
@@ -314,11 +313,10 @@ final class DiaryListViewTests: XCTestCase {
     ///
     /// # 仕様確認
     /// - 日記リストのセルをタップしたら日記した日記情報の詳細画面に遷移する
-    @MainActor
     func testTappedDiaryItem() async throws {
         
         let diariesState: IdentifiedArray<UUID, DiaryListItemFeature.State> = [
-            DiaryListItemFeature.State(Self.getTestDiaryData(date: Date())),
+            DiaryListItemFeature.State(entity: Self.getTestDiaryData(date: Date())),
          ]
         
         let store = TestStore(
@@ -340,26 +338,29 @@ final class DiaryListViewTests: XCTestCase {
     /// # 仕様確認
     /// - 日記リストのスワイプアクションで削除を選択すると削除確認アラートが表示されること
     /// - 削除アラートで削除を選択したとき、選択した日記が日記リストから削除されること
-    @MainActor
-    func testTappedDeleteItem() async {
+    func testTappedDeleteItem() async throws {
         
-        let diariesState: IdentifiedArray<UUID, DiaryListItemFeature.State> = [
-            DiaryListItemFeature.State(Self.getTestDiaryData(date: Date())),
-            DiaryListItemFeature.State(Self.getTestDiaryData(date: Date()))
-         ]
+        let inputDiaryList = [
+            Self.getTestDiaryData(date: Date()),
+            Self.getTestDiaryData(date: Date())
+        ]
         
         let viewState = DiaryListFeature.State.ViewState(hasDiaryItems: true)
         
-        let mockDiaryEntityClient = DiaryEntityClient.getMockClient(expectedDeleteDiaryId: diariesState[0].id,
-                                                                    expectedDeleteDiaryResult: true)
+        let mockRealm = try await RealmTestHelper.getMockRealm()
+        let mockDiaryClient = DiaryEntityClient.getMockClient(realm: mockRealm)
+        await setupDiaryDataList(mockDiaryClient, diaryList: inputDiaryList)
         
+        let diariesState = IdentifiedArray(uniqueElements: inputDiaryList.map { DiaryListItemFeature.State(entity: $0) })
         let store = TestStore(
-            initialState: DiaryListFeature.State(filteredDiaries: diariesState, diaries: diariesState, viewState: viewState)) {
+            initialState: DiaryListFeature.State(filteredDiaries: diariesState,
+                                                 diaries: diariesState,
+                                                 viewState: viewState)) {
                 
                 DiaryListFeature()
             } withDependencies: {
                 
-                $0.diaryEntityClient = mockDiaryEntityClient
+                $0.diaryEntityClient = mockDiaryClient
             }
         
         // 削除確認アラートの表示
@@ -384,9 +385,6 @@ final class DiaryListViewTests: XCTestCase {
         }
         
         // 全ての日記リストを削除する
-        
-        store.dependencies.diaryEntityClient = DiaryEntityClient.getMockClient(expectedDeleteDiaryId: diariesState[1].id,
-                                                                               expectedDeleteDiaryResult: true)
         
         // 削除確認アラートの表示
         await store.send(.diaries(.element(id: diariesState[1].id, action: .deleteItemSwipeAction))) {
@@ -417,11 +415,10 @@ final class DiaryListViewTests: XCTestCase {
     /// # 仕様確認
     /// - 日記リストのスワイプアクションで編集を選択すると編集確認アラートが表示されること
     /// - 編集を選択すると選択した日記の編集画面に遷移する
-    @MainActor
     func testTappedEditItem() async throws {
         
         let diariesState: IdentifiedArray<UUID, DiaryListItemFeature.State> = [
-            DiaryListItemFeature.State(Self.getTestDiaryData(date: Date())),
+            DiaryListItemFeature.State(entity: Self.getTestDiaryData(date: Date())),
          ]
         
         let store = TestStore(
@@ -454,7 +451,6 @@ final class DiaryListViewTests: XCTestCase {
     ///
     /// # 仕様確認
     /// - 日記作成ボタンを押下すると、日記作成画面に遷移する
-    @MainActor
     func testTappedAddDiaryButton() async throws {
         
         let store = TestStore(
@@ -478,7 +474,6 @@ final class DiaryListViewTests: XCTestCase {
     ///
     /// # 仕様確認
     /// - グラフボタンを押下するとグラフ画面に遷移する
-    @MainActor
     func testTappedGraphButton() async throws {
         
         let store = TestStore(
@@ -508,23 +503,25 @@ final class DiaryListViewTests: XCTestCase {
     /// - フィルター画面の閉じるボタンを押下されると、リスト画面に戻る
     /// - フィルターを全て削除すると、フィルター適用前の日記が全て表示される
     /// - リスト画面が非表示になると、フィルター監視を終了する
-    @MainActor
     func testTappedFilterButton() async throws {
         
-        let expectedItems = IdentifiedArray(uniqueElements: [DiaryListItemFeature.State(Self.getTestDiaryData(date: Self.fistDiaryDate, isWin: false, training: Self.plunk)),])
-        let receivedFilters = [DiaryListFilterItem(target: .achievement, filterItemId: Self.achievementId, value: "達成していない")]
-        let changeFilters = [DiaryListFilterItem(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋")]
-        let expectedDiariesAfterChangeFilter: IdentifiedArrayOf<DiaryListItemFeature.State> = []
-        let filterPublisher = PassthroughSubject<[any DiaryListFilterData], Never>()
+        let inputDiaryList = [
+            Self.getTestDiaryData(date: Self.fistDiaryDate, isWin: false, training: Self.plunk)
+        ]
+        let inputFilters = [
+            ConcreteDiaryListFilterData(target: .achievement, filterItemId: Self.achievementId, value: "達成していない")
+        ]
         
-        let mockDiaryListClient = DiaryEntityClient.getMockClient(expectedFetchList: [expectedData])
-        let mockDiaryListFilterClient = DiaryListFilterClient.getMockClient(expectedFetchList: receivedFiltersData,
-                                                                            stubObserver: filterPublisher.eraseToAnyPublisher())
+        let mockRealm = try await RealmTestHelper.getMockRealm()
+        let mockDiaryClient = DiaryEntityClient.getMockClient(realm: mockRealm)
+        let mockDiaryFilterClient = DiaryListFilterClient.getMockClient(realm: mockRealm)
+        await setupDiaryDataList(mockDiaryClient, diaryList: inputDiaryList)
+        await setupDiaryFilterList(mockDiaryFilterClient, filterList: inputFilters)
         
         let store = TestStore(initialState: DiaryListFeature.State(), reducer: { DiaryListFeature() }) {
             
-            $0.diaryEntityClient = mockDiaryListClient
-            $0.diaryListFilterClient = mockDiaryListFilterClient
+            $0.diaryEntityClient = mockDiaryClient
+            $0.diaryListFilterClient = mockDiaryFilterClient
             $0.date = DateGenerator({ Date() })
         }
         
@@ -538,16 +535,17 @@ final class DiaryListViewTests: XCTestCase {
         // 日記リストのフィルター取得イベント受信
         await store.receive(\.receiveLoadDiaryListFilter) {
             
-            $0.currentFilters = receivedFilters
+            $0.currentFilters = inputFilters.map { .init(entity: $0) }
         }
         
         // 日記リスト取得イベント受信
+        let expectedFullDiaryList = IdentifiedArrayOf<DiaryListItemFeature.State>(uniqueElements: inputDiaryList.map { .init(entity: $0) })
         await store.receive(\.receiveLoadDiaryItems) {
             
             // 日記リスト更新
-            $0.diaries = expectedItems
+            $0.diaries = expectedFullDiaryList
             // フィルター反映後の日記リスト
-            $0.filteredDiaries = expectedItems
+            $0.filteredDiaries = expectedFullDiaryList
             // 日記リスト取得処理終了
             $0.viewState.isLoadingDiaries = false
             // 日記リストがあるかどうかのフラグ更新
@@ -577,13 +575,14 @@ final class DiaryListViewTests: XCTestCase {
         }
         
         // フィルター更新
-        filterPublisher.send(changeFiltersData)
+        let addFilter = ConcreteDiaryListFilterData(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋")
+        let addResult = await mockDiaryFilterClient.addFilter(addFilter)
+        XCTAssertTrue(addResult)
         
         // 日記リストのフィルター取得イベント受信
         await store.receive(\.receiveLoadDiaryListFilter) {
             
-            $0.currentFilters = changeFilters
-            $0.filteredDiaries = expectedDiariesAfterChangeFilter
+            $0.currentFilters.append(.init(entity: addFilter))
         }
         
         // フィルター画面の閉じるボタンタップ
@@ -602,13 +601,14 @@ final class DiaryListViewTests: XCTestCase {
         }
         
         // フィルター更新
-        filterPublisher.send([])
+        let deleteResult = await mockDiaryFilterClient.deleteFilters(inputFilters + [addFilter])
+        XCTAssertTrue(deleteResult)
         
         // 日記リストのフィルター取得イベント受信
         await store.receive(\.receiveLoadDiaryListFilter) {
             
             $0.currentFilters = []
-            $0.filteredDiaries = expectedItems
+            $0.filteredDiaries = expectedFullDiaryList
         }
         
         // 画面非表示
@@ -629,13 +629,13 @@ private extension DiaryListViewTests {
     private static let tag1Id = UUID()
     private static let tag2Id = UUID()
     
-    static let abs = TrainingTypeData(id: absTrainingId, name: "腹筋")
-    static let squat = TrainingTypeData(id: squatTrainingId, name: "スクワット")
-    static let plunk = TrainingTypeData(id: plunkTrainingId, name: "プランク")
-    static let benchPress = TrainingTypeData(id: benchPressTrainingId, name: "ベンチプレス")
+    static let abs = ConcreteTrainingTypeData(id: absTrainingId, name: "腹筋")
+    static let squat = ConcreteTrainingTypeData(id: squatTrainingId, name: "スクワット")
+    static let plunk = ConcreteTrainingTypeData(id: plunkTrainingId, name: "プランク")
+    static let benchPress = ConcreteTrainingTypeData(id: benchPressTrainingId, name: "ベンチプレス")
     
-    static let tag1 = TrainingTagData(id: tag1Id, tagName: "元気")
-    static let tag2 = TrainingTagData(id: tag2Id, tagName: "晴れ")
+    static let tag1 = ConcreteTrainingTagData(id: tag1Id, tagName: "元気")
+    static let tag2 = ConcreteTrainingTagData(id: tag2Id, tagName: "晴れ")
     
     static let fistDiaryDate = Date()
     static let secondDiaryDate = Calendar.current.date(byAdding: .minute, value: -1, to: fistDiaryDate)!
@@ -643,43 +643,51 @@ private extension DiaryListViewTests {
     
     static func getTestDiaryData(date: Date,
                                  isWin: Bool = true,
-                                 training: TrainingTypeData? = nil,
-                                 tag: TrainingTagData? = nil) -> DiaryData {
+                                 training: ConcreteTrainingTypeData? = nil,
+                                 tag: ConcreteTrainingTagData? = nil) -> ConcreteDiaryData {
         
-        return DiaryData(id: UUID(),
+        return ConcreteDiaryData(id: UUID(),
                          date: date,
                          title: "test",
                          mainText: "test message",
-                         goals: [TrainingContentData(id: UUID(),
+                         goals: [ConcreteTrainingContentData(id: UUID(),
                                                      trainingType: training ?? Self.abs,
                                                      goalNumberOfSets: 3,
                                                      goalSetCount: 3,
                                                      actualNumberOfSets: isWin ? 3 : 1,
-                                                     actualSetCount: 3)],
+                                                     actualSetCount: 3,
+                                                     isAchieved: isWin)],
                          tags: [tag ?? Self.tag1],
                          startTime: Date(),
                          endTime: Date())
     }
-}
-
-// MARK: - utility
-
-private extension DiaryListViewTests {
     
-    func getFilterMockRealm(_ expectedReceiveFilter: [DiaryListFilterItem]) -> RealmAccessorMock<DiaryListFilterEntity> {
+    func setupDiaryFilterList(_ client: DiaryListFilterClient,
+                              filterList: [ConcreteDiaryListFilterData]) async {
         
-        // filterApiのモックRealm設定
-        return RealmAccessorMock(fetchEntity: expectedReceiveFilter.map {
+        for filter in filterList {
             
-            DiaryListFilterEntity(id: $0.id,
-                                  filterTarget: $0.target.rawValue,
-                                  filterId: $0.filterItemId,
-                                  filterValue: $0.value)
-        })
+            let result = await client.addFilter(filter)
+            XCTAssertTrue(result)
+        }
     }
     
-    func getDiaryMockRealm(_ expectedReceiveDiary: [DiaryListItemFeature.State]) -> RealmAccessorMock<DiaryEntity> {
+    func setupDiaryDataList(_ client: DiaryEntityClient, diaryList: [ConcreteDiaryData]) async {
         
-        return RealmAccessorMock(fetchEntity: expectedReceiveDiary.map(\.entity))
+        for diary in diaryList {
+            
+            let result = await client.add(diary)
+            XCTAssertTrue(result)
+        }
+    }
+}
+
+extension DiaryListFilterItem {
+    
+    init(entity: ConcreteDiaryListFilterData) {
+        
+        self.init(target: DiaryListFilterTarget(rawValue: entity.filterTarget)!,
+                  filterItemId: entity.filterId,
+                  value: entity.filterValue)
     }
 }

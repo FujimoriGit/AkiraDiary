@@ -16,14 +16,14 @@ extension DiaryEntityClient: DependencyKey {
     public static let liveValue = DiaryEntityClient {
         
         return await repository.fetchAll()
-    } deleteDiary: { id in
+    } add: {
         
-        return await repository.deleteDiary(id)
+        return await repository.insertOrUpdate($0)
+    } deleteDiary: {
+        
+        return await repository.deleteDiary($0)
     } getDiaryObserver: {
         
-        guard let publisher = await repository.getDiaryObserver() else { return nil }
-        return publisher
-            .map { $0 as [any DiaryData] }
-            .eraseToAnyPublisher()
+        return await repository.getDiaryObserver()
     }
 }

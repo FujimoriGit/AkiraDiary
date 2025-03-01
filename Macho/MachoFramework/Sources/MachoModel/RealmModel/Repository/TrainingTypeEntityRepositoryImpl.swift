@@ -5,6 +5,7 @@
 //  Created by 佐藤汰一 on 2024/11/29.
 //
 
+@preconcurrency import Combine
 import Foundation
 import MachoCore
 import RealmHelper
@@ -18,12 +19,13 @@ public struct TrainingTypeEntityRepositoryImpl: RealmUseable, Sendable {
         self.realm = realm
     }
     
-    public func fetchAll() async -> [TrainingTypeEntity] {
+    public func fetchAll() async -> [ConcreteTrainingTypeData] {
         
-        return await (getRealm()?.read() ?? [])
+        return await ((getRealm()?.read() ?? []) as [TrainingTypeEntity])
+            .map { .init(id: $0.id, name: $0.name) }
     }
     
-    public func insert(_ entity: some TrainingTypeData) async -> Bool {
+    public func insert(_ entity: ConcreteTrainingTypeData) async -> Bool {
         
         let entity = TrainingTypeEntity(entity)
         return await getRealm()?.insert(records: [entity]) ?? false
@@ -33,5 +35,12 @@ public struct TrainingTypeEntityRepositoryImpl: RealmUseable, Sendable {
         
         return await getRealm()?
             .delete { (entity: TrainingTypeEntity) in entity.id == id } ?? false
+    }
+    
+    public func getObserver() async -> AnyPublisher<[ConcreteTrainingTypeData], Never>? {
+        
+        return await getRealm()?.readObjectsForObserve(type: TrainingTypeEntity.self)
+            .map { $0.map { ConcreteTrainingTypeData(id: $0.id, name: $0.name) } }
+            .eraseToAnyPublisher()
     }
 }

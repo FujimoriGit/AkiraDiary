@@ -11,15 +11,18 @@ import Foundation
 
 public struct DiaryEntityClient: Sendable {
     
-    public let fetchAll: @Sendable () async -> [any DiaryData]
+    public let fetchAll: @Sendable () async -> [ConcreteDiaryData]
+    public let add: @Sendable (ConcreteDiaryData) async -> Bool
     public let deleteDiary: @Sendable (_ id: UUID) async -> Bool
-    public let getDiaryObserver: @Sendable () async -> AnyPublisher<[any DiaryData], Never>?
+    public let getDiaryObserver: @Sendable () async -> AnyPublisher<[ConcreteDiaryData], Never>?
     
-    public init(fetchAll: @escaping @Sendable () async -> [any DiaryData],
+    public init(fetchAll: @escaping @Sendable () async -> [ConcreteDiaryData],
+                add: @escaping @Sendable (ConcreteDiaryData) async -> Bool,
                 deleteDiary: @escaping @Sendable (_: UUID) async -> Bool,
-                getDiaryObserver: @escaping @Sendable () async -> AnyPublisher<[any DiaryData], Never>?) {
+                getDiaryObserver: @escaping @Sendable () async -> AnyPublisher<[ConcreteDiaryData], Never>?) {
         
         self.fetchAll = fetchAll
+        self.add = add
         self.deleteDiary = deleteDiary
         self.getDiaryObserver = getDiaryObserver
     }
@@ -29,8 +32,9 @@ extension DiaryEntityClient: TestDependencyKey {
     
     public static let testValue = DiaryEntityClient(
         fetchAll: unimplemented(placeholder: []),
+        add: unimplemented(placeholder: false),
         deleteDiary: unimplemented(placeholder: false),
-        getDiaryObserver: unimplemented(placeholder: PassthroughSubject().eraseToAnyPublisher())
+        getDiaryObserver: unimplemented(placeholder: nil)
     )
 }
 

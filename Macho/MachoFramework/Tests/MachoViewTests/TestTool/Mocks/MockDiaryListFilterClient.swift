@@ -5,56 +5,28 @@
 //  Created by 佐藤汰一 on 2024/11/29.
 //
 
-@preconcurrency import Combine
 import MachoCore
+import MachoModel
+import RealmHelper
 import XCTest
 
 extension DiaryListFilterClient {
     
-    static func getMockClient(expectedFetchList: [ConcreteDiaryListFilterData] = [],
-                              expectedAddFilter: ConcreteDiaryListFilterData? = nil,
-                              expectedAddFilterResult: Bool = false,
-                              expectedDeleteFilters: [ConcreteDiaryListFilterData] = [],
-                              expectedDeleteFiltersResult: Bool = false,
-                              stubObserver: AnyPublisher<[any DiaryListFilterData], Never> = PassthroughSubject().eraseToAnyPublisher()) -> DiaryListFilterClient {
+    static func getMockClient(realm: RealmWrapper) -> DiaryListFilterClient {
         
+        let repository = DiaryListFilterEntityRepositoryImpl(realm: Task { realm })
         return DiaryListFilterClient {
             
-            return expectedFetchList
-        } addFilter: { data in
+            return await repository.fetchAll()
+        } addFilter: {
             
-            return await addFilterMock(expectedAddFilter: expectedAddFilter,
-                                       expectedAddFilterResult: expectedAddFilterResult)(data)
-        } deleteFilters: { targets in
+            return await repository.add($0)
+        } deleteFilters: {
             
-            guard let targets = targets as? [ConcreteDiaryListFilterData] else {
-                
-                XCTFail("Failed to delete filters.")
-                return false
-            }
-            
-            XCTAssertEqual(targets, expectedDeleteFilters)
-            return expectedDeleteFiltersResult
+            return await repository.deleteFilters($0)
         } getFilterListObserver: {
             
-            return stubObserver
-        }
-    }
-    
-    static func addFilterMock(expectedAddFilter: ConcreteDiaryListFilterData? = nil,
-                              expectedAddFilterResult: Bool = false) -> @Sendable (any DiaryListFilterData) async -> Bool {
-        
-        return { data in
-            
-            guard let expectedAddFilter,
-                  let data = data as? ConcreteDiaryListFilterData else {
-                
-                XCTFail("Failed to add filter.")
-                return false
-            }
-            
-            XCTAssertEqual(data, expectedAddFilter)
-            return expectedAddFilterResult
+            return await repository.getObserver()
         }
     }
 }

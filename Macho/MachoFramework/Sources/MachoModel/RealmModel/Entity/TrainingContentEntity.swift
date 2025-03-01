@@ -88,8 +88,6 @@ public struct TrainingContentEntity: BaseRealmEntity, TrainingContentData {
         goalSetCount = data.goalSetCount
         actualNumberOfSets = data.actualNumberOfSets
         actualSetCount = data.actualSetCount
-        startTime = data.startTime
-        endTime = data.endTime
     }
     
     public func toRealmObject() -> TrainingContentRealmObject {
@@ -102,9 +100,7 @@ public struct TrainingContentEntity: BaseRealmEntity, TrainingContentData {
                                               goalNumberOfSets: goalNumberOfSets,
                                               goalSetCount: goalSetCount,
                                               actualNumberOfSets: actualNumberOfSets,
-                                              actualSetCount: actualSetCount,
-                                              startTime: startTime,
-                                              endTime: endTime)
+                                              actualSetCount: actualSetCount)
         }
         
         return TrainingContentRealmObject(id: id,
@@ -141,5 +137,29 @@ public class TrainingContentRealmObject: Object {
         self.goalSetCount = goalSetCount
         self.actualNumberOfSets = actualNumberOfSets
         self.actualSetCount = actualSetCount
+    }
+}
+
+extension ConcreteTrainingContentData {
+    
+    init(entity: TrainingContentEntity) {
+        
+        let trainingType: ConcreteTrainingTypeData? = if let entityTrainingType = entity.trainingType {
+            
+            ConcreteTrainingTypeData(id: entityTrainingType.id,
+                                     name: entityTrainingType.name)
+        }
+        else {
+            
+            nil
+        }
+        
+        self.init(id: entity.id,
+                  trainingType: trainingType,
+                  goalNumberOfSets: entity.goalNumberOfSets,
+                  goalSetCount: entity.goalSetCount,
+                  actualNumberOfSets: entity.actualNumberOfSets,
+                  actualSetCount: entity.actualSetCount,
+                  isAchieved: entity.isAchieved)
     }
 }
