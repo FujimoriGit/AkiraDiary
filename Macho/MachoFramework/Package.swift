@@ -17,6 +17,23 @@ let package = Package(
                 "MachoCore",
                 "RealmHelper"
             ]
+        ),
+        .library(
+            name: "MachoView",
+            targets: [
+                "MachoView",
+                "MachoModel",
+                "MachoCore",
+                "RealmHelper"
+            ]
+        ),
+        .library(
+            name: "MachoModel",
+            targets: [
+                "MachoModel",
+                "MachoCore",
+                "RealmHelper"
+            ]
         )
     ],
     dependencies: [

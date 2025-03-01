@@ -8,10 +8,10 @@ on:
     branches:
       - "BR_develop**"
       - "BR_topic/**"
-    paths-ignore:
-      - "doc/*"
-      - "wiki/**"
-      - README.md
+    # paths-ignore:
+    #   - "doc/*"
+    #   - "wiki/**"
+    #   - README.md
   issue_comment:
     types: [created, edited, deleted]
 
