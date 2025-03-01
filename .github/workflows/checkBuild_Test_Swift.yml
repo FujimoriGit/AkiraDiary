@@ -73,7 +73,8 @@ jobs:
 
       # 単体テストの実行
       - name: Xcode test
-        run: xcodebuild
+        run: set -o pipefail &&
+          xcodebuild
           -workspace ${WORKSPACE_DIR}
           -configuration Debug
           -destination 'platform=iOS Simulator,OS=18.1,name=iPhone 16 Pro'
