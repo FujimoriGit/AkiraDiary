@@ -36,7 +36,7 @@ struct DiaryEntityRepositoryTest {
     )
     func fetchEntityTest(goalSet: Int, goalNumOfSet: Int, actualSet: Int, actualNumOfSet: Int) async throws {
         
-        let realm = TestRealmGenerator.setupRealm("fetch_entity_realm_\(UUID().uuidString)")
+        let realm = TestRealmGenerator.setupRealm()
         let testRepository = DiaryEntityRepositoryImpl(realm)
         
         let entity = ConcreteDiaryData(id: UUID(),
@@ -100,7 +100,7 @@ struct DiaryEntityRepositoryTest {
                               endTime: nil)
         }
         
-        let realm = TestRealmGenerator.setupRealm("observe_diary_entity_realm_\(testArg.id.uuidString)")
+        let realm = TestRealmGenerator.setupRealm()
         let testRepository = DiaryEntityRepositoryImpl(realm)
         
         var observeValues = await testRepository.getDiaryObserver()?.values.makeAsyncIterator()

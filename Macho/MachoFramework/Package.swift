@@ -9,20 +9,13 @@ let package = Package(
     products: [
         .library(
             name: "MachoFramework",
+            type: .dynamic,
             targets: [
                 "MachoFramework",
-            ]
-        ),
-        .library(
-            name: "MachoView",
-            targets: [
                 "MachoView",
-            ]
-        ),
-        .library(
-            name: "MachoModel",
-            targets: [
                 "MachoModel",
+                "MachoCore",
+                "RealmHelper"
             ]
         )
     ],
@@ -39,6 +32,8 @@ let package = Package(
             dependencies: [
                 "MachoView",
                 "MachoModel",
+                "MachoCore",
+                "RealmHelper"
             ]
         ),
         .target(
@@ -88,7 +83,8 @@ let package = Package(
         .testTarget(
             name: "MachoViewTests",
             dependencies: [
-                "MachoFramework"
+                "MachoModel",
+                "MachoView"
             ]),
         .testTarget(
             name: "MachoModelTests",

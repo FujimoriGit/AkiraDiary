@@ -27,7 +27,7 @@ struct TrainingTypeEntityRepositoryTest {
     )
     func entityIoTest(_ typeName: String) async throws {
         
-        let realm = TestRealmGenerator.setupRealm("training_type_entity_io_test_realm_\(UUID().uuidString)")
+        let realm = TestRealmGenerator.setupRealm()
         let testRepository = TrainingTypeEntityRepositoryImpl(realm)
         
         let initialType = ConcreteTrainingTypeData(id: UUID(), name: typeName)

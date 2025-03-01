@@ -27,7 +27,7 @@ struct TrainingTagEntityRepositoryTest {
     )
     func entityIoTest(_ tagName: String) async throws {
         
-        let realm = TestRealmGenerator.setupRealm("training_tag_entity_io_test_realm_\(UUID().uuidString)")
+        let realm = TestRealmGenerator.setupRealm()
         let testRepository = TrainingTagEntityRepositoryImpl(realm)
         
         let initialTag = ConcreteTrainingTagData(id: UUID(), tagName: tagName)

@@ -7,6 +7,7 @@
 
 import XCTest
 
+@MainActor
 final class MachoUITests: XCTestCase {
 
     override func setUpWithError() throws {

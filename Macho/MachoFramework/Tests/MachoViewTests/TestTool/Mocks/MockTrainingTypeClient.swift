@@ -6,9 +6,9 @@
 //
 
 import MachoCore
+import MachoModel
+import RealmHelper
 import XCTest
-@testable import RealmHelper
-@testable import MachoModel
 
 extension TrainingTypeClient {
     

@@ -19,20 +19,20 @@ import Testing
 )
 @MainActor
 struct DiaryListFilterRepositoryTest {
-
+    
     @Test(
         "Entityの追加、取得、更新、削除ができることを確認する",
         arguments: [
-            ConcreteDiaryListFilterData(id: UUID().uuidString, filterTarget: "aaaaa", filterId: UUID(), filterValue: "sjlefjilse"),
-            ConcreteDiaryListFilterData(id: UUID().uuidString,
+            ConcreteDiaryListFilterData(id: "test-uuid-1", filterTarget: "aaaaa", filterId: UUID(0), filterValue: "sjlefjilse"),
+            ConcreteDiaryListFilterData(id: "test-uuid-2",
                                         filterTarget: "aasjfisjeljaiefjsleifjlasijfljsiejflisefjlisaejfiajsifjsleifjlisejfjsaeifaaa",
-                                        filterId: UUID(),
+                                        filterId: UUID(1),
                                         filterValue: "slfjiesjflsajlefjlsaijeflisajeflasjefaisejflasei")
         ]
     )
     func entityIoTest(updateFilter: ConcreteDiaryListFilterData) async throws {
         
-        let realm = TestRealmGenerator.setupRealm("diary_list_filter_entity_io_test_realm_\(UUID().uuidString)")
+        let realm = TestRealmGenerator.setupRealm()
         let testRepository = DiaryListFilterEntityRepositoryImpl(realm: realm)
         
         let initialFilter = ConcreteDiaryListFilterData(id: UUID().uuidString,
@@ -77,7 +77,7 @@ struct DiaryListFilterRepositoryTest {
     )
     func observeEntityTest(_ arg: ObserveTestArgument) async throws {
         
-        let realm = TestRealmGenerator.setupRealm("diary_list_filter_entity_observe_test_realm_\(UUID().uuidString)")
+        let realm = TestRealmGenerator.setupRealm()
         let testRepository = DiaryListFilterEntityRepositoryImpl(realm: realm)
         var observeValues = await testRepository.getObserver()?.values.makeAsyncIterator()
         #expect(await observeValues?.next() == [],
