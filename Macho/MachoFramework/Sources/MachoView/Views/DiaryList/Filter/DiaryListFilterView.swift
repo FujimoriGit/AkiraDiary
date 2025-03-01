@@ -90,7 +90,7 @@ private extension DiaryListFilterView {
                 createScrollArea()
             }
             .padding(.vertical, dialogPadding)
-            .frame(width: parentSize.width - dialogPadding)
+            .frame(width: abs(parentSize.width - dialogPadding))
             .background(Color(asset: CustomColor.appPrimaryBackgroundColor))
             .borderModifier(cornerRadius: dialogCornerRadius)
             Button(action: { // 閉じるボタン

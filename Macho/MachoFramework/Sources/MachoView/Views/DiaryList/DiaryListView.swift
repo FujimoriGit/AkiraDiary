@@ -10,7 +10,6 @@ import ComposableArchitecture
 import MachoCore
 import SwiftUI
 
-@MainActor
 struct DiaryListView: View {
     
     // MARK: - TCA store property
@@ -121,7 +120,7 @@ private extension DiaryListView {
     
     func createListSection() -> some View {
         TrackableList(store: store.scope(state: \.trackableList, action: \.trackableList)) {
-            ForEachStore(store.scope(state: \.diaries,
+            ForEachStore(store.scope(state: \.filteredDiaries,
                                      action: \.diaries)) { store in
                 DiaryListItemView(store: store)
                     .frame(minHeight: diaryItemMinHeightSize)
@@ -198,6 +197,7 @@ private extension DiaryListView {
 
 private extension DiaryListView {
     
+    @ViewBuilder
     func getNavigationDestination(_ store: Store<DiaryListFeature.Path.State,
                                   DiaryListFeature.Path.Action>) -> some View {
         
@@ -208,13 +208,13 @@ private extension DiaryListView {
             AddContactView(store: editScreenStore)
             
         case .createScreen(let createScreenStore):
-            AddContactView(store: createScreenStore)
+            DiaryCreationView(store: createScreenStore)
             
         case .graphScreen(let graphScreenStore):
             AddContactView(store: graphScreenStore)
             
         case .detailScreen(let detailScreenStore):
-            AddContactView(store: detailScreenStore)
+            DiaryDetailView(store: detailScreenStore)
         }
     }
 }

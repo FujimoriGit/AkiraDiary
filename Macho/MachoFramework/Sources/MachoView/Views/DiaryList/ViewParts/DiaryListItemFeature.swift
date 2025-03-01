@@ -15,47 +15,21 @@ struct DiaryListItemFeature: Sendable {
     @ObservableState
     struct State: Equatable, Identifiable, Sendable {
         
-        init(id: UUID = UUID(),
-             title: String,
-             message: String,
-             date: Date,
-             isWin: Bool,
-             trainingList: [UUID],
-             tagList: [UUID]) {
-            
-            self.id = id
-            self.title = title
-            self.message = message
-            self.date = date
-            self.isWin = isWin
-            self.trainingList = trainingList
-            self.tagList = tagList
-        }
+        let entity: ConcreteDiaryData
         
-        init(_ entity: any DiaryData) {
-            
-            id = entity.id
-            title = entity.title
-            message = entity.mainText
-            date = entity.date
-            isWin = entity.goals.isEmpty ? false : !entity.goals.contains { !($0.isAchieved) }
-            trainingList = entity.goals.compactMap { $0.trainingType?.id }
-            tagList = entity.tags.map(\.id)
-        }
-        
-        let id: UUID
+        var id: UUID { entity.id }
         /// 日記のタイトル
-        let title: String
+        var title: String { entity.title }
         /// 日記のメッセージ
-        let message: String
+        var message: String { entity.mainText }
         /// 日記の作成日付
-        let date: Date
+        var date: Date { entity.date }
         /// 目標達成したかどうか
-        let isWin: Bool
+        var isWin: Bool { !entity.goals.contains { !$0.isAchieved } } // TODO: ドメインクラスにロジックを切り出したい
         /// 日記に登録したトレーニング種別のID
-        let trainingList: [UUID]
+        var trainingList: [UUID] { entity.goals.compactMap { $0.trainingType?.id } }
         /// 日記に登録したタグのID
-        let tagList: [UUID]
+        var tagList: [UUID] { entity.tags.map(\.id) }
     }
     
     enum Action: Sendable {

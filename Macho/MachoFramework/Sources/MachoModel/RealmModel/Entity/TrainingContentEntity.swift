@@ -25,10 +25,7 @@ public struct TrainingContentEntity: BaseRealmEntity, TrainingContentData {
     public let actualNumberOfSets: Int?
     /// 達成したセット数
     public let actualSetCount: Int?
-    /// 開始時間
-    public let startTime: Date?
-    /// 終了時間
-    public let endTime: Date?
+    
     /// トレーニング達成成否
     public var isAchieved: Bool {
         
@@ -49,9 +46,7 @@ public struct TrainingContentEntity: BaseRealmEntity, TrainingContentData {
                 goalNumberOfSets: Int,
                 goalSetCount: Int,
                 actualNumberOfSets: Int?,
-                actualSetCount: Int?,
-                startTime: Date?,
-                endTime: Date?) {
+                actualSetCount: Int?) {
         
         self.id = id
         self.trainingType = trainingType
@@ -59,8 +54,6 @@ public struct TrainingContentEntity: BaseRealmEntity, TrainingContentData {
         self.goalSetCount = goalSetCount
         self.actualNumberOfSets = actualNumberOfSets
         self.actualSetCount = actualSetCount
-        self.startTime = startTime
-        self.endTime = endTime
     }
     
     public init(realmObject: TrainingContentRealmObject) {
@@ -78,8 +71,6 @@ public struct TrainingContentEntity: BaseRealmEntity, TrainingContentData {
         goalSetCount = realmObject.goalSetCount
         actualNumberOfSets = realmObject.actualNumberOfSets
         actualSetCount = realmObject.actualSetCount
-        startTime = realmObject.startTime
-        endTime = realmObject.endTime
     }
     
     init(_ data: some TrainingContentData) {
@@ -121,9 +112,7 @@ public struct TrainingContentEntity: BaseRealmEntity, TrainingContentData {
                                           goalNumberOfSets: goalNumberOfSets,
                                           goalSetCount: goalSetCount,
                                           actualNumberOfSets: actualNumberOfSets,
-                                          actualSetCount: actualSetCount,
-                                          startTime: startTime,
-                                          endTime: endTime)
+                                          actualSetCount: actualSetCount)
     }
 }
 
@@ -136,17 +125,13 @@ public class TrainingContentRealmObject: Object {
     @Persisted var goalSetCount: Int
     @Persisted var actualNumberOfSets: Int?
     @Persisted var actualSetCount: Int?
-    @Persisted var startTime: Date?
-    @Persisted var endTime: Date?
     
     convenience init(id: UUID,
                      trainingType: TrainingTypeRealmObject?,
                      goalNumberOfSets: Int,
                      goalSetCount: Int,
                      actualNumberOfSets: Int?,
-                     actualSetCount: Int?,
-                     startTime: Date?,
-                     endTime: Date?) {
+                     actualSetCount: Int?) {
         
         self.init()
         
@@ -156,7 +141,5 @@ public class TrainingContentRealmObject: Object {
         self.goalSetCount = goalSetCount
         self.actualNumberOfSets = actualNumberOfSets
         self.actualSetCount = actualSetCount
-        self.startTime = startTime
-        self.endTime = endTime
     }
 }

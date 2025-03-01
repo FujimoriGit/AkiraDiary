@@ -1,0 +1,3 @@
+struct TrainingContentRepositoryImpl: Sendable {
+    
+}
