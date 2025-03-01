@@ -93,3 +93,5 @@ jobs:
       # テスト結果の確認
       - name: Check Test Coverage
         run: swift run danger-swift ci --dangerfile Dangerfile_after_build.swift
+        env:
+          GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_TOKEN }}
