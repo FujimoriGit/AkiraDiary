@@ -4,5 +4,6 @@ import DangerSwiftCoverage
 
 let danger = Danger()
 
-Coverage.xcodeBuildCoverage(.derivedDataFolder("Build/test.xcresult"),
+let resultBundlePath = "Build/test.xcresult"
+Coverage.xcodeBuildCoverage(.xcresultBundle(resultBundlePath),
                             minimumCoverage: 50)
