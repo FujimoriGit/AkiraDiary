@@ -45,6 +45,6 @@ jobs:
 
       # Dangerの実行
       - name: danger run
-        run: swift run danger-swift ci --danger-id preDangerReview
+        run: swift run danger-swift ci --danger_id preDangerReview
         env:
           GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_TOKEN }}
