@@ -7,14 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BC0940B52B5B6CAD00E11B53 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BC0940B42B5B6CAD00E11B53 /* MachoFramework */; };
-		BC0940D02B6F532100E11B53 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BC0940CF2B6F532100E11B53 /* MachoFramework */; };
-		BC0940D22B6F6B0100E11B53 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BC0940D12B6F6B0100E11B53 /* MachoFramework */; };
+		BC46E6CC2D7B056000B7031C /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BCEA14EF2D601A630045B580 /* MachoFramework */; };
 		BC98AEA22D4CA4F400EFD0BF /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = BC98AEA12D4CA4F400EFD0BF /* FirebaseCrashlytics */; };
 		BC98AEA52D4CA61500EFD0BF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC98AEA42D4CA61500EFD0BF /* GoogleService-Info.plist */; };
 		BC98AEA72D4CA66200EFD0BF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC98AEA62D4CA66200EFD0BF /* AppDelegate.swift */; };
 		BC98AEA92D4CA71200EFD0BF /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = BC98AEA82D4CA71200EFD0BF /* FirebaseAnalytics */; };
-		BC98AEAA2D4CB5D000EFD0BF /* MachoFramework in Embed Frameworks */ = {isa = PBXBuildFile; productRef = BC0940B42B5B6CAD00E11B53 /* MachoFramework */; };
+		BCEA14F52D601D790045B580 /* MachoFramework in Embed Frameworks */ = {isa = PBXBuildFile; productRef = BCEA14EF2D601A630045B580 /* MachoFramework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		BCEA14FC2D603A340045B580 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BCEA14FB2D603A340045B580 /* MachoFramework */; };
 		D9F160F12AE39EE40061307C /* MachoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F160F02AE39EE40061307C /* MachoApp.swift */; };
 		D9F160F52AE39EE60061307C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9F160F42AE39EE60061307C /* Assets.xcassets */; };
 		D9F160F82AE39EE60061307C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9F160F72AE39EE60061307C /* Preview Assets.xcassets */; };
@@ -41,13 +40,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		BC98AEAB2D4CB5D000EFD0BF /* Embed Frameworks */ = {
+		BCEA14F42D601D6D0045B580 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				BC98AEAA2D4CB5D000EFD0BF /* MachoFramework in Embed Frameworks */,
+				BCEA14F52D601D790045B580 /* MachoFramework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -75,9 +74,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC0940B52B5B6CAD00E11B53 /* MachoFramework in Frameworks */,
+				BC46E6CC2D7B056000B7031C /* MachoFramework in Frameworks */,
 				BC98AEA22D4CA4F400EFD0BF /* FirebaseCrashlytics in Frameworks */,
 				BC98AEA92D4CA71200EFD0BF /* FirebaseAnalytics in Frameworks */,
+				BCEA14FC2D603A340045B580 /* MachoFramework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,7 +85,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC0940D02B6F532100E11B53 /* MachoFramework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,7 +92,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC0940D22B6F6B0100E11B53 /* MachoFramework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -177,8 +175,8 @@
 				D9F160E92AE39EE40061307C /* Sources */,
 				D9F160EA2AE39EE40061307C /* Frameworks */,
 				D9F160EB2AE39EE40061307C /* Resources */,
-				BC98AEAB2D4CB5D000EFD0BF /* Embed Frameworks */,
 				BC98AEA32D4CA52B00EFD0BF /* ShellScript */,
+				BCEA14F42D601D6D0045B580 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -186,9 +184,10 @@
 			);
 			name = Macho;
 			packageProductDependencies = (
-				BC0940B42B5B6CAD00E11B53 /* MachoFramework */,
 				BC98AEA12D4CA4F400EFD0BF /* FirebaseCrashlytics */,
 				BC98AEA82D4CA71200EFD0BF /* FirebaseAnalytics */,
+				BCEA14EF2D601A630045B580 /* MachoFramework */,
+				BCEA14FB2D603A340045B580 /* MachoFramework */,
 			);
 			productName = Macho;
 			productReference = D9F160ED2AE39EE40061307C /* Macho.app */;
@@ -209,7 +208,6 @@
 			);
 			name = MachoTests;
 			packageProductDependencies = (
-				BC0940CF2B6F532100E11B53 /* MachoFramework */,
 			);
 			productName = MachoTests;
 			productReference = D9F160FD2AE39EE60061307C /* MachoTests.xctest */;
@@ -230,7 +228,6 @@
 			);
 			name = MachoUITests;
 			packageProductDependencies = (
-				BC0940D12B6F6B0100E11B53 /* MachoFramework */,
 			);
 			productName = MachoUITests;
 			productReference = D9F161072AE39EE60061307C /* MachoUITests.xctest */;
@@ -269,8 +266,8 @@
 			);
 			mainGroup = D9F160E42AE39EE40061307C;
 			packageReferences = (
-				BC0940B12B5B6ACC00E11B53 /* XCLocalSwiftPackageReference "MachoFramework" */,
 				BC98AEA02D4CA4F400EFD0BF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				BCEA14FA2D603A340045B580 /* XCLocalSwiftPackageReference "MachoFramework" */,
 			);
 			productRefGroup = D9F160EE2AE39EE40061307C /* Products */;
 			projectDirPath = "";
@@ -685,7 +682,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		BC0940B12B5B6ACC00E11B53 /* XCLocalSwiftPackageReference "MachoFramework" */ = {
+		BCEA14FA2D603A340045B580 /* XCLocalSwiftPackageReference "MachoFramework" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = MachoFramework;
 		};
@@ -703,20 +700,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		BC0940B42B5B6CAD00E11B53 /* MachoFramework */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = MachoFramework;
-		};
-		BC0940CF2B6F532100E11B53 /* MachoFramework */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = BC0940B12B5B6ACC00E11B53 /* XCLocalSwiftPackageReference "MachoFramework" */;
-			productName = MachoFramework;
-		};
-		BC0940D12B6F6B0100E11B53 /* MachoFramework */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = BC0940B12B5B6ACC00E11B53 /* XCLocalSwiftPackageReference "MachoFramework" */;
-			productName = MachoFramework;
-		};
 		BC98AEA12D4CA4F400EFD0BF /* FirebaseCrashlytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = BC98AEA02D4CA4F400EFD0BF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
@@ -726,6 +709,14 @@
 			isa = XCSwiftPackageProductDependency;
 			package = BC98AEA02D4CA4F400EFD0BF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAnalytics;
+		};
+		BCEA14EF2D601A630045B580 /* MachoFramework */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MachoFramework;
+		};
+		BCEA14FB2D603A340045B580 /* MachoFramework */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MachoFramework;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

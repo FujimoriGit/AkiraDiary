@@ -27,7 +27,8 @@ DerivedData/
 timeline.xctimeline
 playground.xcworkspace
 
-.build/
+Macho/*.build/
+.build/checkouts
 
 iOSInjectionProject/
 xcschememanagement.plist
