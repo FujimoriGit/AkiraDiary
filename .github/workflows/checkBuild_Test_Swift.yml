@@ -92,6 +92,6 @@ jobs:
 
       # テスト結果の確認
       - name: Check Test Coverage
-        run: swift run danger-swift ci --dangerfile Dangerfile_after_build.swift
+        run: swift run danger-swift ci --dangerfile Dangerfile_after_build.swift --danger-id postBuildDangerReview
         env:
           GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_TOKEN }}
