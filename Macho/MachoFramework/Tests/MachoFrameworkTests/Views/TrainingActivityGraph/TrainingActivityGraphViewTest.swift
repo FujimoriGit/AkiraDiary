@@ -24,104 +24,48 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                                 goalNumberOfSets: 3,
                                                                 goalSetCount: 3,
                                                                 actualNumberOfSets: 3,
-                                                                actualSetCount: 3,
-                                                                startTime: getSelectDate(year: 2024,
-                                                                                         month: 6,
-                                                                                         day: 1,
-                                                                                         hour: 10),
-                                                                endTime: getSelectDate(year: 2024,
-                                                                                       month: 6,
-                                                                                       day: 1,
-                                                                                       hour: 18))
+                                                                actualSetCount: 3)
     private static let benchPressTrainingContent = TrainingContentData(id: UUID(),
                                                                        trainingType: absTraining,
                                                                        goalNumberOfSets: 3,
                                                                        goalSetCount: 3,
                                                                        actualNumberOfSets: 1,
-                                                                       actualSetCount: 1,
-                                                                       startTime: getSelectDate(year: 2024,
-                                                                                                month: 6,
-                                                                                                day: 2,
-                                                                                                hour: 14),
-                                                                       endTime: getSelectDate(year: 2024,
-                                                                                              month: 6,
-                                                                                              day: 2,
-                                                                                              hour: 20))
+                                                                       actualSetCount: 1)
     
     private static let pushUpTrainingContent = TrainingContentData(id: UUID(),
                                                                    trainingType: pushUpTraining,
                                                                    goalNumberOfSets: 3,
                                                                    goalSetCount: 3,
                                                                    actualNumberOfSets: 1,
-                                                                   actualSetCount: 1,
-                                                                   startTime: getSelectDate(year: 2024,
-                                                                                            month: 6,
-                                                                                            day: 3,
-                                                                                            hour: 9),
-                                                                   endTime: getSelectDate(year: 2024,
-                                                                                          month: 6,
-                                                                                          day: 3,
-                                                                                          hour: 10))
+                                                                   actualSetCount: 1)
     
     private static let absTrainingContentAtThreeDay = TrainingContentData(id: UUID(),
                                                                           trainingType: absTraining,
                                                                           goalNumberOfSets: 3,
                                                                           goalSetCount: 3,
                                                                           actualNumberOfSets: 3,
-                                                                          actualSetCount: 3,
-                                                                          startTime: getSelectDate(year: 2024,
-                                                                                                   month: 6,
-                                                                                                   day: 3,
-                                                                                                   hour: 9),
-                                                                          endTime: getSelectDate(year: 2024,
-                                                                                                 month: 6,
-                                                                                                 day: 3,
-                                                                                                 hour: 10))
+                                                                          actualSetCount: 3)
     
     private static let pushUpTrainingContentAtFourDay = TrainingContentData(id: UUID(),
                                                                             trainingType: pushUpTraining,
                                                                             goalNumberOfSets: 3,
                                                                             goalSetCount: 3,
                                                                             actualNumberOfSets: 1,
-                                                                            actualSetCount: 1,
-                                                                            startTime: getSelectDate(year: 2024,
-                                                                                                     month: 6,
-                                                                                                     day: 4,
-                                                                                                     hour: 9),
-                                                                            endTime: getSelectDate(year: 2024,
-                                                                                                   month: 6,
-                                                                                                   day: 4,
-                                                                                                   hour: 10))
+                                                                            actualSetCount: 1)
     
     private static let absTrainingContentAtFourDay = TrainingContentData(id: UUID(),
                                                                          trainingType: absTraining,
                                                                          goalNumberOfSets: 3,
                                                                          goalSetCount: 3,
                                                                          actualNumberOfSets: 3,
-                                                                         actualSetCount: 3,
-                                                                         startTime: getSelectDate(year: 2024,
-                                                                                                  month: 6,
-                                                                                                  day: 4,
-                                                                                                  hour: 9),
-                                                                         endTime: getSelectDate(year: 2024,
-                                                                                                month: 6,
-                                                                                                day: 4,
-                                                                                                hour: 10))
+                                                                         actualSetCount: 3)
     
     private static let absTrainingContentAtFiveDay = TrainingContentData(id: UUID(),
                                                                          trainingType: absTraining,
                                                                          goalNumberOfSets: 3,
                                                                          goalSetCount: 3,
                                                                          actualNumberOfSets: 3,
-                                                                         actualSetCount: 3,
-                                                                         startTime: getSelectDate(year: 2024,
-                                                                                                  month: 6,
-                                                                                                  day: 5,
-                                                                                                  hour: 9),
-                                                                         endTime: getSelectDate(year: 2024,
-                                                                                                month: 6,
-                                                                                                day: 5,
-                                                                                                hour: 10))
+                                                                         actualSetCount: 3)
     
     private static let benchPressTrainingContentAtFiveDay = TrainingContentData(
         id: UUID(),
@@ -129,47 +73,21 @@ final class TrainingActivityGraphViewTest: XCTestCase {
         goalNumberOfSets: 3,
         goalSetCount: 3,
         actualNumberOfSets: 1,
-        actualSetCount: 1,
-        startTime: getSelectDate(year: 2024,
-                                 month: 6,
-                                 day: 5,
-                                 hour: 9),
-        endTime: getSelectDate(year: 2024,
-                               month: 6,
-                               day: 5,
-                               hour: 10)
-    )
+        actualSetCount: 1)
     
     private static let absTrainingContentOfNewest = TrainingContentData(id: UUID(),
                                                                         trainingType: absTraining,
                                                                         goalNumberOfSets: 3,
                                                                         goalSetCount: 3,
                                                                         actualNumberOfSets: 3,
-                                                                        actualSetCount: 3,
-                                                                        startTime: getSelectDate(year: 2025,
-                                                                                                 month: 6,
-                                                                                                 day: 30,
-                                                                                                 hour: 10),
-                                                                        endTime: getSelectDate(year: 2025,
-                                                                                               month: 6,
-                                                                                               day: 30,
-                                                                                               hour: 18))
+                                                                        actualSetCount: 3)
     private static let benchPressTrainingContentOfNewest = TrainingContentData(
         id: UUID(),
         trainingType: benchPressTraining,
         goalNumberOfSets: 3,
         goalSetCount: 3,
         actualNumberOfSets: 1,
-        actualSetCount: 1,
-        startTime: getSelectDate(year: 2025,
-                                 month: 6,
-                                 day: 30,
-                                 hour: 14),
-        endTime: getSelectDate(year: 2025,
-                               month: 6,
-                               day: 30,
-                               hour: 20)
-    )
+        actualSetCount: 1)
     
     
     private static let sampleDiaryData = DiaryData(id: UUID(),
@@ -179,7 +97,15 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                    title: "sampleDiaryData",
                                                    mainText: "sampleDiaryData message",
                                                    goals: [absTrainingContent],
-                                                   tags: [])
+                                                   tags: [],
+                                                   startTime: getSelectDate(year: 2024,
+                                                                            month: 6,
+                                                                            day: 1,
+                                                                            hour: 10),
+                                                   endTime: getSelectDate(year: 2024,
+                                                                          month: 6,
+                                                                          day: 1,
+                                                                          hour: 18))
     
     private static let sampleDiaryData2 = DiaryData(id: UUID(),
                                                     date: getSelectDate(year: 2024,
@@ -188,7 +114,15 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                     title: "sampleDiaryData2",
                                                     mainText: "sampleDiaryData2 message",
                                                     goals: [benchPressTrainingContent],
-                                                    tags: [])
+                                                    tags: [],
+                                                    startTime: getSelectDate(year: 2024,
+                                                                             month: 6,
+                                                                             day: 2,
+                                                                             hour: 14),
+                                                    endTime: getSelectDate(year: 2024,
+                                                                           month: 6,
+                                                                           day: 2,
+                                                                           hour: 20))
     
     private static let sampleDiaryData3 = DiaryData(id: UUID(),
                                                     date: getSelectDate(year: 2025,
@@ -200,7 +134,15 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                         absTrainingContentOfNewest,
                                                         benchPressTrainingContentOfNewest
                                                     ],
-                                                    tags: [])
+                                                    tags: [],
+                                                    startTime: getSelectDate(year: 2025,
+                                                                             month: 6,
+                                                                             day: 30,
+                                                                             hour: 10),
+                                                    endTime: getSelectDate(year: 2025,
+                                                                           month: 6,
+                                                                           day: 30,
+                                                                           hour: 18))
     
     private static let sampleDiaryData4 = DiaryData(id: UUID(),
                                                     date: getSelectDate(year: 2024,
@@ -212,7 +154,15 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                         pushUpTrainingContent,
                                                         absTrainingContentAtThreeDay
                                                     ],
-                                                    tags: [])
+                                                    tags: [],
+                                                    startTime: getSelectDate(year: 2024,
+                                                                             month: 6,
+                                                                             day: 3,
+                                                                             hour: 9),
+                                                    endTime: getSelectDate(year: 2024,
+                                                                           month: 6,
+                                                                           day: 3,
+                                                                           hour: 10))
     
     private static let sampleDiaryData5 = DiaryData(id: UUID(),
                                                     date: getSelectDate(year: 2024,
@@ -223,7 +173,15 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                     goals: [
                                                         pushUpTrainingContentAtFourDay,
                                                     ],
-                                                    tags: [])
+                                                    tags: [],
+                                                    startTime: getSelectDate(year: 2024,
+                                                                             month: 6,
+                                                                             day: 4,
+                                                                             hour: 9),
+                                                    endTime: getSelectDate(year: 2024,
+                                                                           month: 6,
+                                                                           day: 4,
+                                                                           hour: 10))
     
     private static let sampleDiaryData6 = DiaryData(id: UUID(),
                                                     date: getSelectDate(year: 2024,
@@ -234,7 +192,15 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                     goals: [
                                                         absTrainingContentAtFourDay,
                                                     ],
-                                                    tags: [])
+                                                    tags: [],
+                                                    startTime: getSelectDate(year: 2024,
+                                                                             month: 6,
+                                                                             day: 4,
+                                                                             hour: 9),
+                                                    endTime: getSelectDate(year: 2024,
+                                                                           month: 6,
+                                                                           day: 4,
+                                                                           hour: 10))
     
     private static let sampleDiaryData7 = DiaryData(id: UUID(),
                                                     date: getSelectDate(year: 2024,
@@ -243,7 +209,15 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                     title: "sampleDiaryData7",
                                                     mainText: "sampleDiaryData7 message",
                                                     goals: [absTrainingContentAtFiveDay],
-                                                    tags: [])
+                                                    tags: [],
+                                                    startTime: getSelectDate(year: 2024,
+                                                                             month: 6,
+                                                                             day: 5,
+                                                                             hour: 9),
+                                                    endTime: getSelectDate(year: 2024,
+                                                                           month: 6,
+                                                                           day: 5,
+                                                                           hour: 10))
     
     private static let sampleDiaryData8 = DiaryData(id: UUID(),
                                                     date: getSelectDate(year: 2024,
@@ -252,7 +226,15 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                     title: "sampleDiaryData8",
                                                     mainText: "sampleDiaryData8 message",
                                                     goals: [benchPressTrainingContentAtFiveDay],
-                                                    tags: [])
+                                                    tags: [],
+                                                    startTime: getSelectDate(year: 2024,
+                                                                             month: 6,
+                                                                             day: 5,
+                                                                             hour: 9),
+                                                    endTime: getSelectDate(year: 2024,
+                                                                           month: 6,
+                                                                           day: 5,
+                                                                           hour: 10))
 }
 
 extension TrainingActivityGraphViewTest {
@@ -287,7 +269,7 @@ extension TrainingActivityGraphViewTest {
         let expectedFetchDiaryData7 = Self.sampleDiaryData7
         let expectedFetchDiaryData8 = Self.sampleDiaryData8
         
-        let testStore = TestStore(initialState: .getDefaultState(),
+        let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(),
                                   reducer: { TrainingActivityGraphFeature() },
                                   withDependencies: {
             
@@ -305,8 +287,6 @@ extension TrainingActivityGraphViewTest {
             $0.defaultAppStorage = createTestUserDefaults(initialStartDate: initialStartPeriod)
         })
         
-        throw XCTSkip("テスト対象未実装のためスキップ")
-        
         await testStore.send(.onAppear) {
             
             $0 = .init(activityStartPeriod: initialStartPeriod,
@@ -315,51 +295,68 @@ extension TrainingActivityGraphViewTest {
                        activityResultList: .init(resultList: []))
         }
         
-        await testStore.receive(\.didReceiveTrainingTypeList) {
+        // TODO: 実装できたらコメントアウト外す
+        await testStore.receive(\.didReceiveTrainingTypeList)
+        
+        //        await testStore.receive(\.didReceiveDiaryData) {
+        //
+        //            $0.viewState = .init(activityStartPeriod: initialStartPeriod,
+        //                                 activityPeriod: .week,
+        //                                 targetTrainingTypeList: expectedTrainingTypeList,
+        //                                 activityResultList: .init(resultList: [
+        //                                    .init(targetDate: expectedFetchDiaryData1.date,
+        //                                          isAchieved: true,
+        //                                          activities: [.init(id: expectedFetchDiaryData1.id,
+        //                                                             title: expectedFetchDiaryData1.title,
+        //                                                             isAchieved: true)]),
+        //                                    .init(targetDate: expectedFetchDiaryData2.date,
+        //                                          isAchieved: false,
+        //                                          activities: [.init(id: expectedFetchDiaryData2.id,
+        //                                                             title: expectedFetchDiaryData2.title,
+        //                                                             isAchieved: false)]),
+        //                                    .init(targetDate: expectedFetchDiaryData4.date,
+        //                                          isAchieved: true,
+        //                                          activities: [.init(id: expectedFetchDiaryData4.id,
+        //                                                             title: expectedFetchDiaryData4.title,
+        //                                                             isAchieved: true)]),
+        //                                    .init(targetDate: expectedFetchDiaryData5.date,
+        //                                          isAchieved: false,
+        //                                          activities: [.init(id: expectedFetchDiaryData5.id,
+        //                                                             title: expectedFetchDiaryData5.title,
+        //                                                             isAchieved: false)]),
+        //                                    .init(targetDate: expectedFetchDiaryData7.date,
+        //                                          isAchieved: false,
+        //                                          activities: [
+        //                                            .init(id: expectedFetchDiaryData7.id,
+        //                                                             title: expectedFetchDiaryData7.title,
+        //                                                             isAchieved: true),
+        //                                            .init(id: expectedFetchDiaryData8.id,
+        //                                                             title: expectedFetchDiaryData8.title,
+        //                                                             isAchieved: false)
+        //                                          ])
+        //                                 ]))
+        //        }
+        
+        await testStore.send(.tappedFilterDisplayButton) {
             
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .week,
-                       targetTrainingTypeList: [],
-                       activityResultList: .init(resultList: []))
+            $0.isShowingFilter = false
         }
         
-        await testStore.receive(\.didReceiveDiaryData) {
+        await testStore.send(.tappedFilterDisplayButton) {
             
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .week,
-                       targetTrainingTypeList: expectedTrainingTypeList,
-                       activityResultList: .init(resultList: [
-                        .init(targetDate: expectedFetchDiaryData1.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData1.id,
-                                                 title: expectedFetchDiaryData1.title,
-                                                 isAchieved: true)]),
-                        .init(targetDate: expectedFetchDiaryData2.date,
-                              isAchieved: false,
-                              activities: [.init(id: expectedFetchDiaryData2.id,
-                                                 title: expectedFetchDiaryData2.title,
-                                                 isAchieved: false)]),
-                        .init(targetDate: expectedFetchDiaryData4.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData4.id,
-                                                 title: expectedFetchDiaryData4.title,
-                                                 isAchieved: true)]),
-                        .init(targetDate: expectedFetchDiaryData5.date,
-                              isAchieved: false,
-                              activities: [.init(id: expectedFetchDiaryData5.id,
-                                                 title: expectedFetchDiaryData5.title,
-                                                 isAchieved: false)]),
-                        .init(targetDate: expectedFetchDiaryData7.date,
-                              isAchieved: false,
-                              activities: [
-                                .init(id: expectedFetchDiaryData7.id,
-                                      title: expectedFetchDiaryData7.title,
-                                      isAchieved: true),
-                                .init(id: expectedFetchDiaryData8.id,
-                                      title: expectedFetchDiaryData8.title,
-                                      isAchieved: false)
-                              ])
-                       ]))
+            $0.isShowingFilter = true
+        }
+        
+        await testStore.send(.onDragEndedFilterArea(result: .init(startLocation: CGPoint(x: .zero, y: 140),
+                                                                  currentLocation: CGPoint(x: .zero, y: 90)))) {
+            
+            $0.isShowingFilter = false
+        }
+        
+        await testStore.send(.onDragEndedFilterArea(result: .init(startLocation: CGPoint(x: .zero, y: 90),
+                                                                  currentLocation: CGPoint(x: .zero, y: 140)))) {
+            
+            $0.isShowingFilter = true
         }
     }
     
@@ -387,7 +384,7 @@ extension TrainingActivityGraphViewTest {
         let expectedFetchDiaryData2 = Self.sampleDiaryData2
         let expectedFetchDiaryData3 = Self.sampleDiaryData3
         
-        let testStore = TestStore(initialState: .getDefaultState(),
+        let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(),
                                   reducer: { TrainingActivityGraphFeature() },
                                   withDependencies: {
             
@@ -403,36 +400,30 @@ extension TrainingActivityGraphViewTest {
                                                           initialTrainingTypeList: [Self.absTraining])
         })
         
-        throw XCTSkip("テスト対象未実装のためスキップ")
-        
         await testStore.send(.onAppear) {
             
             $0 = .init(activityStartPeriod: initialStartPeriod,
                        activityPeriod: .year,
-                       targetTrainingTypeList: [Self.absTraining],
+                       targetTrainingTypeList: [],
                        activityResultList: .init(resultList: []))
         }
         
         await testStore.receive(\.didReceiveTrainingTypeList) {
             
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .year,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: []))
+            $0.targetTrainingTypeList = [Self.absTraining]
         }
+        
+        throw XCTSkip("No implementation yet.")
         
         await testStore.receive(\.didReceiveDiaryData) {
             
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .year,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: [
-                        .init(targetDate: expectedFetchDiaryData3.date,
-                              isAchieved: false,
-                              activities: [.init(id: expectedFetchDiaryData3.id,
-                                                 title: expectedFetchDiaryData3.title,
-                                                 isAchieved: false)]),
-                       ]))
+            $0.activityResultList = .init(resultList: [
+                .init(targetDate: expectedFetchDiaryData3.date,
+                      isAchieved: false,
+                      activities: [.init(id: expectedFetchDiaryData3.id,
+                                         title: expectedFetchDiaryData3.title,
+                                         isAchieved: false)]),
+            ])
         }
         
         await testStore.send(.tappedActivityCell)
@@ -465,7 +456,7 @@ extension TrainingActivityGraphViewTest {
         let testUserDefaults = createTestUserDefaults(initialStartDate: initialStartPeriod,
                                                       initialPeriod: .month,
                                                       initialTrainingTypeList: [Self.absTraining])
-        let testStore = TestStore(initialState: .getDefaultState(),
+        let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(),
                                   reducer: { TrainingActivityGraphFeature() },
                                   withDependencies: {
             
@@ -476,58 +467,50 @@ extension TrainingActivityGraphViewTest {
             $0.defaultAppStorage = testUserDefaults
         })
         
-        throw XCTSkip("テスト対象未実装のためスキップ")
-        
         await testStore.send(.onAppear) {
             
             $0 = .init(activityStartPeriod: initialStartPeriod,
                        activityPeriod: .month,
-                       targetTrainingTypeList: [Self.absTraining],
+                       targetTrainingTypeList: [],
                        activityResultList: .init(resultList: []))
         }
         
         await testStore.receive(\.didReceiveTrainingTypeList) {
             
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .month,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: []))
+            $0.targetTrainingTypeList = [Self.absTraining]
         }
         
-        await testStore.receive(\.didReceiveDiaryData) {
-            
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .month,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: []))
-        }
+        // TODO: 実装できたらコメントアウト外す
+        //        await testStore.receive(\.didReceiveDiaryData) {
+        //
+        //            $0 = .init(activityStartPeriod: initialStartPeriod,
+        //                       activityPeriod: .month,
+        //                       targetTrainingTypeList: [Self.absTraining],
+        //                       activityResultList: .init(resultList: []))
+        //        }
         
         let expectedChangeActivityStartPeriod = Self.getSelectDate(year: 2024, month: 6, day: 1)
         
         await testStore.send(.didSelectActivityStartPeriodMenu(expectedChangeActivityStartPeriod)) {
             
-            $0 = .init(activityStartPeriod: expectedChangeActivityStartPeriod,
-                       activityPeriod: .month,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: []))
+            $0.activityStartPeriod = expectedChangeActivityStartPeriod
         }
         
         // UserDefaultsにグラフ表示開始日付の設定が正しく保存されているか確認
         XCTAssertEqual(expectedChangeActivityStartPeriod.timeIntervalSince1970,
                        testUserDefaults.getDouble(.activityStartPeriod))
         
+        throw XCTSkip("No implementation yet.")
+        
         await testStore.receive(\.didReceiveDiaryData) {
             
-            $0 = .init(activityStartPeriod: expectedChangeActivityStartPeriod,
-                       activityPeriod: .month,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: [
-                        .init(targetDate: expectedFetchDiaryData1.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData1.id,
-                                                 title: expectedFetchDiaryData1.title,
-                                                 isAchieved: true)]),
-                       ]))
+            $0.activityResultList = .init(resultList: [
+                .init(targetDate: expectedFetchDiaryData1.date,
+                      isAchieved: true,
+                      activities: [.init(id: expectedFetchDiaryData1.id,
+                                         title: expectedFetchDiaryData1.title,
+                                         isAchieved: true)]),
+            ])
         }
     }
     
@@ -555,7 +538,7 @@ extension TrainingActivityGraphViewTest {
         let testUserDefaults = createTestUserDefaults(initialStartDate: initialStartPeriod,
                                                       initialPeriod: .month,
                                                       initialTrainingTypeList: [Self.absTraining])
-        let testStore = TestStore(initialState: .getDefaultState(),
+        let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(),
                                   reducer: { TrainingActivityGraphFeature() },
                                   withDependencies: {
             
@@ -566,62 +549,55 @@ extension TrainingActivityGraphViewTest {
             $0.defaultAppStorage = testUserDefaults
         })
         
-        throw XCTSkip("テスト対象未実装のためスキップ")
-        
         await testStore.send(.onAppear) {
             
             $0 = .init(activityStartPeriod: initialStartPeriod,
                        activityPeriod: .month,
-                       targetTrainingTypeList: [Self.absTraining],
+                       targetTrainingTypeList: [],
                        activityResultList: .init(resultList: []))
         }
         
         await testStore.receive(\.didReceiveTrainingTypeList) {
             
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .month,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: []))
+            $0.targetTrainingTypeList = [Self.absTraining]
         }
         
-        await testStore.receive(\.didReceiveDiaryData) {
-            
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .month,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: []))
-        }
+        // TODO: 実装できたらコメントアウト外す
+        //        await testStore.receive(\.didReceiveDiaryData) {
+        //
+        //            $0.viewState = .init(activityStartPeriod: initialStartPeriod,
+        //                                 activityPeriod: .month,
+        //                                 targetTrainingTypeList: [Self.absTraining],
+        //                                 activityResultList: .init(resultList: []))
+        //        }
         
         let expectedActivityPeriod: ActivityPeriod = .year
         await testStore.send(.didSelectActivityPeriodMenu(expectedActivityPeriod)) {
             
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: expectedActivityPeriod,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: []))
+            $0.activityPeriod = expectedActivityPeriod
         }
         
         // UserDefaultsにグラフ表示期間の設定が正しく保存されているか確認
         XCTAssertEqual(expectedActivityPeriod.rawValue,
                        testUserDefaults.getInt(.activityPeriod))
         
+        // TODO: 実装できたら削除する
+        throw XCTSkip("No implementation yet.")
+        
         await testStore.receive(\.didReceiveDiaryData) {
             
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: expectedActivityPeriod,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: [
-                        .init(targetDate: expectedFetchDiaryData1.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData1.id,
-                                                 title: expectedFetchDiaryData1.title,
-                                                 isAchieved: true)]),
-                        .init(targetDate: expectedFetchDiaryData3.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData3.id,
-                                                 title: expectedFetchDiaryData3.title,
-                                                 isAchieved: true)]),
-                       ]))
+            $0.activityResultList = .init(resultList: [
+                .init(targetDate: expectedFetchDiaryData1.date,
+                      isAchieved: true,
+                      activities: [.init(id: expectedFetchDiaryData1.id,
+                                         title: expectedFetchDiaryData1.title,
+                                         isAchieved: true)]),
+                .init(targetDate: expectedFetchDiaryData3.date,
+                      isAchieved: true,
+                      activities: [.init(id: expectedFetchDiaryData3.id,
+                                         title: expectedFetchDiaryData3.title,
+                                         isAchieved: true)]),
+            ])
         }
     }
     
@@ -649,7 +625,7 @@ extension TrainingActivityGraphViewTest {
         let testUserDefaults = createTestUserDefaults(initialStartDate: initialStartPeriod,
                                                       initialPeriod: .year,
                                                       initialTrainingTypeList: [Self.absTraining])
-        let testStore = TestStore(initialState: .getDefaultState(),
+        let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(),
                                   reducer: { TrainingActivityGraphFeature() },
                                   withDependencies: {
             
@@ -660,14 +636,16 @@ extension TrainingActivityGraphViewTest {
             $0.defaultAppStorage = testUserDefaults
         })
         
-        throw XCTSkip("テスト対象未実装のためスキップ")
-        
         await testStore.send(.onAppear) {
             
             $0 = .init(activityStartPeriod: initialStartPeriod,
                        activityPeriod: .year,
-                       targetTrainingTypeList: [Self.absTraining],
+                       targetTrainingTypeList: [],
                        activityResultList: .init(resultList: []))
+            //            $0 = .init(activityStartPeriod: initialStartPeriod,
+            //                       activityPeriod: .year,
+            //                       targetTrainingTypeList: [Self.absTraining],
+            //                       activityResultList: .init(resultList: []))
         }
         
         await testStore.receive(\.didReceiveTrainingTypeList) {
@@ -675,66 +653,55 @@ extension TrainingActivityGraphViewTest {
             $0 = .init(activityStartPeriod: initialStartPeriod,
                        activityPeriod: .year,
                        targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: [
-                        .init(targetDate: expectedFetchDiaryData1.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData1.id,
-                                                 title: expectedFetchDiaryData1.title,
-                                                 isAchieved: true)]),
-                        .init(targetDate: expectedFetchDiaryData3.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData3.id,
-                                                 title: expectedFetchDiaryData3.title,
-                                                 isAchieved: true)])
-                       ]))
+                       activityResultList: .init(resultList: []))
         }
         
-        await testStore.receive(\.didReceiveDiaryData) {
-            
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .year,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: [
-                        .init(targetDate: expectedFetchDiaryData1.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData1.id,
-                                                 title: expectedFetchDiaryData1.title,
-                                                 isAchieved: true)]),
-                        .init(targetDate: expectedFetchDiaryData3.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData3.id,
-                                                 title: expectedFetchDiaryData3.title,
-                                                 isAchieved: true)])
-                       ]))
-        }
+        // TODO: 実装できたらコメントアウト外す
+        //        await testStore.receive(\.didReceiveDiaryData) {
+        //
+        //            $0 = .init(activityStartPeriod: initialStartPeriod,
+        //                                 activityPeriod: .year,
+        //                                 targetTrainingTypeList: [Self.absTraining],
+        //                                 activityResultList: .init(resultList: [
+        //                                    .init(targetDate: expectedFetchDiaryData1.date,
+        //                                          isAchieved: true,
+        //                                          activities: [.init(id: expectedFetchDiaryData1.id,
+        //                                                             title: expectedFetchDiaryData1.title,
+        //                                                             isAchieved: true)]),
+        //                                    .init(targetDate: expectedFetchDiaryData3.date,
+        //                                          isAchieved: true,
+        //                                          activities: [.init(id: expectedFetchDiaryData3.id,
+        //                                                             title: expectedFetchDiaryData3.title,
+        //                                                             isAchieved: true)])
+        //                                 ]))
+        //        }
         
         let expectedChangeTrainingTypeList: [TrainingTypeData] = [
             Self.absTraining,
             Self.benchPressTraining
         ]
         
-        await testStore.send(.didSelectTargetTrainingTypeMenu(expectedChangeTrainingTypeList)) {
+        await testStore.send(.tappedTargetTrainingTypeMenu) {
             
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .year,
-                       targetTrainingTypeList: expectedChangeTrainingTypeList,
-                       activityResultList: .init(resultList: [
-                        .init(targetDate: expectedFetchDiaryData1.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData1.id,
-                                                 title: expectedFetchDiaryData1.title,
-                                                 isAchieved: true)]),
-                        .init(targetDate: expectedFetchDiaryData3.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData3.id,
-                                                 title: expectedFetchDiaryData3.title,
-                                                 isAchieved: true)])
-                       ]))
+            $0.selectTrainingPopUp = .init(childState: .init(selectingTrainingTypeList: [Self.absTraining]))
+        }
+        
+        await testStore.send(.selectTrainingPopUp(.presented(.childAction(.delegate(.selectedTrainingTypeList(expectedChangeTrainingTypeList)))))) {
+            
+            $0.targetTrainingTypeList = expectedChangeTrainingTypeList
+        }
+        
+        await testStore.send(.selectTrainingPopUp(.dismiss)) {
+            
+            $0.selectTrainingPopUp = nil
         }
         
         // UserDefaultsにグラフ表示期間の設定が正しく保存されているか確認
         XCTAssertEqual(expectedChangeTrainingTypeList.map { $0.id.uuidString },
                        testUserDefaults.getStringArray(.targetTrainingTypeList))
+        
+        // TODO: 実装できたら削除する
+        throw XCTSkip("No implementation yet.")
         
         await testStore.receive(\.didReceiveDiaryData) {
             
@@ -782,7 +749,7 @@ extension TrainingActivityGraphViewTest {
         let testUserDefaults = createTestUserDefaults(initialStartDate: initialStartPeriod,
                                                       initialPeriod: .year,
                                                       initialTrainingTypeList: expectedTrainingTypeList)
-        let testStore = TestStore(initialState: .getDefaultState(),
+        let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(),
                                   reducer: { TrainingActivityGraphFeature() },
                                   withDependencies: {
             
@@ -792,9 +759,15 @@ extension TrainingActivityGraphViewTest {
             $0.defaultAppStorage = testUserDefaults
         })
         
-        throw XCTSkip("テスト対象未実装のためスキップ")
-        
         await testStore.send(.onAppear) {
+            
+            $0 = .init(activityStartPeriod: initialStartPeriod,
+                       activityPeriod: .year,
+                       targetTrainingTypeList: [],
+                       activityResultList: .init(resultList: []))
+        }
+        
+        await testStore.receive(\.didReceiveTrainingTypeList) {
             
             $0 = .init(activityStartPeriod: initialStartPeriod,
                        activityPeriod: .year,
@@ -802,7 +775,10 @@ extension TrainingActivityGraphViewTest {
                        activityResultList: .init(resultList: []))
         }
         
-        await testStore.receive(\.didReceiveTrainingTypeList) {
+        // TODO: 実装できたら削除する
+        throw XCTSkip("No implementation yet.")
+        
+        await testStore.receive(\.didReceiveDiaryData) {
             
             $0.alert = .createAlertState(.emptyDiaryItemAlert,
                                          firstButtonHandler: .emptyActivityData)
