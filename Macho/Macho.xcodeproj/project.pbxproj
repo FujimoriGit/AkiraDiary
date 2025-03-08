@@ -175,8 +175,8 @@
 				D9F160E92AE39EE40061307C /* Sources */,
 				D9F160EA2AE39EE40061307C /* Frameworks */,
 				D9F160EB2AE39EE40061307C /* Resources */,
-				BC98AEA32D4CA52B00EFD0BF /* ShellScript */,
 				BCEA14F42D601D6D0045B580 /* Embed Frameworks */,
+				BC98AEA32D4CA52B00EFD0BF /* ShellScript */,
 			);
 			buildRules = (
 			);
