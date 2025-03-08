@@ -15,7 +15,7 @@ struct DiaryListItemFeature: Sendable {
     @ObservableState
     struct State: Equatable, Identifiable, Sendable {
         
-        let entity: ConcreteDiaryData
+        let entity: DiaryData
         
         var id: UUID { entity.id }
         /// 日記のタイトル

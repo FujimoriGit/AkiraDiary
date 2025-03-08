@@ -2,18 +2,26 @@
 //  DiaryListFilterData.swift
 //  MachoFramework
 //
-//  Created by 佐藤汰一 on 2024/11/28.
+//  Created by 佐藤汰一 on 2024/11/29.
 //
 
 import Foundation
 
-public protocol DiaryListFilterData: Equatable, Sendable, Identifiable {
+public struct DiaryListFilterData: Equatable, Sendable {
     
-    var id: String { get }
-    // フィルターの種別
-    var filterTarget: String { get }
-    // フィルターのID
-    var filterId: UUID { get }
-    // フィルターの項目
-    var filterValue: String { get }
+    public let id: String
+    public let filterTarget: String
+    public let filterId: UUID
+    public let filterValue: String
+    
+    public init(id: String,
+                filterTarget: String,
+                filterId: UUID,
+                filterValue: String) {
+        
+        self.id = id
+        self.filterTarget = filterTarget
+        self.filterId = filterId
+        self.filterValue = filterValue
+    }
 }

@@ -30,7 +30,7 @@ struct TrainingTagEntityRepositoryTest {
         let realm = TestRealmGenerator.setupRealm()
         let testRepository = TrainingTagEntityRepositoryImpl(realm)
         
-        let initialTag = ConcreteTrainingTagData(id: UUID(), tagName: tagName)
+        let initialTag = TrainingTagData(id: UUID(), tagName: tagName)
         
         #expect(await testRepository.insert(initialTag), "check insert proc is successed.")
         

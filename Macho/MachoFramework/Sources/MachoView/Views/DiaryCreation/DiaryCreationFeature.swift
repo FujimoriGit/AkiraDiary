@@ -13,14 +13,14 @@ import SwiftUI
 struct Tag: Equatable, Identifiable {
     
     var id: UUID { entity.id }
-    let entity: ConcreteTrainingTagData
+    let entity: TrainingTagData
     var isSelected = false
 }
 
 struct Goal: Equatable, Identifiable {
     
     let id: UUID
-    var trainingType: ConcreteTrainingTypeData
+    var trainingType: TrainingTypeData
     var numberOfSets: Int
     var setCount: Int
 }
@@ -51,7 +51,7 @@ struct DiaryCreationFeature: Sendable {
         
         case onAppear
         case didChangeTags
-        case fetchedTags([ConcreteTrainingTagData])
+        case fetchedTags([TrainingTagData])
         case titleTextChange(String)
         case messageTextChange(String)
         case trainingStartButtonTapped
@@ -68,7 +68,7 @@ struct DiaryCreationFeature: Sendable {
         @CasePathable
         enum PublisherEvent: Equatable {
             
-            case observeTags(AnyPublisher<[ConcreteTrainingTagData], Never>)
+            case observeTags(AnyPublisher<[TrainingTagData], Never>)
             
             static func == (lhs: DiaryCreationFeature.Action.PublisherEvent, rhs: DiaryCreationFeature.Action.PublisherEvent) -> Bool {
                 
@@ -233,13 +233,13 @@ private extension DiaryCreationFeature {
         _ = await diaryListFetchApi.add(diary)
     }
     
-    func createDiary(state: State) -> ConcreteDiaryData {
+    func createDiary(state: State) -> DiaryData {
         
         let startDate = Date()
         
         let goals = state.goals.map {
             
-            ConcreteTrainingContentData(id: $0.id,
+            TrainingContentData(id: $0.id,
                                         trainingType: $0.trainingType,
                                         goalNumberOfSets: $0.numberOfSets,
                                         goalSetCount: $0.setCount,
@@ -250,7 +250,7 @@ private extension DiaryCreationFeature {
         
         let tags = state.tags.map { $0.entity }
         
-        return ConcreteDiaryData(id: UUID(),
+        return DiaryData(id: UUID(),
                                  date: startDate,
                                  title: state.titleText,
                                  mainText: state.messageText,

@@ -10,84 +10,33 @@ import MachoCore
 import RealmHelper
 import RealmSwift
 
-public struct TrainingContentEntity: BaseRealmEntity, TrainingContentData {
-    
-    public typealias TrainingType = TrainingTypeEntity
-    
-    public let id: UUID
-    /// 種目
-    public var trainingType: TrainingType?
-    /// 目標1セットの回数
-    public let goalNumberOfSets: Int
-    /// 目標セット数
-    public let goalSetCount: Int
-    /// 達成した1セットの回数
-    public let actualNumberOfSets: Int?
-    /// 達成したセット数
-    public let actualSetCount: Int?
-    
-    /// トレーニング達成成否
-    public var isAchieved: Bool {
-        
-        guard let actualSetCount,
-              let actualNumberOfSets else { return false }
-        
-        if actualSetCount > goalSetCount ||
-            (actualSetCount == goalSetCount && actualNumberOfSets >= goalNumberOfSets) {
-            
-            return true
-        }
-        
-        return false
-    }
-    
-    public init(id: UUID,
-                trainingType: TrainingTypeEntity,
-                goalNumberOfSets: Int,
-                goalSetCount: Int,
-                actualNumberOfSets: Int?,
-                actualSetCount: Int?) {
-        
-        self.id = id
-        self.trainingType = trainingType
-        self.goalNumberOfSets = goalNumberOfSets
-        self.goalSetCount = goalSetCount
-        self.actualNumberOfSets = actualNumberOfSets
-        self.actualSetCount = actualSetCount
-    }
+extension TrainingContentData: BaseRealmEntity {
     
     public init(realmObject: TrainingContentRealmObject) {
         
-        id = realmObject.id
-        if let trainingType = realmObject.trainingType {
+        let trainingTypeEntity: TrainingTypeData? = if let trainingType = realmObject.trainingType {
             
-            self.trainingType = TrainingTypeEntity(realmObject: trainingType)
+            TrainingTypeData(realmObject: trainingType)
         }
         else {
             
-            trainingType = nil
+            nil
         }
-        goalNumberOfSets = realmObject.goalNumberOfSets
-        goalSetCount = realmObject.goalSetCount
-        actualNumberOfSets = realmObject.actualNumberOfSets
-        actualSetCount = realmObject.actualSetCount
-    }
-    
-    init(_ data: some TrainingContentData) {
         
-        id = data.id
-        if let trainingType = data.trainingType {
-            
-            self.trainingType = TrainingTypeEntity(trainingType)
-        }
-        else {
-            
-            trainingType = nil
-        }
-        goalNumberOfSets = data.goalNumberOfSets
-        goalSetCount = data.goalSetCount
-        actualNumberOfSets = data.actualNumberOfSets
-        actualSetCount = data.actualSetCount
+        self.init(
+            id: realmObject.id,
+            trainingType: trainingTypeEntity,
+            goalNumberOfSets: realmObject.goalNumberOfSets,
+            goalSetCount: realmObject.goalSetCount,
+            actualNumberOfSets: realmObject.actualNumberOfSets,
+            actualSetCount: realmObject.actualSetCount,
+            isAchieved: Self.isAchieved(
+                actualSetCount: realmObject.actualSetCount,
+                actualNumberOfSets: realmObject.actualNumberOfSets,
+                goalSetCount: realmObject.goalSetCount,
+                goalNumberOfSets: realmObject.goalNumberOfSets
+            )
+        )
     }
     
     public func toRealmObject() -> TrainingContentRealmObject {
@@ -109,6 +58,26 @@ public struct TrainingContentEntity: BaseRealmEntity, TrainingContentData {
                                           goalSetCount: goalSetCount,
                                           actualNumberOfSets: actualNumberOfSets,
                                           actualSetCount: actualSetCount)
+    }
+}
+
+private extension TrainingContentData {
+    
+    static func isAchieved(actualSetCount: Int?,
+                           actualNumberOfSets: Int?,
+                           goalSetCount: Int,
+                           goalNumberOfSets: Int) -> Bool {
+        
+        guard let actualSetCount,
+              let actualNumberOfSets else { return false }
+        
+        if actualSetCount > goalSetCount ||
+            (actualSetCount == goalSetCount && actualNumberOfSets >= goalNumberOfSets) {
+            
+            return true
+        }
+        
+        return false
     }
 }
 
@@ -137,29 +106,5 @@ public class TrainingContentRealmObject: Object {
         self.goalSetCount = goalSetCount
         self.actualNumberOfSets = actualNumberOfSets
         self.actualSetCount = actualSetCount
-    }
-}
-
-extension ConcreteTrainingContentData {
-    
-    init(entity: TrainingContentEntity) {
-        
-        let trainingType: ConcreteTrainingTypeData? = if let entityTrainingType = entity.trainingType {
-            
-            ConcreteTrainingTypeData(id: entityTrainingType.id,
-                                     name: entityTrainingType.name)
-        }
-        else {
-            
-            nil
-        }
-        
-        self.init(id: entity.id,
-                  trainingType: trainingType,
-                  goalNumberOfSets: entity.goalNumberOfSets,
-                  goalSetCount: entity.goalSetCount,
-                  actualNumberOfSets: entity.actualNumberOfSets,
-                  actualSetCount: entity.actualSetCount,
-                  isAchieved: entity.isAchieved)
     }
 }

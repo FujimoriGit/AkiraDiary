@@ -19,32 +19,30 @@ public struct DiaryEntityRepositoryImpl: RealmUseable, Sendable {
         self.realm = realm
     }
     
-    public func fetchAll() async -> [ConcreteDiaryData] {
+    public func fetchAll() async -> [DiaryData] {
         
         logger.debug("[In]")
-        return await ((getRealm()?.read() ?? []) as [DiaryEntity])
-            .map { .init(entity: $0) }
+        return await getRealm()?.read() ?? []
     }
     
-    public func insertOrUpdate(_ diary: ConcreteDiaryData) async -> Bool {
+    public func insertOrUpdate(_ diary: DiaryData) async -> Bool {
         
         logger.debug("[In] diary: \(diary)")
-        return await getRealm()?.insert(records: [DiaryEntity(diary)]) ?? false
+        return await getRealm()?.insert(records: [diary]) ?? false
     }
     
     public func deleteDiary(_ id: UUID) async -> Bool {
         
         logger.debug("[In] id: \(id)")
         return await getRealm()?
-            .delete { (entity: DiaryEntity) in entity.id == id } ?? false
+            .delete { (entity: DiaryData) in entity.id == id } ?? false
     }
     
-    public func getDiaryObserver() async -> AnyPublisher<[ConcreteDiaryData], Never>? {
+    public func getDiaryObserver() async -> AnyPublisher<[DiaryData], Never>? {
         
         logger.debug("[In]")
         guard let realm = await getRealm() else { return nil }
-        return await realm.readObjectsForObserve(type: DiaryEntity.self)
-            .map { $0.map { ConcreteDiaryData(entity: $0) } }
+        return await realm.readObjectsForObserve(type: DiaryData.self)
             .eraseToAnyPublisher()
     }
 }

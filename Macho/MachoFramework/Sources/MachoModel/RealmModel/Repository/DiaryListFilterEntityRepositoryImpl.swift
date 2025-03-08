@@ -19,41 +19,33 @@ public struct DiaryListFilterEntityRepositoryImpl: RealmUseable, Sendable {
         self.realm = realm
     }
     
-    public func fetchAll() async -> [ConcreteDiaryListFilterData] {
+    public func fetchAll() async -> [DiaryListFilterData] {
         
         logger.debug("[In]")
-        return await ((getRealm()?.read() ?? []) as [DiaryListFilterEntity])
-            .map { .init(entity: $0) }
+        return await getRealm()?.read() ?? []
     }
     
-    public func add(_ filter: ConcreteDiaryListFilterData) async -> Bool {
+    public func add(_ filter: DiaryListFilterData) async -> Bool {
         
         logger.debug("[In] filter: \(filter)")
-        return await getRealm()?.insert(records: [DiaryListFilterEntity(filter)]) ?? false
+        return await getRealm()?.insert(records: [filter]) ?? false
     }
     
-    public func deleteFilters(_ targets: [ConcreteDiaryListFilterData]) async -> Bool {
+    public func deleteFilters(_ targets: [DiaryListFilterData]) async -> Bool {
         
         logger.debug("[In] targets: \(targets)")
-        return await getRealm()?.delete { (entity: DiaryListFilterEntity) in
+        return await getRealm()?.delete { (entity: DiaryListFilterData) in
             
             return targets.contains { $0.id == entity.id }
         }
         ?? false
     }
     
-    public func getObserver() async -> AnyPublisher<[ConcreteDiaryListFilterData], Never>? {
+    public func getObserver() async -> AnyPublisher<[DiaryListFilterData], Never>? {
         
         logger.debug("[In]")
         guard let realm = await getRealm() else { return nil }
-        return await realm.readObjectsForObserve(type: DiaryListFilterEntity.self)
-            .map { $0.map {
-                
-                ConcreteDiaryListFilterData(id: $0.id,
-                                            filterTarget: $0.filterTarget,
-                                            filterId: $0.filterId,
-                                            filterValue: $0.filterValue)
-            }}
+        return await realm.readObjectsForObserve(type: DiaryListFilterData.self)
             .eraseToAnyPublisher()
     }
 }

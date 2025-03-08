@@ -74,13 +74,13 @@ private extension AddTagFeature {
     
     func saveTag(tagName: String) async {
         
-        let entity = ConcreteTrainingTagData(id: UUID(), tagName: tagName)
+        let entity = TrainingTagData(id: UUID(), tagName: tagName)
         _ = await trainingTagApi.add(entity)
     }
     
     func updateTag(id: UUID, tagName: String) async {
         
-        let entity = ConcreteTrainingTagData(id: id, tagName: tagName)
+        let entity = TrainingTagData(id: id, tagName: tagName)
         _ = await trainingTagApi.update(entity)
     }
 }

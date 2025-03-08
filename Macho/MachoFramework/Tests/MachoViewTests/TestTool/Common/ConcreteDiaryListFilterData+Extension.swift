@@ -10,7 +10,7 @@ import Foundation
 @testable import MachoCore
 @testable import MachoView
 
-extension ConcreteDiaryListFilterData {
+extension DiaryListFilterData {
     
     init(target: DiaryListFilterTarget, filterItemId: UUID, value: String) {
         

@@ -38,7 +38,7 @@ struct DiaryDetailFeature {
         /// 日記のメッセージ
         private(set) var message: String
         /// 日記のタグ
-        private(set) var tags: [ConcreteTrainingTagData]
+        private(set) var tags: [TrainingTagData]
         /// 日記に設定したトレーニングの総合結果
         private(set) var totalResult: TotalTrainingResult
         /// 日記に設定したトレーニング種目毎の結果
@@ -67,7 +67,7 @@ struct DiaryDetailFeature {
         // MARK: Effect Action
         
         /// 日記の取得副作用
-        case didReceivedDiary(ConcreteDiaryData)
+        case didReceivedDiary(DiaryData)
         /// 監視イベント
         case observePublisher(PublisherEvent)
         
@@ -75,7 +75,7 @@ struct DiaryDetailFeature {
         enum PublisherEvent: Equatable, Sendable {
             
             /// 日記の監視
-            case observeDiaryList(AnyPublisher<[ConcreteDiaryData], Never>)
+            case observeDiaryList(AnyPublisher<[DiaryData], Never>)
             
             static func == (lhs: Self, rhs: Self) -> Bool {
                 
@@ -168,7 +168,7 @@ extension DiaryDetailFeature {
 
 private extension DiaryDetailFeature {
     
-    func addObserveDiaryData(publisher: AnyPublisher<[ConcreteDiaryData], Never>,
+    func addObserveDiaryData(publisher: AnyPublisher<[DiaryData], Never>,
                              targetId: UUID) -> EffectOf<Self> {
         
         return .publisher {
@@ -184,7 +184,7 @@ private extension DiaryDetailFeature {
 
 extension DiaryDetailFeature.State {
     
-    init(diary: ConcreteDiaryData) {
+    init(diary: DiaryData) {
         
         diaryId = diary.id
         title = diary.title
@@ -194,7 +194,7 @@ extension DiaryDetailFeature.State {
         trainings = diary.goals.map { TrainingTypeResult($0) }
     }
     
-    mutating func updateDiary(_ diary: ConcreteDiaryData) {
+    mutating func updateDiary(_ diary: DiaryData) {
         
         title = diary.title
         message = diary.mainText

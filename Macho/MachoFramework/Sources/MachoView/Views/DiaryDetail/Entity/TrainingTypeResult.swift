@@ -51,7 +51,7 @@ struct TrainingTypeResult: Equatable, Identifiable {
     
     // MARK: - initialize method
     
-    init(_ content: ConcreteTrainingContentData) {
+    init(_ content: TrainingContentData) {
         
         id = content.id
         trainingName = content.trainingType?.name ?? "-"

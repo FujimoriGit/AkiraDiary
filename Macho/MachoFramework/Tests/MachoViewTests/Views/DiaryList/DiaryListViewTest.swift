@@ -130,7 +130,7 @@ final class DiaryListViewTests: XCTestCase {
     func testOnAppearView() async throws {
         
         let inputDiary = Self.getTestDiaryData(date: Self.fistDiaryDate, isWin: false)
-        let inputFilters = [ConcreteDiaryListFilterData(target: .achievement,
+        let inputFilters = [DiaryListFilterData(target: .achievement,
                                                         filterItemId: Self.achievementId,
                                                         value: "達成していない")]
         
@@ -189,8 +189,8 @@ final class DiaryListViewTests: XCTestCase {
         ]
         
         let inputFilters = [
-            ConcreteDiaryListFilterData(target: .achievement, filterItemId: Self.achievementId, value: "達成していない"),
-            ConcreteDiaryListFilterData(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋")
+            DiaryListFilterData(target: .achievement, filterItemId: Self.achievementId, value: "達成していない"),
+            DiaryListFilterData(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋")
         ]
         
         let mockRealm = try await RealmTestHelper.getMockRealm()
@@ -256,10 +256,10 @@ final class DiaryListViewTests: XCTestCase {
             Self.getTestDiaryData(date: Self.thirdDiaryDate, training: Self.plunk)
         ]
         let inputFilters = [
-            ConcreteDiaryListFilterData(target: .achievement, filterItemId: Self.achievementId, value: "達成していない"),
-            ConcreteDiaryListFilterData(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋"),
-            ConcreteDiaryListFilterData(target: .trainingType, filterItemId: Self.squatTrainingId, value: "スクワット"),
-            ConcreteDiaryListFilterData(target: .tag, filterItemId: Self.tag2Id, value: "晴れ")
+            DiaryListFilterData(target: .achievement, filterItemId: Self.achievementId, value: "達成していない"),
+            DiaryListFilterData(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋"),
+            DiaryListFilterData(target: .trainingType, filterItemId: Self.squatTrainingId, value: "スクワット"),
+            DiaryListFilterData(target: .tag, filterItemId: Self.tag2Id, value: "晴れ")
         ]
         
         let mockRealm = try await RealmTestHelper.getMockRealm()
@@ -508,7 +508,7 @@ final class DiaryListViewTests: XCTestCase {
             Self.getTestDiaryData(date: Self.fistDiaryDate, isWin: false, training: Self.plunk)
         ]
         let inputFilters = [
-            ConcreteDiaryListFilterData(target: .achievement, filterItemId: Self.achievementId, value: "達成していない")
+            DiaryListFilterData(target: .achievement, filterItemId: Self.achievementId, value: "達成していない")
         ]
         
         let mockRealm = try await RealmTestHelper.getMockRealm()
@@ -574,7 +574,7 @@ final class DiaryListViewTests: XCTestCase {
         }
         
         // フィルター更新
-        let addFilter = ConcreteDiaryListFilterData(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋")
+        let addFilter = DiaryListFilterData(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋")
         let addResult = await mockDiaryFilterClient.addFilter(addFilter)
         XCTAssertTrue(addResult)
         
@@ -628,13 +628,13 @@ private extension DiaryListViewTests {
     private static let tag1Id = UUID()
     private static let tag2Id = UUID()
     
-    static let abs = ConcreteTrainingTypeData(id: absTrainingId, name: "腹筋")
-    static let squat = ConcreteTrainingTypeData(id: squatTrainingId, name: "スクワット")
-    static let plunk = ConcreteTrainingTypeData(id: plunkTrainingId, name: "プランク")
-    static let benchPress = ConcreteTrainingTypeData(id: benchPressTrainingId, name: "ベンチプレス")
+    static let abs = TrainingTypeData(id: absTrainingId, name: "腹筋")
+    static let squat = TrainingTypeData(id: squatTrainingId, name: "スクワット")
+    static let plunk = TrainingTypeData(id: plunkTrainingId, name: "プランク")
+    static let benchPress = TrainingTypeData(id: benchPressTrainingId, name: "ベンチプレス")
     
-    static let tag1 = ConcreteTrainingTagData(id: tag1Id, tagName: "元気")
-    static let tag2 = ConcreteTrainingTagData(id: tag2Id, tagName: "晴れ")
+    static let tag1 = TrainingTagData(id: tag1Id, tagName: "元気")
+    static let tag2 = TrainingTagData(id: tag2Id, tagName: "晴れ")
     
     static let fistDiaryDate = Date()
     static let secondDiaryDate = Calendar.current.date(byAdding: .minute, value: -1, to: fistDiaryDate)!
@@ -642,14 +642,14 @@ private extension DiaryListViewTests {
     
     static func getTestDiaryData(date: Date,
                                  isWin: Bool = true,
-                                 training: ConcreteTrainingTypeData? = nil,
-                                 tag: ConcreteTrainingTagData? = nil) -> ConcreteDiaryData {
+                                 training: TrainingTypeData? = nil,
+                                 tag: TrainingTagData? = nil) -> DiaryData {
         
-        return ConcreteDiaryData(id: UUID(),
+        return DiaryData(id: UUID(),
                          date: date,
                          title: "test",
                          mainText: "test message",
-                         goals: [ConcreteTrainingContentData(id: UUID(),
+                         goals: [TrainingContentData(id: UUID(),
                                                      trainingType: training ?? Self.abs,
                                                      goalNumberOfSets: 3,
                                                      goalSetCount: 3,
@@ -662,7 +662,7 @@ private extension DiaryListViewTests {
     }
     
     func setupDiaryFilterList(_ client: DiaryListFilterClient,
-                              filterList: [ConcreteDiaryListFilterData]) async {
+                              filterList: [DiaryListFilterData]) async {
         
         for filter in filterList {
             
@@ -671,7 +671,7 @@ private extension DiaryListViewTests {
         }
     }
     
-    func setupDiaryDataList(_ client: DiaryEntityClient, diaryList: [ConcreteDiaryData]) async {
+    func setupDiaryDataList(_ client: DiaryEntityClient, diaryList: [DiaryData]) async {
         
         for diary in diaryList {
             
@@ -683,7 +683,7 @@ private extension DiaryListViewTests {
 
 extension DiaryListFilterItem {
     
-    init(entity: ConcreteDiaryListFilterData) {
+    init(entity: DiaryListFilterData) {
         
         self.init(target: DiaryListFilterTarget(rawValue: entity.filterTarget)!,
                   filterItemId: entity.filterId,

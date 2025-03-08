@@ -1,14 +1,20 @@
 //
 //  TrainingTagData.swift
-//  Macho
+//  MachoFramework
 //
-//  Created by 佐藤汰一 on 2023/11/04.
+//  Created by 佐藤汰一 on 2024/11/29.
 //
 
 import Foundation
 
-public protocol TrainingTagData: Equatable, Sendable, Identifiable {
+public struct TrainingTagData: Equatable, Sendable, Identifiable {
     
-    var id: UUID { get }
-    var tagName: String { get }
+    public let id: UUID
+    public let tagName: String
+    
+    public init(id: UUID, tagName: String) {
+        
+        self.id = id
+        self.tagName = tagName
+    }
 }

@@ -187,7 +187,7 @@ private extension DiaryListFilterFeature {
             
             guard let deleteItem = currentFilters
                 .first(where: { $0.target == type && $0.value == value }),
-                  await diaryListFilterApi.deleteFilters([ConcreteDiaryListFilterData(deleteItem)]) else {
+                  await diaryListFilterApi.deleteFilters([DiaryListFilterData(deleteItem)]) else {
                 
                 logger.error("did fail delete filter(target: \(type), value: \(value)).")
                 return
@@ -206,7 +206,7 @@ private extension DiaryListFilterFeature {
             return
         }
         
-        guard await diaryListFilterApi.addFilter(ConcreteDiaryListFilterData(targetFilter)) else {
+        guard await diaryListFilterApi.addFilter(DiaryListFilterData(targetFilter)) else {
             
             logger.error("did fail add filter(\(targetFilter)).")
             return

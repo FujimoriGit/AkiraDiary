@@ -23,15 +23,15 @@ final class DiaryListFilterViewTest: XCTestCase {
     private static let rainTagId = UUID()
     
     // DBに保存されているトレーニング種目のリスト
-    private static let expectedSelectableTrainingValues: [ConcreteTrainingTypeData] = [
-        ConcreteTrainingTypeData(id: absTrainingId, name: "腹筋"),
-        ConcreteTrainingTypeData(id: dumbbellPressTrainingId, name: "ダンベルプレス")
+    private static let expectedSelectableTrainingValues: [TrainingTypeData] = [
+        TrainingTypeData(id: absTrainingId, name: "腹筋"),
+        TrainingTypeData(id: dumbbellPressTrainingId, name: "ダンベルプレス")
     ]
     
     // DBに保存されているタグのリスト
-    private static let expectedSelectableTagValues: [ConcreteTrainingTagData] = [
-        ConcreteTrainingTagData(id: fineTagId, tagName: "元気"),
-        ConcreteTrainingTagData(id: rainTagId, tagName: "雨")
+    private static let expectedSelectableTagValues: [TrainingTagData] = [
+        TrainingTagData(id: fineTagId, tagName: "元気"),
+        TrainingTagData(id: rainTagId, tagName: "雨")
     ]
     
     // 設定可能フィルターの期待値
@@ -52,8 +52,8 @@ final class DiaryListFilterViewTest: XCTestCase {
         
         // Viewで受信するフィルターの期待値生成
         let inputFilters = [
-            ConcreteDiaryListFilterData(target: .achievement, filterItemId: Self.achievementId, value: "達成している"),
-            ConcreteDiaryListFilterData(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋")
+            DiaryListFilterData(target: .achievement, filterItemId: Self.achievementId, value: "達成している"),
+            DiaryListFilterData(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋")
         ]
         
         let mockRealm = try await RealmTestHelper.getMockRealm()
@@ -95,9 +95,9 @@ final class DiaryListFilterViewTest: XCTestCase {
         let isDismissInvoked = LockIsolated(false)
         
         let inputFilters = [
-            ConcreteDiaryListFilterData(target: .achievement, filterItemId: Self.achievementId, value: "達成している"),
-            ConcreteDiaryListFilterData(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋"),
-            ConcreteDiaryListFilterData(target: .trainingType, filterItemId: Self.dumbbellPressTrainingId, value: "ダンベルプレス")
+            DiaryListFilterData(target: .achievement, filterItemId: Self.achievementId, value: "達成している"),
+            DiaryListFilterData(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋"),
+            DiaryListFilterData(target: .trainingType, filterItemId: Self.dumbbellPressTrainingId, value: "ダンベルプレス")
         ]
         
         let mockRealm = try await RealmTestHelper.getMockRealm()
@@ -147,9 +147,9 @@ final class DiaryListFilterViewTest: XCTestCase {
         let isDismissInvoked = LockIsolated(false)
         
         let inputFilters = [
-            ConcreteDiaryListFilterData(target: .achievement, filterItemId: Self.achievementId, value: "達成している"),
-            ConcreteDiaryListFilterData(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋"),
-            ConcreteDiaryListFilterData(target: .trainingType, filterItemId: Self.dumbbellPressTrainingId, value: "ダンベルプレス")
+            DiaryListFilterData(target: .achievement, filterItemId: Self.achievementId, value: "達成している"),
+            DiaryListFilterData(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋"),
+            DiaryListFilterData(target: .trainingType, filterItemId: Self.dumbbellPressTrainingId, value: "ダンベルプレス")
         ]
         
         let mockRealm = try await RealmTestHelper.getMockRealm()
@@ -201,8 +201,8 @@ final class DiaryListFilterViewTest: XCTestCase {
         let isDismissInvoked = LockIsolated(false)
         
         let inputFilters = [
-            ConcreteDiaryListFilterData(target: .achievement, filterItemId: Self.achievementId, value: "達成している"),
-            ConcreteDiaryListFilterData(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋"),
+            DiaryListFilterData(target: .achievement, filterItemId: Self.achievementId, value: "達成している"),
+            DiaryListFilterData(target: .trainingType, filterItemId: Self.absTrainingId, value: "腹筋"),
         ]
         
         let mockRealm = try await RealmTestHelper.getMockRealm()

@@ -19,28 +19,25 @@ public struct TrainingTypeEntityRepositoryImpl: RealmUseable, Sendable {
         self.realm = realm
     }
     
-    public func fetchAll() async -> [ConcreteTrainingTypeData] {
+    public func fetchAll() async -> [TrainingTypeData] {
         
-        return await ((getRealm()?.read() ?? []) as [TrainingTypeEntity])
-            .map { .init(id: $0.id, name: $0.name) }
+        return await getRealm()?.read() ?? []
     }
     
-    public func insert(_ entity: ConcreteTrainingTypeData) async -> Bool {
+    public func insert(_ entity: TrainingTypeData) async -> Bool {
         
-        let entity = TrainingTypeEntity(entity)
         return await getRealm()?.insert(records: [entity]) ?? false
     }
     
     public func delete(_ id: UUID) async -> Bool {
         
         return await getRealm()?
-            .delete { (entity: TrainingTypeEntity) in entity.id == id } ?? false
+            .delete { (entity: TrainingTypeData) in entity.id == id } ?? false
     }
     
-    public func getObserver() async -> AnyPublisher<[ConcreteTrainingTypeData], Never>? {
+    public func getObserver() async -> AnyPublisher<[TrainingTypeData], Never>? {
         
-        return await getRealm()?.readObjectsForObserve(type: TrainingTypeEntity.self)
-            .map { $0.map { ConcreteTrainingTypeData(id: $0.id, name: $0.name) } }
+        return await getRealm()?.readObjectsForObserve(type: TrainingTypeData.self)
             .eraseToAnyPublisher()
     }
 }

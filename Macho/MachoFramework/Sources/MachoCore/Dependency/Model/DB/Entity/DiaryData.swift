@@ -1,32 +1,47 @@
 //
 //  DiaryData.swift
+//  MachoFramework
 //
-//  
-//  Created by Daiki Fujimori on 2024/08/31
-//  
+//  Created by 佐藤汰一 on 2024/11/29.
+//
 
 import Foundation
 
-public protocol DiaryData: Equatable, Sendable, Identifiable {
+public struct DiaryData: Equatable, Sendable {
     
-    associatedtype GoalType: TrainingContentData
-    associatedtype TagType: TrainingTagData
+    public typealias GoalType = TrainingContentData
+    public typealias TagType = TrainingTagData
     
-    var id: UUID { get }
-    /// 日付
-    var date: Date { get }
-    /// 日記タイトル
-    var title: String { get }
-    /// 日記本文
-    var mainText: String { get }
-    /// 目標種目リスト
-    var  goals: [GoalType] { get }
-    /// タグリスト
-    var tags: [TagType] { get }
-    /// 開始時間
-    var startTime: Date? { get }
-    /// 終了時間
-    var endTime: Date? { get }
+    public let id: UUID
+    public let date: Date
+    public let title: String
+    public let mainText: String
+    public let goals: [GoalType]
+    public let tags: [TagType]
+    public let startTime: Date?
+    public let endTime: Date?
     /// 全ての目標を達成したかどうか
-    var isAchieved: Bool { get }
+    public var isAchieved: Bool {
+        
+        return !goals.contains { !$0.isAchieved }
+    }
+    
+    public init(id: UUID,
+                date: Date,
+                title: String,
+                mainText: String,
+                goals: [GoalType],
+                tags: [TagType],
+                startTime: Date?,
+                endTime: Date?) {
+        
+        self.id = id
+        self.date = date
+        self.title = title
+        self.mainText = mainText
+        self.goals = goals
+        self.tags = tags
+        self.startTime = startTime
+        self.endTime = endTime
+    }
 }

@@ -10,27 +10,12 @@ import MachoCore
 import RealmHelper
 import RealmSwift
 
-public struct TrainingTagEntity: BaseRealmEntity, TrainingTagData {
-    
-    public let id: UUID
-    public let tagName: String
-    
-    public init(id: UUID, tagName: String) {
-        
-        self.id = id
-        self.tagName = tagName
-    }
+extension TrainingTagData: BaseRealmEntity {
     
     public init(realmObject: TrainingTagRealmObject) {
         
-        id = realmObject.id
-        tagName = realmObject.tagName
-    }
-    
-    init(_ data: some TrainingTagData) {
-        
-        id = data.id
-        tagName = data.tagName
+        self.init(id: realmObject.id,
+                  tagName: realmObject.tagName)
     }
     
     public func toRealmObject() -> TrainingTagRealmObject {

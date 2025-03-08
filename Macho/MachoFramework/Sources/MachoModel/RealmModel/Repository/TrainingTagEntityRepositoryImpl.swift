@@ -19,21 +19,19 @@ public struct TrainingTagEntityRepositoryImpl: RealmUseable, Sendable {
         self.realm = realm
     }
     
-    public func fetchAll() async -> [ConcreteTrainingTagData] {
+    public func fetchAll() async -> [TrainingTagData] {
         
-        return await ((getRealm()?.read() ?? []) as [TrainingTagEntity])
-            .map { .init(id: $0.id, tagName: $0.tagName) }
+        return await getRealm()?.read() ?? []
     }
     
-    public func insert(_ entity: ConcreteTrainingTagData) async -> Bool {
+    public func insert(_ entity: TrainingTagData) async -> Bool {
         
-        let entity = TrainingTagEntity(entity)
         return await getRealm()?.insert(records: [entity]) ?? false
     }
     
-    public func update(_ entity: ConcreteTrainingTagData) async -> Bool {
+    public func update(_ entity: TrainingTagData) async -> Bool {
         
-        return await getRealm()?.update(type: TrainingTypeEntity.self,
+        return await getRealm()?.update(type: TrainingTagData.self,
                                         value: [
                                             "id": entity.id,
                                             "name": entity.tagName
@@ -43,13 +41,12 @@ public struct TrainingTagEntityRepositoryImpl: RealmUseable, Sendable {
     public func delete(_ id: UUID) async -> Bool {
         
         return await getRealm()?
-            .delete { (entity: TrainingTagEntity) in entity.id == id } ?? false
+            .delete { (entity: TrainingTagData) in entity.id == id } ?? false
     }
     
-    public func getObserver() async -> AnyPublisher<[ConcreteTrainingTagData], Never>? {
+    public func getObserver() async -> AnyPublisher<[TrainingTagData], Never>? {
         
-        return await getRealm()?.readObjectsForObserve(type: TrainingTagEntity.self)
-            .map { $0.map { ConcreteTrainingTagData(id: $0.id, tagName: $0.tagName) } }
+        return await getRealm()?.readObjectsForObserve(type: TrainingTagData.self)
             .eraseToAnyPublisher()
     }
 }

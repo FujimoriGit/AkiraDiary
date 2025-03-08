@@ -121,28 +121,28 @@ final class DiaryDetailViewTest: XCTestCase {
 
 private extension DiaryDetailViewTest {
     
-    static let sampleDiaryGoal1 = ConcreteTrainingContentData(id: UUID(),
-                                                              trainingType: ConcreteTrainingTypeData(id: UUID(), name: "腹筋"),
+    static let sampleDiaryGoal1 = TrainingContentData(id: UUID(),
+                                                              trainingType: TrainingTypeData(id: UUID(), name: "腹筋"),
                                                               goalNumberOfSets: 3,
                                                               goalSetCount: 3,
                                                               actualNumberOfSets: 3,
                                                               actualSetCount: 3,
                                                               isAchieved: true)
-    static let sampleDiaryGoal2 = ConcreteTrainingContentData(id: UUID(),
-                                                              trainingType: ConcreteTrainingTypeData(id: UUID(), name: "ベンチプレス"),
+    static let sampleDiaryGoal2 = TrainingContentData(id: UUID(),
+                                                              trainingType: TrainingTypeData(id: UUID(), name: "ベンチプレス"),
                                                               goalNumberOfSets: 2,
                                                               goalSetCount: 1,
                                                               actualNumberOfSets: 1,
                                                               actualSetCount: 1,
                                                               isAchieved: false)
     
-    static let sampleDiaryTag1 = ConcreteTrainingTagData(id: UUID(), tagName: "tag1")
-    static let sampleDiaryTag2 = ConcreteTrainingTagData(id: UUID(), tagName: "tag2")
+    static let sampleDiaryTag1 = TrainingTagData(id: UUID(), tagName: "tag1")
+    static let sampleDiaryTag2 = TrainingTagData(id: UUID(), tagName: "tag2")
     
     static let sampleDiaryEntity1Id = UUID()
     static let sampleDiaryEntity2Id = UUID()
     
-    static let sampleDiaryEntity1 = ConcreteDiaryData(id: sampleDiaryEntity1Id,
+    static let sampleDiaryEntity1 = DiaryData(id: sampleDiaryEntity1Id,
                                                       date: Date(),
                                                       title: "sample1",
                                                       mainText: "sample1 message",
@@ -150,7 +150,7 @@ private extension DiaryDetailViewTest {
                                                       tags: [sampleDiaryTag1],
                                                       startTime: Date(),
                                                       endTime: nil)
-    static let updatedSampleDiaryEntity1 = ConcreteDiaryData(id: sampleDiaryEntity1Id,
+    static let updatedSampleDiaryEntity1 = DiaryData(id: sampleDiaryEntity1Id,
                                                              date: Date(),
                                                              title: "updated_sample1",
                                                              mainText: "updated_sample1 message",
@@ -158,7 +158,7 @@ private extension DiaryDetailViewTest {
                                                              tags: [sampleDiaryTag1],
                                                              startTime: Date(),
                                                              endTime: nil)
-    static let sampleDiaryEntity2 = ConcreteDiaryData(id: sampleDiaryEntity2Id,
+    static let sampleDiaryEntity2 = DiaryData(id: sampleDiaryEntity2Id,
                                                       date: Date(),
                                                       title: "sample2",
                                                       mainText: "sample2 message",

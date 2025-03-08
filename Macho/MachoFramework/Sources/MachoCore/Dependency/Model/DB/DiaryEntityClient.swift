@@ -11,15 +11,15 @@ import Foundation
 
 public struct DiaryEntityClient: Sendable {
     
-    public let fetchAll: @Sendable () async -> [ConcreteDiaryData]
-    public let add: @Sendable (ConcreteDiaryData) async -> Bool
+    public let fetchAll: @Sendable () async -> [DiaryData]
+    public let add: @Sendable (DiaryData) async -> Bool
     public let deleteDiary: @Sendable (_ id: UUID) async -> Bool
-    public let getDiaryObserver: @Sendable () async -> AnyPublisher<[ConcreteDiaryData], Never>?
+    public let getDiaryObserver: @Sendable () async -> AnyPublisher<[DiaryData], Never>?
     
-    public init(fetchAll: @escaping @Sendable () async -> [ConcreteDiaryData],
-                add: @escaping @Sendable (ConcreteDiaryData) async -> Bool,
+    public init(fetchAll: @escaping @Sendable () async -> [DiaryData],
+                add: @escaping @Sendable (DiaryData) async -> Bool,
                 deleteDiary: @escaping @Sendable (_: UUID) async -> Bool,
-                getDiaryObserver: @escaping @Sendable () async -> AnyPublisher<[ConcreteDiaryData], Never>?) {
+                getDiaryObserver: @escaping @Sendable () async -> AnyPublisher<[DiaryData], Never>?) {
         
         self.fetchAll = fetchAll
         self.add = add

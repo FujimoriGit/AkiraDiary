@@ -39,12 +39,12 @@ struct DiaryEntityRepositoryTest {
         let realm = TestRealmGenerator.setupRealm()
         let testRepository = DiaryEntityRepositoryImpl(realm)
         
-        let entity = ConcreteDiaryData(id: UUID(),
+        let entity = DiaryData(id: UUID(),
                                        date: Date(),
                                        title: "sample",
                                        mainText: "sample",
                                        goals: [
-                                         ConcreteTrainingContentData(id: UUID(),
+                                         TrainingContentData(id: UUID(),
                                                                      trainingType: Self.sampleTrainingType1,
                                                                      goalNumberOfSets: goalNumOfSet,
                                                                      goalSetCount: goalSet,
@@ -82,12 +82,12 @@ struct DiaryEntityRepositoryTest {
         
         let insertDiaries = testArg.insertIds.map {
             
-            ConcreteDiaryData(id: $0,
+            DiaryData(id: $0,
                               date: Date(),
                               title: "sample_\($0.uuidString)",
                               mainText: "sample_\($0.uuidString)",
                               goals: [
-                                ConcreteTrainingContentData(id: UUID(),
+                                TrainingContentData(id: UUID(),
                                                             trainingType: Self.sampleTrainingType1,
                                                             goalNumberOfSets: 3,
                                                             goalSetCount: 3,
@@ -110,7 +110,7 @@ struct DiaryEntityRepositoryTest {
         
         let insetTask = Task {
             
-            var result: [[ConcreteDiaryData]] = []
+            var result: [[DiaryData]] = []
             
             for i in 1...insertDiaries.count {
                 
@@ -129,7 +129,7 @@ struct DiaryEntityRepositoryTest {
         }
         
         let observedOutputs = await insetTask.value
-        var expectedOutputs: [ConcreteDiaryData] = []
+        var expectedOutputs: [DiaryData] = []
         
         for index in insertDiaries.indices {
             
@@ -145,7 +145,7 @@ struct DiaryEntityRepositoryTest {
         
         let deleteTask = Task {
             
-            var result: [[ConcreteDiaryData]] = []
+            var result: [[DiaryData]] = []
             for i in 1...expectedDeleteDiaries.count {
                 
                 print("Waiting delete event: \(i) / \(expectedDeleteDiaries.count)")
@@ -172,7 +172,7 @@ struct DiaryEntityRepositoryTest {
         }
         
         var observedDeletedOutputs = await deleteTask.value
-        var expectedDeletedOutputs: [ConcreteDiaryData] = insertDiaries
+        var expectedDeletedOutputs: [DiaryData] = insertDiaries
         
         for deleteDiary in expectedDeleteDiaries {
             
@@ -195,9 +195,9 @@ struct ObserveEntityTestArgument {
 
 private extension DiaryEntityRepositoryTest {
     
-    static let sampleTag1 = ConcreteTrainingTagData(id: UUID(), tagName: "sample1")
-    static let sampleTag2 = ConcreteTrainingTagData(id: UUID(), tagName: "sample2")
+    static let sampleTag1 = TrainingTagData(id: UUID(), tagName: "sample1")
+    static let sampleTag2 = TrainingTagData(id: UUID(), tagName: "sample2")
     
-    static let sampleTrainingType1 = ConcreteTrainingTypeData(id: UUID(), name: "sample1")
-    static let sampleTrainingType2 = ConcreteTrainingTypeData(id: UUID(), name: "sample2")
+    static let sampleTrainingType1 = TrainingTypeData(id: UUID(), name: "sample1")
+    static let sampleTrainingType2 = TrainingTypeData(id: UUID(), name: "sample2")
 }

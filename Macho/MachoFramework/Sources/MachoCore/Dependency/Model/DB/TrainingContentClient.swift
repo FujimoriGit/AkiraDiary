@@ -13,19 +13,19 @@ import ComposableArchitecture
 public struct TrainingContentClient: Sendable {
 
     /// 目標の登録
-    public var addGoals: @Sendable (ConcreteTrainingContentData) async -> Bool
+    public var addGoals: @Sendable (TrainingContentData) async -> Bool
     /// 目標の更新
-    public var updateGoal: @Sendable (ConcreteTrainingContentData) async -> Bool
+    public var updateGoal: @Sendable (TrainingContentData) async -> Bool
     /// 登録している目標をすべて取得する
-    public var fetchAll: @Sendable () async -> [ConcreteTrainingContentData]
+    public var fetchAll: @Sendable () async -> [TrainingContentData]
     /// 監視用のPublisherを返す
-    public var getTrainingGoalPublisher: @Sendable () async -> AnyPublisher<[ConcreteTrainingContentData], Never>?
+    public var getTrainingGoalPublisher: @Sendable () async -> AnyPublisher<[TrainingContentData], Never>?
     
     public init(
-        addGoals: @Sendable @escaping (ConcreteTrainingContentData) async -> Bool,
-        updateGoal: @Sendable @escaping (ConcreteTrainingContentData) async -> Bool,
-        fetchAll: @Sendable @escaping () async -> [ConcreteTrainingContentData],
-        getTrainingGoalPublisher: @Sendable @escaping () async -> AnyPublisher<[ConcreteTrainingContentData], Never>?
+        addGoals: @Sendable @escaping (TrainingContentData) async -> Bool,
+        updateGoal: @Sendable @escaping (TrainingContentData) async -> Bool,
+        fetchAll: @Sendable @escaping () async -> [TrainingContentData],
+        getTrainingGoalPublisher: @Sendable @escaping () async -> AnyPublisher<[TrainingContentData], Never>?
     ) {
         
         self.addGoals = addGoals

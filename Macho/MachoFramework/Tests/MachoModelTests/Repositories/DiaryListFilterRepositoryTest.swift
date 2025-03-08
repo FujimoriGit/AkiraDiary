@@ -23,19 +23,19 @@ struct DiaryListFilterRepositoryTest {
     @Test(
         "Entityの追加、取得、更新、削除ができることを確認する",
         arguments: [
-            ConcreteDiaryListFilterData(id: "test-uuid-1", filterTarget: "aaaaa", filterId: UUID(0), filterValue: "sjlefjilse"),
-            ConcreteDiaryListFilterData(id: "test-uuid-2",
+            DiaryListFilterData(id: "test-uuid-1", filterTarget: "aaaaa", filterId: UUID(0), filterValue: "sjlefjilse"),
+            DiaryListFilterData(id: "test-uuid-2",
                                         filterTarget: "aasjfisjeljaiefjsleifjlasijfljsiejflisefjlisaejfiajsifjsleifjlisejfjsaeifaaa",
                                         filterId: UUID(1),
                                         filterValue: "slfjiesjflsajlefjlsaijeflisajeflasjefaisejflasei")
         ]
     )
-    func entityIoTest(updateFilter: ConcreteDiaryListFilterData) async throws {
+    func entityIoTest(updateFilter: DiaryListFilterData) async throws {
         
         let realm = TestRealmGenerator.setupRealm()
         let testRepository = DiaryListFilterEntityRepositoryImpl(realm: realm)
         
-        let initialFilter = ConcreteDiaryListFilterData(id: UUID().uuidString,
+        let initialFilter = DiaryListFilterData(id: UUID().uuidString,
                                                         filterTarget: "trainingType",
                                                         filterId: UUID(),
                                                         filterValue: "腹筋")
@@ -45,7 +45,7 @@ struct DiaryListFilterRepositoryTest {
         let fetchResultAfterAdd = await testRepository.fetchAll()
         #expect([initialFilter] == fetchResultAfterAdd)
         
-        let updateTargetFilter = ConcreteDiaryListFilterData(id: initialFilter.id,
+        let updateTargetFilter = DiaryListFilterData(id: initialFilter.id,
                                                         filterTarget: updateFilter.filterTarget,
                                                         filterId: updateFilter.filterId,
                                                         filterValue: updateFilter.filterValue)
@@ -83,14 +83,14 @@ struct DiaryListFilterRepositoryTest {
         #expect(await observeValues?.next() == [],
                 "check initial observe output is empty.")
         
-        let insertEntities = arg.insertIds.map { ConcreteDiaryListFilterData(id: $0.uuidString,
+        let insertEntities = arg.insertIds.map { DiaryListFilterData(id: $0.uuidString,
                                                                              filterTarget: "sample",
                                                                              filterId: $0,
                                                                              filterValue: "sample value") }
         
         let insertTask = Task {
             
-            var expectedOutput: [ConcreteDiaryListFilterData] = []
+            var expectedOutput: [DiaryListFilterData] = []
             
             for (index, expectedEntity) in insertEntities.enumerated() {
                 
@@ -112,16 +112,16 @@ struct DiaryListFilterRepositoryTest {
         
         await insertTask.value
         
-        let updateEntities: [ConcreteDiaryListFilterData] = arg.updateIds.compactMap { updateId in
+        let updateEntities: [DiaryListFilterData] = arg.updateIds.compactMap { updateId in
             
             guard let target = insertEntities.first(where: { $0.id == updateId.uuidString }) else { return nil }
-            return ConcreteDiaryListFilterData(id: target.id,
+            return DiaryListFilterData(id: target.id,
                                                filterTarget: "update target",
                                                filterId: target.filterId,
                                                filterValue: "update value")
         }
         
-        let updateTask: Task<[ConcreteDiaryListFilterData], Never> = Task {
+        let updateTask: Task<[DiaryListFilterData], Never> = Task {
             
             var expectedOutput = insertEntities
             for (index, updateEntity) in updateEntities.enumerated() {
@@ -153,7 +153,7 @@ struct DiaryListFilterRepositoryTest {
         
         let currentEntities = await updateTask.value
         
-        let deleteEntities: [ConcreteDiaryListFilterData] = arg.deleteIds.compactMap { deleteId in
+        let deleteEntities: [DiaryListFilterData] = arg.deleteIds.compactMap { deleteId in
             
             guard let target = currentEntities.first(where: { $0.id == deleteId.uuidString }) else { return nil }
             return target

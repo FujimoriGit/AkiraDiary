@@ -41,7 +41,7 @@ struct TotalTrainingResult: Equatable {
         return getDisplayDateText(Date(timeIntervalSince1970: endDate.timeIntervalSince(startDate)))
     }
     
-    init(_ diary: ConcreteDiaryData) {
+    init(_ diary: DiaryData) {
         
         trainingCount = diary.goals.count
         isAchievedTotalGoal = diary.isAchieved

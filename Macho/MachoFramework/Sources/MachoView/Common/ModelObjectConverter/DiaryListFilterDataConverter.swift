@@ -9,7 +9,7 @@ import MachoCore
 
 struct DiaryListFilterDataConverter {
     
-    static func convertToDiaryFilterItemList(_ entities: [any DiaryListFilterData]) -> [DiaryListFilterItem] {
+    static func convertToDiaryFilterItemList(_ entities: [DiaryListFilterData]) -> [DiaryListFilterItem] {
         
         return entities.compactMap {
             
@@ -20,13 +20,13 @@ struct DiaryListFilterDataConverter {
         }
     }
     
-    static func convertToDiaryListFilterDataList(_ items: [DiaryListFilterItem]) -> [ConcreteDiaryListFilterData] {
+    static func convertToDiaryListFilterDataList(_ items: [DiaryListFilterItem]) -> [DiaryListFilterData] {
         
-        return items.map { ConcreteDiaryListFilterData($0) }
+        return items.map { DiaryListFilterData($0) }
     }
 }
 
-extension ConcreteDiaryListFilterData {
+extension DiaryListFilterData {
     
     init(_ item: DiaryListFilterItem) {
         

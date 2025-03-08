@@ -30,7 +30,7 @@ struct TrainingTypeEntityRepositoryTest {
         let realm = TestRealmGenerator.setupRealm()
         let testRepository = TrainingTypeEntityRepositoryImpl(realm)
         
-        let initialType = ConcreteTrainingTypeData(id: UUID(), name: typeName)
+        let initialType = TrainingTypeData(id: UUID(), name: typeName)
         
         #expect(await testRepository.insert(initialType), "check insert proc is successed.")
         

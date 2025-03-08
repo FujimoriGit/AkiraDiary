@@ -10,38 +10,14 @@ import MachoCore
 import RealmHelper
 import RealmSwift
 
-public struct DiaryListFilterEntity: BaseRealmEntity, DiaryListFilterData {
-    
-    public let id: String
-    // フィルターの種別
-    public let filterTarget: String
-    // フィルターのID
-    public let filterId: UUID
-    // フィルターの項目
-    public let filterValue: String
-        
-    public init(id: String, filterTarget: String, filterId: UUID, filterValue: String) {
-        
-        self.id = id
-        self.filterTarget = filterTarget
-        self.filterId = filterId
-        self.filterValue = filterValue
-    }
+extension DiaryListFilterData: BaseRealmEntity {
     
     public init(realmObject: DiaryListFilterRealmObject) {
         
-        id = realmObject.id
-        filterTarget = realmObject.filterTarget
-        filterId = realmObject.filterId
-        filterValue = realmObject.filterValue
-    }
-    
-    init(_ data: some DiaryListFilterData) {
-        
-        id = data.id
-        filterTarget = data.filterTarget
-        filterId = data.filterId
-        filterValue = data.filterValue
+        self.init(id: realmObject.id,
+                  filterTarget: realmObject.filterTarget,
+                  filterId: realmObject.filterId,
+                  filterValue: realmObject.filterValue)
     }
     
     public func toRealmObject() -> DiaryListFilterRealmObject {
@@ -71,16 +47,5 @@ public class DiaryListFilterRealmObject: Object {
         self.filterTarget = filterTarget
         self.filterId = filterId
         self.filterValue = filterValue
-    }
-}
- 
-extension ConcreteDiaryListFilterData {
-    
-    init(entity: DiaryListFilterEntity) {
-        
-        self.init(id: entity.id,
-                  filterTarget: entity.filterTarget,
-                  filterId: entity.filterId,
-                  filterValue: entity.filterValue)
     }
 }

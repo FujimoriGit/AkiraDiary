@@ -105,7 +105,7 @@ struct DiaryListFeature: Sendable {
         // MARK: Effect Actions
         
         /// 日記リストの取得に成功したときの副作用を処理する
-        case receiveLoadDiaryItems(items: [ConcreteDiaryData])
+        case receiveLoadDiaryItems(items: [DiaryData])
         /// 指定した日記をRealmから削除する副作用を処理する
         case deletedDiaryItem(id: UUID)
         /// 日記リストのフィルター取得に成功した時の副作用を処理する
@@ -392,7 +392,7 @@ private extension DiaryListFeature {
     /// - Parameters:
     ///   - receive: 日記リストのリロードで取得したリスト
     ///   - state: 更新前のState
-    func getUpdatedStateAfterReloadDiary(receive diaries: [ConcreteDiaryData],
+    func getUpdatedStateAfterReloadDiary(receive diaries: [DiaryData],
                                          state: State) -> State {
         
         var updatedState = state

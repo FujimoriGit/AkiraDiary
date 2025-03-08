@@ -1,27 +1,38 @@
 //
 //  TrainingContentData.swift
+//  MachoFramework
 //
-//
-//  Created by Daiki Fujimori on 2024/04/13
+//  Created by 佐藤汰一 on 2024/11/29.
 //
 
 import Foundation
 
-public protocol TrainingContentData: Equatable, Sendable, Identifiable {
+public struct TrainingContentData: Equatable, Sendable {
     
-    associatedtype TrainingType: TrainingTypeData
+    public typealias TrainingType = TrainingTypeData
     
-    var id: UUID { get }
-    /// 種目
-    var trainingType: TrainingType? { get }
-    /// 目標1セットの回数
-    var goalNumberOfSets: Int { get }
-    /// 目標セット数
-    var goalSetCount: Int { get }
-    /// 達成した1セットの回数
-    var actualNumberOfSets: Int? { get }
-    /// 達成したセット数
-    var actualSetCount: Int? { get }
-    /// トレーニング達成成否
-    var isAchieved: Bool { get }
+    public let id: UUID
+    public let trainingType: TrainingType?
+    public let goalNumberOfSets: Int
+    public let goalSetCount: Int
+    public let actualNumberOfSets: Int?
+    public let actualSetCount: Int?
+    public let isAchieved: Bool
+    
+    public init(id: UUID,
+                trainingType: TrainingType?,
+                goalNumberOfSets: Int,
+                goalSetCount: Int,
+                actualNumberOfSets: Int?,
+                actualSetCount: Int?,
+                isAchieved: Bool) {
+        
+        self.id = id
+        self.trainingType = trainingType
+        self.goalNumberOfSets = goalNumberOfSets
+        self.goalSetCount = goalSetCount
+        self.actualNumberOfSets = actualNumberOfSets
+        self.actualSetCount = actualSetCount
+        self.isAchieved = isAchieved
+    }
 }

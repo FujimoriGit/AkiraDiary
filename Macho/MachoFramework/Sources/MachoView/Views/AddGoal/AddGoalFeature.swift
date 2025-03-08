@@ -20,8 +20,8 @@ struct AddGoalFeature: Sendable {
     @ObservableState
     struct State: Sendable, Equatable {
         
-        var trainingTypes: [ConcreteTrainingTypeData] = []
-        var selectedTrainingType: ConcreteTrainingTypeData?
+        var trainingTypes: [TrainingTypeData] = []
+        var selectedTrainingType: TrainingTypeData?
         var typeNameBeingAdded: String?
         var numberOfSets = 0
         var setCount = 0
@@ -38,10 +38,10 @@ struct AddGoalFeature: Sendable {
         
         case onAppear
         case didChangeTrainingTypes
-        case fetchedTrainingTypes([ConcreteTrainingTypeData])
+        case fetchedTrainingTypes([TrainingTypeData])
         case cancelButtonTapped
         case delegate(Delegate)
-        case selectedTrainingType(ConcreteTrainingTypeData)
+        case selectedTrainingType(TrainingTypeData)
         case saveButtonTapped
         case setNumberOfSets(Int)
         case setCount(Int)
@@ -51,7 +51,7 @@ struct AddGoalFeature: Sendable {
         @CasePathable
         enum PublisherEvent: Equatable {
             
-            case observeTrainingType(AnyPublisher<[ConcreteTrainingTypeData], Never>)
+            case observeTrainingType(AnyPublisher<[TrainingTypeData], Never>)
             
             static func == (lhs: AddGoalFeature.Action.PublisherEvent,
                             rhs: AddGoalFeature.Action.PublisherEvent) -> Bool {

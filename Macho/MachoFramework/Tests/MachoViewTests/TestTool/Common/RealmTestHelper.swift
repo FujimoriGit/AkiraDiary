@@ -24,7 +24,7 @@ enum RealmTestHelper {
     }
     
     static func setupDiaryFilterList(_ client: DiaryListFilterClient,
-                              filterList: [ConcreteDiaryListFilterData]) async {
+                              filterList: [DiaryListFilterData]) async {
         
         for filter in filterList {
             
@@ -33,7 +33,7 @@ enum RealmTestHelper {
         }
     }
     
-    static func setupDiaryDataList(_ client: DiaryEntityClient, diaryList: [ConcreteDiaryData]) async {
+    static func setupDiaryDataList(_ client: DiaryEntityClient, diaryList: [DiaryData]) async {
         
         for diary in diaryList {
             
@@ -42,7 +42,7 @@ enum RealmTestHelper {
         }
     }
     
-    static func setupTrainingTypeList(_ client: TrainingTypeClient, typeList: [ConcreteTrainingTypeData]) async {
+    static func setupTrainingTypeList(_ client: TrainingTypeClient, typeList: [TrainingTypeData]) async {
         
         for type in typeList {
             

@@ -1,14 +1,20 @@
 //
 //  TrainingTypeData.swift
+//  MachoFramework
 //
-//  
-//  Created by Daiki Fujimori on 2024/08/16
-//  
+//  Created by 佐藤汰一 on 2024/11/29.
+//
 
 import Foundation
 
-public protocol TrainingTypeData: Equatable, Sendable, Identifiable {
+public struct TrainingTypeData: Equatable, Sendable {
     
-    var id: UUID { get }
-    var name: String { get }
+    public let id: UUID
+    public let name: String
+    
+    public init(id: UUID, name: String) {
+        
+        self.id = id
+        self.name = name
+    }
 }

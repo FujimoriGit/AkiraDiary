@@ -16,18 +16,18 @@ final class TrainingActivityGraphViewTest: XCTestCase {
     
     // MARK: - test data definition
     
-    private static let absTraining = ConcreteTrainingTypeData(id: UUID(), name: "腹筋")
-    private static let benchPressTraining = ConcreteTrainingTypeData(id: UUID(), name: "ベンチプレス")
-    private static let pushUpTraining = ConcreteTrainingTypeData(id: UUID(), name: "腕立て")
+    private static let absTraining = TrainingTypeData(id: UUID(), name: "腹筋")
+    private static let benchPressTraining = TrainingTypeData(id: UUID(), name: "ベンチプレス")
+    private static let pushUpTraining = TrainingTypeData(id: UUID(), name: "腕立て")
     
-    private static let absTrainingContent = ConcreteTrainingContentData(id: UUID(),
+    private static let absTrainingContent = TrainingContentData(id: UUID(),
                                                                 trainingType: absTraining,
                                                                 goalNumberOfSets: 3,
                                                                 goalSetCount: 3,
                                                                 actualNumberOfSets: 3,
                                                                         actualSetCount: 3,
                                                                         isAchieved: true)
-    private static let benchPressTrainingContent = ConcreteTrainingContentData(id: UUID(),
+    private static let benchPressTrainingContent = TrainingContentData(id: UUID(),
                                                                        trainingType: absTraining,
                                                                        goalNumberOfSets: 3,
                                                                        goalSetCount: 3,
@@ -35,7 +35,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                                                actualSetCount: 1,
                                                                                isAchieved: false)
     
-    private static let pushUpTrainingContent = ConcreteTrainingContentData(id: UUID(),
+    private static let pushUpTrainingContent = TrainingContentData(id: UUID(),
                                                                    trainingType: pushUpTraining,
                                                                    goalNumberOfSets: 3,
                                                                    goalSetCount: 3,
@@ -43,7 +43,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                                            actualSetCount: 1,
                                                                            isAchieved: false)
     
-    private static let absTrainingContentAtThreeDay = ConcreteTrainingContentData(id: UUID(),
+    private static let absTrainingContentAtThreeDay = TrainingContentData(id: UUID(),
                                                                           trainingType: absTraining,
                                                                           goalNumberOfSets: 3,
                                                                           goalSetCount: 3,
@@ -51,7 +51,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                                                   actualSetCount: 3,
                                                                                   isAchieved: true)
     
-    private static let pushUpTrainingContentAtFourDay = ConcreteTrainingContentData(id: UUID(),
+    private static let pushUpTrainingContentAtFourDay = TrainingContentData(id: UUID(),
                                                                             trainingType: pushUpTraining,
                                                                             goalNumberOfSets: 3,
                                                                             goalSetCount: 3,
@@ -59,7 +59,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                                                     actualSetCount: 1,
                                                                                     isAchieved: false)
     
-    private static let absTrainingContentAtFourDay = ConcreteTrainingContentData(id: UUID(),
+    private static let absTrainingContentAtFourDay = TrainingContentData(id: UUID(),
                                                                          trainingType: absTraining,
                                                                          goalNumberOfSets: 3,
                                                                          goalSetCount: 3,
@@ -67,7 +67,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                                                  actualSetCount: 3,
                                                                                  isAchieved: true)
     
-    private static let absTrainingContentAtFiveDay = ConcreteTrainingContentData(id: UUID(),
+    private static let absTrainingContentAtFiveDay = TrainingContentData(id: UUID(),
                                                                          trainingType: absTraining,
                                                                          goalNumberOfSets: 3,
                                                                          goalSetCount: 3,
@@ -75,7 +75,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                                                  actualSetCount: 3,
                                                                                  isAchieved: true)
     
-    private static let benchPressTrainingContentAtFiveDay = ConcreteTrainingContentData(
+    private static let benchPressTrainingContentAtFiveDay = TrainingContentData(
         id: UUID(),
         trainingType: benchPressTraining,
         goalNumberOfSets: 3,
@@ -85,14 +85,14 @@ final class TrainingActivityGraphViewTest: XCTestCase {
         isAchieved: false
     )
     
-    private static let absTrainingContentOfNewest = ConcreteTrainingContentData(id: UUID(),
+    private static let absTrainingContentOfNewest = TrainingContentData(id: UUID(),
                                                                         trainingType: absTraining,
                                                                         goalNumberOfSets: 3,
                                                                         goalSetCount: 3,
                                                                         actualNumberOfSets: 3,
                                                                                 actualSetCount: 3,
                                                                                 isAchieved: true)
-    private static let benchPressTrainingContentOfNewest = ConcreteTrainingContentData(
+    private static let benchPressTrainingContentOfNewest = TrainingContentData(
         id: UUID(),
         trainingType: benchPressTraining,
         goalNumberOfSets: 3,
@@ -103,7 +103,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
     )
     
     
-    private static let sampleDiaryData = ConcreteDiaryData(id: UUID(),
+    private static let sampleDiaryData = DiaryData(id: UUID(),
                                                    date: getSelectDate(year: 2024,
                                                                        month: 6,
                                                                        day: 1),
@@ -120,7 +120,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                                           day: 1,
                                                                           hour: 18))
     
-    private static let sampleDiaryData2 = ConcreteDiaryData(id: UUID(),
+    private static let sampleDiaryData2 = DiaryData(id: UUID(),
                                                     date: getSelectDate(year: 2024,
                                                                         month: 6,
                                                                         day: 2),
@@ -137,7 +137,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                                            day: 2,
                                                                            hour: 20))
     
-    private static let sampleDiaryData3 = ConcreteDiaryData(id: UUID(),
+    private static let sampleDiaryData3 = DiaryData(id: UUID(),
                                                     date: getSelectDate(year: 2025,
                                                                         month: 6,
                                                                         day: 30),
@@ -157,7 +157,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                                            day: 30,
                                                                            hour: 18))
     
-    private static let sampleDiaryData4 = ConcreteDiaryData(id: UUID(),
+    private static let sampleDiaryData4 = DiaryData(id: UUID(),
                                                     date: getSelectDate(year: 2024,
                                                                         month: 6,
                                                                         day: 3),
@@ -177,7 +177,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                                            day: 3,
                                                                            hour: 10))
     
-    private static let sampleDiaryData5 = ConcreteDiaryData(id: UUID(),
+    private static let sampleDiaryData5 = DiaryData(id: UUID(),
                                                     date: getSelectDate(year: 2024,
                                                                         month: 6,
                                                                         day: 4),
@@ -196,7 +196,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                                            day: 4,
                                                                            hour: 10))
     
-    private static let sampleDiaryData6 = ConcreteDiaryData(id: UUID(),
+    private static let sampleDiaryData6 = DiaryData(id: UUID(),
                                                     date: getSelectDate(year: 2024,
                                                                         month: 6,
                                                                         day: 4),
@@ -215,7 +215,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                                            day: 4,
                                                                            hour: 10))
     
-    private static let sampleDiaryData7 = ConcreteDiaryData(id: UUID(),
+    private static let sampleDiaryData7 = DiaryData(id: UUID(),
                                                     date: getSelectDate(year: 2024,
                                                                         month: 6,
                                                                         day: 5),
@@ -232,7 +232,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                                            day: 5,
                                                                            hour: 10))
     
-    private static let sampleDiaryData8 = ConcreteDiaryData(id: UUID(),
+    private static let sampleDiaryData8 = DiaryData(id: UUID(),
                                                     date: getSelectDate(year: 2024,
                                                                         month: 6,
                                                                         day: 5),
@@ -747,7 +747,7 @@ extension TrainingActivityGraphViewTest {
                        ]))
         }
         
-        let expectedChangeTrainingTypeList: [ConcreteTrainingTypeData] = [
+        let expectedChangeTrainingTypeList: [TrainingTypeData] = [
             Self.absTraining,
             Self.benchPressTraining
         ]
@@ -867,7 +867,7 @@ private extension TrainingActivityGraphViewTest {
     
     func createTestUserDefaults(initialStartDate startDate: Date,
                                 initialPeriod: ActivityPeriod = .week,
-                                initialTrainingTypeList: [ConcreteTrainingTypeData] = []) -> UserDefaults {
+                                initialTrainingTypeList: [TrainingTypeData] = []) -> UserDefaults {
         
         guard let testStorage = UserDefaults(suiteName: "testOnAppearWithInitial") else {
             

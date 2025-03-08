@@ -28,7 +28,7 @@ struct TrainingActivityGraphFeature {
         /// グラフ表示期間
         let activityPeriod: ActivityPeriod
         /// 表示トレーニングリスト
-        let targetTrainingTypeList: [ConcreteTrainingTypeData]
+        let targetTrainingTypeList: [TrainingTypeData]
         /// 一日毎のアクティビティ結果
         let activityResultList: ActivityResults
         
@@ -59,7 +59,7 @@ struct TrainingActivityGraphFeature {
         /// グラフ表示期間のメニュー選択時
         case didSelectActivityPeriodMenu(ActivityPeriod)
         /// グラフ表示開始日付のメニュー選択時
-        case didSelectTargetTrainingTypeMenu([ConcreteTrainingTypeData])
+        case didSelectTargetTrainingTypeMenu([TrainingTypeData])
         /// グラフ表示開始日付のメニュー選択時
         case tappedDayOfCalendar(Date)
         /// アクティビティのセルタップ時
@@ -68,9 +68,9 @@ struct TrainingActivityGraphFeature {
         // MARK: effect event action
         
         /// 日記データを取得時
-        case didReceiveDiaryData([ConcreteDiaryData])
+        case didReceiveDiaryData([DiaryData])
         /// 保存しているトレーニング種目取得時
-        case didReceiveTrainingTypeList([ConcreteTrainingTypeData])
+        case didReceiveTrainingTypeList([TrainingTypeData])
         
         enum Alert: Equatable {
             

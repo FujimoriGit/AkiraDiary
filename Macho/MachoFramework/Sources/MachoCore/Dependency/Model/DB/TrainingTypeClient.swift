@@ -11,16 +11,16 @@ import ComposableArchitecture
 public struct TrainingTypeClient: Sendable {
 
     /// 登録されているすべてのトレーニング種目を取得する
-    public var fetchAllType: @Sendable () async -> [ConcreteTrainingTypeData]
+    public var fetchAllType: @Sendable () async -> [TrainingTypeData]
     /// 新しいトレーニング種目を追加する
-    public var add: @Sendable (ConcreteTrainingTypeData) async -> Bool
+    public var add: @Sendable (TrainingTypeData) async -> Bool
     /// タグの監視
-    public var getObserve: @Sendable () async -> AnyPublisher<[ConcreteTrainingTypeData], Never>?
+    public var getObserve: @Sendable () async -> AnyPublisher<[TrainingTypeData], Never>?
     
     public init(
-        fetchAllType: @escaping @Sendable () async -> [ConcreteTrainingTypeData],
-        add: @escaping @Sendable (ConcreteTrainingTypeData) async -> Bool,
-        getObserve: @escaping @Sendable () async -> AnyPublisher<[ConcreteTrainingTypeData], Never>?
+        fetchAllType: @escaping @Sendable () async -> [TrainingTypeData],
+        add: @escaping @Sendable (TrainingTypeData) async -> Bool,
+        getObserve: @escaping @Sendable () async -> AnyPublisher<[TrainingTypeData], Never>?
     ) {
         
         self.fetchAllType = fetchAllType

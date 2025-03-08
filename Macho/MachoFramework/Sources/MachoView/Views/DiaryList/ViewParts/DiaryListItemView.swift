@@ -133,12 +133,12 @@ private extension DiaryListItemView {
 // MARK: - preview block
 
 #Preview {
-    let diaryData = ConcreteDiaryData(
+    let diaryData = DiaryData(
         id: UUID(),
         date: Date(),
         title: "sample", mainText: "sample main text",
         goals: [
-            ConcreteTrainingContentData(id: UUID(),
+            TrainingContentData(id: UUID(),
                                         trainingType: .init(id: UUID(), name: "腹筋"),
                                         goalNumberOfSets: 3,
                                         goalSetCount: 3,

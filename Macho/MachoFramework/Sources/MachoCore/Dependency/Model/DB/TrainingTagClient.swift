@@ -11,19 +11,19 @@ import ComposableArchitecture
 public struct TrainingTagClient: Sendable {
 
     /// 登録しているタグをすべて取得する
-    public var fetchAll: @Sendable () async -> [ConcreteTrainingTagData]
+    public var fetchAll: @Sendable () async -> [TrainingTagData]
     /// 新しいタグを追加する
-    public var add: @Sendable (ConcreteTrainingTagData) async -> Bool
+    public var add: @Sendable (TrainingTagData) async -> Bool
     /// 既存タグを更新する
-    public var update: @Sendable (ConcreteTrainingTagData) async -> Bool
+    public var update: @Sendable (TrainingTagData) async -> Bool
     /// タグの監視
-    public var getObserve: @Sendable () async -> AnyPublisher<[ConcreteTrainingTagData], Never>?
+    public var getObserve: @Sendable () async -> AnyPublisher<[TrainingTagData], Never>?
     
     public init(
-        fetchAll: @escaping @Sendable () async -> [ConcreteTrainingTagData],
-        add: @escaping @Sendable (ConcreteTrainingTagData) async -> Bool,
-        update: @escaping @Sendable (ConcreteTrainingTagData) async -> Bool,
-        getObserve: @escaping @Sendable () async -> AnyPublisher<[ConcreteTrainingTagData], Never>?
+        fetchAll: @escaping @Sendable () async -> [TrainingTagData],
+        add: @escaping @Sendable (TrainingTagData) async -> Bool,
+        update: @escaping @Sendable (TrainingTagData) async -> Bool,
+        getObserve: @escaping @Sendable () async -> AnyPublisher<[TrainingTagData], Never>?
     ) {
         
         self.fetchAll = fetchAll
