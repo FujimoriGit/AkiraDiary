@@ -1,4 +1,7 @@
 import Danger
+import DangerXCodeSummary
+import DangerSwiftCoverage
+
 let danger = Danger()
 
 // PR自体のレビュー
@@ -26,3 +29,9 @@ SwiftLint.lint(.modifiedAndCreatedFiles(directory: "Macho/MachoFramework/Sources
                inline: true,
                configFile: "Macho/MachoFramework/Sources/.swiftlint.yml",
                swiftlintPath: swiftLintPath)
+
+// カバレッジの確認
+
+let resultBundlePath = "Build/test.xcresult"
+Coverage.xcodeBuildCoverage(.xcresultBundle(resultBundlePath),
+                            minimumCoverage: 50)

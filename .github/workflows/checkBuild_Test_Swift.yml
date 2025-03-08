@@ -27,8 +27,15 @@ jobs:
     runs-on: macos-latest
 
     steps:
+      # fetch-depth の計算
+      - run: echo "fetch_depth=$(( commits + 1 ))" >> $GITHUB_ENV
+        env:
+          commits: ${{ github.event.pull_request.commits }}
+
       # チェックアウト(リポジトリからソースコードを取得)
       - uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: ${{ env.fetch_depth }}
 
       # Xcodeの一覧出力
       - name: Show Xcode list
@@ -91,7 +98,7 @@ jobs:
           xcbeautify --renderer github-actions
 
       # テスト結果の確認
-      - name: Check Test Coverage
-        run: swift run danger-swift ci --dangerfile Dangerfile_after_build.swift --danger_id=postBuildDangerReview
+      - name: Analyze Danger
+        run: swift run danger-swift ci
         env:
           GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_TOKEN }}
