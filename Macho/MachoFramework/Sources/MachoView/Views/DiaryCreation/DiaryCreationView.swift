@@ -59,6 +59,8 @@ struct DiaryCreationView: View {
                     .frame(maxWidth: geometry.size.width, minHeight: geometry.size.height)
                 if textFieldFocusState != nil {
                     Color.clear.contentShape(Rectangle())
+                        .accessibilityAddTraits(.isButton)
+                        .accessibilityLabel("キーボードを閉じる")
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .ignoresSafeArea()
                         .onTapGesture {

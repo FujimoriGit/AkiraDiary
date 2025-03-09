@@ -70,12 +70,7 @@ struct DiaryCreationFeature: Sendable {
             case .onAppear:
                 logger.debug("onAppear")
                 return .concatenate(
-                    .publisher {
-                         
-                        return trainingTagApi.getTrainingTagPublisher()
-                            .receive(on: DispatchQueue.main)
-                            .map { .fetchedTags($0) }
-                    }.cancellable(id: TrainingTagsSubscriber()),
+                    addObserveTagEntity(),
                     fetchTags()
                 )
                 
@@ -110,8 +105,8 @@ struct DiaryCreationFeature: Sendable {
                     .run { [state] _ in
                         
                         await addDiary(state: state)
-                        await dismiss()
-                    }
+                    },
+                    popToPrev()
                 )
                 
             case .animateStartButton:
@@ -128,15 +123,7 @@ struct DiaryCreationFeature: Sendable {
             case .tappedTag(let tag):
                 withAnimation(.easeIn(duration: 0.15)) {
                     
-                    state.tags = state.tags.map {
-                        
-                        if $0.entity.id == tag.entity.id {
-                            
-                            return Tag(entity: $0.entity, isSelected: !$0.isSelected)
-                        }
-                        
-                        return $0
-                    }
+                    state.tags = updateTagSelectedState(target: tag, currentList: state.tags)
                 }
                 return .none
                 
@@ -190,13 +177,7 @@ struct DiaryCreationFeature: Sendable {
                 return .none
                 
             case .alert(.presented(.tappedDismissAcceptButton)):
-                return .concatenate(
-                    .cancel(id: TrainingTagsSubscriber()),
-                    .run { _ in
-                        
-                        await dismiss()
-                    }
-                )
+                return popToPrev()
                 
             case .destination, .alert:
                 return .none
@@ -253,14 +234,44 @@ private extension DiaryCreationFeature {
                          endTime: nil)
     }
     
-    func cancelChangesetObserve() -> Effect<Self.Action> {
+    func popToPrev() -> Effect<Self.Action> {
         
-        return .cancel(id: TrainingTagsSubscriber())
+        return .merge(
+            .cancel(id: TrainingTagsSubscriber()),
+            .run { _ in
+                
+                await dismiss()
+            }
+        )
     }
     
     func isEnableStartButton(state: State) -> Bool {
         
         return !(state.titleText.isEmpty || state.goals.isEmpty)
+    }
+    
+    func addObserveTagEntity() -> Effect<Self.Action> {
+        
+        return .publisher {
+             
+            return trainingTagApi.getTrainingTagPublisher()
+                .receive(on: DispatchQueue.main)
+                .map { .fetchedTags($0) }
+        }.cancellable(id: TrainingTagsSubscriber())
+    }
+    
+    func updateTagSelectedState(target: Tag, currentList: [Tag]) -> [Tag] {
+        
+        guard let targetIndex = currentList.firstIndex(where: { $0 == target }) else {
+            
+            return currentList
+        }
+        
+        var result = currentList
+        let currentTag = result[targetIndex]
+        result[targetIndex] = .init(entity: target.entity,
+                                    isSelected: !currentTag.isSelected)
+        return result
     }
 }
 
@@ -269,29 +280,14 @@ private extension DiaryCreationFeature {
 extension DiaryCreationFeature {
     
     @Reducer(state: .equatable, action: .equatable)
-    enum Destination: Equatable {
+    enum Destination {
         
         case addTag(AddTagFeature)
         case addGoal(AddGoalFeature)
-        
-        var id: Int {
-            
-            switch self {
-                
-            case .addTag:
-                return 0
-                
-            case .addGoal:
-                return 1
-            }
-        }
-        
-        static func == (lhs: DiaryCreationFeature.Destination, rhs: DiaryCreationFeature.Destination) -> Bool {
-            
-            return lhs.id == rhs.id
-        }
     }
 }
+
+// MARK: - extension (for alert)
 
 extension DiaryCreationFeature.Action {
     
