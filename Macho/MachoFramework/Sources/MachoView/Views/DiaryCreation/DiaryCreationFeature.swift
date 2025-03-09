@@ -39,6 +39,7 @@ struct DiaryCreationFeature: Sendable {
         var goals: [Goal] = []
         var isEnableStartButton = false
         var animationsRunning = false
+        var isFocusedTextField: DiaryCreationTextFieldFocus?
         
         @Presents var destination: Destination.State?
     }
@@ -61,6 +62,8 @@ struct DiaryCreationFeature: Sendable {
         case tappedAddingGoalButton
         case deletedGoal(Goal)
         case editingGoal(Goal)
+        case didChangeFocusState(DiaryCreationTextFieldFocus?)
+        case tappedOutsideOfKeyboard
     }
     
     @Dependency(\.trainingTagApi) var trainingTagApi
@@ -171,6 +174,14 @@ struct DiaryCreationFeature: Sendable {
                                                                   numberOfSets: goal.numberOfSets,
                                                                   setCount: goal.setCount,
                                                                   isEnableSaveButton: true))
+                return .none
+                
+            case .didChangeFocusState(let newState):
+                state.isFocusedTextField = newState
+                return .none
+                
+            case .tappedOutsideOfKeyboard:
+                state.isFocusedTextField = nil
                 return .none
                 
             case .destination(.presented(.addGoal(.delegate(.saveGoal(let goal))))):
