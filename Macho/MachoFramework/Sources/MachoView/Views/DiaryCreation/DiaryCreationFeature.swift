@@ -8,21 +8,6 @@
 import ComposableArchitecture
 import SwiftUI
 
-struct Tag: Equatable, Identifiable {
-    
-    var id: UUID { entity.id }
-    let entity: TrainingTagData
-    var isSelected = false
-}
-
-struct Goal: Equatable, Identifiable {
-    
-    let id: UUID
-    var trainingType: TrainingTypeData
-    var numberOfSets: Int
-    var setCount: Int
-}
-
 @Reducer
 struct DiaryCreationFeature: Sendable {
     
