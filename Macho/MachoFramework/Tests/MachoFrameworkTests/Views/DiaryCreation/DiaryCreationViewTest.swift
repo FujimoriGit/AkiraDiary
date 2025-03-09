@@ -39,4 +39,39 @@ struct DiaryCreationViewTest {
         }
     }
 
+    @Test
+    func 戻るボタンを押下すると入力情報が消えることを確認するアラートを表示する() async throws {
+        
+        let testStore = TestStore(initialState: .init(),
+                                  reducer: { DiaryCreationFeature() })
+        
+        await testStore.send(.tappedNavigationBackButton) {
+            
+            $0.alert = .createAlertStateWithCancel(.confirmNoSavingDiary,
+                                                   firstButtonHandler: .tappedDismissAcceptButton)
+        }
+    }
+    
+    @Test
+    func 入力情報が消えることを確認するアラートでOKボタン押下すると前画面に戻る() async throws {
+        
+        let dismissInvoke = LockIsolated(false)
+        let testStore = TestStore(initialState: .init(
+            alert: .createAlertStateWithCancel(
+                .confirmNoSavingDiary,
+                firstButtonHandler: .tappedDismissAcceptButton
+            )
+        ),
+                                  reducer: { DiaryCreationFeature() }) {
+            
+            $0.dismiss = .init { dismissInvoke.setValue(true) }
+        }
+        
+        await testStore.send(.alert(.presented(.tappedDismissAcceptButton))) {
+            
+            $0.alert = nil
+        }
+        
+        #expect(dismissInvoke.value)
+    }
 }
