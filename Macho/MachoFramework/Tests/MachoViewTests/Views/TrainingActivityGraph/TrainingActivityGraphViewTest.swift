@@ -20,60 +20,75 @@ final class TrainingActivityGraphViewTest: XCTestCase {
     private static let benchPressTraining = TrainingTypeData(id: UUID(), name: "ベンチプレス")
     private static let pushUpTraining = TrainingTypeData(id: UUID(), name: "腕立て")
     
-    private static let absTrainingContent = TrainingContentData(id: UUID(),
-                                                                trainingType: absTraining,
-                                                                goalNumberOfSets: 3,
-                                                                goalSetCount: 3,
-                                                                actualNumberOfSets: 3,
-                                                                        actualSetCount: 3,
-                                                                        isAchieved: true)
-    private static let benchPressTrainingContent = TrainingContentData(id: UUID(),
-                                                                       trainingType: absTraining,
-                                                                       goalNumberOfSets: 3,
-                                                                       goalSetCount: 3,
-                                                                       actualNumberOfSets: 1,
-                                                                               actualSetCount: 1,
-                                                                               isAchieved: false)
+    private static let absTrainingContent = TrainingContentData(
+        id: UUID(),
+        trainingType: absTraining,
+        goalNumberOfSets: 3,
+        goalSetCount: 3,
+        actualNumberOfSets: 3,
+        actualSetCount: 3,
+        isAchieved: true
+    )
     
-    private static let pushUpTrainingContent = TrainingContentData(id: UUID(),
-                                                                   trainingType: pushUpTraining,
-                                                                   goalNumberOfSets: 3,
-                                                                   goalSetCount: 3,
-                                                                   actualNumberOfSets: 1,
-                                                                           actualSetCount: 1,
-                                                                           isAchieved: false)
+    private static let benchPressTrainingContent = TrainingContentData(
+        id: UUID(),
+        trainingType: absTraining,
+        goalNumberOfSets: 3,
+        goalSetCount: 3,
+        actualNumberOfSets: 1,
+        actualSetCount: 1,
+        isAchieved: false
+    )
     
-    private static let absTrainingContentAtThreeDay = TrainingContentData(id: UUID(),
-                                                                          trainingType: absTraining,
-                                                                          goalNumberOfSets: 3,
-                                                                          goalSetCount: 3,
-                                                                          actualNumberOfSets: 3,
-                                                                                  actualSetCount: 3,
-                                                                                  isAchieved: true)
+    private static let pushUpTrainingContent = TrainingContentData(
+        id: UUID(),
+        trainingType: pushUpTraining,
+        goalNumberOfSets: 3,
+        goalSetCount: 3,
+        actualNumberOfSets: 1,
+        actualSetCount: 1,
+        isAchieved: false
+    )
     
-    private static let pushUpTrainingContentAtFourDay = TrainingContentData(id: UUID(),
-                                                                            trainingType: pushUpTraining,
-                                                                            goalNumberOfSets: 3,
-                                                                            goalSetCount: 3,
-                                                                            actualNumberOfSets: 1,
-                                                                                    actualSetCount: 1,
-                                                                                    isAchieved: false)
+    private static let absTrainingContentAtThreeDay = TrainingContentData(
+        id: UUID(),
+        trainingType: absTraining,
+        goalNumberOfSets: 3,
+        goalSetCount: 3,
+        actualNumberOfSets: 3,
+        actualSetCount: 3,
+        isAchieved: true
+    )
     
-    private static let absTrainingContentAtFourDay = TrainingContentData(id: UUID(),
-                                                                         trainingType: absTraining,
-                                                                         goalNumberOfSets: 3,
-                                                                         goalSetCount: 3,
-                                                                         actualNumberOfSets: 3,
-                                                                                 actualSetCount: 3,
-                                                                                 isAchieved: true)
+    private static let pushUpTrainingContentAtFourDay = TrainingContentData(
+        id: UUID(),
+        trainingType: pushUpTraining,
+        goalNumberOfSets: 3,
+        goalSetCount: 3,
+        actualNumberOfSets: 1,
+        actualSetCount: 1,
+        isAchieved: false
+    )
     
-    private static let absTrainingContentAtFiveDay = TrainingContentData(id: UUID(),
-                                                                         trainingType: absTraining,
-                                                                         goalNumberOfSets: 3,
-                                                                         goalSetCount: 3,
-                                                                         actualNumberOfSets: 3,
-                                                                                 actualSetCount: 3,
-                                                                                 isAchieved: true)
+    private static let absTrainingContentAtFourDay = TrainingContentData(
+        id: UUID(),
+        trainingType: absTraining,
+        goalNumberOfSets: 3,
+        goalSetCount: 3,
+        actualNumberOfSets: 3,
+        actualSetCount: 3,
+        isAchieved: true
+    )
+    
+    private static let absTrainingContentAtFiveDay = TrainingContentData(
+        id: UUID(),
+        trainingType: absTraining,
+        goalNumberOfSets: 3,
+        goalSetCount: 3,
+        actualNumberOfSets: 3,
+        actualSetCount: 3,
+        isAchieved: true
+    )
     
     private static let benchPressTrainingContentAtFiveDay = TrainingContentData(
         id: UUID(),
@@ -85,13 +100,16 @@ final class TrainingActivityGraphViewTest: XCTestCase {
         isAchieved: false
     )
     
-    private static let absTrainingContentOfNewest = TrainingContentData(id: UUID(),
-                                                                        trainingType: absTraining,
-                                                                        goalNumberOfSets: 3,
-                                                                        goalSetCount: 3,
-                                                                        actualNumberOfSets: 3,
-                                                                                actualSetCount: 3,
-                                                                                isAchieved: true)
+    private static let absTrainingContentOfNewest = TrainingContentData(
+        id: UUID(),
+        trainingType: absTraining,
+        goalNumberOfSets: 3,
+        goalSetCount: 3,
+        actualNumberOfSets: 3,
+        actualSetCount: 3,
+        isAchieved: true
+    )
+    
     private static let benchPressTrainingContentOfNewest = TrainingContentData(
         id: UUID(),
         trainingType: benchPressTraining,
@@ -101,7 +119,6 @@ final class TrainingActivityGraphViewTest: XCTestCase {
         actualSetCount: 1,
         isAchieved: false
     )
-    
     
     private static let sampleDiaryData = DiaryData(id: UUID(),
                                                    date: getSelectDate(year: 2024,
@@ -298,8 +315,7 @@ extension TrainingActivityGraphViewTest {
         await RealmTestHelper.setupTrainingTypeList(mockTrainingTypeClient,
                                                     typeList: inputTrainingTypeList)
         
-        
-        let testStore = TestStore(initialState: .getDefaultState(),
+        let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(),
                                   reducer: { TrainingActivityGraphFeature() },
                                   withDependencies: {
             
@@ -307,8 +323,6 @@ extension TrainingActivityGraphViewTest {
             $0.trainingTypeClient = mockTrainingTypeClient
             $0.defaultAppStorage = createTestUserDefaults(initialStartDate: initialStartPeriod)
         })
-        
-        throw XCTSkip("テスト対象未実装のためスキップ")
         
         await testStore.send(.onAppear) {
             
@@ -318,51 +332,68 @@ extension TrainingActivityGraphViewTest {
                        activityResultList: .init(resultList: []))
         }
         
-        await testStore.receive(\.didReceiveTrainingTypeList) {
+        // TODO: 実装できたらコメントアウト外す
+        await testStore.receive(\.didReceiveTrainingTypeList)
+        
+        //        await testStore.receive(\.didReceiveDiaryData) {
+        //
+        //            $0.viewState = .init(activityStartPeriod: initialStartPeriod,
+        //                                 activityPeriod: .week,
+        //                                 targetTrainingTypeList: expectedTrainingTypeList,
+        //                                 activityResultList: .init(resultList: [
+        //                                    .init(targetDate: expectedFetchDiaryData1.date,
+        //                                          isAchieved: true,
+        //                                          activities: [.init(id: expectedFetchDiaryData1.id,
+        //                                                             title: expectedFetchDiaryData1.title,
+        //                                                             isAchieved: true)]),
+        //                                    .init(targetDate: expectedFetchDiaryData2.date,
+        //                                          isAchieved: false,
+        //                                          activities: [.init(id: expectedFetchDiaryData2.id,
+        //                                                             title: expectedFetchDiaryData2.title,
+        //                                                             isAchieved: false)]),
+        //                                    .init(targetDate: expectedFetchDiaryData4.date,
+        //                                          isAchieved: true,
+        //                                          activities: [.init(id: expectedFetchDiaryData4.id,
+        //                                                             title: expectedFetchDiaryData4.title,
+        //                                                             isAchieved: true)]),
+        //                                    .init(targetDate: expectedFetchDiaryData5.date,
+        //                                          isAchieved: false,
+        //                                          activities: [.init(id: expectedFetchDiaryData5.id,
+        //                                                             title: expectedFetchDiaryData5.title,
+        //                                                             isAchieved: false)]),
+        //                                    .init(targetDate: expectedFetchDiaryData7.date,
+        //                                          isAchieved: false,
+        //                                          activities: [
+        //                                            .init(id: expectedFetchDiaryData7.id,
+        //                                                             title: expectedFetchDiaryData7.title,
+        //                                                             isAchieved: true),
+        //                                            .init(id: expectedFetchDiaryData8.id,
+        //                                                             title: expectedFetchDiaryData8.title,
+        //                                                             isAchieved: false)
+        //                                          ])
+        //                                 ]))
+        //        }
+        
+        await testStore.send(.tappedFilterDisplayButton) {
             
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .week,
-                       targetTrainingTypeList: [],
-                       activityResultList: .init(resultList: []))
+            $0.isShowingFilter = false
         }
         
-        await testStore.receive(\.didReceiveDiaryData) {
+        await testStore.send(.tappedFilterDisplayButton) {
             
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .week,
-                       targetTrainingTypeList: inputTrainingTypeList,
-                       activityResultList: .init(resultList: [
-                        .init(targetDate: expectedFetchDiaryData1.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData1.id,
-                                                 title: expectedFetchDiaryData1.title,
-                                                 isAchieved: true)]),
-                        .init(targetDate: expectedFetchDiaryData2.date,
-                              isAchieved: false,
-                              activities: [.init(id: expectedFetchDiaryData2.id,
-                                                 title: expectedFetchDiaryData2.title,
-                                                 isAchieved: false)]),
-                        .init(targetDate: expectedFetchDiaryData4.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData4.id,
-                                                 title: expectedFetchDiaryData4.title,
-                                                 isAchieved: true)]),
-                        .init(targetDate: expectedFetchDiaryData5.date,
-                              isAchieved: false,
-                              activities: [.init(id: expectedFetchDiaryData5.id,
-                                                 title: expectedFetchDiaryData5.title,
-                                                 isAchieved: false)]),
-                        .init(targetDate: expectedFetchDiaryData7.date,
-                              isAchieved: false,
-                              activities: [
-                                .init(id: expectedFetchDiaryData7.id,
-                                      title: expectedFetchDiaryData7.title,
-                                      isAchieved: true),
-                                .init(id: expectedFetchDiaryData8.id,
-                                      title: expectedFetchDiaryData8.title,
-                                      isAchieved: false)
-                              ])
-                       ]))
+            $0.isShowingFilter = true
+        }
+        
+        await testStore.send(.onDragEndedFilterArea(result: .init(startLocation: CGPoint(x: .zero, y: 140),
+                                                                  currentLocation: CGPoint(x: .zero, y: 90)))) {
+            
+            $0.isShowingFilter = false
+        }
+        
+        await testStore.send(.onDragEndedFilterArea(result: .init(startLocation: CGPoint(x: .zero, y: 90),
+                                                                  currentLocation: CGPoint(x: .zero, y: 140)))) {
+            
+            $0.isShowingFilter = true
         }
     }
     
@@ -401,7 +432,7 @@ extension TrainingActivityGraphViewTest {
         await RealmTestHelper.setupTrainingTypeList(mockTrainingTypeClient,
                                                     typeList: inputTrainingTypeList)
         
-        let testStore = TestStore(initialState: .getDefaultState(),
+        let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(),
                                   reducer: { TrainingActivityGraphFeature() },
                                   withDependencies: {
             
@@ -413,36 +444,30 @@ extension TrainingActivityGraphViewTest {
                                                           initialTrainingTypeList: [Self.absTraining])
         })
         
-        throw XCTSkip("テスト対象未実装のためスキップ")
-        
         await testStore.send(.onAppear) {
             
             $0 = .init(activityStartPeriod: initialStartPeriod,
                        activityPeriod: .year,
-                       targetTrainingTypeList: [Self.absTraining],
+                       targetTrainingTypeList: [],
                        activityResultList: .init(resultList: []))
         }
         
         await testStore.receive(\.didReceiveTrainingTypeList) {
             
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .year,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: []))
+            $0.targetTrainingTypeList = [Self.absTraining]
         }
+        
+        throw XCTSkip("No implementation yet.")
         
         await testStore.receive(\.didReceiveDiaryData) {
             
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .year,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: [
-                        .init(targetDate: expectedFetchDiaryData3.date,
-                              isAchieved: false,
-                              activities: [.init(id: expectedFetchDiaryData3.id,
-                                                 title: expectedFetchDiaryData3.title,
-                                                 isAchieved: false)]),
-                       ]))
+            $0.activityResultList = .init(resultList: [
+                .init(targetDate: expectedFetchDiaryData3.date,
+                      isAchieved: false,
+                      activities: [.init(id: expectedFetchDiaryData3.id,
+                                         title: expectedFetchDiaryData3.title,
+                                         isAchieved: false)]),
+            ])
         }
         
         await testStore.send(.tappedActivityCell)
@@ -486,7 +511,7 @@ extension TrainingActivityGraphViewTest {
         await RealmTestHelper.setupTrainingTypeList(mockTrainingTypeClient,
                                                     typeList: inputTrainingTypeList)
         
-        let testStore = TestStore(initialState: .getDefaultState(),
+        let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(),
                                   reducer: { TrainingActivityGraphFeature() },
                                   withDependencies: {
             
@@ -495,58 +520,50 @@ extension TrainingActivityGraphViewTest {
             $0.defaultAppStorage = testUserDefaults
         })
         
-        throw XCTSkip("テスト対象未実装のためスキップ")
-        
         await testStore.send(.onAppear) {
             
             $0 = .init(activityStartPeriod: initialStartPeriod,
                        activityPeriod: .month,
-                       targetTrainingTypeList: [Self.absTraining],
+                       targetTrainingTypeList: [],
                        activityResultList: .init(resultList: []))
         }
         
         await testStore.receive(\.didReceiveTrainingTypeList) {
             
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .month,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: []))
+            $0.targetTrainingTypeList = [Self.absTraining]
         }
         
-        await testStore.receive(\.didReceiveDiaryData) {
-            
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .month,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: []))
-        }
+        // TODO: 実装できたらコメントアウト外す
+        //        await testStore.receive(\.didReceiveDiaryData) {
+        //
+        //            $0 = .init(activityStartPeriod: initialStartPeriod,
+        //                       activityPeriod: .month,
+        //                       targetTrainingTypeList: [Self.absTraining],
+        //                       activityResultList: .init(resultList: []))
+        //        }
         
         let expectedChangeActivityStartPeriod = Self.getSelectDate(year: 2024, month: 6, day: 1)
         
         await testStore.send(.didSelectActivityStartPeriodMenu(expectedChangeActivityStartPeriod)) {
             
-            $0 = .init(activityStartPeriod: expectedChangeActivityStartPeriod,
-                       activityPeriod: .month,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: []))
+            $0.activityStartPeriod = expectedChangeActivityStartPeriod
         }
         
         // UserDefaultsにグラフ表示開始日付の設定が正しく保存されているか確認
         XCTAssertEqual(expectedChangeActivityStartPeriod.timeIntervalSince1970,
                        testUserDefaults.getDouble(.activityStartPeriod))
         
+        throw XCTSkip("No implementation yet.")
+        
         await testStore.receive(\.didReceiveDiaryData) {
             
-            $0 = .init(activityStartPeriod: expectedChangeActivityStartPeriod,
-                       activityPeriod: .month,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: [
-                        .init(targetDate: expectedFetchDiaryData1.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData1.id,
-                                                 title: expectedFetchDiaryData1.title,
-                                                 isAchieved: true)]),
-                       ]))
+            $0.activityResultList = .init(resultList: [
+                .init(targetDate: expectedFetchDiaryData1.date,
+                      isAchieved: true,
+                      activities: [.init(id: expectedFetchDiaryData1.id,
+                                         title: expectedFetchDiaryData1.title,
+                                         isAchieved: true)]),
+            ])
         }
     }
     
@@ -586,7 +603,7 @@ extension TrainingActivityGraphViewTest {
         await RealmTestHelper.setupTrainingTypeList(mockTrainingTypeClient,
                                                     typeList: inputTrainingTypeList)
         
-        let testStore = TestStore(initialState: .getDefaultState(),
+        let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(),
                                   reducer: { TrainingActivityGraphFeature() },
                                   withDependencies: {
             
@@ -595,62 +612,55 @@ extension TrainingActivityGraphViewTest {
             $0.defaultAppStorage = testUserDefaults
         })
         
-        throw XCTSkip("テスト対象未実装のためスキップ")
-        
         await testStore.send(.onAppear) {
             
             $0 = .init(activityStartPeriod: initialStartPeriod,
                        activityPeriod: .month,
-                       targetTrainingTypeList: [Self.absTraining],
+                       targetTrainingTypeList: [],
                        activityResultList: .init(resultList: []))
         }
         
         await testStore.receive(\.didReceiveTrainingTypeList) {
             
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .month,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: []))
+            $0.targetTrainingTypeList = [Self.absTraining]
         }
         
-        await testStore.receive(\.didReceiveDiaryData) {
-            
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .month,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: []))
-        }
+        // TODO: 実装できたらコメントアウト外す
+        //        await testStore.receive(\.didReceiveDiaryData) {
+        //
+        //            $0.viewState = .init(activityStartPeriod: initialStartPeriod,
+        //                                 activityPeriod: .month,
+        //                                 targetTrainingTypeList: [Self.absTraining],
+        //                                 activityResultList: .init(resultList: []))
+        //        }
         
         let expectedActivityPeriod: ActivityPeriod = .year
         await testStore.send(.didSelectActivityPeriodMenu(expectedActivityPeriod)) {
             
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: expectedActivityPeriod,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: []))
+            $0.activityPeriod = expectedActivityPeriod
         }
         
         // UserDefaultsにグラフ表示期間の設定が正しく保存されているか確認
         XCTAssertEqual(expectedActivityPeriod.rawValue,
                        testUserDefaults.getInt(.activityPeriod))
         
+        // TODO: 実装できたら削除する
+        throw XCTSkip("No implementation yet.")
+        
         await testStore.receive(\.didReceiveDiaryData) {
             
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: expectedActivityPeriod,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: [
-                        .init(targetDate: expectedFetchDiaryData1.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData1.id,
-                                                 title: expectedFetchDiaryData1.title,
-                                                 isAchieved: true)]),
-                        .init(targetDate: expectedFetchDiaryData3.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData3.id,
-                                                 title: expectedFetchDiaryData3.title,
-                                                 isAchieved: true)]),
-                       ]))
+            $0.activityResultList = .init(resultList: [
+                .init(targetDate: expectedFetchDiaryData1.date,
+                      isAchieved: true,
+                      activities: [.init(id: expectedFetchDiaryData1.id,
+                                         title: expectedFetchDiaryData1.title,
+                                         isAchieved: true)]),
+                .init(targetDate: expectedFetchDiaryData3.date,
+                      isAchieved: true,
+                      activities: [.init(id: expectedFetchDiaryData3.id,
+                                         title: expectedFetchDiaryData3.title,
+                                         isAchieved: true)]),
+            ])
         }
     }
     
@@ -690,7 +700,7 @@ extension TrainingActivityGraphViewTest {
         await RealmTestHelper.setupTrainingTypeList(mockTrainingTypeClient,
                                                     typeList: inputTrainingTypeList)
         
-        let testStore = TestStore(initialState: .getDefaultState(),
+        let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(),
                                   reducer: { TrainingActivityGraphFeature() },
                                   withDependencies: {
             
@@ -699,14 +709,16 @@ extension TrainingActivityGraphViewTest {
             $0.defaultAppStorage = testUserDefaults
         })
         
-        throw XCTSkip("テスト対象未実装のためスキップ")
-        
         await testStore.send(.onAppear) {
             
             $0 = .init(activityStartPeriod: initialStartPeriod,
                        activityPeriod: .year,
-                       targetTrainingTypeList: [Self.absTraining],
+                       targetTrainingTypeList: [],
                        activityResultList: .init(resultList: []))
+            //            $0 = .init(activityStartPeriod: initialStartPeriod,
+            //                       activityPeriod: .year,
+            //                       targetTrainingTypeList: [Self.absTraining],
+            //                       activityResultList: .init(resultList: []))
         }
         
         await testStore.receive(\.didReceiveTrainingTypeList) {
@@ -714,66 +726,55 @@ extension TrainingActivityGraphViewTest {
             $0 = .init(activityStartPeriod: initialStartPeriod,
                        activityPeriod: .year,
                        targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: [
-                        .init(targetDate: expectedFetchDiaryData1.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData1.id,
-                                                 title: expectedFetchDiaryData1.title,
-                                                 isAchieved: true)]),
-                        .init(targetDate: expectedFetchDiaryData3.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData3.id,
-                                                 title: expectedFetchDiaryData3.title,
-                                                 isAchieved: true)])
-                       ]))
+                       activityResultList: .init(resultList: []))
         }
         
-        await testStore.receive(\.didReceiveDiaryData) {
-            
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .year,
-                       targetTrainingTypeList: [Self.absTraining],
-                       activityResultList: .init(resultList: [
-                        .init(targetDate: expectedFetchDiaryData1.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData1.id,
-                                                 title: expectedFetchDiaryData1.title,
-                                                 isAchieved: true)]),
-                        .init(targetDate: expectedFetchDiaryData3.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData3.id,
-                                                 title: expectedFetchDiaryData3.title,
-                                                 isAchieved: true)])
-                       ]))
-        }
+        // TODO: 実装できたらコメントアウト外す
+        //        await testStore.receive(\.didReceiveDiaryData) {
+        //
+        //            $0 = .init(activityStartPeriod: initialStartPeriod,
+        //                                 activityPeriod: .year,
+        //                                 targetTrainingTypeList: [Self.absTraining],
+        //                                 activityResultList: .init(resultList: [
+        //                                    .init(targetDate: expectedFetchDiaryData1.date,
+        //                                          isAchieved: true,
+        //                                          activities: [.init(id: expectedFetchDiaryData1.id,
+        //                                                             title: expectedFetchDiaryData1.title,
+        //                                                             isAchieved: true)]),
+        //                                    .init(targetDate: expectedFetchDiaryData3.date,
+        //                                          isAchieved: true,
+        //                                          activities: [.init(id: expectedFetchDiaryData3.id,
+        //                                                             title: expectedFetchDiaryData3.title,
+        //                                                             isAchieved: true)])
+        //                                 ]))
+        //        }
         
         let expectedChangeTrainingTypeList: [TrainingTypeData] = [
             Self.absTraining,
             Self.benchPressTraining
         ]
         
-        await testStore.send(.didSelectTargetTrainingTypeMenu(expectedChangeTrainingTypeList)) {
+        await testStore.send(.tappedTargetTrainingTypeMenu) {
             
-            $0 = .init(activityStartPeriod: initialStartPeriod,
-                       activityPeriod: .year,
-                       targetTrainingTypeList: expectedChangeTrainingTypeList,
-                       activityResultList: .init(resultList: [
-                        .init(targetDate: expectedFetchDiaryData1.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData1.id,
-                                                 title: expectedFetchDiaryData1.title,
-                                                 isAchieved: true)]),
-                        .init(targetDate: expectedFetchDiaryData3.date,
-                              isAchieved: true,
-                              activities: [.init(id: expectedFetchDiaryData3.id,
-                                                 title: expectedFetchDiaryData3.title,
-                                                 isAchieved: true)])
-                       ]))
+            $0.selectTrainingPopUp = .init(childState: .init(selectingTrainingTypeList: [Self.absTraining]))
+        }
+        
+        await testStore.send(.selectTrainingPopUp(.presented(.childAction(.delegate(.selectedTrainingTypeList(expectedChangeTrainingTypeList)))))) {
+            
+            $0.targetTrainingTypeList = expectedChangeTrainingTypeList
+        }
+        
+        await testStore.send(.selectTrainingPopUp(.dismiss)) {
+            
+            $0.selectTrainingPopUp = nil
         }
         
         // UserDefaultsにグラフ表示期間の設定が正しく保存されているか確認
         XCTAssertEqual(expectedChangeTrainingTypeList.map { $0.id.uuidString },
                        testUserDefaults.getStringArray(.targetTrainingTypeList))
+        
+        // TODO: 実装できたら削除する
+        throw XCTSkip("No implementation yet.")
         
         await testStore.receive(\.didReceiveDiaryData) {
             
@@ -828,7 +829,7 @@ extension TrainingActivityGraphViewTest {
         await RealmTestHelper.setupTrainingTypeList(mockTrainingTypeClient,
                                                     typeList: inputTrainingTypeList)
         
-        let testStore = TestStore(initialState: .getDefaultState(),
+        let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(),
                                   reducer: { TrainingActivityGraphFeature() },
                                   withDependencies: {
             
@@ -838,9 +839,15 @@ extension TrainingActivityGraphViewTest {
             $0.defaultAppStorage = testUserDefaults
         })
         
-        throw XCTSkip("テスト対象未実装のためスキップ")
-        
         await testStore.send(.onAppear) {
+            
+            $0 = .init(activityStartPeriod: initialStartPeriod,
+                       activityPeriod: .year,
+                       targetTrainingTypeList: [],
+                       activityResultList: .init(resultList: []))
+        }
+        
+        await testStore.receive(\.didReceiveTrainingTypeList) {
             
             $0 = .init(activityStartPeriod: initialStartPeriod,
                        activityPeriod: .year,
@@ -848,7 +855,10 @@ extension TrainingActivityGraphViewTest {
                        activityResultList: .init(resultList: []))
         }
         
-        await testStore.receive(\.didReceiveTrainingTypeList) {
+        // TODO: 実装できたら削除する
+        throw XCTSkip("No implementation yet.")
+        
+        await testStore.receive(\.didReceiveDiaryData) {
             
             $0.alert = .createAlertState(.emptyDiaryItemAlert,
                                          firstButtonHandler: .emptyActivityData)

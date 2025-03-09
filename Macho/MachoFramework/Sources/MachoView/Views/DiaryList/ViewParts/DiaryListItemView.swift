@@ -139,11 +139,11 @@ private extension DiaryListItemView {
         title: "sample", mainText: "sample main text",
         goals: [
             TrainingContentData(id: UUID(),
-                                        trainingType: .init(id: UUID(), name: "腹筋"),
-                                        goalNumberOfSets: 3,
-                                        goalSetCount: 3,
-                                        actualNumberOfSets: 3,
-                                        actualSetCount: 3, isAchieved: true)
+                                trainingType: .init(id: UUID(), name: "腹筋"),
+                                goalNumberOfSets: 3,
+                                goalSetCount: 3,
+                                actualNumberOfSets: 3,
+                                actualSetCount: 3, isAchieved: true)
         ],
         tags: [.init(id: UUID(), tagName: "xxx")],
         startTime: Date(),

@@ -10,7 +10,7 @@ import MachoCore
 import RealmHelper
 import RealmSwift
 
-extension TrainingTypeData: BaseRealmEntity {
+extension TrainingTypeData: BaseRealmEntity, Identifiable {
     
     public init(realmObject: TrainingTypeRealmObject) {
         

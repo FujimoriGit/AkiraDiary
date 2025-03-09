@@ -200,7 +200,6 @@ private extension DiaryListView {
     @ViewBuilder
     func getNavigationDestination(_ store: Store<DiaryListFeature.Path.State,
                                   DiaryListFeature.Path.Action>) -> some View {
-        
         switch store.case {
             
         // TODO: 実装出来次第正しい画面に変更する
@@ -211,7 +210,7 @@ private extension DiaryListView {
             DiaryCreationView(store: createScreenStore)
             
         case .graphScreen(let graphScreenStore):
-            AddContactView(store: graphScreenStore)
+            TrainingActivityGraphView(store: graphScreenStore)
             
         case .detailScreen(let detailScreenStore):
             DiaryDetailView(store: detailScreenStore)

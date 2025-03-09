@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct TrainingTypeData: Equatable, Sendable {
+public struct TrainingTypeData: Equatable, Sendable, Identifiable {
     
     public let id: UUID
     public let name: String

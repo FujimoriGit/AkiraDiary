@@ -121,10 +121,10 @@ private extension OmittableMessageView {
         Text("Hello")
         OmittableMessageView("lsjfljslfjsiejflsjelfiasjfsfsd"
                     + "\n"
-                    // swiftlint:disable:next file_name
+                    // swiftlint:disable:next line_length
                     + "fsfsfsfsefsefasefasefasefsfsfefasefasefaselsaleifjlsesjeflesjlsijfseljfsifjelsjilsjfjelsijfselfijsliefjlsejjl"
                     + "\n"
-                    // swiftlint:disable:next file_name
+                    // swiftlint:disable:next line_length
                     + "jslejfiljsefljaslejfilsjefjlasjefljsleifjlsjflaisjfleijsaeljflsiejflisjelfiajslefjlasjeflsiejflsajeflijselfjilasejfliajseljflisejflasjlefjlsejfi")
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)

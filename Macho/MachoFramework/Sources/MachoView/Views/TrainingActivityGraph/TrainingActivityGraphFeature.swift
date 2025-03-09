@@ -8,9 +8,10 @@
 import ComposableArchitecture
 import Foundation
 import MachoCore
+import SwiftUI
 
 @Reducer
-struct TrainingActivityGraphFeature {    
+struct TrainingActivityGraphFeature {
     
     // MARK: - state definition
     
@@ -20,26 +21,29 @@ struct TrainingActivityGraphFeature {
         // MARK: Presents States
         
         @Presents var alert: AlertState<Action.Alert>?
+        @Presents var selectTrainingPopUp: PopUpFeature<SelectTrainingTypeContentFeature>.State?
         
         // MARK: View State
         
-        /// グラフ表示開始日付
-        let activityStartPeriod: Date
-        /// グラフ表示期間
-        let activityPeriod: ActivityPeriod
-        /// 表示トレーニングリスト
-        let targetTrainingTypeList: [TrainingTypeData]
-        /// 一日毎のアクティビティ結果
-        let activityResultList: ActivityResults
-        
-        static func getDefaultState(_ current: Date = .now) -> Self {
+        var currentActivityPeriodTitle: String {
             
-            let component = Calendar.current.dateComponents([.year, .month], from: current)
-            return .init(activityStartPeriod: Calendar.current.date(from: component) ?? current,
-                         activityPeriod: .month,
-                         targetTrainingTypeList: [],
-                         activityResultList: .init(resultList: []))
+            return activityPeriod.title
         }
+        
+        var selectingTrainingTypeNameList: [String] {
+            
+            return targetTrainingTypeList.map(\.name)
+        }
+
+        var isShowingFilter = true
+        /// グラフ表示開始日付
+        var activityStartPeriod: Date = .now
+        /// グラフ表示期間
+        var activityPeriod: ActivityPeriod = .week
+        /// 表示トレーニングリスト
+        var targetTrainingTypeList: [TrainingTypeData] = []
+        /// 一日毎のアクティビティ結果
+        var activityResultList: ActivityResults = .init(resultList: [])
     }
     
     // MARK: - action definition
@@ -49,6 +53,7 @@ struct TrainingActivityGraphFeature {
         // MARK: - rooting event action
         
         case alert(PresentationAction<Alert>)
+        case selectTrainingPopUp(PresentationAction<PopUpFeature<SelectTrainingTypeContentFeature>.Action>)
         
         // MARK: user event action
         
@@ -58,12 +63,16 @@ struct TrainingActivityGraphFeature {
         case didSelectActivityStartPeriodMenu(Date)
         /// グラフ表示期間のメニュー選択時
         case didSelectActivityPeriodMenu(ActivityPeriod)
-        /// グラフ表示開始日付のメニュー選択時
-        case didSelectTargetTrainingTypeMenu([TrainingTypeData])
+        /// グラフ表示対象のトレーニング種目選択ボタン押下時
+        case tappedTargetTrainingTypeMenu
         /// グラフ表示開始日付のメニュー選択時
         case tappedDayOfCalendar(Date)
         /// アクティビティのセルタップ時
         case tappedActivityCell
+        /// フィルター領域をドラッグした時
+        case onDragEndedFilterArea(result: DragGestureResult)
+        /// フィルター領域のトグルボタンタップ時
+        case tappedFilterDisplayButton
         
         // MARK: effect event action
         
@@ -88,10 +97,108 @@ struct TrainingActivityGraphFeature {
     
     // MARK: - reduce definition
     
+    // swiftlint:disable:next closure_body_length
     var body: some ReducerOf<Self> {
         
         Reduce { state, action in
-            return .none
+            
+            logger.info("action: \(action)")
+            
+            switch action {
+                
+            case .alert:
+                // TODO: 未実装
+                return .none
+                
+            case .selectTrainingPopUp(.presented(
+                .childAction(
+                    .delegate(.selectedTrainingTypeList(let selectedTrainingTypeList))
+                )
+            )):
+                state.targetTrainingTypeList = selectedTrainingTypeList
+                defaultAppStorage.setStringArray(selectedTrainingTypeList.map(\.id.uuidString),
+                                                 .targetTrainingTypeList)
+                return loadActivityResult()
+                
+            case .selectTrainingPopUp:
+                return .none
+                
+            case .onAppear:
+                state = setupStateOnAppear(state)
+                return .run { send in
+                    
+                    await send(.didReceiveTrainingTypeList(trainingTypeApi.fetchAllType()))
+                }
+                // TODO: 日記リストの取得、監視が残件
+                
+            case .didSelectActivityStartPeriodMenu(let selectDate):
+                defaultAppStorage.setDouble(selectDate.timeIntervalSince1970, .activityStartPeriod)
+                state.activityStartPeriod = selectDate
+                return loadActivityResult()
+                
+            case .didSelectActivityPeriodMenu(let selectPeriod):
+                defaultAppStorage.setInt(selectPeriod.rawValue, .activityPeriod)
+                state.activityPeriod = selectPeriod
+                return loadActivityResult()
+                
+            case .tappedTargetTrainingTypeMenu:
+                state.selectTrainingPopUp = .init(
+                    childState: .init(selectingTrainingTypeList: state.targetTrainingTypeList)
+                )
+                return .none
+                
+            case .tappedDayOfCalendar:
+                // TODO: 未実装
+                return .none
+                
+            case .tappedActivityCell:
+                // TODO: 未実装
+                return .none
+                
+            case .onDragEndedFilterArea(let result):
+                state.isShowingFilter = result.isUpGesture
+                return .none
+                
+            case .tappedFilterDisplayButton:
+                state.isShowingFilter.toggle()
+                return .none
+                
+            case .didReceiveDiaryData:
+                // TODO: 未実装
+                return .none
+                
+            case .didReceiveTrainingTypeList(let trainingTypeList):
+                let selectedIds = defaultAppStorage.getStringArray(.targetTrainingTypeList)
+                let selectedTrainingTypeList = trainingTypeList.filter {
+                    
+                    selectedIds.contains($0.id.uuidString)
+                }
+                state.targetTrainingTypeList = selectedTrainingTypeList
+                return .none
+            }
         }
+        .ifLet(\.$selectTrainingPopUp, action: \.selectTrainingPopUp) {
+            PopUpFeature<SelectTrainingTypeContentFeature>()
+        }
+    }
+}
+
+// MARK: - private feature method definition
+
+private extension TrainingActivityGraphFeature {
+    
+    func setupStateOnAppear(_ current: State) -> State {
+        
+        var currentState = current
+        let startPeriodDate = Date(timeIntervalSince1970: defaultAppStorage.getDouble(.activityStartPeriod))
+        let activityPeriod = ActivityPeriod(rawValue: defaultAppStorage.getInt(.activityPeriod))
+        currentState.activityStartPeriod = startPeriodDate
+        currentState.activityPeriod = activityPeriod ?? currentState.activityPeriod
+        return currentState
+    }
+    
+    func loadActivityResult() -> Effect<Action> {
+        
+        return .none
     }
 }

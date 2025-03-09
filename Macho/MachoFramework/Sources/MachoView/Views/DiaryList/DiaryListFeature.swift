@@ -162,7 +162,6 @@ struct DiaryListFeature: Sendable {
 private extension DiaryListFeature {
     
     // swiftlint:disable:next function_body_length
-    // swiftlint:disable:next cyclomatic_complexity
     func createActionHandler() -> some ReducerOf<Self> {
         
         // swiftlint:disable:next closure_body_length
@@ -237,9 +236,7 @@ private extension DiaryListFeature {
                 
             case .tappedGraphButton:
                 logger.info("tappedGraphButton")
-                // TODO: グラフ画面表示を実行
-                state.path.append(.graphScreen(AddContactFeature.State(contact: .init(id: uuid.callAsFunction(),
-                                                                                      name: ""))))
+                state.path.append(.graphScreen(.init()))
                 return .none
                 
             case .tappedCreateNewDiaryButton:
@@ -302,7 +299,7 @@ extension DiaryListFeature {
         // 日記作成画面
         case createScreen(DiaryCreationFeature)
         // グラフ画面
-        case graphScreen(AddContactFeature)
+        case graphScreen(TrainingActivityGraphFeature)
         // 詳細画面
         case detailScreen(DiaryDetailFeature)
     }
@@ -416,8 +413,10 @@ private extension DiaryListFeature {
         updatedState.diaries = newDiaries
         updatedState.diaries.sort { $0.date > $1.date }
         // フィルターの反映
-        updatedState.filteredDiaries = getFilteringDiaryList(diaryList: updatedState.diaries,
-                                                                  filters: updatedState.currentFilters)
+        updatedState.filteredDiaries = getFilteringDiaryList(
+            diaryList: updatedState.diaries,
+            filters: updatedState.currentFilters
+        )
         return updatedState
     }
     
