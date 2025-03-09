@@ -27,6 +27,7 @@ struct DiaryCreationFeature: Sendable {
         var textFieldFocusState: DiaryCreationTextFieldFocus?
         
         @Presents var destination: Destination.State?
+        @Presents var alert: AlertState<Action.Alert>?
     }
     
     // MARK: - Action
@@ -49,6 +50,8 @@ struct DiaryCreationFeature: Sendable {
         case editingGoal(Goal)
         case didChangeFocusState(DiaryCreationTextFieldFocus?)
         case tappedOutsideOfKeyboard
+        case tappedNavigationBackButton
+        case alert(PresentationAction<Alert>)
     }
     
     @Dependency(\.trainingTagApi) var trainingTagApi
@@ -59,6 +62,7 @@ struct DiaryCreationFeature: Sendable {
     
     var body: some ReducerOf<Self> {
         
+        // swiftlint:disable:next closure_body_length
         Reduce { state, action in
             
             switch action {
@@ -169,6 +173,11 @@ struct DiaryCreationFeature: Sendable {
                 state.textFieldFocusState = nil
                 return .none
                 
+            case .tappedNavigationBackButton:
+                state.alert = .createAlertStateWithCancel(.confirmNoSavingDiary,
+                                                          firstButtonHandler: .tappedDismissAcceptButton)
+                return .none
+                
             case .destination(.presented(.addGoal(.delegate(.saveGoal(let goal))))):
                 guard let index = state.goals.firstIndex(where: { $0.trainingType == goal.trainingType }) else {
                     
@@ -180,11 +189,21 @@ struct DiaryCreationFeature: Sendable {
                 state.isEnableStartButton = isEnableStartButton(state: state)
                 return .none
                 
-            case .destination:
+            case .alert(.presented(.tappedDismissAcceptButton)):
+                return .concatenate(
+                    .cancel(id: TrainingTagsSubscriber()),
+                    .run { _ in
+                        
+                        await dismiss()
+                    }
+                )
+                
+            case .destination, .alert:
                 return .none
             }
         }
         .ifLet(\.$destination, action: \.destination)
+        .ifLet(\.$alert, action: \.alert)
     }
 }
 
@@ -271,5 +290,14 @@ extension DiaryCreationFeature {
             
             return lhs.id == rhs.id
         }
+    }
+}
+
+extension DiaryCreationFeature.Action {
+    
+    enum Alert {
+        
+        /// 前画面を戻ることを了承するボタンを押下
+        case tappedDismissAcceptButton
     }
 }

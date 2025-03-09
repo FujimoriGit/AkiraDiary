@@ -69,7 +69,6 @@ struct DiaryListFeature: Sendable {
         /// アラートの表示
         case alert(PresentationAction<Alert>)
         /// モーダル遷移による画面表示
-//        case destination(PresentationAction<Destination.Action>)
         case destination(PresentationAction<PopUpFeature<DiaryListFilterFeature>.Action>)
         
         // MARK: Navigation Action

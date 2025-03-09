@@ -67,6 +67,14 @@ struct DiaryCreationView: View {
                 }
             }
         }
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                NavigationButton(.back) {
+                    store.send(.tappedNavigationBackButton)
+                }
+            }
+        }
+        .navigationBarBackButtonHidden()
         .navigationTitle("Create Diary")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $store.scope(state: \.destination, action: \.destination)) { destination in
@@ -83,6 +91,7 @@ struct DiaryCreationView: View {
                 }
             }
         }
+        .alert(store: store.scope(state: \.$alert, action: \.alert))
         .onAppear {
             
             store.send(.onAppear)
@@ -309,10 +318,11 @@ private extension DiaryCreationView {
 // MARK: - preview
 
 #Preview {
-    DiaryCreationView(store: Store(initialState: DiaryCreationFeature.State()) {
-        
-        DiaryCreationFeature()
-    })
+    NavigationStack {
+        DiaryCreationView(store: Store(initialState: DiaryCreationFeature.State()) {
+            DiaryCreationFeature()
+        })
+    }
 }
 
 #Preview("タグあり(ひとつだけ)") {
