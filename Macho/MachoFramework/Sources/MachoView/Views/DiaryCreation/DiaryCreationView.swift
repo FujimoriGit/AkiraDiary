@@ -58,8 +58,7 @@ struct DiaryCreationView: View {
                 createView(parentSize: geometry.size)
                     .frame(maxWidth: geometry.size.width, minHeight: geometry.size.height)
                 if isFocused != nil {
-                    Color(asset: CustomColor.dialogBackgroundColor)
-                        .opacity(0.1)
+                    Color.clear.contentShape(Rectangle())
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .ignoresSafeArea()
                         .onTapGesture {
