@@ -12,13 +12,13 @@ import XCTest
 
 class RealmAccessorMock<Entity>: RealmAccessible where Entity: BaseRealmEntity {
     
-    private var fetchEntity: [Entity]
-    private var expectedInsertResult: ([Entity]) -> Bool
-    private var expectedUpdateResult: (Entity.Type, [String : Any]) -> Bool
-    private var expectedDeleteResult: () -> Bool
-    private var expectedDeleteAllResult: () -> Bool
-    private var expectedTruncateResult: () -> Bool
-    private var expectedNotification: AnyPublisher<[Entity], Never>
+    var fetchEntity: [Entity]
+    var expectedInsertResult: ([Entity]) -> Bool
+    var expectedUpdateResult: (Entity.Type, [String : Any]) -> Bool
+    var expectedDeleteResult: () -> Bool
+    var expectedDeleteAllResult: () -> Bool
+    var expectedTruncateResult: () -> Bool
+    var expectedNotification: AnyPublisher<[Entity], Never>
     
     private var cancellable: AnyCancellable?
     
