@@ -14,7 +14,7 @@ struct DiaryCreationView: View {
     
     @Bindable private var store: StoreOf<DiaryCreationFeature>
     @State private var animationsRunning = false
-    @FocusState private var isFocused: DiaryCreationTextFieldFocus?
+    @FocusState private var textFieldFocusState: DiaryCreationTextFieldFocus?
     
     // MARK: - initialize
     
@@ -57,7 +57,7 @@ struct DiaryCreationView: View {
             ZStack {
                 createView(parentSize: geometry.size)
                     .frame(maxWidth: geometry.size.width, minHeight: geometry.size.height)
-                if isFocused != nil {
+                if textFieldFocusState != nil {
                     Color.clear.contentShape(Rectangle())
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .ignoresSafeArea()
@@ -87,8 +87,8 @@ struct DiaryCreationView: View {
             
             store.send(.onAppear)
         }
-        .synchronize($store.isFocusedTextField.sending(\.didChangeFocusState),
-                     $isFocused)
+        .synchronize($store.textFieldFocusState.sending(\.didChangeFocusState),
+                     $textFieldFocusState)
     }
 }
 
@@ -128,7 +128,7 @@ private extension DiaryCreationView {
         VStack(alignment: .leading) {
             Text("title")
             TextField("\(formatter.string(from: Date()))", text: $store.titleText.sending(\.titleTextChange))
-                .focused($isFocused, equals: .title)
+                .focused($textFieldFocusState, equals: .title)
                 .padding(8)
                 .overlay(RoundedRectangle(cornerRadius: textEditorCornerRadius)
                     .stroke(Color(uiColor: .systemGray2), lineWidth: lineWidth))
@@ -141,7 +141,7 @@ private extension DiaryCreationView {
             Text("message")
             ZStack(alignment: .topLeading) {
                 TextEditor(text: $store.messageText.sending(\.messageTextChange))
-                    .focused($isFocused, equals: .message)
+                    .focused($textFieldFocusState, equals: .message)
                     .padding(textEditorPadding)
                     .overlay(RoundedRectangle(cornerRadius: textEditorCornerRadius)
                         .stroke(Color(uiColor: .systemGray2), lineWidth: lineWidth))

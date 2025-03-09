@@ -39,7 +39,7 @@ struct DiaryCreationFeature: Sendable {
         var goals: [Goal] = []
         var isEnableStartButton = false
         var animationsRunning = false
-        var isFocusedTextField: DiaryCreationTextFieldFocus?
+        var textFieldFocusState: DiaryCreationTextFieldFocus?
         
         @Presents var destination: Destination.State?
     }
@@ -177,11 +177,11 @@ struct DiaryCreationFeature: Sendable {
                 return .none
                 
             case .didChangeFocusState(let newState):
-                state.isFocusedTextField = newState
+                state.textFieldFocusState = newState
                 return .none
                 
             case .tappedOutsideOfKeyboard:
-                state.isFocusedTextField = nil
+                state.textFieldFocusState = nil
                 return .none
                 
             case .destination(.presented(.addGoal(.delegate(.saveGoal(let goal))))):

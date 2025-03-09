@@ -18,12 +18,12 @@ struct DiaryCreationViewTest {
     @Test
     func キーボード表示中にキーボード領域外をタップするとキーボードを閉じる() async throws {
         
-        let testStore = TestStore(initialState: .init(isFocusedTextField: .title),
+        let testStore = TestStore(initialState: .init(textFieldFocusState: .title),
                                   reducer: { DiaryCreationFeature() })
         
         await testStore.send(.tappedOutsideOfKeyboard) {
             
-            $0.isFocusedTextField = nil
+            $0.textFieldFocusState = nil
         }
     }
     
@@ -35,7 +35,7 @@ struct DiaryCreationViewTest {
         
         await testStore.send(.didChangeFocusState(.title)) {
             
-            $0.isFocusedTextField = .title
+            $0.textFieldFocusState = .title
         }
     }
 
