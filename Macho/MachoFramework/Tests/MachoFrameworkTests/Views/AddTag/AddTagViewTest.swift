@@ -25,39 +25,32 @@ struct AddTagViewTest {
             TrainingTagData.fine
         ])
         
-        async let checkAddTag: () = confirmation { confirmation in
-            let result = await withCheckedContinuation { continuation in
-                mockRealm.expectedInsertResult = { actual in
+        await confirmation { confirmation in
+            mockRealm.expectedInsertResult = { actual in
+                
+                guard let target = try? #require(actual.first) else {
                     
-                    guard let target = try? #require(actual.first) else {
-                        
-                        continuation.resume(returning: false)
-                        return false
-                    }
-                    #expect(target.tagName == TrainingTagData.unfine.tagName)
-                    continuation.resume(returning: true)
-                    return true
+                    return false
                 }
+                #expect(target.tagName == TrainingTagData.unfine.tagName)
+                confirmation()
+                return true
             }
             
-            #expect(result)
-            confirmation()
-        }
-        
-        let testStore = TestStore(initialState: .init(
-            tagName: TrainingTagData.unfine.tagName,
-            isEnableSaveButton: true
-        ),
-                                  reducer: { AddTagFeature() }) {
+            let testStore = TestStore(initialState: .init(
+                tagName: TrainingTagData.unfine.tagName,
+                isEnableSaveButton: true
+            ),
+                                      reducer: { AddTagFeature() }) {
+                
+                $0.trainingTagApi = TrainingTagClient.createCustomValue(mockRealm)
+                $0.dismiss = .init { dismissInvoke.setValue(true) }
+            }
             
-            $0.trainingTagApi = TrainingTagClient.createCustomValue(mockRealm)
-            $0.dismiss = .init { dismissInvoke.setValue(true) }
+            await testStore.send(.saveButtonTapped)
+            
+            #expect(dismissInvoke.value)
         }
-        
-        await testStore.send(.saveButtonTapped)
-        
-        await checkAddTag
-        #expect(dismissInvoke.value)
     }
     
     @Test
