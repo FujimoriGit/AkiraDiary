@@ -1,0 +1,9 @@
+appId: morimori.Macho
+---
+# 初期状態にする
+- clearState: "morimori.Macho"
+# Macho起動
+- launchApp: "morimori.Macho"
+
+# 初期状態の日記リストを確認
+- runFlow: "initial_diary_list.yml"
