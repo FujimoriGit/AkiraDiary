@@ -287,17 +287,11 @@ final class DiaryListViewTests: XCTestCase {
                 
             DiaryListFeature()
         }
-        
-        throw XCTSkip("ignore test. because don't complete target code.")
-        
-        // TODO: 編集画面への遷移が未実装のため、実装後にテストの期待値を実装する
-        // 日記項目編集確認アラートで編集を選択した時
+                
         await store.send(.alert(.presented(.confirmEditItem(targetId: diariesState[0].id)))) {
             
-            // アラート削除
             $0.alert = nil
-            // 編集画面をナビゲーションスタックに追加
-//            $0.path.append(.editScreen(.init()))
+            $0.path.append(.editScreen(.init(editTarget: diariesState[0].entity)))
         }
     }
     
