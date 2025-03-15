@@ -30,7 +30,7 @@ struct DiaryListFeature: Sendable {
         /// フィルター反映後の日記リスト
         var filteredDiaries = IdentifiedArrayOf<DiaryListItemFeature.State>()
         /// 日記リストに表示する日記の項目の要素
-        @ObservationStateIgnored var diaries = IdentifiedArrayOf<DiaryListItemFeature.State>()
+        @ObservationStateIgnored var diaryList = DiaryList(elements: [])
         /// スクロール位置追跡リストのコンポーネントState
         @ObservationStateIgnored var trackableList = TrackableListFeature.State()
         
@@ -162,7 +162,7 @@ private extension DiaryListFeature {
                 
             case .alert(.presented(.confirmEditItem(targetId: let id))):
                 logger.info("tapped edit button(id=\(id)).")
-                guard let targetDiary = state.diaries.first(where: { $0.id == id }) else { return .none }
+                guard let targetDiary = state.diaryList.getTargetDiaryById(id) else { return .none }
                 state.path = .getToEditScreenPath(targetDiary.entity)
                 return .none
                 
@@ -210,7 +210,7 @@ private extension DiaryListFeature {
                 // ロード中にStateを更新する
                 state.viewState.isLoadingDiaries = true
                 // バウンスした際はデータをリロードする
-                return loadDiaryListItem(state.diaries.last?.date ?? date.now)
+                return loadDiaryListItem(state.diaryList.getLoadStartDate() ?? date.now)
                 
             case .trackableList:
                 return .none
@@ -229,18 +229,16 @@ private extension DiaryListFeature {
                 
             case .receiveLoadDiaryItems(let fetchedDiaries):
                 logger.info("receiveLoadDiaryItems(\(fetchedDiaries))")
-                let diaryList = DiaryList(adding: fetchedDiaries,
-                                          current: state.diaries.elements)
-                state = getUpdatedDiaryList(updatedList: diaryList, currentState: state)
+                state.diaryList.addLoadedDiaries(fetchedDiaries)
+                state = getUpdatedDiaryList(currentState: state)
                 // リロード中フラグを倒す
                 state.viewState.isLoadingDiaries = false
                 return .none
                 
             case .deletedDiaryItem(let id):
                 logger.info("deletedDiaryItem(id: \(id))")
-                let diaryList = DiaryList(removing: id, current: state.diaries.elements)
-                state = getUpdatedDiaryList(updatedList: diaryList, currentState: state)
-                
+                state.diaryList.deleteDiaryById(id)
+                state = getUpdatedDiaryList(currentState: state)
                 return .none
                 
             case .receiveLoadDiaryListFilter(let filters):
@@ -249,8 +247,7 @@ private extension DiaryListFeature {
                 // 現在のフィルターを更新
                 state.currentFilters = filters
                 // 日記リストのフィルター反映
-                let diaryList = DiaryList(elements: state.diaries.elements)
-                state = getUpdatedDiaryList(updatedList: diaryList, currentState: state)
+                state = getUpdatedDiaryList(currentState: state)
                 
                 return .none
             }
@@ -307,16 +304,14 @@ private extension DiaryListFeature {
         }
     }
     
-    func getUpdatedDiaryList(updatedList: DiaryList, currentState: State) -> State {
+    func getUpdatedDiaryList(currentState: State) -> State {
         
         var updatedState = currentState
-        updatedState.diaries = .init(uniqueElements: updatedList.elements)
+        let diaryList = updatedState.diaryList
+        let filteredDiaryList = diaryList.getFilteredList(filters: currentState.currentFilters)
         
-        let filteredDiaryList = updatedList.getFilteredList(filters: currentState.currentFilters)
-        updatedState.filteredDiaries = .init(
-            uniqueElements: filteredDiaryList.elements
-        )
-        updatedState.viewState.hasDiaryItems = filteredDiaryList.hasElements
+        updatedState.filteredDiaries = .init(uniqueElements: filteredDiaryList)
+        updatedState.viewState.hasDiaryItems = !filteredDiaryList.isEmpty
         return updatedState
     }
     
@@ -338,7 +333,7 @@ private extension DiaryListFeature {
         switch delegate {
             
         case .tappedDiaryItem:
-            if let diary = state.diaries.first(where: { $0.id == id }) {
+            if let diary = state.diaryList.getTargetDiaryById(id) {
                 
                 updateTargetState.path = .getToDetailScreenPath(diary.entity)
             }
