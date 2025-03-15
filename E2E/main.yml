@@ -7,3 +7,6 @@ appId: morimori.Macho
 
 # 初期状態の日記リストを確認
 - runFlow: "initial_diary_list.yml"
+
+# 日記作成画面の確認
+- runFlow: "creation_diary.yml"
