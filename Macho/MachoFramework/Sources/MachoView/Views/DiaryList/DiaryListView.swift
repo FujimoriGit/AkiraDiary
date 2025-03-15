@@ -200,9 +200,8 @@ private extension DiaryListView {
                                   DiaryListFeature.Path.Action>) -> some View {
         switch store.case {
             
-        // TODO: 実装出来次第正しい画面に変更する
         case .editScreen(let editScreenStore):
-            AddContactView(store: editScreenStore)
+            DiaryCreationView(store: editScreenStore)
             
         case .createScreen(let createScreenStore):
             DiaryCreationView(store: createScreenStore)

@@ -14,9 +14,9 @@ extension StackState where Element == DiaryListFeature.Path.State {
     
     static func getToCreationScreenPath() -> Self { .init([.createScreen(.init())]) }
     
-    static func getToEditScreenPath() -> Self {
+    static func getToEditScreenPath(_ diary: DiaryData) -> Self {
         
-        .init([.editScreen(.init(contact: .init(id: UUID(), name: "")))])
+        .init([.editScreen(.init(editTarget: diary))])
     }
     
     static func getToGraphScreenPath() -> Self { .init([.graphScreen(.init())]) }
