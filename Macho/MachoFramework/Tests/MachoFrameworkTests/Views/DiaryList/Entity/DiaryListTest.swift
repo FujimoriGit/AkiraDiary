@@ -175,6 +175,38 @@ struct DiaryListTest {
         
         #expect(sut.elements == [])
     }
+    
+    @Test
+    func IDで指定した日記を取得する() async throws {
+        
+        let inputDiaries: [DiaryData] = [
+            .create(id: Self.diaryIdList[0]),
+            .create(id: Self.diaryIdList[1], tag: [.fine]),
+            .create(id: Self.diaryIdList[2],
+                    isAchieved: true,
+                    type: [.benchPress],
+                    tag: [.unfine])
+        ]
+        var sut = DiaryList(elements: inputDiaries.map { .init($0) })
+        
+        let result = try #require(sut.getTargetDiaryById(Self.diaryIdList[0]))
+        
+        #expect(result == .init(inputDiaries[0]))
+    }
+    
+    @Test
+    func 次の日記を取得するための日記リストの一番古い日付を返す() async throws {
+        
+        let inputDiaries: [DiaryData] = [
+            .create(id: Self.diaryIdList[0], date: .create(year: 2025, month: 2, day: 2)),
+            .create(id: Self.diaryIdList[1], date: .create(year: 2024, month: 2, day: 2))
+        ]
+        var sut = DiaryList(elements: inputDiaries.map { .init($0) })
+        
+        let result = try #require(sut.getLoadStartDate())
+        
+        #expect(result == inputDiaries[1].date)
+    }
 }
 
 fileprivate extension DiaryData {
