@@ -43,7 +43,7 @@ struct CreatingDiaryUseCase: Equatable {
     func addGoal(_ goal: Goal) -> EditEvent {
         
         var updateGoals = edited?.goals ?? initial.goals
-        guard let targetIndex = updateGoals.firstIndex(of: goal) else {
+        guard let targetIndex = updateGoals.firstIndex(where: { $0.id == goal.id }) else {
             
             return .goals(edit(goals: updateGoals + [goal]))
         }
@@ -74,37 +74,41 @@ struct CreatingDiaryUseCase: Equatable {
     
     func updateTags(_ tags: [Tag]) -> EditEvent {
         
-        let newInitial = CreatingDiary(id: initial.id,
-                                       createdAt: initial.createdAt,
-                                       title: initial.title,
-                                       mainText: initial.mainText,
-                                       goals: initial.goals,
-                                       tags: tags.map { tag in
-            
-            guard let actualTag = initial.tags.first(where: { $0.id == tag.id }) else {
+        let newInitial = CreatingDiary(
+            id: initial.id,
+            createdAt: initial.createdAt,
+            title: initial.title,
+            mainText: initial.mainText,
+            goals: initial.goals,
+            tags: tags.map { tag in
                 
-                return tag
+                guard let actualTag = initial.tags.first(where: { $0.id == tag.id }) else {
+                    
+                    return tag
+                }
+                
+                return actualTag
             }
-            
-            return actualTag
-        })
+        )
         
         guard let edited else { return .tags(.init(initial: newInitial)) }
         
-        let newEdited = CreatingDiary(id: edited.id,
-                                      createdAt: edited.createdAt,
-                                      title: edited.title,
-                                      mainText: edited.mainText,
-                                      goals: edited.goals,
-                                      tags: tags.map { tag in
-            
-            guard let actualTag = edited.tags.first(where: { $0.id == tag.id }) else {
+        let newEdited = CreatingDiary(
+            id: edited.id,
+            createdAt: edited.createdAt,
+            title: edited.title,
+            mainText: edited.mainText,
+            goals: edited.goals,
+            tags: tags.map { tag in
                 
-                return tag
+                guard let actualTag = edited.tags.first(where: { $0.id == tag.id }) else {
+                    
+                    return tag
+                }
+                
+                return actualTag
             }
-            
-            return actualTag
-        })
+        )
         
         return .tags(.init(initial: newInitial, edited: newEdited))
     }

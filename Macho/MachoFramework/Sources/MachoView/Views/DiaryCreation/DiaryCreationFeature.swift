@@ -153,10 +153,13 @@ struct DiaryCreationFeature: Sendable {
                 return .none
                 
             case .editingGoal(let goal):
-                state.destination = .addGoal(AddGoalFeature.State(selectedTrainingType: goal.trainingType,
-                                                                  numberOfSets: goal.numberOfSets,
-                                                                  setCount: goal.setCount,
-                                                                  isEnableSaveButton: true))
+                state.destination = .addGoal(AddGoalFeature.State(
+                    id: goal.id,
+                    selectedTrainingType: goal.trainingType,
+                    numberOfSets: goal.numberOfSets,
+                    setCount: goal.setCount,
+                    isEnableSaveButton: true
+                ))
                 return .none
                 
             case .didChangeFocusState(let newState):
