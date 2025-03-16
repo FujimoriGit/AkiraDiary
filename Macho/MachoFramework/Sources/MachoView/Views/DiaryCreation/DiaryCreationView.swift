@@ -128,18 +128,12 @@ private extension DiaryCreationView {
             .scrollIndicators(.hidden)
             
             if store.isEditMode {
-                
-                editButton(animationsRunning: store.animationsRunning, parentSize: parentSize) {
-                    
-                    store.send(.trainingSaveButtonTapped)
-                }
+ 
+                editModeSaveButtonArea()
             }
             else {
                 
-                startButton(animationsRunning: store.animationsRunning, parentSize: parentSize) {
-                    
-                    store.send(.trainingStartButtonTapped)
-                }
+                startButton()
             }
             
             Spacer()
@@ -309,42 +303,67 @@ private extension DiaryCreationView {
                alignment: .leading)
     }
     
-    func editButton(animationsRunning: Bool,
-                    parentSize: CGSize,
+    func editModeSaveButtonArea() -> some View {
+        
+        VStack(spacing: 16) {
+            finishButton() // TODO: トレーニングが終了している日記には表示しないようにする
+            editButton()
+        }
+    }
+    
+    func finishButton() -> some View {
+        
+        saveButton(title: "Finish Training!!",
+                   iconName: "flame.fill",
+                   color: .red,
+                   isEnable: store.isEnableFinishButton) {
+            
+            store.send(.trainingSaveButtonTapped)
+        }
+    }
+    
+    func editButton() -> some View {
+        
+        saveButton(title: "Continue Training",
+                   iconName: "figure.run",
+                   color: .orange,
+                   isEnable: store.isEnableSaveButton) {
+            
+            store.send(.trainingSaveButtonTapped)
+        }
+    }
+    
+    func startButton() -> some View {
+        
+        saveButton(title: "Training Start!",
+                   iconName: "figure.run.square.stack",
+                   color: .orange,
+                   isEnable: store.isEnableSaveButton) {
+            
+            store.send(.trainingStartButtonTapped)
+        }
+    }
+    
+    func saveButton(title: String,
+                    iconName: String,
+                    color: Color,
+                    isEnable: Bool,
                     action: @escaping () -> Void) -> some View {
         
         Button(action: action, label: {
             HStack {
-                Image(systemName: "figure.run.square.stack")
+                Image(systemName: iconName)
                     .font(.system(size: 24))
-                    .symbolEffect(.bounce, value: animationsRunning)
-                Text("Save")
+                    .symbolEffect(.bounce, value: store.animationsRunning)
+                Text(title)
                     .font(.system(size: textSize, weight: .bold))
             }
-            .frame(maxWidth: ViewUtil.calcWidth(size: parentSize, horizontalPadding: horizontalPadding),
+            .frame(maxWidth: .infinity,
                    minHeight: startButtonHeight)
         })
-        .fillButtonStyle(backgroundColor: store.isEnableStartButton ? .orange : .gray)
-        .disabled(!store.isEnableStartButton)
-    }
-    
-    func startButton(animationsRunning: Bool,
-                     parentSize: CGSize,
-                     action: @escaping () -> Void) -> some View {
-        
-        Button(action: action, label: {
-            HStack {
-                Image(systemName: "figure.run.square.stack")
-                    .font(.system(size: 24))
-                    .symbolEffect(.bounce, value: animationsRunning)
-                Text("Training Start!")
-                    .font(.system(size: textSize, weight: .bold))
-            }
-            .frame(maxWidth: ViewUtil.calcWidth(size: parentSize, horizontalPadding: horizontalPadding),
-                   minHeight: startButtonHeight)
-        })
-        .fillButtonStyle(backgroundColor: store.isEnableStartButton ? .orange : .gray)
-        .disabled(!store.isEnableStartButton)
+        .fillButtonStyle(backgroundColor: isEnable ? color : .gray)
+        .disabled(!isEnable)
+        .padding(.horizontal, horizontalPadding)
     }
 }
 

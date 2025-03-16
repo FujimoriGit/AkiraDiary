@@ -28,6 +28,11 @@ struct CreatingDiaryUseCase: Equatable {
         return edited?.canSave ?? false
     }
     
+    var canFinish: Bool {
+        
+        return edited?.canSave ?? initial.canSave
+    }
+    
     func editTitle(title: String) -> EditEvent {
         
         return .title(edit(title: title))
