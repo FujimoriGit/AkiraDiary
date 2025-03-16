@@ -12,10 +12,10 @@ struct CreatingDiaryUseCase: Equatable {
     private let initial: CreatingDiary
     let edited: CreatingDiary?
     
-    init(initial: CreatingDiary) {
+    init(initial: CreatingDiary, edited: CreatingDiary? = nil) {
         
         self.initial = initial
-        edited = nil
+        self.edited = edited
     }
     
     var isEditMode: Bool {
@@ -101,7 +101,7 @@ struct CreatingDiaryUseCase: Equatable {
 
 extension CreatingDiaryUseCase {
     
-    enum EditEvent {
+    enum EditEvent: Equatable {
         
         case title(CreatingDiaryUseCase)
         case mainText(CreatingDiaryUseCase)
@@ -134,12 +134,6 @@ extension CreatingDiaryUseCase {
 }
 
 private extension CreatingDiaryUseCase {
-    
-    init(initial: CreatingDiary, edited: CreatingDiary?) {
-        
-        self.initial = initial
-        self.edited = edited
-    }
     
     func edit(title: String? = nil,
               mainText: String? = nil,
