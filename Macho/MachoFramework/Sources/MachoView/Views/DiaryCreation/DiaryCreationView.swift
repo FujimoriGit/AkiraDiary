@@ -13,7 +13,6 @@ struct DiaryCreationView: View {
     // MARK: - Store
     
     @Bindable private var store: StoreOf<DiaryCreationFeature>
-    @State private var animationsRunning = false
     @FocusState private var textFieldFocusState: DiaryCreationTextFieldFocus?
     
     // MARK: - initialize
