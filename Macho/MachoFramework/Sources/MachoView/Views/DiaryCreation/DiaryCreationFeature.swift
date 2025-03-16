@@ -101,6 +101,7 @@ struct DiaryCreationFeature: Sendable {
                 
             case .messageTextChange(let text):
                 state.messageText = text
+                state.isEnableStartButton = isEnableStartButton(state: state)
                 return .none
                 
             case .trainingStartButtonTapped:
@@ -271,7 +272,11 @@ private extension DiaryCreationFeature {
     
     func isEnableStartButton(state: State) -> Bool {
         
-        return !(state.titleText.isEmpty || state.goals.isEmpty)
+        let creatingDiary = CreatingDiary(title: state.titleText,
+                                          mainText: state.messageText,
+                                          goals: state.goals,
+                                          tags: state.tags)
+        return creatingDiary.canSave
     }
     
     func addObserveTagEntity() -> Effect<Self.Action> {
