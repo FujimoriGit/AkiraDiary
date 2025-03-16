@@ -11,7 +11,7 @@ import Foundation
 
 struct Tag: Equatable, Identifiable {
     
-    var id: UUID { entity.id }
-    let entity: TrainingTagData
-    var isSelected = false
+    let id: UUID
+    let tagName: String
+    let isSelected: Bool
 }

@@ -18,16 +18,15 @@ struct DiaryCreationFeature: Sendable {
     @ObservableState
     struct State: Equatable {
         
-        @ObservationStateIgnored var id: UUID?
-        var createdAt: Date?
+        @ObservationStateIgnored var useCase = CreatingDiaryUseCase(initial: .initial)
         var titleText = ""
         var messageText = ""
         var tags: [Tag] = []
         var goals: [Goal] = []
-        var isEnableStartButton = false
         var animationsRunning = false
         var textFieldFocusState: DiaryCreationTextFieldFocus?
-        var isEditMode = false
+        var isEnableStartButton: Bool { useCase.canSave }
+        var isEditMode: Bool { useCase.isEditMode }
         
         @Presents var destination: Destination.State?
         @Presents var alert: AlertState<Action.Alert>?
@@ -61,6 +60,8 @@ struct DiaryCreationFeature: Sendable {
     @Dependency(\.trainingTagApi) var trainingTagApi
     @Dependency(\.diaryListFetchApi) var diaryListFetchApi
     @Dependency(\.dismiss) var dismiss
+    @Dependency(\.uuid) var uuid
+    @Dependency(\.date) var date
     
     // MARK: - body
     
@@ -82,26 +83,18 @@ struct DiaryCreationFeature: Sendable {
                 return fetchTags()
                 
             case .fetchedTags(let tags):
-                state.tags = tags.map { entity in
-                    
-                    if let tag = state.tags.first(where: { $0.id == entity.id }) {
-                        
-                        return Tag(entity: entity, isSelected: tag.isSelected)
-                    }
-                    
-                    return Tag(entity: entity)
-                }
+                let tags = tags.map { TagConverter.toTag($0) }
+                state = updateCreatingDiaryState(state.useCase.updateTags(tags),
+                                                 state: state)
                 return .none
                 
             case .titleTextChange(let text):
                 if state.titleText.isEmpty, text.isEmpty { return .none }
-                state.titleText = text
-                state.isEnableStartButton = isEnableStartButton(state: state)
+                state = updateCreatingDiaryState(state.useCase.editTitle(title: text), state: state)
                 return .none
                 
             case .messageTextChange(let text):
-                state.messageText = text
-                state.isEnableStartButton = isEnableStartButton(state: state)
+                state = updateCreatingDiaryState(state.useCase.editMainText(mainText: text), state: state)
                 return .none
                 
             case .trainingStartButtonTapped:
@@ -109,7 +102,7 @@ struct DiaryCreationFeature: Sendable {
                     .send(.animateStartButton),
                     .run { [state] _ in
                         
-                        await addDiary(state: state)
+                        await saveDiary(diary: state.useCase.edited)
                     },
                     popToPrev()
                 )
@@ -119,7 +112,7 @@ struct DiaryCreationFeature: Sendable {
                     .send(.animateStartButton),
                     .run { [state] _ in
                         
-                        await updateDiary(state: state)
+                        await saveDiary(diary: state.useCase.edited)
                     },
                     popToPrev()
                 )
@@ -138,13 +131,13 @@ struct DiaryCreationFeature: Sendable {
             case .tappedTag(let tag):
                 withAnimation(.easeIn(duration: 0.15)) {
                     
-                    state.tags = updateTagSelectedState(target: tag, currentList: state.tags)
+                    state = updateCreatingDiaryState(state.useCase.selectTag(tag), state: state)
                 }
                 return .none
                 
             case .longTappedTag(let tag):
                 state.destination = .addTag(AddTagFeature.State(id: tag.id,
-                                                                tagName: tag.entity.tagName,
+                                                                tagName: tag.tagName,
                                                                 isEnableSaveButton: true))
                 return .none
                 
@@ -155,8 +148,7 @@ struct DiaryCreationFeature: Sendable {
             case .deletedGoal(let goal):
                 withAnimation(.easeIn(duration: 0.5)) {
                     
-                    state.goals.removeAll(where: { $0.id == goal.id })
-                    state.isEnableStartButton = isEnableStartButton(state: state)
+                    state = updateCreatingDiaryState(state.useCase.removeGoal(goal), state: state)
                 }
                 return .none
                 
@@ -181,14 +173,7 @@ struct DiaryCreationFeature: Sendable {
                 return .none
                 
             case .destination(.presented(.addGoal(.delegate(.saveGoal(let goal))))):
-                guard let index = state.goals.firstIndex(where: { $0.trainingType == goal.trainingType }) else {
-                    
-                    state.goals.append(goal)
-                    state.isEnableStartButton = isEnableStartButton(state: state)
-                    return .none
-                }
-                state.goals[index] = goal
-                state.isEnableStartButton = isEnableStartButton(state: state)
+                state = updateCreatingDiaryState(state.useCase.addGoal(goal), state: state)
                 return .none
                 
             case .alert(.presented(.tappedDismissAcceptButton)):
@@ -217,46 +202,33 @@ private extension DiaryCreationFeature {
         }
     }
     
-    func addDiary(state: State) async {
+    func saveDiary(diary: CreatingDiary?) async {
         
-        let diary = createDiary(state: state)
-        _ = await diaryListFetchApi.add(diary)
+        guard let diary,
+              let entity = convertToDbEntity(diary: diary) else { return }
+        _ = await diaryListFetchApi.add(entity)
     }
     
-    func updateDiary(state: State) async {
+    func convertToDbEntity(diary: CreatingDiary) -> DiaryData? {
         
-        guard let id = state.id,
-              let createdAt = state.createdAt else {
+        guard let title = diary.title,
+              let mainText = diary.mainText else {
             
-            assertionFailure("Unexpected state.id is nil.")
-            return
+            assertionFailure("Unexpected empty diary data.")
+            return nil
         }
-        let diary = DiaryData(id: id,
-                              date: createdAt,
-                              title: state.titleText,
-                              mainText: state.messageText,
-                              goals: state.goals.map(\.entity),
-                              tags: state.tags.map(\.entity),
-                              startTime: createdAt,
-                              endTime: nil)
-        _ = await diaryListFetchApi.add(diary)
-    }
-    
-    func createDiary(state: State) -> DiaryData {
         
-        let startDate = Date()
+        let id = diary.id ?? uuid()
+        let createdAt = diary.createdAt ?? date()
         
-        let goals = state.goals.map(\.entity)
-        let tags = state.tags.map(\.entity)
-        
-        return DiaryData(id: UUID(),
-                         date: startDate,
-                         title: state.titleText,
-                         mainText: state.messageText,
-                         goals: goals,
-                         tags: tags,
-                         startTime: startDate,
-                         endTime: nil)
+        return .init(id: id,
+                     date: createdAt,
+                     title: title,
+                     mainText: mainText,
+                     goals: diary.goals.map(\.entity),
+                     tags: diary.tags.filter { $0.isSelected }.map { TagConverter.toEntity($0) },
+                     startTime: createdAt,
+                     endTime: nil)
     }
     
     func popToPrev() -> Effect<Self.Action> {
@@ -270,15 +242,6 @@ private extension DiaryCreationFeature {
         )
     }
     
-    func isEnableStartButton(state: State) -> Bool {
-        
-        let creatingDiary = CreatingDiary(title: state.titleText,
-                                          mainText: state.messageText,
-                                          goals: state.goals,
-                                          tags: state.tags)
-        return creatingDiary.canSave
-    }
-    
     func addObserveTagEntity() -> Effect<Self.Action> {
         
         return .publisher {
@@ -289,18 +252,29 @@ private extension DiaryCreationFeature {
         }.cancellable(id: TrainingTagsSubscriber())
     }
     
-    func updateTagSelectedState(target: Tag, currentList: [Tag]) -> [Tag] {
+    func updateCreatingDiaryState(_ editEvent: CreatingDiaryUseCase.EditEvent, state: State) -> State {
         
-        guard let targetIndex = currentList.firstIndex(where: { $0 == target }) else {
+        var updateState = state
+        switch editEvent {
             
-            return currentList
+        case .title(let useCase):
+            updateState.titleText = editEvent.currentDiary.title ?? ""
+            updateState.useCase = useCase
+            
+        case .mainText(let useCase):
+            updateState.messageText = editEvent.currentDiary.mainText ?? ""
+            updateState.useCase = useCase
+            
+        case .tags(let useCase):
+            updateState.tags = editEvent.currentDiary.tags
+            updateState.useCase = useCase
+            
+        case .goals(let useCase):
+            updateState.goals = editEvent.currentDiary.goals
+            updateState.useCase = useCase
         }
         
-        var result = currentList
-        let currentTag = result[targetIndex]
-        result[targetIndex] = .init(entity: target.entity,
-                                    isSelected: !currentTag.isSelected)
-        return result
+        return updateState
     }
 }
 
@@ -333,13 +307,7 @@ extension DiaryCreationFeature.State {
     
     init(editTarget diary: DiaryData) {
         
-        isEditMode = true
-        id = diary.id
-        createdAt = diary.date
-        titleText = diary.title
-        messageText = diary.mainText
-        tags = diary.tags.map { .init(entity: $0, isSelected: true) }
-        goals = diary.goals.compactMap {
+        let goals: [Goal] = diary.goals.compactMap {
             
             guard let trainingType = $0.trainingType else {
                 
@@ -351,5 +319,18 @@ extension DiaryCreationFeature.State {
                          numberOfSets: $0.goalNumberOfSets,
                          setCount: $0.goalSetCount)
         }
+        let tags: [Tag] = diary.tags.map { TagConverter.toTag($0, isSelected: true) }
+        let creatingDiary = CreatingDiary(id: diary.id,
+                                          createdAt: diary.date,
+                                          title: diary.title,
+                                          mainText: diary.mainText,
+                                          goals: goals,
+                                          tags: tags)
+        
+        useCase = .init(initial: creatingDiary)
+        titleText = diary.title
+        messageText = diary.mainText
+        self.tags = tags
+        self.goals = goals
     }
 }

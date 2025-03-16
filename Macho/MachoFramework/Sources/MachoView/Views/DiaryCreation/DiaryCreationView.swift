@@ -233,7 +233,7 @@ private extension DiaryCreationView {
                 // tapとlongPressのイベントをハンドルするため、actionでは何もしない
                 Button(action: {}, label: {
                     HStack(spacing: 4) {
-                        Text(tag.entity.tagName)
+                        Text(tag.tagName)
                             .font(.system(size: textSize, weight: tag.isSelected ? .semibold : .regular))
                         
                         Image(systemName: tag.isSelected ? "checkmark.circle.fill" : "circle.dashed")
@@ -360,7 +360,7 @@ private extension DiaryCreationView {
 
 #Preview("タグあり(ひとつだけ)") {
     DiaryCreationView(store: Store(initialState: DiaryCreationFeature.State(
-        tags: [.init(entity: .init(id: UUID(), tagName: "test"))]
+        tags: [.init(id: UUID(), tagName: "test", isSelected: false)]
     )) {
         
         DiaryCreationFeature()
@@ -370,13 +370,13 @@ private extension DiaryCreationView {
 #Preview("タグあり(複数)") {
     DiaryCreationView(store: Store(initialState: DiaryCreationFeature.State(
         tags: [
-            .init(entity: .init(id: UUID(), tagName: "test1")),
-            .init(entity: .init(id: UUID(), tagName: "test2")),
-            .init(entity: .init(id: UUID(), tagName: "test3")),
-            .init(entity: .init(id: UUID(), tagName: "test4")),
-            .init(entity: .init(id: UUID(), tagName: "test5")),
-            .init(entity: .init(id: UUID(), tagName: "test6")),
-            .init(entity: .init(id: UUID(), tagName: "test7"))
+            .init(id: UUID(), tagName: "test1", isSelected: true),
+            .init(id: UUID(), tagName: "test2", isSelected: true),
+            .init(id: UUID(), tagName: "test3", isSelected: false),
+            .init(id: UUID(), tagName: "test4", isSelected: false),
+            .init(id: UUID(), tagName: "test5", isSelected: false),
+            .init(id: UUID(), tagName: "test6", isSelected: false),
+            .init(id: UUID(), tagName: "test7", isSelected: false)
         ]
     )) {
         
