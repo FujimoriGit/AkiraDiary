@@ -229,7 +229,7 @@ private extension DiaryCreationFeature {
                      title: title,
                      mainText: mainText,
                      goals: diary.goals.map(\.entity),
-                     tags: diary.tags.filter { $0.isSelected }.map { TagConverter.toEntity($0) },
+                     tags: diary.tags.filter(\.isSelected).map { TagConverter.toEntity($0) },
                      startTime: createdAt,
                      endTime: nil)
     }
