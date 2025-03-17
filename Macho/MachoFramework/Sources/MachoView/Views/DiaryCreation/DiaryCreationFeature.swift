@@ -342,7 +342,8 @@ extension DiaryCreationFeature.State {
                                           title: diary.title,
                                           mainText: diary.mainText,
                                           goals: goals,
-                                          tags: tags)
+                                          tags: tags,
+                                          isFinished: diary.endTime != nil)
         
         useCase = .init(initial: creatingDiary)
         titleText = diary.title
