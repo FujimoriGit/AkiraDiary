@@ -17,6 +17,7 @@ struct CreatingDiary: Equatable {
     let mainText: String?
     let goals: [Goal]
     let tags: [Tag]
+    let isFinished: Bool
     
     var canSave: Bool {
         
@@ -42,7 +43,8 @@ struct CreatingDiary: Equatable {
                      title: title ?? self.title,
                      mainText: mainText ?? self.mainText,
                      goals: goals ?? self.goals,
-                     tags: tags ?? self.tags)
+                     tags: tags ?? self.tags,
+                     isFinished: isFinished)
     }
 }
 
@@ -53,5 +55,6 @@ extension CreatingDiary {
                                      title: nil,
                                      mainText: nil,
                                      goals: [],
-                                     tags: [])
+                                     tags: [],
+                                     isFinished: false)
 }
