@@ -51,6 +51,17 @@ struct CreatingDiary: Equatable {
                      tags: tags ?? self.tags,
                      isFinished: isFinished)
     }
+    
+    func finish() -> Self {
+        
+        return .init(id: id,
+                     createdAt: createdAt,
+                     title: title,
+                     mainText: mainText,
+                     goals: goals,
+                     tags: tags,
+                     isFinished: true)
+    }
 }
 
 extension CreatingDiary {

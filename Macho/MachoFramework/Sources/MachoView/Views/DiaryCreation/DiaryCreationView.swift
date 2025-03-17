@@ -319,7 +319,7 @@ private extension DiaryCreationView {
                    color: .red,
                    isEnable: store.isEnableFinishButton) {
             
-            store.send(.trainingSaveButtonTapped)
+            store.send(.trainingFinishButtonTapped)
         }
     }
     

@@ -38,6 +38,11 @@ struct CreatingDiaryUseCase: Equatable {
         return edited?.canFinish ?? initial.canFinish
     }
     
+    var finishTarget: CreatingDiary {
+        
+        return edited ?? initial
+    }
+    
     func editTitle(title: String) -> EditEvent {
         
         return .title(edit(title: title))
