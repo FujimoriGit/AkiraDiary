@@ -12,6 +12,7 @@ import Testing
 
 @testable import MachoView
 
+@Suite("日記作成・編集のユースケーステスト")
 struct CreatingDiaryUseCaseTest {
     
     @Suite("保存可能判定処理のケース")
@@ -106,6 +107,31 @@ extension CreatingDiaryUseCaseTest.CanSaveCase {
         let result = sut.canFinish
         
         #expect(result == expected)
+    }
+    
+    @Test(arguments: [
+        CreatingDiaryUseCase.init(initial: .make()),
+        .init(initial: .make(), edited: .make(title: "edit")),
+        .init(initial: .make(), edited: .make(title: "edit", isFinished: true))
+    ])
+    func 日記のトレーニングが終了していなければ終了ボタンを表示する(useCase: CreatingDiaryUseCase) throws {
+                
+        let result = useCase.shouldShowFinishButton
+        
+        #expect(result)
+    }
+    
+    @Test(arguments: [
+        CreatingDiaryUseCase.init(initial: .make(isFinished: true)),
+        .init(initial: .make(isFinished: true), edited: .make(title: "edit")),
+        .init(initial: .make(isFinished: true), edited: .make(title: "edit", isFinished: true)),
+        .init(initial: .make(isFinished: true), edited: .make(title: "edit"))
+    ])
+    func 日記のトレーニングが終了している場合は終了ボタンは表示しない(useCase: CreatingDiaryUseCase) throws {
+                
+        let result = useCase.shouldShowFinishButton
+        
+        #expect(!result)
     }
 }
 
@@ -289,7 +315,8 @@ fileprivate extension CreatingDiary {
                      title: String = "test",
                      mainText: String = "test message",
                      goals: [Goal] = [defaultGoal],
-                     tags: [MachoView.Tag] = [defaultTag]) -> Self {
+                     tags: [MachoView.Tag] = [defaultTag],
+                     isFinished: Bool = false) -> Self {
            
            
            return .init(
@@ -298,7 +325,8 @@ fileprivate extension CreatingDiary {
                title: title,
                mainText: mainText,
                goals: goals,
-               tags: tags
+               tags: tags,
+               isFinished: isFinished
            )
        }
 }
