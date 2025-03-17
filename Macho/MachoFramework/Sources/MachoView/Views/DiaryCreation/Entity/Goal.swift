@@ -42,4 +42,22 @@ struct Goal: Equatable, Identifiable {
         self.actualNumberOfSets = actualNumberOfSets
         self.actualSetCount = actualSetCount
     }
+    
+    func incrementSet() -> Self {
+        
+        return .init(id: id,
+                     trainingType: trainingType,
+                     numberOfSets: numberOfSets,
+                     setCount: setCount,
+                     actualSetCount: actualSetCount + 1)
+    }
+    
+    func decrementSet() -> Self {
+        
+        return .init(id: id,
+                     trainingType: trainingType,
+                     numberOfSets: numberOfSets,
+                     setCount: setCount,
+                     actualSetCount: actualSetCount == .zero ? .zero : actualSetCount - 1)
+    }
 }

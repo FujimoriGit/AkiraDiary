@@ -54,6 +54,8 @@ struct DiaryCreationFeature: Sendable {
         case tappedAddingGoalButton
         case deletedGoal(Goal)
         case editingGoal(Goal)
+        case tappedAddActualSetButton
+        case tappedMinusActualSetButton
         case didChangeFocusState(DiaryCreationTextFieldFocus?)
         case tappedOutsideOfKeyboard
         case tappedNavigationBackButton
@@ -155,6 +157,12 @@ struct DiaryCreationFeature: Sendable {
                     setCount: goal.setCount,
                     isEnableSaveButton: true
                 ))
+                return .none
+                
+            case .tappedAddActualSetButton:
+                return .none
+                
+            case .tappedMinusActualSetButton:
                 return .none
                 
             case .didChangeFocusState(let newState):
