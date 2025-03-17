@@ -28,6 +28,11 @@ struct CreatingDiary: Equatable {
         return true
     }
     
+    var canFinish: Bool {
+        
+        return canSave && !isFinished
+    }
+    
     var isEditMode: Bool {
         
         return id != nil && createdAt != nil && canSave

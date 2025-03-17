@@ -23,6 +23,11 @@ struct CreatingDiaryUseCase: Equatable {
         return initial.isEditMode
     }
     
+    var shouldShowFinishButton: Bool {
+        
+        return !initial.isFinished
+    }
+    
     var canSave: Bool {
         
         return edited?.canSave ?? false
@@ -30,7 +35,7 @@ struct CreatingDiaryUseCase: Equatable {
     
     var canFinish: Bool {
         
-        return edited?.canSave ?? initial.canSave
+        return edited?.canFinish ?? initial.canFinish
     }
     
     func editTitle(title: String) -> EditEvent {

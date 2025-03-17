@@ -27,6 +27,7 @@ struct DiaryCreationFeature: Sendable {
         var textFieldFocusState: DiaryCreationTextFieldFocus?
         var isEnableSaveButton: Bool { useCase.canSave }
         var isEnableFinishButton: Bool { useCase.canFinish }
+        var shouldShowFinishButton: Bool { useCase.shouldShowFinishButton }
         var isEditMode: Bool { useCase.isEditMode }
         
         @Presents var destination: Destination.State?
