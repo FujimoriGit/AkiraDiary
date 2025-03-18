@@ -232,9 +232,7 @@ private extension DiaryListFeature {
                 
             case .tappedGraphButton:
                 logger.info("tappedGraphButton")
-                // TODO: グラフ画面表示を実行
-                state.path.append(.graphScreen(AddContactFeature.State(contact: .init(id: uuid.callAsFunction(),
-                                                                                      name: ""))))
+                state.path.append(.graphScreen(.init()))
                 return .none
                 
             case .tappedCreateNewDiaryButton:
@@ -287,7 +285,7 @@ extension DiaryListFeature {
         // 日記作成画面
         case createScreen(DiaryCreationFeature)
         // グラフ画面
-        case graphScreen(AddContactFeature)
+        case graphScreen(TrainingActivityGraphFeature)
         // 詳細画面
         case detailScreen(DiaryDetailFeature)
         
