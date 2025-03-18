@@ -218,6 +218,7 @@ private extension DiaryListFilterView {
     DiaryListFilterView(store: Store(initialState: DiaryListFilterFeature.State(),
                                      reducer: { DiaryListFilterFeature() },
                                      withDependencies: {
+
         $0.diaryListFilterApi = DiaryListFilterClient(addFilter: { filter in
             
             currentFilters += [filter]

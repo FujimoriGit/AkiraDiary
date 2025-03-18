@@ -65,8 +65,10 @@ extension TrainingTagClient: DependencyKey {
         return PassthroughSubject<[TrainingTagEntity], Never>().eraseToAnyPublisher()
     }
     
-    static func createCustomValue(_ realm: RealmAccessible = RealmAccessor(),
-                                  publisher: (() -> AnyPublisher<[TrainingTagEntity], Never>)? = nil) -> TrainingTagClient {
+    static func createCustomValue(
+        _ realm: RealmAccessible = RealmAccessor(),
+        publisher: (() -> AnyPublisher<[TrainingTagEntity], Never>)? = nil
+    ) -> TrainingTagClient {
 
         return TrainingTagClient {
             
