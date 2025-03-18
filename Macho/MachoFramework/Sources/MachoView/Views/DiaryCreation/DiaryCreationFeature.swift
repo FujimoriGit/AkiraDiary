@@ -145,7 +145,8 @@ struct DiaryCreationFeature: Sendable {
             case .deletedGoal(let goal):
                 withAnimation(.easeIn(duration: 0.5)) {
                     
-                    state = updateCreatingDiaryState(state.useCase.removeGoal(goal), state: state)
+                    state = updateCreatingDiaryState(state.useCase.removeGoal(goal),
+                                                     state: state)
                 }
                 return .none
                 
