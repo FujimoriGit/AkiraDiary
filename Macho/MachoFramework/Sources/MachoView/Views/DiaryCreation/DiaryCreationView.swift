@@ -264,12 +264,16 @@ private extension DiaryCreationView {
                         .foregroundStyle(.white)
                 }
                 Spacer()
-                Text("達成セット: \(goal.actualSetCount)")
-                editActualSetCountButton(iconName: "plus") {
-                    store.send(.tappedAddActualSetButton(goal))
-                }
-                editActualSetCountButton(iconName: "minus") {
-                    store.send(.tappedMinusActualSetButton(goal))
+                if store.isEditMode {
+                    HStack(spacing: 8) {
+                        Text("達成セット: \(goal.actualSetCount)")
+                        editActualSetCountButton(iconName: "plus") {
+                            store.send(.tappedAddActualSetButton(goal))
+                        }
+                        editActualSetCountButton(iconName: "minus") {
+                            store.send(.tappedMinusActualSetButton(goal))
+                        }
+                    }
                 }
             }
             .clipped()

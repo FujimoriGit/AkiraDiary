@@ -347,7 +347,8 @@ extension DiaryCreationFeature.State {
             return .init(id: $0.id,
                          trainingType: trainingType,
                          numberOfSets: $0.goalNumberOfSets,
-                         setCount: $0.goalSetCount)
+                         setCount: $0.goalSetCount,
+                         actualSetCount: $0.actualSetCount ?? .zero)
         }
         let tags: [Tag] = diary.tags.map { TagConverter.toTag($0, isSelected: true) }
         let creatingDiary = CreatingDiary(id: diary.id,
