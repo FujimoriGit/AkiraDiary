@@ -54,8 +54,8 @@ struct DiaryCreationFeature: Sendable {
         case tappedAddingGoalButton
         case deletedGoal(Goal)
         case editingGoal(Goal)
-        case tappedAddActualSetButton
-        case tappedMinusActualSetButton
+        case tappedAddActualSetButton(Goal)
+        case tappedMinusActualSetButton(Goal)
         case didChangeFocusState(DiaryCreationTextFieldFocus?)
         case tappedOutsideOfKeyboard
         case tappedNavigationBackButton
@@ -159,10 +159,18 @@ struct DiaryCreationFeature: Sendable {
                 ))
                 return .none
                 
-            case .tappedAddActualSetButton:
+            case .tappedAddActualSetButton(let goal):
+                state = updateCreatingDiaryState(
+                    state.useCase.incrementActualSetCount(of: goal),
+                    state: state
+                )
                 return .none
                 
-            case .tappedMinusActualSetButton:
+            case .tappedMinusActualSetButton(let goal):
+                state = updateCreatingDiaryState(
+                    state.useCase.decrementActualSetCount(of: goal),
+                    state: state
+                )
                 return .none
                 
             case .didChangeFocusState(let newState):

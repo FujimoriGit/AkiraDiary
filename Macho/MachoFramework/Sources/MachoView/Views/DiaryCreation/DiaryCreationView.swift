@@ -263,6 +263,14 @@ private extension DiaryCreationView {
                         .font(.system(size: 16))
                         .foregroundStyle(.white)
                 }
+                Spacer()
+                Text("達成セット: \(goal.actualSetCount)")
+                editActualSetCountButton(iconName: "plus") {
+                    store.send(.tappedAddActualSetButton(goal))
+                }
+                editActualSetCountButton(iconName: "minus") {
+                    store.send(.tappedMinusActualSetButton(goal))
+                }
             }
             .clipped()
             .listRowBackground(Color.indigo)
@@ -286,6 +294,17 @@ private extension DiaryCreationView {
         .listRowSpacing(10.0)
         .scrollDisabled(true)
         .frame(minHeight: (goalCellHeight + goalCellMargin) * CGFloat(store.goals.count))
+    }
+    
+    func editActualSetCountButton(iconName: String, action: @escaping () -> Void) -> some View {
+        Button {
+            action()
+        } label: {
+            Image(systemName: iconName)
+                .frame(width: 16, height: 16)
+                .padding(8)
+        }
+        .fillButtonStyle(cornerRadius: 12)
     }
     
     func addingButton(title: String, parentSize: CGSize, action: @escaping () -> Void) -> some View {
