@@ -31,9 +31,11 @@ struct AddGoalView: View {
                 TextField("Number Of Sets",
                           value: $store.numberOfSets.sending(\.setNumberOfSets),
                           formatter: NumberFormatter())
+                .keyboardType(.asciiCapableNumberPad)
                 TextField("Set Count",
                           value: $store.setCount.sending(\.setCount),
                           formatter: NumberFormatter())
+                .keyboardType(.asciiCapableNumberPad)
                 Button("Save") {
                     store.send(.saveButtonTapped)
                 }
