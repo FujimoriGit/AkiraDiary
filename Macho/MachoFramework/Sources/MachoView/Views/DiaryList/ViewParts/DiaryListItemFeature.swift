@@ -34,6 +34,8 @@ struct DiaryListItemFeature: Sendable {
         var trainingList: [UUID] { entity.goals.compactMap { $0.trainingType?.id } }
         /// 日記に登録したタグのID
         var tagList: [UUID] { entity.tags.map(\.id) }
+        /// 日記のトレーニング状況の状態
+        var diaryState: DiaryStatus { entity.endTime == nil ? .training : .finished }
     }
     
     enum Action: Sendable {
