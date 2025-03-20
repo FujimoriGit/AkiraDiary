@@ -96,8 +96,8 @@ private extension DiaryListItemView {
                 .resizable()
                 .scaledToFit()
                 .frame(width: diaryStatusIconSize, height: diaryStatusIconSize)
-        case .finished:
-            createWinLoseIcon(isWin: store.isWin)
+        case .finished(let isAchieved):
+            createWinLoseIcon(isWin: isAchieved)
         }
     }
     

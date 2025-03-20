@@ -9,7 +9,7 @@ import Foundation
 
 enum DiaryListFilterTarget: String, CaseIterable {
     
-    /// 己に勝ったかどうか
+    /// トレーニングの目標達成状況
     case achievement
     /// トレーニング種別
     case trainingType
@@ -38,7 +38,7 @@ enum DiaryListFilterTarget: String, CaseIterable {
         switch self {
             
         case .achievement:
-            return "目標達成有無"
+            return "目標達成状況"
             
         case .trainingType:
             return "種目"
@@ -73,6 +73,8 @@ enum TrainingAchievement: Int, CaseIterable, SingleSelectableFilter {
     case notAchieved
     /// 達成
     case achieved
+    /// トレーニング中
+    case training
     
     init?(value: String) {
         
@@ -89,6 +91,9 @@ enum TrainingAchievement: Int, CaseIterable, SingleSelectableFilter {
             
         case .achieved:
             return "達成している"
+            
+        case .training:
+            return "トレーニング中"
         }
     }
 }

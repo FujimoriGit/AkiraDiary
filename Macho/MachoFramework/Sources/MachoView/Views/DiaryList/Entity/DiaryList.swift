@@ -24,7 +24,7 @@ struct DiaryList: Equatable {
             
             return filters.contains {
                 
-                return $0.isMatchFilter(isAchieved: item.isWin,
+                return $0.isMatchFilter(diaryStatus: item.diaryState,
                                         trainingList: item.trainingList,
                                         tagList: item.tagList)
             }

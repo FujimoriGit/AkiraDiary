@@ -12,5 +12,5 @@ import Foundation
 enum DiaryStatus {
     
     case training
-    case finished
+    case finished(isAchieved: Bool)
 }
