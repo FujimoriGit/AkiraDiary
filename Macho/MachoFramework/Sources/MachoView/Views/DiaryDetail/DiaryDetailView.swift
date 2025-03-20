@@ -43,6 +43,7 @@ struct DiaryDetailView: View {
     private let tagCornerRadius: CGFloat = 10
     
     private let defaultMessageLineLimit = 3
+    private let resultDescriptionTextFormat = ":%dセット%d回"
     
     // MARK: - initialize method
     
@@ -171,7 +172,7 @@ private extension DiaryDetailView {
         }
     }
     
-    func createResultPerTrainingSectionView(_ trainingResultList: [TrainingTypeResult]) -> some View {
+    func createResultPerTrainingSectionView(_ trainingResultList: [Goal]) -> some View {
         VStack(alignment: .leading, spacing: resultPerTrainingSectionVerticalSpace) {
             ForEach(trainingResultList) {
                 createResultPerTrainingItemView($0)
@@ -180,9 +181,9 @@ private extension DiaryDetailView {
         }
     }
     
-    func createResultPerTrainingItemView(_ resultItem: TrainingTypeResult) -> some View {
+    func createResultPerTrainingItemView(_ resultItem: Goal) -> some View {
         HStack(spacing: .zero) {
-            Text(resultItem.trainingName)
+            Text(resultItem.trainingType.name)
                 .font(.system(size: sectionTitleFontSize, weight: .bold))
                 .frame(maxHeight: .infinity,
                        alignment: .topLeading)
@@ -190,8 +191,8 @@ private extension DiaryDetailView {
                 .frame(width: trainingNameTrailingPadding)
             VStack(spacing: .zero) {
                 Spacer()
-                Text(resultItem.goalResultText)
-                Text(resultItem.actualResultText)
+                Text("目標\(String(format: resultDescriptionTextFormat, resultItem.setCount, resultItem.numberOfSets))")
+                Text("達成セット数: \(resultItem.actualSetCount)")
             }
             .font(.system(size: trainingDetailTextFontSize))
             Spacer()

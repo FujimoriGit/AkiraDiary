@@ -88,22 +88,9 @@ private extension DiaryListItemView {
         }
     }
     
-    @ViewBuilder
     func createDiaryStatusIcon() -> some View {
-        switch store.diaryState {
-        case .training:
-            Image(systemName: "figure.highintensity.intervaltraining")
-                .resizable()
-                .scaledToFit()
-                .frame(width: diaryStatusIconSize, height: diaryStatusIconSize)
-        case .finished(let isAchieved):
-            createWinLoseIcon(isWin: isAchieved)
-        }
-    }
-    
-    func createWinLoseIcon(isWin: Bool) -> some View {
-        AchieveIconView(isAchieved: isWin,
-                        size: diaryStatusIconSize)
+        DiaryStatusIconView(status: store.diaryState,
+                            size: diaryStatusIconSize)
     }
     
     func createTopContents(title: String, date: String) -> some View {
