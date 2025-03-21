@@ -13,7 +13,7 @@ import Testing
 
 struct DiaryListTest {
     
-    static let diaryIdList = (1...4).map { _ in UUID() }
+    static let diaryIdList = (1...5).map { _ in UUID() }
     
     typealias DiaryListItem = DiaryListItemFeature.State
     
@@ -87,7 +87,18 @@ struct DiaryListTest {
                                 tag: [.unfine])
                 ]
             ),
-            ([DiaryListFilterItem.create(.init(id: UUID(), tagName: "Test"))], [])
+            ([DiaryListFilterItem.create(.init(id: UUID(), tagName: "Test"))], []),
+            (
+                [DiaryListFilterItem.training],
+                [DiaryData.createData(id: Self.diaryIdList[4], isFinished: false)]
+            ),
+            (
+                [
+                    DiaryListFilterItem.training,
+                    DiaryListFilterItem.create(.init(id: UUID(), tagName: "Test"))
+                ],
+                [DiaryData.createData(id: Self.diaryIdList[4], isFinished: false)]
+            )
         ]
     )
     func フィルタリング処理の確認(
@@ -103,6 +114,7 @@ struct DiaryListTest {
                         isAchieved: true,
                         type: [.benchPress],
                         tag: [.unfine]),
+            .createData(id: Self.diaryIdList[4], isFinished: false),
         ]
         
         let sut = DiaryList(elements: inputDiaries.map { .init($0) })
@@ -239,6 +251,9 @@ fileprivate extension DiaryListFilterItem {
     static let notAchieved: Self = .init(target: .achievement,
                                          filterItemId: UUID(DiaryListFilterTarget.achievement.num),
                                          value: "達成していない")
+    static let training: Self = .init(target: .achievement,
+                                      filterItemId: UUID(DiaryListFilterTarget.achievement.num),
+                                      value: "トレーニング中")
     
     static func create(_ tag: TrainingTagData) -> Self {
         
