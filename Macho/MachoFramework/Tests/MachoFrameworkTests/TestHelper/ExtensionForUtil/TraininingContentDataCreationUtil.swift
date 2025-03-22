@@ -27,7 +27,7 @@ extension TrainingContentData {
     init(_ goal: Goal) {
         
         self.init(id: goal.id,
-                  trainingType: goal.trainingType,
+                  trainingType: .init(id: goal.trainingType.id, name: goal.trainingType.name),
                   goalNumberOfSets: goal.numberOfSets,
                   goalSetCount: goal.setCount,
                   actualNumberOfSets: nil,

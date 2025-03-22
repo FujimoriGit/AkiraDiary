@@ -221,7 +221,7 @@ fileprivate extension Diary {
     static func createData(id: UUID,
                            date: Date = .create(year: 2025, month: 2, day: 1),
                            isAchieved: Bool = true,
-                           type trainingType: [TrainingTypeData] = [],
+                           type trainingType: [TrainingType] = [],
                            tag: [MachoView.Tag] = [],
                            isFinished: Bool = true) -> Self {
         
