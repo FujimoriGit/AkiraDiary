@@ -32,7 +32,7 @@ extension TrainingActivityGraphFeature.State {
     
     mutating func updateActivityResults(_ diaries: [DiaryData]) {
         
-        activityResultList = .init(diaries,
+        activityResultList = .init(diaries.map { DiaryConverter.toDiary($0) },
                                    periodFilter: periodFilter,
                                    trainingTypeFilter: trainingTypeFilter)
         calendar.decorationDic = activityResultList.buildCalendarDecorator()

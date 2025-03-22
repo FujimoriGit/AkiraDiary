@@ -163,7 +163,7 @@ private extension DiaryListFeature {
             case .alert(.presented(.confirmEditItem(targetId: let id))):
                 logger.info("tapped edit button(id=\(id)).")
                 guard let targetDiary = state.diaryList.getTargetDiaryById(id) else { return .none }
-                state.path = .getToEditScreenPath(targetDiary.entity)
+                state.path = .getToEditScreenPath(targetDiary.diary)
                 return .none
                 
             case .alert(.presented(.confirmDeleteItem(deleteItemId: let id))):
@@ -229,7 +229,7 @@ private extension DiaryListFeature {
                 
             case .receiveLoadDiaryItems(let fetchedDiaries):
                 logger.info("receiveLoadDiaryItems(\(fetchedDiaries))")
-                state.diaryList.addLoadedDiaries(fetchedDiaries)
+                state.diaryList.addLoadedDiaries(fetchedDiaries.map { DiaryConverter.toDiary($0) })
                 state = getUpdatedDiaryList(currentState: state)
                 // リロード中フラグを倒す
                 state.viewState.isLoadingDiaries = false
@@ -333,9 +333,9 @@ private extension DiaryListFeature {
         switch delegate {
             
         case .tappedDiaryItem:
-            if let diary = state.diaryList.getTargetDiaryById(id) {
+            if let item = state.diaryList.getTargetDiaryById(id) {
                 
-                updateTargetState.path = .getToDetailScreenPath(diary.entity)
+                updateTargetState.path = .getToDetailScreenPath(item.diary)
             }
             
         case .deleteItemSwipeAction:

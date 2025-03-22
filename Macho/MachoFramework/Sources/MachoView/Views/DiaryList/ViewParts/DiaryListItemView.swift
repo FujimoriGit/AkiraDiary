@@ -132,38 +132,27 @@ private extension DiaryListItemView {
 // MARK: - preview block
 
 #Preview {
-    let diaryData = DiaryData(id: UUID(),
-                              date: Date(),
-                              title: "sample", mainText: "sample main text",
-                              goals: [
-                                TrainingContentData(id: UUID(),
-                                                    trainingType: .init(id: UUID(),
-                                                                        name: "腹筋"),
-                                                    goalNumberOfSets: 3,
-                                                    goalSetCount: 3,
-                                                    actualNumberOfSets: 3,
-                                                    actualSetCount: 3)
-                              ],
-                              tags: [TrainingTagData(id: UUID(), tagName: "xxx")],
-                              startTime: Date(),
-                              endTime: Date())
-    let trainingStatusData = DiaryData(id: UUID(),
-                                       date: Date(),
-                                       title: "sample", mainText: "sample main text",
-                                       goals: [
-                                        TrainingContentData(id: UUID(),
-                                                            trainingType: .init(id: UUID(),
-                                                                                name: "腹筋"),
-                                                            goalNumberOfSets: 3,
-                                                            goalSetCount: 3,
-                                                            actualNumberOfSets: 3,
-                                                            actualSetCount: 3)
-                                       ],
-                                       tags: [],
-                                       startTime: Date(), endTime: nil)
+    let winDiaryData = Diary(id: UUID(),
+                             createdAt: Date(),
+                             title: "sample", mainText: "sample main text",
+                             goals: [], tags: [],
+                             status: .finished(.init(isAchieved: true, endTime: .now)))
+    let loseDiaryData = Diary(id: UUID(),
+                              createdAt: Date(),
+                              title: "sample2", mainText: "sample main text",
+                              goals: [], tags: [],
+                              status: .finished(.init(isAchieved: false, endTime: .now)))
+    let trainingStatusData = Diary(id: UUID(),
+                                   createdAt: Date(),
+                                   title: "sample3", mainText: "sample main text",
+                                   goals: [], tags: [],
+                                   status: .training)
     ScrollView {
         LazyVStack(spacing: .zero) {
-            DiaryListItemView(store: Store(initialState: DiaryListItemFeature.State(diaryData)) {
+            DiaryListItemView(store: Store(initialState: DiaryListItemFeature.State(winDiaryData)) {
+                DiaryListItemFeature()
+            })
+            DiaryListItemView(store: Store(initialState: DiaryListItemFeature.State(loseDiaryData)) {
                 DiaryListItemFeature()
             })
             DiaryListItemView(store: Store(initialState: DiaryListItemFeature.State(trainingStatusData)) {

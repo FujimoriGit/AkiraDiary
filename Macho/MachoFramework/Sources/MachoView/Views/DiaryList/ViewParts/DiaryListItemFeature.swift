@@ -14,29 +14,26 @@ struct DiaryListItemFeature: Sendable {
     @ObservableState
     struct State: Equatable, Identifiable, Sendable {
         
-        init(_ entity: DiaryData) {
+        init(_ diary: Diary) {
             
-            self.entity = entity
+            self.diary = diary
         }
         
-        let entity: DiaryData
+        let diary: Diary
         
-        var id: UUID { entity.id }
+        var id: UUID { diary.id }
         /// 日記のタイトル
-        var title: String { entity.title }
+        var title: String { diary.title }
         /// 日記のメッセージ
-        var message: String { entity.mainText }
+        var message: String { diary.mainText }
         /// 日記の作成日付
-        var date: Date { entity.date }
+        var date: Date { diary.createdAt }
         /// 日記に登録したトレーニング種別のID
-        var trainingList: [UUID] { entity.goals.compactMap { $0.trainingType?.id } }
+        var trainingList: [UUID] { diary.goals.compactMap { $0.id } }
         /// 日記に登録したタグのID
-        var tagList: [UUID] { entity.tags.map(\.id) }
+        var tagList: [UUID] { diary.tags.map(\.id) }
         /// 日記のトレーニング状況の状態
-        var diaryState: DiaryStatus {
-            
-            entity.endTime == nil ? .training : .finished(isAchieved: entity.isAchieved)
-        }
+        var diaryState: DiaryStatus { diary.status }
     }
     
     enum Action: Sendable {

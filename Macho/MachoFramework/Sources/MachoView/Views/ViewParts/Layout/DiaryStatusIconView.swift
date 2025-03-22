@@ -37,16 +37,16 @@ struct DiaryStatusIconView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: size, height: size)
-        case .finished(let isAchieved):
-            AchieveIconView(isAchieved: isAchieved, size: size)
+        case .finished(let info):
+            AchieveIconView(isAchieved: info.isAchieved, size: size)
         }
     }
 }
 
 #Preview("finished") {
-    DiaryStatusIconView(status: .finished(isAchieved: true), size: 30)
+    DiaryStatusIconView(status: .finished(.init(isAchieved: true, endTime: .now)), size: 30)
 }
 
-#Preview("Lose") {
+#Preview("training") {
     DiaryStatusIconView(status: .training, size: 30)
 }

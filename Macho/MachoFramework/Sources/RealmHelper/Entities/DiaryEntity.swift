@@ -26,12 +26,6 @@ public struct DiaryEntity: BaseRealmEntity {
     /// 終了時間
     public let endTime: Date?
     
-    /// 全ての目標を達成したかどうか
-    public var isAchieved: Bool {
-        
-        return !goals.contains { !$0.isAchieved }
-    }
-    
     public static let executor = RealmObserverExecutor<Self>()
     
     public init(id: UUID,

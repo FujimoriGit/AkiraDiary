@@ -237,7 +237,7 @@ struct TrainingActivityGraphFeature {
                 return .none
                 
             case .didReceiveDiaryDataForShowingDetail(let diary):
-                state.navigationDestination = .detailScreen(.init(diary: diary))
+                state.navigationDestination = .detailScreen(.init(diary: DiaryConverter.toDiary(diary)))
                 return cancelObserver()
                 
             case .didReceiveTrainingTypeList(let trainingTypeList):

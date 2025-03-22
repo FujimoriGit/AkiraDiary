@@ -46,41 +46,25 @@ struct ActivityCalendarView: View {
     var calendar
     let interval = DateInterval(start: Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date(),
                                 end: Date())
-    let activityResults = ActivityResults([
-        .init(id: UUID(),
-              date: interval.start,
-              title: "Test1",
-              mainText: "",
-              goals: [
-                .init(id: UUID(),
-                      trainingType: .init(id: UUID(), name: ""),
-                      goalNumberOfSets: 3,
-                      goalSetCount: 3,
-                      actualNumberOfSets: 3,
-                      actualSetCount: 3)
-              ],
-              tags: [],
-              startTime: nil,
-              endTime: nil),
-        .init(id: UUID(),
-              date: calendar.date(byAdding: .day, value: 1, to: interval.start)!,
-              title: "Test2",
-              mainText: "",
-              goals: [
-                .init(id: UUID(),
-                      trainingType: .init(id: UUID(), name: ""),
-                      goalNumberOfSets: 3,
-                      goalSetCount: 3,
-                      actualNumberOfSets: 1,
-                      actualSetCount: 3)
-              ],
-              tags: [],
-              startTime: nil,
-              endTime: nil)
-    ],
-                                          periodFilter: .init(startPeriodDate: interval.start,
-                                                              period: .month),
-                                          trainingTypeFilter: .init(selectedIdList: []))
+    let activityResults = ActivityResults(
+        [
+            .init(id: UUID(),
+                  createdAt: interval.start,
+                  title: "Test1", mainText: "",
+                  goals: [],
+                  tags: [],
+                  status: .finished(.init(isAchieved: true, endTime: .now))),
+            .init(id: UUID(),
+                  createdAt: interval.start,
+                  title: "Test2", mainText: "",
+                  goals: [],
+                  tags: [],
+                  status: .finished(.init(isAchieved: false, endTime: .now))),
+        ],
+        periodFilter: .init(startPeriodDate: interval.start,
+                            period: .month),
+        trainingTypeFilter: .init(selectedIdList: [])
+    )
     
     ActivityCalendarView(store: Store(initialState: .init(
         displayInterval: interval,
