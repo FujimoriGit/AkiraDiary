@@ -224,7 +224,7 @@ private extension DiaryDetailView {
 
 #Preview {
     let goal1 = Goal(id: UUID(),
-                     trainingType: TrainingTypeData(id: UUID(), name: "腹筋"),
+                     trainingType: .init(id: UUID(), name: "腹筋"),
                      numberOfSets: 3,
                      setCount: 3,
                      actualSetCount: 3)

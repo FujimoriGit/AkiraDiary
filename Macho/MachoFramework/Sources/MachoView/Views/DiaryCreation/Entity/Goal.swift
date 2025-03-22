@@ -12,20 +12,10 @@ import Foundation
 struct Goal: Equatable, Identifiable {
     
     let id: UUID
-    var trainingType: TrainingTypeData
+    var trainingType: TrainingType
     var numberOfSets: Int
     var setCount: Int
     var actualSetCount: Int
-    
-    var entity: TrainingContentData {
-        
-        return .init(id: id,
-                     trainingType: trainingType,
-                     goalNumberOfSets: numberOfSets,
-                     goalSetCount: setCount,
-                     actualNumberOfSets: nil,
-                     actualSetCount: actualSetCount)
-    }
     
     var isAchieved: Bool {
         
@@ -33,7 +23,7 @@ struct Goal: Equatable, Identifiable {
     }
     
     init(id: UUID,
-         trainingType: TrainingTypeData,
+         trainingType: TrainingType,
          numberOfSets: Int,
          setCount: Int,
          actualSetCount: Int = 0) {

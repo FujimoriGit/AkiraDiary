@@ -104,7 +104,7 @@ struct AddGoalFeature: Sendable {
                     guard let goalType = state.selectedTrainingType else { return }
                     
                     let goal = Goal(id: state.id ?? uuid(),
-                                    trainingType: goalType,
+                                    trainingType: TrainingTypeConverter.toType(goalType),
                                     numberOfSets: state.numberOfSets,
                                     setCount: state.setCount)
                     
