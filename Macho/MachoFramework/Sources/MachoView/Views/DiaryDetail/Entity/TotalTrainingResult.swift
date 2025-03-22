@@ -40,14 +40,20 @@ struct TotalTrainingResult: Equatable {
             isFinished = true
             isAchievedTotalGoal = info.isAchieved
             endDateDisplayText = Self.getDisplayDateText(info.endTime)
-            totalTrainingTimeDurationText = Self.getTotalTrainingTimeDurationText(from: diary.createdAt, to: info.endTime)
+            totalTrainingTimeDurationText = Self.getTotalTrainingTimeDurationText(
+                from: diary.createdAt,
+                to: info.endTime
+            )
         }
         else {
             
             isFinished = false
             isAchievedTotalGoal = false
             endDateDisplayText = Self.getDisplayDateText(nil)
-            totalTrainingTimeDurationText = Self.getTotalTrainingTimeDurationText(from: diary.createdAt, to: nil)
+            totalTrainingTimeDurationText = Self.getTotalTrainingTimeDurationText(
+                from: diary.createdAt,
+                to: nil
+            )
         }
     }
 }
