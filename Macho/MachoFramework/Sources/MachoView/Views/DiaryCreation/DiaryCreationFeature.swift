@@ -21,7 +21,7 @@ struct DiaryCreationFeature: Sendable {
         @ObservationStateIgnored var useCase = CreatingDiaryUseCase(initial: .initial)
         var titleText = ""
         var messageText = ""
-        var tags: [Tag] = []
+        var tags: [SelectionTag] = []
         var goals: [Goal] = []
         var animationsRunning = false
         var textFieldFocusState: DiaryCreationTextFieldFocus?
@@ -49,8 +49,8 @@ struct DiaryCreationFeature: Sendable {
         case animateStartButton
         case destination(PresentationAction<Destination.Action>)
         case tappedAddingTagButton
-        case tappedTag(Tag)
-        case longTappedTag(Tag)
+        case tappedTag(SelectionTag)
+        case longTappedTag(SelectionTag)
         case tappedAddingGoalButton
         case deletedGoal(Goal)
         case editingGoal(Goal)
@@ -88,7 +88,7 @@ struct DiaryCreationFeature: Sendable {
                 return fetchTags()
                 
             case .fetchedTags(let tags):
-                let tags = tags.map { TagConverter.toTag($0) }
+                let tags = tags.map { SelectionTagConverter.toTag($0) }
                 state = updateCreatingDiaryState(state.useCase.updateTags(tags),
                                                  state: state)
                 return .none
@@ -132,9 +132,9 @@ struct DiaryCreationFeature: Sendable {
                 }
                 return .none
                 
-            case .longTappedTag(let tag):
-                state.destination = .addTag(AddTagFeature.State(id: tag.id,
-                                                                tagName: tag.tagName,
+            case .longTappedTag(let selectionTag):
+                state.destination = .addTag(AddTagFeature.State(id: selectionTag.id,
+                                                                tagName: selectionTag.tag.tagName,
                                                                 isEnableSaveButton: true))
                 return .none
                 
@@ -212,7 +212,6 @@ private extension DiaryCreationFeature {
         return .run { send in
             
             let tags = await trainingTagApi.fetchAll()
-            
             await send(.fetchedTags(tags))
         }
     }
@@ -257,7 +256,7 @@ private extension DiaryCreationFeature {
                      title: title,
                      mainText: mainText,
                      goals: diary.goals.map(\.entity),
-                     tags: diary.tags.filter(\.isSelected).map { TagConverter.toEntity($0) },
+                     tags: diary.tags.filter(\.isSelected).map { SelectionTagConverter.toEntity($0) },
                      startTime: createdAt,
                      endTime: diary.isFinished ? date() : nil)
     }
@@ -339,7 +338,7 @@ extension DiaryCreationFeature.State {
     init(editTarget diary: DiaryData) {
         
         let goals: [Goal] = diary.goals.compactMap { GoalConverter.toGoal($0) }
-        let tags: [Tag] = diary.tags.map { TagConverter.toTag($0, isSelected: true) }
+        let tags: [SelectionTag] = diary.tags.map { SelectionTagConverter.toTag($0, isSelected: true) }
         let creatingDiary = CreatingDiary(id: diary.id,
                                           createdAt: diary.date,
                                           title: diary.title,
