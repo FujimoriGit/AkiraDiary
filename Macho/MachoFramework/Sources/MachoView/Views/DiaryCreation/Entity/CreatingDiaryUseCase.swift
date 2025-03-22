@@ -95,16 +95,16 @@ struct CreatingDiaryUseCase: Equatable {
         )))
     }
     
-    func selectTag(_ tag: SelectionTag) -> EditEvent {
+    func selectTag(_ tag: Tag) -> EditEvent {
         
         let updateTags = edited?.tags ?? initial.tags
         return .tags(edit(tags: updateTags.map {
             
-            $0 == tag ? .init(id: $0.id, tagName: $0.tag.tagName, isSelected: !$0.isSelected) : $0
+            $0 == tag ? .init(id: $0.id, tagName: $0.tagName, isSelected: !$0.isSelected) : $0
         }))
     }
     
-    func updateTags(_ tags: [SelectionTag]) -> EditEvent {
+    func updateTags(_ tags: [Tag]) -> EditEvent {
         
         let initialUpdatedTags = tags.map { tag in
             
@@ -172,7 +172,7 @@ private extension CreatingDiaryUseCase {
     func edit(title: String? = nil,
               mainText: String? = nil,
               goals: [Goal]? = nil,
-              tags: [SelectionTag]? = nil) -> Self {
+              tags: [Tag]? = nil) -> Self {
         
         let edited = (edited ?? initial).edit(title: title,
                                               mainText: mainText,

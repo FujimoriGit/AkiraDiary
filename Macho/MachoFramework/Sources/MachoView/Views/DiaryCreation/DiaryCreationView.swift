@@ -219,33 +219,33 @@ private extension DiaryCreationView {
                alignment: .leading)
     }
     
-    func tags(tapAction: @escaping (SelectionTag) -> Void,
-              longPressAction: @escaping (SelectionTag) -> Void) -> some View {
+    func tags(tapAction: @escaping (Tag) -> Void,
+              longPressAction: @escaping (Tag) -> Void) -> some View {
         
         FlowLayout(alignment: .leading, spacing: 8) {
-            ForEach(store.tags, id: \.id) { selectionTag in
+            ForEach(store.tags, id: \.id) { tag in
                 // tapとlongPressのイベントをハンドルするため、actionでは何もしない
                 Button(action: {}, label: {
                     HStack(spacing: 4) {
-                        Text(selectionTag.tag.tagName)
-                            .font(.system(size: textSize, weight: selectionTag.isSelected ? .semibold : .regular))
+                        Text(tag.tagName)
+                            .font(.system(size: textSize, weight: tag.isSelected ? .semibold : .regular))
                         
-                        Image(systemName: selectionTag.isSelected ? "checkmark.circle.fill" : "circle.dashed")
+                        Image(systemName: tag.isSelected ? "checkmark.circle.fill" : "circle.dashed")
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundStyle(.white)
-                            .symbolEffect(.bounce, value: selectionTag.isSelected)
+                            .symbolEffect(.bounce, value: tag.isSelected)
                     }
                     .padding(tagPadding)
-                    .background(selectionTag.isSelected ? .indigo : .gray)
+                    .background(tag.isSelected ? .indigo : .gray)
                     .foregroundStyle(.white)
                     .cornerRadius(14)
                     .onTapGesture {
                         
-                        tapAction(selectionTag)
+                        tapAction(tag)
                     }
                     .onLongPressGesture {
                         
-                        longPressAction(selectionTag)
+                        longPressAction(tag)
                     }
                 })
             }

@@ -9,9 +9,9 @@
 
 enum TagConverter {
     
-    static func toTag(_ entity: TrainingTagData) -> Tag {
+    static func toTag(_ entity: TrainingTagData, isSelected: Bool = false) -> Tag {
         
-        return .init(id: entity.id, tagName: entity.tagName)
+        return .init(id: entity.id, tagName: entity.tagName, isSelected: isSelected)
     }
     
     static func toEntity(_ tag: Tag) -> TrainingTagData {

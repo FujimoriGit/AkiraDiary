@@ -160,6 +160,11 @@ struct DiaryListTest {
         expected: [DiaryData]
     ) throws {
         
+        let currentDiaryItems: [DiaryListItem] = [
+            .create(id: Self.diaryIdList[0], date: .create(year: 2025, month: 2, day: 1)),
+        ]
+            .map { .init($0) }
+        
         var sut = initialList
         sut.addLoadedDiaries(addingDiaries)
         
@@ -192,7 +197,7 @@ struct DiaryListTest {
                         type: [.benchPress],
                         tag: [.unfine])
         ]
-        let sut = DiaryList(elements: inputDiaries.map { .init($0) })
+        var sut = DiaryList(elements: inputDiaries.map { .init($0) })
         
         let result = try #require(sut.getTargetDiaryById(Self.diaryIdList[0]))
         
@@ -206,7 +211,7 @@ struct DiaryListTest {
             .createData(id: Self.diaryIdList[0], date: .create(year: 2025, month: 2, day: 2)),
             .createData(id: Self.diaryIdList[1], date: .create(year: 2024, month: 2, day: 2))
         ]
-        let sut = DiaryList(elements: inputDiaries.map { .init($0) })
+        var sut = DiaryList(elements: inputDiaries.map { .init($0) })
         
         let result = try #require(sut.getLoadStartDate())
         

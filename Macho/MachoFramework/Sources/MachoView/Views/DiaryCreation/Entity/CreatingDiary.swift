@@ -16,7 +16,7 @@ struct CreatingDiary: Equatable {
     let title: String?
     let mainText: String?
     let goals: [Goal]
-    let tags: [SelectionTag]
+    let tags: [Tag]
     let isFinished: Bool
     
     var canSave: Bool {
@@ -41,7 +41,7 @@ struct CreatingDiary: Equatable {
     func edit(title: String? = nil,
               mainText: String? = nil,
               goals: [Goal]? = nil,
-              tags: [SelectionTag]? = nil) -> Self {
+              tags: [Tag]? = nil) -> Self {
         
         return .init(id: self.id,
                      createdAt: self.createdAt,

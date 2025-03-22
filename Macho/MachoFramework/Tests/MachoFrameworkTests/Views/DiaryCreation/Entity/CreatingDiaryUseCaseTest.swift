@@ -55,7 +55,7 @@ extension CreatingDiaryUseCaseTest.CanSaveCase {
         ]), true),
         (CreatingDiary.make(tags: [
             .init(id: CreatingDiary.defaultTag.id,
-                  tagName: CreatingDiary.defaultTag.tag.tagName,
+                  tagName: CreatingDiary.defaultTag.tagName,
                   isSelected: true)
         ]), true),
         (Optional(nilLiteral: ()), false),
@@ -86,7 +86,7 @@ extension CreatingDiaryUseCaseTest.CanSaveCase {
         ]), true),
         (CreatingDiary.make(tags: [
             .init(id: CreatingDiary.defaultTag.id,
-                  tagName: CreatingDiary.defaultTag.tag.tagName,
+                  tagName: CreatingDiary.defaultTag.tagName,
                   isSelected: true)
         ]), true),
         (Optional(nilLiteral: ()), true),
@@ -305,7 +305,7 @@ extension CreatingDiaryUseCaseTest.EditCase {
     @Test
     func タグを選択すると選択状態が切り替わる() throws {
         
-        let initialTags: [SelectionTag] = [
+        let initialTags: [MachoView.Tag] = [
             .init(id: UUID(), tagName: "test1", isSelected: true),
         ]
         let initial = CreatingDiary.make(tags: initialTags)
@@ -315,7 +315,7 @@ extension CreatingDiaryUseCaseTest.EditCase {
         
         let expected = CreatingDiary.make(tags: [
             .init(id: initialTags[0].id,
-                  tagName: initialTags[0].tag.tagName,
+                  tagName: initialTags[0].tagName,
                   isSelected: false)
         ])
         #expect(result == .tags(.init(initial: initial, edited: expected)))
@@ -338,11 +338,11 @@ extension CreatingDiaryUseCaseTest.EditCase {
             .init(id: TrainingTagData.fine.id, tagName: "test"),
             .unfine
         ]
-        let result = sut.updateTags(updatedTags.map { SelectionTagConverter.toTag($0) })
+        let result = sut.updateTags(updatedTags.map { TagConverter.toTag($0) })
         
         let expectedInitialDiary = CreatingDiary.make(tags: [
             .init(id: TrainingTagData.fine.id, tagName: "test", isSelected: true),
-            SelectionTagConverter.toTag(.unfine)
+            TagConverter.toTag(.unfine)
         ])
         let expectedEditedDiary: CreatingDiary? = if let edited = initialUseCase.edited {
             
@@ -370,27 +370,27 @@ fileprivate extension CreatingDiary {
                                   trainingType: .abs,
                                   numberOfSets: 3,
                                   setCount: 3)
-    static let defaultTag = SelectionTag(id: UUID(),
-                                         tagName: "test",
-                                         isSelected: false)
+    static let defaultTag = MachoView.Tag(id: UUID(),
+                                          tagName: "test",
+                                          isSelected: false)
     
     static func make(id: UUID? = Self.defaultDiaryId,
                      createdAt: Date? = Self.defaultDate,
                      title: String = "test",
                      mainText: String = "test message",
                      goals: [Goal] = [defaultGoal],
-                     tags: [SelectionTag] = [defaultTag],
+                     tags: [MachoView.Tag] = [defaultTag],
                      isFinished: Bool = false) -> Self {
-        
-        
-        return .init(
-            id: id,
-            createdAt: createdAt,
-            title: title,
-            mainText: mainText,
-            goals: goals,
-            tags: tags,
-            isFinished: isFinished
-        )
-    }
+           
+           
+           return .init(
+               id: id,
+               createdAt: createdAt,
+               title: title,
+               mainText: mainText,
+               goals: goals,
+               tags: tags,
+               isFinished: isFinished
+           )
+       }
 }
