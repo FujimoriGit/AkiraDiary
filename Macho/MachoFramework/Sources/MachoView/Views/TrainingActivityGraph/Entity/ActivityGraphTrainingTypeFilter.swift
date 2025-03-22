@@ -36,7 +36,7 @@ struct ActivityGraphTrainingTypeFilter {
         
         return selectedIdList.contains {
             
-            return diary.goals.map(\.id.uuidString).contains($0)
+            return diary.goals.map(\.trainingType.id.uuidString).contains($0)
         }
     }
 }

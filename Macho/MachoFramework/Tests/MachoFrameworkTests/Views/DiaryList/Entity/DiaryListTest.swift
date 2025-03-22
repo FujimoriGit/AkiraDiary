@@ -22,12 +22,12 @@ struct DiaryListTest {
         arguments: [
             (
                 [DiaryListFilterItem.notAchieved],
-                [DiaryData.createData(id: Self.diaryIdList[1], isAchieved: false, type: [.abs])]
+                [Diary.createData(id: Self.diaryIdList[1], isAchieved: false, type: [.abs])]
             ),
             (
                 [DiaryListFilterItem.achieved],
                 [
-                    DiaryData.createData(id: Self.diaryIdList[0]),
+                    Diary.createData(id: Self.diaryIdList[0]),
                     .createData(id: Self.diaryIdList[2], tag: [.fine]),
                     .createData(id: Self.diaryIdList[3],
                                 isAchieved: true,
@@ -37,24 +37,24 @@ struct DiaryListTest {
             ),
             (
                 [DiaryListFilterItem.create(.fine)],
-                [DiaryData.createData(id: Self.diaryIdList[2], tag: [.fine])]
+                [Diary.createData(id: Self.diaryIdList[2], tag: [.fine])]
             ),
             (
                 [DiaryListFilterItem.create(.unfine)],
-                [DiaryData.createData(id: Self.diaryIdList[3],
+                [Diary.createData(id: Self.diaryIdList[3],
                                       isAchieved: true,
                                       type: [.benchPress],
                                       tag: [.unfine])]
             ),
             (
                 [DiaryListFilterItem.create(.abs)],
-                [DiaryData.createData(id: Self.diaryIdList[1],
+                [Diary.createData(id: Self.diaryIdList[1],
                                       isAchieved: false,
                                       type: [.abs])]
             ),
             (
                 [DiaryListFilterItem.create(.benchPress)],
-                [DiaryData.createData(id: Self.diaryIdList[3],
+                [Diary.createData(id: Self.diaryIdList[3],
                                       isAchieved: true,
                                       type: [.benchPress],
                                       tag: [.unfine])]
@@ -62,7 +62,7 @@ struct DiaryListTest {
             (
                 [DiaryListFilterItem.achieved, .create(.fine), .create(.benchPress)],
                 [
-                    DiaryData.createData(id: Self.diaryIdList[0]),
+                    Diary.createData(id: Self.diaryIdList[0]),
                     .createData(id: Self.diaryIdList[2], tag: [.fine]),
                     .createData(id: Self.diaryIdList[3],
                                 isAchieved: true,
@@ -78,7 +78,7 @@ struct DiaryListTest {
                     .create(.abs)
                 ],
                 [
-                    DiaryData.createData(id: Self.diaryIdList[0]),
+                    Diary.createData(id: Self.diaryIdList[0]),
                     .createData(id: Self.diaryIdList[1], isAchieved: false, type: [.abs]),
                     .createData(id: Self.diaryIdList[2], tag: [.fine]),
                     .createData(id: Self.diaryIdList[3],
@@ -90,23 +90,23 @@ struct DiaryListTest {
             ([DiaryListFilterItem.create(.init(id: UUID(), tagName: "Test"))], []),
             (
                 [DiaryListFilterItem.training],
-                [DiaryData.createData(id: Self.diaryIdList[4], isFinished: false)]
+                [Diary.createData(id: Self.diaryIdList[4], isFinished: false)]
             ),
             (
                 [
                     DiaryListFilterItem.training,
                     DiaryListFilterItem.create(.init(id: UUID(), tagName: "Test"))
                 ],
-                [DiaryData.createData(id: Self.diaryIdList[4], isFinished: false)]
+                [Diary.createData(id: Self.diaryIdList[4], isFinished: false)]
             )
         ]
     )
     func フィルタリング処理の確認(
         inputFilter: [DiaryListFilterItem],
-        expected: [DiaryData]
+        expected: [Diary]
     ) throws {
         
-        let inputDiaries: [DiaryData] = [
+        let inputDiaries: [Diary] = [
             .createData(id: Self.diaryIdList[0]),
             .createData(id: Self.diaryIdList[1], isAchieved: false, type: [.abs]),
             .createData(id: Self.diaryIdList[2], tag: [.fine]),
@@ -129,26 +129,26 @@ struct DiaryListTest {
             (
                 DiaryList(elements: []),
                 [
-                    DiaryData.create(id: diaryIdList[2], date: .create(year: 2024, month: 2, day: 2)),
+                    Diary.create(id: diaryIdList[2], date: .create(year: 2024, month: 2, day: 2)),
                     .create(id: diaryIdList[1], date: .create(year: 2025, month: 2, day: 2))
                 ],
                 [
-                    DiaryData.create(id: diaryIdList[1], date: .create(year: 2025, month: 2, day: 2)),
+                    Diary.create(id: diaryIdList[1], date: .create(year: 2025, month: 2, day: 2)),
                     .create(id: diaryIdList[2], date: .create(year: 2024, month: 2, day: 2))
                 ]
             ),
             (
                 DiaryList(elements: []),
-                [DiaryData.createData(id: diaryIdList[0], date: .create(year: 2025, month: 2, day: 1), tag: [.fine])],
-                [DiaryData.createData(id: diaryIdList[0], date: .create(year: 2025, month: 2, day: 1), tag: [.fine])]
+                [Diary.createData(id: diaryIdList[0], date: .create(year: 2025, month: 2, day: 1), tag: [.fine])],
+                [Diary.createData(id: diaryIdList[0], date: .create(year: 2025, month: 2, day: 1), tag: [.fine])]
             ),
             (
                 DiaryList(elements: [
                     .init(.create(id: diaryIdList[1], date: .create(year: 2025, month: 2, day: 10)))
                 ]),
-                [DiaryData.create(id: diaryIdList[0], date: .create(year: 2025, month: 2, day: 1))],
+                [Diary.create(id: diaryIdList[0], date: .create(year: 2025, month: 2, day: 1))],
                 [
-                    DiaryData.create(id: diaryIdList[1], date: .create(year: 2025, month: 2, day: 10)),
+                    Diary.create(id: diaryIdList[1], date: .create(year: 2025, month: 2, day: 10)),
                     .create(id: diaryIdList[0], date: .create(year: 2025, month: 2, day: 1))
                 ]
             )
@@ -156,8 +156,8 @@ struct DiaryListTest {
     )
     func 追加の日記リストは既存の日記リストにマージし日記作成日の降順にする(
         initialList: DiaryList,
-        addingDiaries: [DiaryData],
-        expected: [DiaryData]
+        addingDiaries: [Diary],
+        expected: [Diary]
     ) throws {
         
         var sut = initialList
@@ -184,7 +184,7 @@ struct DiaryListTest {
     @Test
     func IDで指定した日記を取得する() async throws {
         
-        let inputDiaries: [DiaryData] = [
+        let inputDiaries: [Diary] = [
             .createData(id: Self.diaryIdList[0]),
             .createData(id: Self.diaryIdList[1], tag: [.fine]),
             .createData(id: Self.diaryIdList[2],
@@ -202,7 +202,7 @@ struct DiaryListTest {
     @Test
     func 次の日記を取得するための日記リストの一番古い日付を返す() async throws {
         
-        let inputDiaries: [DiaryData] = [
+        let inputDiaries: [Diary] = [
             .createData(id: Self.diaryIdList[0], date: .create(year: 2025, month: 2, day: 2)),
             .createData(id: Self.diaryIdList[1], date: .create(year: 2024, month: 2, day: 2))
         ]
@@ -210,11 +210,11 @@ struct DiaryListTest {
         
         let result = try #require(sut.getLoadStartDate())
         
-        #expect(result == inputDiaries[1].date)
+        #expect(result == inputDiaries[1].createdAt)
     }
 }
 
-fileprivate extension DiaryData {
+fileprivate extension Diary {
     
     static let defaultEndDate: Date = .create(year: 2025, month: 1, day: 1)
     
@@ -222,10 +222,10 @@ fileprivate extension DiaryData {
                            date: Date = .create(year: 2025, month: 2, day: 1),
                            isAchieved: Bool = true,
                            type trainingType: [TrainingTypeData] = [],
-                           tag: [TrainingTagData] = [],
+                           tag: [MachoView.Tag] = [],
                            isFinished: Bool = true) -> Self {
         
-        let goals: [TrainingContentData] = trainingType.map {
+        let goals: [Goal] = trainingType.map {
             .create(id: id,
                     trainingType: $0,
                     isAchieved: isAchieved)

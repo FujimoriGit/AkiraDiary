@@ -23,11 +23,11 @@ final class TrainingActivityGraphViewTest: XCTestCase {
         let initialPeriod = ActivityPeriod.month
         let initialSelectedTrainingTypeList: [TrainingTypeData] = [.abs]
                 
-        let expectedFetchDiaryData1 = DiaryData.create(
+        let expectedFetchDiaryData1 = Diary.create(
             date: .create(year: 2024, month: 7, day: 1),
             goals: [.create(trainingType: .abs)]
         )
-        let expectedFetchDiaryData2 = DiaryData.create(
+        let expectedFetchDiaryData2 = Diary.create(
             date: .create(year: 2024, month: 7, day: 2),
             goals: [.create(trainingType: .benchPress)]
         )
@@ -37,7 +37,10 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                   withDependencies: {
             
             $0.diaryListFetchApi = .createCustomValue(createDiaryListFetchApiRealmMock(
-                expectedFetchResult: [expectedFetchDiaryData1, expectedFetchDiaryData2]
+                expectedFetchResult: [
+                    .init(expectedFetchDiaryData1),
+                    .init(expectedFetchDiaryData2)
+                ]
             ))
             $0.trainingTypeApi = .createCustomValue(createTrainingTypeApiRealmMock(
                 expectedFetchResult: [.abs, .benchPress]
@@ -74,7 +77,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                 initialPeriod,
                 initialSelectedTrainingTypeList
             )
-            $0.calendar.decorationDic = self.createExpectedDecorationDic(expectedFetchDiaryData1)
+            $0.calendar.decorationDic = try self.createExpectedDecorationDic(expectedFetchDiaryData1)
         }
         
         // 後始末
@@ -111,7 +114,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
         
         // 準備
         
-        let expectedFetchDiaryData1 = DiaryData.create(
+        let expectedFetchDiaryData1 = Diary.create(
             date: .create(year: 2024, month: 6, day: 3),
             goals: [.create(trainingType: .abs)]
         )
@@ -143,14 +146,15 @@ final class TrainingActivityGraphViewTest: XCTestCase {
             
             // 検証
             
+            let isAchieved = try XCTUnwrap(expectedFetchDiaryData1.isAchieved)
             let expectedChildState = DetailDayOfActivityFeature.State(
                 targetDayStr: "2024/6/3",
                 activities: [
                     .init(id: expectedFetchDiaryData1.id,
                           title: expectedFetchDiaryData1.title,
-                          isAchieved: expectedFetchDiaryData1.isAchieved)
+                          isAchieved: isAchieved)
                 ],
-                isAchieved: expectedFetchDiaryData1.isAchieved)
+                isAchieved: isAchieved)
             $0.popup = .detailDayOfActivity(.init(childState: expectedChildState))
         }
     }
@@ -159,7 +163,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
         
         // 準備
         
-        let expectedFetchDiaryData1 = DiaryData.create(
+        let expectedFetchDiaryData1 = Diary.create(
             date: .create(year: 2024, month: 6, day: 3),
             goals: [.create(trainingType: .abs)]
         )
@@ -171,9 +175,9 @@ final class TrainingActivityGraphViewTest: XCTestCase {
             activities: [
                 .init(id: expectedFetchDiaryData1.id,
                       title: expectedFetchDiaryData1.title,
-                      isAchieved: expectedFetchDiaryData1.isAchieved)
+                      isAchieved: try XCTUnwrap(expectedFetchDiaryData1.isAchieved))
             ],
-            isAchieved: expectedFetchDiaryData1.isAchieved)
+            isAchieved: try XCTUnwrap(expectedFetchDiaryData1.isAchieved))
         
         let testState: TrainingActivityGraphFeature.State = .init(
             popup: .detailDayOfActivity(.init(childState: calendarDetailChildState)),
@@ -194,7 +198,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
             
             $0.defaultAppStorage = createTestUserDefaults(initialStartDate: .now)
             $0.diaryListFetchApi = .createCustomValue(createDiaryListFetchApiRealmMock(expectedFetchResult: [
-                expectedFetchDiaryData1,
+                .init(expectedFetchDiaryData1),
                 .create()
             ]))
         })
@@ -225,11 +229,11 @@ final class TrainingActivityGraphViewTest: XCTestCase {
         let initialStartPeriod = Date.create(year: 2024, month: 5, day: 1)
         let initialPeriod = ActivityPeriod.month
         
-        let displayDiaryData = DiaryData.create(
+        let displayDiaryData = Diary.create(
             date: .create(year: 2024, month: 5, day: 1),
             goals: [.create(trainingType: .abs)]
         )
-        let notDisplayDiaryData = DiaryData.create(
+        let notDisplayDiaryData = Diary.create(
             date: .create(year: 2024, month: 5, day: 31),
             goals: [.create(trainingType: .abs)]
         )
@@ -245,8 +249,8 @@ final class TrainingActivityGraphViewTest: XCTestCase {
             
             $0.diaryListFetchApi = .createCustomValue(
                 createDiaryListFetchApiRealmMock(expectedFetchResult: [
-                    displayDiaryData,
-                    notDisplayDiaryData
+                    .init(displayDiaryData),
+                    .init(notDisplayDiaryData)
                 ])
             )
             $0.defaultAppStorage = testUserDefaults
@@ -272,7 +276,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                 initialPeriod,
                 []
             )
-            $0.calendar.decorationDic = self.createExpectedDecorationDic(displayDiaryData)
+            $0.calendar.decorationDic = try self.createExpectedDecorationDic(displayDiaryData)
         }
         
         // UserDefaultsにグラフ表示開始日付の設定が正しく保存されているか確認
@@ -287,11 +291,11 @@ final class TrainingActivityGraphViewTest: XCTestCase {
         let initialStartPeriod = Date.create(year: 2024, month: 5, day: 1)
         let initialPeriod = ActivityPeriod.month
         
-        let displayDiaryData = DiaryData.create(
+        let displayDiaryData = Diary.create(
             date: .create(year: 2024, month: 5, day: 1),
             goals: [.create(trainingType: .abs)]
         )
-        let notDisplayDiaryData = DiaryData.create(
+        let notDisplayDiaryData = Diary.create(
             date: .create(year: 2024, month: 5, day: 31),
             goals: [.create(trainingType: .abs)]
         )
@@ -307,8 +311,8 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                   withDependencies: {
             
             $0.diaryListFetchApi = .createCustomValue(createDiaryListFetchApiRealmMock(expectedFetchResult: [
-                displayDiaryData,
-                notDisplayDiaryData
+                .init(displayDiaryData),
+                .init(notDisplayDiaryData)
             ]))
             $0.defaultAppStorage = testUserDefaults
         })
@@ -333,7 +337,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                 selectedActivityPeriod,
                 []
             )
-            $0.calendar.decorationDic = self.createExpectedDecorationDic(displayDiaryData)
+            $0.calendar.decorationDic = try self.createExpectedDecorationDic(displayDiaryData)
         }
         
         // UserDefaultsにグラフ表示期間の設定が正しく保存されているか確認
@@ -362,11 +366,11 @@ final class TrainingActivityGraphViewTest: XCTestCase {
         let initialPeriod = ActivityPeriod.month
         let initialTrainingTypeList: [TrainingTypeData] = [.abs]
         
-        let displayDiaryData = DiaryData.create(
+        let displayDiaryData = Diary.create(
             date: .create(year: 2024, month: 5, day: 1),
             goals: [.create(trainingType: .abs), .create(trainingType: .benchPress)]
         )
-        let notDisplayDiaryData = DiaryData.create(
+        let notDisplayDiaryData = Diary.create(
             date: .create(year: 2024, month: 5, day: 31),
             goals: [.create(trainingType: .abs)]
         )
@@ -391,8 +395,8 @@ final class TrainingActivityGraphViewTest: XCTestCase {
             
             $0.diaryListFetchApi = .createCustomValue(createDiaryListFetchApiRealmMock(
                 expectedFetchResult: [
-                    displayDiaryData,
-                    notDisplayDiaryData
+                    .init(displayDiaryData),
+                    .init(notDisplayDiaryData)
                 ]
             ))
             $0.defaultAppStorage = testUserDefaults
@@ -418,7 +422,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                 initialPeriod,
                 selectedTrainingTypeList
             )
-            $0.calendar.decorationDic = self.createExpectedDecorationDic(displayDiaryData)
+            $0.calendar.decorationDic = try self.createExpectedDecorationDic(displayDiaryData)
         }
         
         // UserDefaultsにグラフ表示期間の設定が正しく保存されているか確認
@@ -551,10 +555,10 @@ private extension TrainingActivityGraphViewTest {
         return RealmAccessorMock(fetchEntity: expectedFetchResult)
     }
     
-    func createExpectedDecorationDic(_ expectedDiary: DiaryData) -> [DateComponents: ActivityResultDecoration] {
+    func createExpectedDecorationDic(_ expectedDiary: Diary) throws -> [DateComponents: ActivityResultDecoration] {
         
         let diaryDateComponents = Calendar.current.dateComponents([.year, .month, .day],
-                                                                  from: expectedDiary.date)
+                                                                  from: expectedDiary.createdAt)
         let resultDateComponents = DateComponents.createDay(
             year: diaryDateComponents.year!,
             month: diaryDateComponents.month!,
@@ -565,7 +569,7 @@ private extension TrainingActivityGraphViewTest {
             activities: [
                 .init(id: expectedDiary.id,
                       title: expectedDiary.title,
-                      isAchieved: expectedDiary.isAchieved)
+                      isAchieved: try XCTUnwrap(expectedDiary.isAchieved))
             ]
         )
         
@@ -574,7 +578,7 @@ private extension TrainingActivityGraphViewTest {
         ]
     }
     
-    func createExpectedActivityResults(_ expectedDiaries: [DiaryData],
+    func createExpectedActivityResults(_ expectedDiaries: [Diary],
                                        _ expectedStartPeriodDate: Date,
                                        _ expectedPeriod: ActivityPeriod,
                                        _ expectedTrainingFilter: [TrainingTypeData]) -> ActivityResults {
@@ -587,5 +591,3 @@ private extension TrainingActivityGraphViewTest {
         )
     }
 }
-
-

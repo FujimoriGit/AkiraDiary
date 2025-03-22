@@ -31,7 +31,7 @@ extension ActivityResultsTest.GetDecorationTest {
         arguments: zip(
             [
                 InputAsCreateActivityResults(
-                    [DiaryData].createDiaries(
+                    [Diary].createDiaries(
                         (Self.diaryIds[0], .create(year: 2025, month: 1, day: 1), true, .abs),
                         (Self.diaryIds[1], .create(year: 2025, month: 1, day: 7), false, .abs),
                         (Self.diaryIds[2], .create(year: 2025, month: 1, day: 8), true, .abs),
@@ -40,7 +40,7 @@ extension ActivityResultsTest.GetDecorationTest {
                     period: .week
                 ),
                 InputAsCreateActivityResults(
-                    [DiaryData].createDiaries(
+                    [Diary].createDiaries(
                         (Self.diaryIds[0], .create(year: 2025, month: 1, day: 1), false, .abs),
                         (Self.diaryIds[1], .create(year: 2025, month: 1, day: 31), true, .abs),
                         (Self.diaryIds[2], .create(year: 2025, month: 2, day: 1), true, .abs)
@@ -48,7 +48,7 @@ extension ActivityResultsTest.GetDecorationTest {
                     period: .month
                 ),
                 InputAsCreateActivityResults(
-                    [DiaryData].createDiaries(
+                    [Diary].createDiaries(
                         (Self.diaryIds[0], .create(year: 2025, month: 1, day: 1), false, .abs),
                         (Self.diaryIds[1], .create(year: 2025, month: 12, day: 31), true, .abs),
                         (Self.diaryIds[2], .create(year: 2026, month: 1, day: 1), true, .abs)
@@ -56,7 +56,7 @@ extension ActivityResultsTest.GetDecorationTest {
                     period: .year
                 ),
                 InputAsCreateActivityResults(
-                    [DiaryData].createDiaries(
+                    [Diary].createDiaries(
                         (Self.diaryIds[0], .create(year: 2025, month: 1, day: 1), true, .abs),
                         (Self.diaryIds[1], .create(year: 2025, month: 1, day: 1), false, .abs),
                         (Self.diaryIds[2], .create(year: 2025, month: 1, day: 7), true, .abs),
@@ -120,7 +120,7 @@ extension ActivityResultsTest.GetDecorationTest {
         arguments: zip(
             [
                 InputAsCreateActivityResults(
-                    [DiaryData].createDiaries(
+                    [Diary].createDiaries(
                         (Self.diaryIds[0], .create(year: 2025, month: 1, day: 1), false, .benchPress),
                         (Self.diaryIds[1], .create(year: 2025, month: 1, day: 1), true, .abs),
                         (Self.diaryIds[2], .create(year: 2025, month: 1, day: 2), false, .abs),
@@ -129,7 +129,7 @@ extension ActivityResultsTest.GetDecorationTest {
                     selectedTraining: [.abs]
                 ),
                 InputAsCreateActivityResults(
-                    [DiaryData].createDiaries(
+                    [Diary].createDiaries(
                         (Self.diaryIds[0], .create(year: 2025, month: 1, day: 1), false, .benchPress),
                         (Self.diaryIds[1], .create(year: 2025, month: 1, day: 1), true, .abs),
                         (Self.diaryIds[2], .create(year: 2025, month: 1, day: 2), false, .benchPress),
@@ -184,7 +184,7 @@ extension ActivityResultsTest.GetDecorationTest {
         
         let activityResults: ActivityResults
         
-        init(_ diaries: [DiaryData],
+        init(_ diaries: [Diary],
              startDate: Date = .create(year: 2025, month: 1, day: 1),
              period: ActivityPeriod = .week,
              selectedTraining: [TrainingTypeData] = [.abs]) {
@@ -210,22 +210,27 @@ extension ActivityResultsTest.GetDecorationTest {
 
 fileprivate extension ActivityResultOfDay {
     
-    static func create(_ diaries: [DiaryData]) -> ActivityResultOfDay {
+    static func create(_ diaries: [Diary]) -> ActivityResultOfDay {
         
         let calendar = Calendar.current
         let targetData = calendar.dateComponents([.year, .month, .day],
-                                                 from: diaries[0].date)
+                                                 from: diaries[0].createdAt)
         return ActivityResultOfDay(targetDate: targetData,
-                                   activities: diaries.map {
+                                   activities: diaries.compactMap {
             
-            return .init(id: $0.id, title: $0.title, isAchieved: $0.isAchieved)
+            guard let isAchieved = $0.isAchieved else {
+                
+                Issue.record()
+                return nil
+            }
+            return .init(id: $0.id, title: $0.title, isAchieved: isAchieved)
         })
     }
 }
 
-fileprivate extension Array where Element == DiaryData {
+fileprivate extension Array where Element == Diary {
     
-    static func createDiaries(_ params: (id: UUID, date: Date, isAchieved: Bool, trainingType: TrainingTypeData)...) -> [DiaryData] {
+    static func createDiaries(_ params: (id: UUID, date: Date, isAchieved: Bool, trainingType: TrainingTypeData)...) -> [Element] {
         
         return params.map {
             

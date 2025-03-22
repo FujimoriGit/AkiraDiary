@@ -29,4 +29,25 @@ extension DiaryData {
                      endTime: endTime
         )
     }
+    
+    init(_ diary: Diary) {
+        
+        let endTime: Date? = if case .finished(let info) = diary.status {
+            
+            info.endTime
+        }
+        else {
+            
+            nil
+        }
+        
+        self.init(id: diary.id,
+                  date: diary.createdAt,
+                  title: diary.title,
+                  mainText: diary.mainText,
+                  goals: diary.goals.map { .init($0) },
+                  tags: diary.tags.map { .init($0) },
+                  startTime: diary.createdAt,
+                  endTime: endTime)
+    }
 }

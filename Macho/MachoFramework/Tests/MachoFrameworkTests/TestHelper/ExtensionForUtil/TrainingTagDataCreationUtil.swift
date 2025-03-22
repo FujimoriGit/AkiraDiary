@@ -14,4 +14,9 @@ extension TrainingTagData {
     
     static let fine: Self = .init(id: UUID(), tagName: "元気")
     static let unfine: Self = .init(id: UUID(), tagName: "不調")
+    
+    init(_ tag: Tag) {
+        
+        self.init(id: tag.id, tagName: tag.tagName)
+    }
 }

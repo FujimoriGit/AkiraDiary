@@ -116,7 +116,7 @@ struct TrainingActivityGraphFeatureStateTest {
         
         // 対象メソッドの実行
         
-        state.updateActivityResults(inputDiaries)
+        state.updateActivityResults(inputDiaries.map { .init($0) })
         
         // 検証
         
@@ -134,7 +134,7 @@ struct TrainingActivityGraphFeatureStateTest {
             trainingTypeFilter: .init(selectedIdList: [])
         )
         expectedState.calendar.decorationDic = [
-            .createDay(year: 2025, month: 1, day: 1): ActivityResultDecoration(activityResult: .init(dayOfdiaries: createDiaries((diaryId_1, .create(year: 2025, month: 1, day: 1), true))))
+            .createDay(year: 2025, month: 1, day: 1): ActivityResultDecoration(activityResult: .init(dayOfDiaries: createDiaries((diaryId_1, .create(year: 2025, month: 1, day: 1), true))))
          ]
         #expect(state == expectedState)
     }
@@ -163,7 +163,7 @@ extension TrainingActivityGraphFeatureStateTest {
 
 private extension TrainingActivityGraphFeatureStateTest {
     
-    func createDiaries(_ params: (id: UUID, date: Date, isAchieved: Bool)...) -> [DiaryData] {
+    func createDiaries(_ params: (id: UUID, date: Date, isAchieved: Bool)...) -> [Diary] {
         
         return params.map {
             

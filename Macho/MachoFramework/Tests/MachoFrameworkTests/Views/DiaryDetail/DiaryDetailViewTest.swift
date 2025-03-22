@@ -38,7 +38,10 @@ final class DiaryDetailViewTest: XCTestCase {
         await testStore.send(.onAppear)
         
         // 監視対象と対象外の日記更新
-        diaryPublisher.send([Self.updatedSampleDiaryEntity1, Self.sampleDiaryEntity2])
+        diaryPublisher.send([
+            .init(Self.updatedSampleDiaryEntity1),
+            .init(Self.sampleDiaryEntity2)
+        ])
         
         await testStore.receive(\.didReceivedDiary) {
             
@@ -96,7 +99,10 @@ final class DiaryDetailViewTest: XCTestCase {
         await testStore.send(.onAppear)
         
         // 監視対象と異なる日記が更新する
-        diaryPublisher.send([Self.sampleDiaryEntity1, Self.sampleDiaryEntity2])
+        diaryPublisher.send([
+            .init(Self.sampleDiaryEntity1),
+            .init(Self.sampleDiaryEntity2)
+        ])
         
         await testStore.receive(\.didReceivedDiary)
         
@@ -122,47 +128,27 @@ private extension DiaryDetailViewTest {
 
 private extension DiaryDetailViewTest {
     
-    static let sampleDiaryGoal1 = TrainingContentData(id: UUID(),
-                                                      trainingType: TrainingTypeEntity(id: UUID(), name: "腹筋"),
-                                                      goalNumberOfSets: 3,
-                                                      goalSetCount: 3,
-                                                      actualNumberOfSets: 3,
-                                                      actualSetCount: 3)
-    static let sampleDiaryGoal2 = TrainingContentData(id: UUID(),
-                                                      trainingType: TrainingTypeEntity(id: UUID(), name: "ベンチプレス"),
-                                                      goalNumberOfSets: 2,
-                                                      goalSetCount: 1,
-                                                      actualNumberOfSets: 1,
-                                                      actualSetCount: 1)
-    
-    static let sampleDiaryTag1 = TrainingTagEntity(id: UUID(), tagName: "tag1")
-    static let sampleDiaryTag2 = TrainingTagEntity(id: UUID(), tagName: "tag2")
+    static let sampleDiaryGoal1 = Goal.create(id: UUID(),
+                                              trainingType: .abs,
+                                              isAchieved: true)
+    static let sampleDiaryGoal2 = Goal.create(id: UUID(),
+                                              trainingType: .benchPress,
+                                              isAchieved: false)
     
     static let sampleDiaryEntity1Id = UUID()
     static let sampleDiaryEntity2Id = UUID()
     
-    static let sampleDiaryEntity1 = DiaryEntity(id: sampleDiaryEntity1Id,
-                                                date: Date(),
-                                                title: "sample1",
-                                                mainText: "sample1 message",
-                                                goals: [sampleDiaryGoal1],
-                                                tags: [sampleDiaryTag1],
-                                                startTime: Date(),
-                                                endTime: nil)
-    static let updatedSampleDiaryEntity1 = DiaryEntity(id: sampleDiaryEntity1Id,
-                                                       date: Date(),
-                                                       title: "updated_sample1",
-                                                       mainText: "updated_sample1 message",
-                                                       goals: [sampleDiaryGoal1],
-                                                       tags: [sampleDiaryTag1],
-                                                       startTime: Date(),
-                                                       endTime: nil)
-    static let sampleDiaryEntity2 = DiaryEntity(id: sampleDiaryEntity2Id,
-                                                date: Date(),
-                                                title: "sample2",
-                                                mainText: "sample2 message",
-                                                goals: [sampleDiaryGoal2],
-                                                tags: [sampleDiaryTag2],
-                                                startTime: Date(),
-                                                endTime: nil)
+    static let sampleDiaryEntity1 = Diary.create(id: sampleDiaryEntity1Id,
+                                                 goals: [sampleDiaryGoal1],
+                                                 tags: [.fine])
+
+    static let updatedSampleDiaryEntity1 = Diary.create(id: sampleDiaryEntity1Id,
+                                                        title: "updated_sample1",
+                                                        mainText: "updated_sample1 message",
+                                                        goals: [sampleDiaryGoal1],
+                                                        tags: [.fine])
+
+    static let sampleDiaryEntity2 = Diary.create(id: sampleDiaryEntity1Id,
+                                                 goals: [sampleDiaryGoal2],
+                                                 tags: [.unfine])
 }

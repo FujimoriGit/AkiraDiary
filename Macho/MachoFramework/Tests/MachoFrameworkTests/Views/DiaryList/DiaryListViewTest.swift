@@ -190,7 +190,7 @@ final class DiaryListViewTests: XCTestCase {
         await store.send(.diaries(.element(id: diariesState[0].id, action: .tappedDiaryItem))) {
             
             // 編集画面をナビゲーションスタックに追加
-            $0.path.append(.detailScreen(.init(diary: diariesState.first!.entity)))
+            $0.path.append(.detailScreen(.init(diary: diariesState.first!.diary)))
         }
     }
     
@@ -303,7 +303,7 @@ final class DiaryListViewTests: XCTestCase {
         await store.send(.alert(.presented(.confirmEditItem(targetId: diariesState[0].id)))) {
             
             $0.alert = nil
-            $0.path.append(.editScreen(.init(editTarget: diariesState[0].entity)))
+            $0.path.append(.editScreen(.init(editTarget: diariesState[0].diary)))
         }
     }
     
@@ -419,6 +419,6 @@ private extension DiaryListViewTests {
     
     func getDiaryMockRealm(_ expectedReceiveDiary: [DiaryListItemFeature.State]) -> RealmAccessorMock<DiaryEntity> {
         
-        return RealmAccessorMock(fetchEntity: expectedReceiveDiary.map(\.entity))
+        return RealmAccessorMock(fetchEntity: expectedReceiveDiary.map { .init($0.diary) })
     }
 }
