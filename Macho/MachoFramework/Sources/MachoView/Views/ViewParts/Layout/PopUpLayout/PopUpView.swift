@@ -63,7 +63,13 @@ private extension PopUpView {
         SelectTrainingTypeContentView,
         SelectTrainingTypeContentFeature
     >(
-        store: Store(initialState: PopUpFeature.State(childState: .init(selectingTrainingTypeList: [TrainingTypeData]())),
-                     reducer: { PopUpFeature() })
+        store: Store(
+            initialState: PopUpFeature.State(
+                childState: .init(
+                    selectingTrainingTypeList: [TrainingTypeData]()
+                )
+            ),
+            reducer: { PopUpFeature() }
+        )
     )
 }

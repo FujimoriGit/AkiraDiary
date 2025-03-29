@@ -35,9 +35,12 @@ extension ActivityResultOfDay {
         
         targetDate = Calendar.current.dateComponents([.year, .month, .day],
                                                      from: dayOfdiaries[0].date)
-        activities = dayOfdiaries.map { .init(id: $0.id,
-                                              title: $0.title,
-                                              isAchieved: $0.isAchieved) }
+        activities = dayOfdiaries.map {
+            
+            .init(id: $0.id,
+                  title: $0.title,
+                  isAchieved: $0.isAchieved)
+        }
     }
 }
 

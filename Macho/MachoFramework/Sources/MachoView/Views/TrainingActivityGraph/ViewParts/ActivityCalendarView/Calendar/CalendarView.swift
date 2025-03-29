@@ -50,7 +50,7 @@ struct CalendarView: UIViewRepresentable {
     
     func makeCoordinator() -> CalendarViewDecorator {
         
-        return CalendarViewDecorator (componentsDecorationDic: [:])
+        return CalendarViewDecorator(componentsDecorationDic: [:])
     }
     
     func updateUIView(_ uiView: UICalendarView, context: Context) {

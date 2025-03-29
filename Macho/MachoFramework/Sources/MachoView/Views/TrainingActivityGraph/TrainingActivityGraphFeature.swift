@@ -5,10 +5,10 @@
 //  Created by 佐藤汰一 on 2024/11/24.
 //
 
+import Combine
 import ComposableArchitecture
 import Foundation
 import SwiftUI
-import Combine
 
 @Reducer
 struct TrainingActivityGraphFeature {
@@ -126,13 +126,13 @@ struct TrainingActivityGraphFeature {
     
     // MARK: - reduce definition
     
-    // swiftlint:disable:next closure_body_length
     var body: some ReducerOf<Self> {
         
         Scope(state: \.calendar, action: \.calendar) {
             
             ActivityCalendarFeature()
         }
+        // swiftlint:disable:next closure_body_length
         Reduce { state, action in
             
             logger.info("action: \(action)")

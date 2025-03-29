@@ -28,7 +28,10 @@ final class CalendarViewDecorator: NSObject, UICalendarViewDelegate {
     func calendarView(_ calendarView: UICalendarView,
                       decorationFor dateComponents: DateComponents) -> UICalendarView.Decoration? {
         
-        guard let targetKey = componentsDecorationDic.keys.first(where: { dateComponents.isMatchDate($0) }) else { return nil }
+        guard let targetKey = componentsDecorationDic.keys.first(where: {
+            
+            dateComponents.isMatchDate($0)
+        }) else { return nil }
         return componentsDecorationDic[targetKey]?.getDecoration()
     }
 }

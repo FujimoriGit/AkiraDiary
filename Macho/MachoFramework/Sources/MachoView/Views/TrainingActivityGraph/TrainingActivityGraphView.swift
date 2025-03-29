@@ -224,8 +224,8 @@ private extension TrainingActivityGraphView {
 
 #Preview {
     
-    @Previewable @Environment(\.calendar)
-    var calendar
+    @Environment(\.calendar)
+    @Previewable  var calendar
     
     let absId = UUID()
     let benchPressId = UUID()
