@@ -519,5 +519,3 @@ private extension TrainingActivityGraphViewTest {
         )
     }
 }
-
-

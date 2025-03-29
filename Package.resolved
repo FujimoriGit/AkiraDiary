@@ -1,6 +1,24 @@
 {
-  "originHash" : "2fb56891fb010ad21a6ef309fde70629a0052bf0044e00aab493304d24a54a38",
+  "originHash" : "81261e2228de252d2e5860848e0d814c13ad6144e6bd8b91263d67785cd94dcb",
   "pins" : [
+    {
+      "identity" : "danger-swift-coverage",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/f-meloni/danger-swift-coverage",
+      "state" : {
+        "revision" : "6a21a6e595e2b13443428942ce128b3ba6b827ee",
+        "version" : "1.2.1"
+      }
+    },
+    {
+      "identity" : "danger-swift-xcodesummary",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/f-meloni/danger-swift-xcodesummary",
+      "state" : {
+        "revision" : "289d5136cead3d4b1eae509acc3f0b044252fc6c",
+        "version" : "1.2.1"
+      }
+    },
     {
       "identity" : "logger",
       "kind" : "remoteSourceControl",
