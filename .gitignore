@@ -27,7 +27,11 @@ DerivedData/
 timeline.xctimeline
 playground.xcworkspace
 
-.build/
+Macho/*.build/
+.build/checkouts
 
 iOSInjectionProject/
 xcschememanagement.plist
+
+# FirebaseのAPIキーが格納されている秘匿情報なので、リポジトリには公開しない
+GoogleService-Info.plist

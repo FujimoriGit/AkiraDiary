@@ -28,7 +28,7 @@ extension TrainingTypeClient: DependencyKey {
         
         let executor = TrainingTypeEntity.executor
         executor.startObservation(RealmAccessor())
-        return executor.getPublisher().eraseToAnyPublisher()
+        return executor.getPublisher()
     }
     
     static var previewValue = TrainingTypeClient { _ in
@@ -116,9 +116,9 @@ private extension TrainingTypeClient {
 }
 
 extension DependencyValues {
-
+    
     var trainingTypeApi: TrainingTypeClient {
-
+        
         get { self[TrainingTypeClient.self] }
         set { self[TrainingTypeClient.self] = newValue }
     }
