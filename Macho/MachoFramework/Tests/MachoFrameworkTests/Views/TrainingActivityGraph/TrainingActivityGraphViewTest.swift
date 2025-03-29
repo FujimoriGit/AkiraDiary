@@ -198,7 +198,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                                              hour: 9),
                                                     endTime: getSelectDate(year: 2024,
                                                                            month: 6,
-                                                                           day: 5,
+                                                                           day: 4,
                                                                            hour: 10))
     
     private static let sampleDiaryData7 = DiaryData(id: UUID(),

@@ -17,8 +17,8 @@ extension Date {
     ///   - locale: 指定のロケール(デフォルトは日本)
     /// - Returns: 指定のフォーマットに文字列として返す
     func formatted(_ format: Date.MachoFormat,
-                  timeZone: TimeZone = .current,
-                  locale: Locale = Locale(identifier: "ja-JP")) -> String {
+                   timeZone: TimeZone = .current,
+                   locale: Locale = Locale(identifier: "ja-JP")) -> String {
         
         return formatted(format.getFormat(timeZone: timeZone, locale: locale))
     }
