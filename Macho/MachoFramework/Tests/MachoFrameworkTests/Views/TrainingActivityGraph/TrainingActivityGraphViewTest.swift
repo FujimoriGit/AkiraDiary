@@ -73,7 +73,8 @@ final class TrainingActivityGraphViewTest: XCTestCase {
         goalNumberOfSets: 3,
         goalSetCount: 3,
         actualNumberOfSets: 1,
-        actualSetCount: 1)
+        actualSetCount: 1
+    )
     
     private static let absTrainingContentOfNewest = TrainingContentData(id: UUID(),
                                                                         trainingType: absTraining,
