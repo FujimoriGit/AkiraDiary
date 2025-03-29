@@ -13,3 +13,4 @@
 - [アーキテクチャ](doc/Architecture/README.md)
 - [設計書](doc/README.md)
 - [ソースファイルのヘッダールール](wiki/rules/codeHeaderTemplete.md)
+- [E2E テスト](wiki/tech/E2E/README.md)

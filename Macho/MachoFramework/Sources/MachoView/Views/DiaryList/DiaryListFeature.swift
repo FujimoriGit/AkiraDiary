@@ -170,7 +170,7 @@ private extension DiaryListFeature {
                 logger.info("confirmEditItem(id=\(id)).")
                 state.path.append(.editScreen(AddContactFeature.State(contact: .init(id: uuid.callAsFunction(),
                                                                                      name: ""))))
-                return .none
+                return cancelObserver()
                 
             case .alert(.presented(.confirmDeleteItem(deleteItemId: let id))):
                 return deleteDiaryListItem(id)
@@ -199,7 +199,7 @@ private extension DiaryListFeature {
                 
             case .onDisappearView:
                 logger.info("onDisappearView")
-                return .cancel(id: FilterObserveCancellable())
+                return cancelObserver()
                 
                 // 日記項目のComponentのDelegateAction
             case .diaries(.element(let id, let delegateAction)):
@@ -233,13 +233,13 @@ private extension DiaryListFeature {
             case .tappedGraphButton:
                 logger.info("tappedGraphButton")
                 state.path.append(.graphScreen(.init()))
-                return .none
+                return cancelObserver()
                 
             case .tappedCreateNewDiaryButton:
                 logger.info("tappedCreateNewDiaryButton")
                 // TODO: 日記作成画面表示を実行
                 state.path.append(.createScreen(DiaryCreationFeature.State()))
-                return .none
+                return cancelObserver()
                 
             case .receiveLoadDiaryItems(let items):
                 logger.info("receiveLoadDiaryItems(items: \(items))")
@@ -417,7 +417,7 @@ private extension DiaryListFeature {
                                filters: [DiaryListFilterItem]) -> IdentifiedArrayOf<DiaryListItemFeature.State> {
         
         // フィルタリング処理
-        var filteredList = diaryList.filter { item in
+        let filteredList = diaryList.filter { item in
             
             return filters.isEmpty ? true : filters.contains {
                 $0.isMatchFilter(isAchieved: item.isWin,
@@ -480,5 +480,10 @@ private extension DiaryListFeature {
         }
         
         return updateTargetState
+    }
+    
+    func cancelObserver() -> Effect<Action> {
+        
+        return .cancel(id: FilterObserveCancellable())
     }
 }
