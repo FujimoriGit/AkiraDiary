@@ -89,7 +89,6 @@ final class TrainingActivityGraphViewTest: XCTestCase {
         actualNumberOfSets: 1,
         actualSetCount: 1)
     
-    
     private static let sampleDiaryData = DiaryData(id: UUID(),
                                                    date: getSelectDate(year: 2024,
                                                                        month: 6,
@@ -199,7 +198,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                                                                              hour: 9),
                                                     endTime: getSelectDate(year: 2024,
                                                                            month: 6,
-                                                                           day: 4,
+                                                                           day: 5,
                                                                            hour: 10))
     
     private static let sampleDiaryData7 = DiaryData(id: UUID(),
