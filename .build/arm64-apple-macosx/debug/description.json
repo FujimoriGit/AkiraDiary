@@ -991,155 +991,6 @@
       "tempsPath" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerSwiftCoverage.build",
       "wholeModuleOptimization" : false
     },
-    "C.DangerXCodeSummary-arm64-apple-macosx15.0-debug.module" : {
-      "executable" : "/Applications/Xcode16.2.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
-      "fileList" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/sources",
-      "importPath" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Modules",
-      "inputs" : [
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/CompilerMessageParser.swift"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/FilePathParser.swift"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/MissingFileErrorParser.swift"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/Result.swift"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/SymbolsErrorsParser.swift"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/TestFailuresParser.swift"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/XCodeSummary.swift"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/swift-version-7ECE0B649383FE20.txt"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Modules/Danger.swiftmodule"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/sources"
-        }
-      ],
-      "isLibrary" : true,
-      "moduleName" : "DangerXCodeSummary",
-      "moduleOutputPath" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Modules/DangerXCodeSummary.swiftmodule",
-      "objects" : [
-        "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/CompilerMessageParser.swift.o",
-        "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/FilePathParser.swift.o",
-        "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/MissingFileErrorParser.swift.o",
-        "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/Result.swift.o",
-        "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/SymbolsErrorsParser.swift.o",
-        "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/TestFailuresParser.swift.o",
-        "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/XCodeSummary.swift.o"
-      ],
-      "otherArguments" : [
-        "-target",
-        "arm64-apple-macosx10.13",
-        "-enable-batch-mode",
-        "-index-store-path",
-        "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/index/store",
-        "-Onone",
-        "-enable-testing",
-        "-j8",
-        "-DSWIFT_PACKAGE",
-        "-DDEBUG",
-        "-module-cache-path",
-        "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/ModuleCache",
-        "-parseable-output",
-        "-parse-as-library",
-        "-emit-objc-header",
-        "-emit-objc-header-path",
-        "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/DangerXCodeSummary-Swift.h",
-        "-swift-version",
-        "5",
-        "-sdk",
-        "/Applications/Xcode16.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk",
-        "-F",
-        "/Applications/Xcode16.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
-        "-I",
-        "/Applications/Xcode16.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
-        "-L",
-        "/Applications/Xcode16.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
-        "-g",
-        "-Xcc",
-        "-isysroot",
-        "-Xcc",
-        "/Applications/Xcode16.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk",
-        "-Xcc",
-        "-F",
-        "-Xcc",
-        "/Applications/Xcode16.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
-        "-Xcc",
-        "-fPIC",
-        "-Xcc",
-        "-g",
-        "-suppress-warnings"
-      ],
-      "outputFileMapPath" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/output-file-map.json",
-      "outputs" : [
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/CompilerMessageParser.swift.o"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/FilePathParser.swift.o"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/MissingFileErrorParser.swift.o"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/Result.swift.o"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/SymbolsErrorsParser.swift.o"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/TestFailuresParser.swift.o"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/XCodeSummary.swift.o"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Modules/DangerXCodeSummary.swiftmodule"
-        }
-      ],
-      "prepareForIndexing" : false,
-      "sources" : [
-        "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/CompilerMessageParser.swift",
-        "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/FilePathParser.swift",
-        "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/MissingFileErrorParser.swift",
-        "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/Result.swift",
-        "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/SymbolsErrorsParser.swift",
-        "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/TestFailuresParser.swift",
-        "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/XCodeSummary.swift"
-      ],
-      "tempsPath" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build",
-      "wholeModuleOptimization" : false
-    },
     "C.Dangerfile-arm64-apple-macosx15.0-debug.module" : {
       "executable" : "/Applications/Xcode16.2.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
       "fileList" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Dangerfile.build/sources",
@@ -1156,10 +1007,6 @@
         {
           "kind" : "file",
           "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Modules/Danger.swiftmodule"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Modules/DangerXCodeSummary.swiftmodule"
         },
         {
           "kind" : "file",
@@ -2606,65 +2453,6 @@
       "-driver-use-frontend-path",
       "/Applications/Xcode16.2.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
     ],
-    "DangerXCodeSummary" : [
-      "/Applications/Xcode16.2.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
-      "-module-name",
-      "DangerXCodeSummary",
-      "-incremental",
-      "-c",
-      "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/CompilerMessageParser.swift",
-      "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/FilePathParser.swift",
-      "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/MissingFileErrorParser.swift",
-      "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/Result.swift",
-      "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/SymbolsErrorsParser.swift",
-      "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/TestFailuresParser.swift",
-      "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/XCodeSummary.swift",
-      "-I",
-      "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Modules",
-      "-target",
-      "arm64-apple-macosx10.13",
-      "-enable-batch-mode",
-      "-index-store-path",
-      "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/index/store",
-      "-Onone",
-      "-enable-testing",
-      "-j8",
-      "-DSWIFT_PACKAGE",
-      "-DDEBUG",
-      "-module-cache-path",
-      "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/ModuleCache",
-      "-parseable-output",
-      "-parse-as-library",
-      "-emit-objc-header",
-      "-emit-objc-header-path",
-      "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/DangerXCodeSummary-Swift.h",
-      "-swift-version",
-      "5",
-      "-sdk",
-      "/Applications/Xcode16.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk",
-      "-F",
-      "/Applications/Xcode16.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
-      "-I",
-      "/Applications/Xcode16.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
-      "-L",
-      "/Applications/Xcode16.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
-      "-g",
-      "-Xcc",
-      "-isysroot",
-      "-Xcc",
-      "/Applications/Xcode16.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk",
-      "-Xcc",
-      "-F",
-      "-Xcc",
-      "/Applications/Xcode16.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
-      "-Xcc",
-      "-fPIC",
-      "-Xcc",
-      "-g",
-      "-suppress-warnings",
-      "-driver-use-frontend-path",
-      "/Applications/Xcode16.2.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
-    ],
     "Dangerfile" : [
       "/Applications/Xcode16.2.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
       "-module-name",
@@ -3124,16 +2912,8 @@
       "RequestKit",
       "DangerShellExecutor"
     ],
-    "DangerXCodeSummary" : [
-      "Danger",
-      "Logger",
-      "OctoKit",
-      "RequestKit",
-      "DangerShellExecutor"
-    ],
     "Dangerfile" : [
       "DangerSwiftCoverage",
-      "DangerXCodeSummary",
       "Danger",
       "Logger",
       "OctoKit",
@@ -3449,34 +3229,6 @@
         },
         {
           "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/CompilerMessageParser.swift.o"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/FilePathParser.swift.o"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/MissingFileErrorParser.swift.o"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/Result.swift.o"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/SymbolsErrorsParser.swift.o"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/TestFailuresParser.swift.o"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/XCodeSummary.swift.o"
-        },
-        {
-          "kind" : "file",
           "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Dangerfile.build/Dangerfile.swift.o"
         },
         {
@@ -3727,44 +3479,6 @@
         }
       ],
       "outputFilePath" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerSwiftCoverage.build/sources"
-    },
-    "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/sources" : {
-      "alwaysOutOfDate" : false,
-      "inputs" : [
-        {
-          "kind" : "virtual",
-          "name" : "<sources-file-list>"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/CompilerMessageParser.swift"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/FilePathParser.swift"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/MissingFileErrorParser.swift"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/Result.swift"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/SymbolsErrorsParser.swift"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/TestFailuresParser.swift"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-xcodesummary/Sources/DangerXCodeSummary/XCodeSummary.swift"
-        }
-      ],
-      "outputFilePath" : "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerXCodeSummary.build/sources"
     },
     "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Dangerfile.build/sources" : {
       "alwaysOutOfDate" : false,
