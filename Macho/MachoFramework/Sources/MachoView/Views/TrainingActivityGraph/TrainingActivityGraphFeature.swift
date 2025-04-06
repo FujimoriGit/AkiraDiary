@@ -60,7 +60,7 @@ struct TrainingActivityGraphFeature {
         // MARK: Child Feature
         
         var calendar = ActivityCalendarFeature.State(displayInterval: .init(start: .now, end: .now),
-                                                     decorationDic: [:])
+                                                     decorationSources: [])
     }
     
     // MARK: - action definition

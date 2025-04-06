@@ -112,7 +112,7 @@ extension ActivityResultsTest.GetDecorationTest {
         
         let result = sut.buildCalendarDecorator()
         
-        #expect(result == createExpectedDecorationDic(expected))
+        #expect(result == createExpectedDecorationSources(expected))
     }
     
     @Test(
@@ -174,7 +174,7 @@ extension ActivityResultsTest.GetDecorationTest {
         
         let result = sut.buildCalendarDecorator()
         
-        #expect(result == createExpectedDecorationDic(expected))
+        #expect(result == createExpectedDecorationSources(expected))
     }
 }
 
@@ -196,12 +196,11 @@ extension ActivityResultsTest.GetDecorationTest {
         }
     }
     
-    func createExpectedDecorationDic(_ resultOfDayList: [ActivityResultOfDay]) -> [DateComponents: ActivityResultDecoration] {
+    func createExpectedDecorationSources(_ resultOfDayList: [ActivityResultOfDay]) -> [ActivityResultDecorationSource] {
         
-        return resultOfDayList.reduce(into: [:]) {
+        return resultOfDayList.map {
             
-            $0.updateValue(.init(isAchievedOfDay: $1.isAchieved),
-                           forKey: $1.targetDate)
+            return .init(isAchievedOfDay: $0.isAchieved, targetDay: $0.targetDate)
         }
     }
 }

@@ -22,23 +22,23 @@ struct CalendarView: UIViewRepresentable {
     
     private let initialDate: DateComponents
     private let interval: DateInterval
-    private let decorationDic: [DateComponents: ActivityResultDecoration]
+    private let decorationSources: [ActivityResultDecorationSource]
     private let onSelectDay: (DateComponents?) -> Void
     
     /// カレンダーコンポーネント
     /// - Parameters:
     ///   - initialDate: 最初に表示する日付
     ///   - interval: 表示する期間
-    ///   - decorator: カレンダーの装飾
+    ///   - decorationSources: カレンダーの装飾
     ///   - onSelectDay: 日付タップ時のハンドラ
     init(initialDate: DateComponents,
          interval: DateInterval,
-         decorationDic: [DateComponents: ActivityResultDecoration] = [:],
+         decorationSources: [ActivityResultDecorationSource] = [],
          onSelectDay: @escaping (DateComponents?) -> Void = { _ in }) {
         
         self.initialDate = initialDate
         self.interval = interval
-        self.decorationDic = decorationDic
+        self.decorationSources = decorationSources
         self.onSelectDay = onSelectDay
     }
     
@@ -50,7 +50,7 @@ struct CalendarView: UIViewRepresentable {
     
     func makeCoordinator() -> CalendarViewDecorator {
         
-        return CalendarViewDecorator(componentsDecorationDic: [:])
+        return CalendarViewDecorator([])
     }
     
     func updateUIView(_ uiView: UICalendarView, context: Context) {
@@ -78,9 +78,9 @@ struct CalendarView: UIViewRepresentable {
         // update decorator
         
         let decorator = context.coordinator
-        decorator.componentsDecorationDic = decorationDic
+        decorator.componentsDecorationSources = decorationSources
         uiView.delegate = decorator
-        uiView.reloadDecorations(forDateComponents: decorationDic.keys.map(\.self),
+        uiView.reloadDecorations(forDateComponents: decorationSources.map(\.targetDay),
                                  animated: true)
     }
 }

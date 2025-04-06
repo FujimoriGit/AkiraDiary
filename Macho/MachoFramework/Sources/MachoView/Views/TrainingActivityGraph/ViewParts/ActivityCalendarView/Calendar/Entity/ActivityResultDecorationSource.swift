@@ -1,15 +1,16 @@
 //
 //  MachoFramework
 //
-//  ActivityResultDecoration.swift
+//  ActivityResultDecorationSource.swift
 //
 //  Created by stotic-dev on 2025/01/13
 //  Copyright © Macho All rights reserved.
 //
 
-import UIKit
+import Foundation
 
-struct ActivityResultDecoration: Equatable {
+struct ActivityResultDecorationSource: Equatable {
     
     let isAchievedOfDay: Bool
+    let targetDay: DateComponents
 }

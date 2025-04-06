@@ -35,7 +35,7 @@ extension TrainingActivityGraphFeature.State {
         activityResultList = .init(diaries,
                                    periodFilter: periodFilter,
                                    trainingTypeFilter: trainingTypeFilter)
-        calendar.decorationDic = activityResultList.buildCalendarDecorator()
+        calendar.decorationSources = activityResultList.buildCalendarDecorator()
     }
 }
 

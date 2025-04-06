@@ -30,7 +30,7 @@ struct ActivityCalendarView: View {
     var body: some View {
         CalendarView(initialDate: store.initialDisplayDate,
                      interval: store.displayInterval,
-                     decorationDic: store.decorationDic) {
+                     decorationSources: store.decorationSources) {
             store.send(.delegate(.selectedDay($0)))
         }
                      .frame(maxWidth: .infinity,
@@ -85,7 +85,7 @@ struct ActivityCalendarView: View {
     
     ActivityCalendarView(store: Store(initialState: .init(
         displayInterval: interval,
-        decorationDic: activityResults.buildCalendarDecorator()
+        decorationSources: activityResults.buildCalendarDecorator()
     )) {
         ActivityCalendarFeature()
     })

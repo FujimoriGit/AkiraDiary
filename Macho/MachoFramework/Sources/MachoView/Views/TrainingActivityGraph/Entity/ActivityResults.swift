@@ -44,11 +44,11 @@ struct ActivityResults: Equatable {
     }
     
     /// カレンダーの各日のコンポーネントにデコレーションするクラスを生成する
-    func buildCalendarDecorator() -> [DateComponents: ActivityResultDecoration] {
+    func buildCalendarDecorator() -> [ActivityResultDecorationSource] {
         
-        return resultList.reduce(into: [:]) {
+        return resultList.map {
             
-            $0.updateValue($1.calendarDecoration, forKey: $1.targetDate)
+            return .init(isAchievedOfDay: $0.isAchieved, targetDay: $0.targetDate)
         }
     }
     
