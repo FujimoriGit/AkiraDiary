@@ -20,7 +20,10 @@ struct ActivityResultOfDay: Equatable {
         return !activities.contains { !$0.isAchieved }
     }
     
-    var calendarDecoration: ActivityResultDecoration { ActivityResultDecoration(activityResult: self) }
+    var calendarDecoration: ActivityResultDecoration {
+        
+        ActivityResultDecoration(isAchievedOfDay: isAchieved)
+    }
 }
 
 extension ActivityResultOfDay {

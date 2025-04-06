@@ -134,7 +134,7 @@ struct TrainingActivityGraphFeatureStateTest {
             trainingTypeFilter: .init(selectedIdList: [])
         )
         expectedState.calendar.decorationDic = [
-            .createDay(year: 2025, month: 1, day: 1): ActivityResultDecoration(activityResult: .init(dayOfdiaries: createDiaries((diaryId_1, .create(year: 2025, month: 1, day: 1), true))))
+            .createDay(year: 2025, month: 1, day: 1): .init(isAchievedOfDay: true)
          ]
         #expect(state == expectedState)
     }

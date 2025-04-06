@@ -31,7 +31,20 @@ final class CalendarViewDecorator: NSObject, UICalendarViewDelegate {
         guard let targetKey = componentsDecorationDic.keys.first(where: {
             
             dateComponents.isMatchDate($0)
-        }) else { return nil }
-        return componentsDecorationDic[targetKey]?.getDecoration()
+        }),
+              let decorationInfo = componentsDecorationDic[targetKey] else { return nil }
+        return getDecoration(decorationInfo)
+    }
+}
+
+private extension CalendarViewDecorator {
+    
+    func getDecoration(_ decorationInfo: ActivityResultDecoration) -> UICalendarView.Decoration {
+        
+        let systemImageName = decorationInfo.isAchievedOfDay ? "checkmark" : "xmark"
+        let imageColor = decorationInfo.isAchievedOfDay ?
+        UIColor(asset: CustomColor.winColor) :
+        UIColor(asset: CustomColor.loseColor)
+        return .image(UIImage(systemName: systemImageName), color: imageColor)
     }
 }

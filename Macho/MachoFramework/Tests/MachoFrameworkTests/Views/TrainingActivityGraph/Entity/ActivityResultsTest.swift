@@ -200,7 +200,7 @@ extension ActivityResultsTest.GetDecorationTest {
         
         return resultOfDayList.reduce(into: [:]) {
             
-            $0.updateValue(.init(activityResult: $1),
+            $0.updateValue(.init(isAchievedOfDay: $1.isAchieved),
                            forKey: $1.targetDate)
         }
     }

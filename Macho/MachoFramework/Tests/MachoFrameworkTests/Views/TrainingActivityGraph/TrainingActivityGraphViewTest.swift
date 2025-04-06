@@ -502,7 +502,7 @@ private extension TrainingActivityGraphViewTest {
         )
         
         return [
-            resultDateComponents: .init(activityResult: decorationResultOfDay)
+            resultDateComponents: .init(isAchievedOfDay: decorationResultOfDay.isAchieved)
         ]
     }
     
