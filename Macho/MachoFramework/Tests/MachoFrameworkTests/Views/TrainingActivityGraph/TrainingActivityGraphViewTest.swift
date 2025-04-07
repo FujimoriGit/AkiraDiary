@@ -74,7 +74,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                 initialPeriod,
                 initialSelectedTrainingTypeList
             )
-            $0.calendar.decorationDic = self.createExpectedDecorationDic(expectedFetchDiaryData1)
+            $0.calendar.decorationSources = self.createExpectedDecorationSources(expectedFetchDiaryData1)
         }
         
         // 後始末
@@ -272,7 +272,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                 initialPeriod,
                 []
             )
-            $0.calendar.decorationDic = self.createExpectedDecorationDic(displayDiaryData)
+            $0.calendar.decorationSources = self.createExpectedDecorationSources(displayDiaryData)
         }
         
         // UserDefaultsにグラフ表示開始日付の設定が正しく保存されているか確認
@@ -333,7 +333,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                 selectedActivityPeriod,
                 []
             )
-            $0.calendar.decorationDic = self.createExpectedDecorationDic(displayDiaryData)
+            $0.calendar.decorationSources = self.createExpectedDecorationSources(displayDiaryData)
         }
         
         // UserDefaultsにグラフ表示期間の設定が正しく保存されているか確認
@@ -418,7 +418,7 @@ final class TrainingActivityGraphViewTest: XCTestCase {
                 initialPeriod,
                 selectedTrainingTypeList
             )
-            $0.calendar.decorationDic = self.createExpectedDecorationDic(displayDiaryData)
+            $0.calendar.decorationSources = self.createExpectedDecorationSources(displayDiaryData)
         }
         
         // UserDefaultsにグラフ表示期間の設定が正しく保存されているか確認
@@ -551,7 +551,7 @@ private extension TrainingActivityGraphViewTest {
         return RealmAccessorMock(fetchEntity: expectedFetchResult)
     }
     
-    func createExpectedDecorationDic(_ expectedDiary: DiaryData) -> [DateComponents: ActivityResultDecoration] {
+    func createExpectedDecorationSources(_ expectedDiary: DiaryData) -> [ActivityResultDecorationSource] {
         
         let diaryDateComponents = Calendar.current.dateComponents([.year, .month, .day],
                                                                   from: expectedDiary.date)
@@ -570,7 +570,10 @@ private extension TrainingActivityGraphViewTest {
         )
         
         return [
-            resultDateComponents: .init(activityResult: decorationResultOfDay)
+            .init(
+                isAchievedOfDay: decorationResultOfDay.isAchieved,
+                targetDay: resultDateComponents
+            )
         ]
     }
     
@@ -587,5 +590,3 @@ private extension TrainingActivityGraphViewTest {
         )
     }
 }
-
-

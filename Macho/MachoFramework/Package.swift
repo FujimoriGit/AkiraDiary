@@ -5,13 +5,14 @@ import PackageDescription
 
 let package = Package(
     name: "MachoFramework",
-    platforms: [.macOS(.v12),.iOS(.v17)],
+    platforms: [.iOS(.v17)],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "MachoFramework",
             type: .dynamic,
-            targets: ["MachoFramework"]),
+            targets: ["MachoFramework"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", exact: "1.12.1"),
@@ -65,6 +66,7 @@ let package = Package(
                 "MachoCore",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "Logging", package: "swift-log")
-            ]),
+            ]
+        ),
     ]
 )

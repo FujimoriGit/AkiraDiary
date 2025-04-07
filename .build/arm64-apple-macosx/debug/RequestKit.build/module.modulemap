@@ -1,0 +1,4 @@
+module RequestKit {
+    header "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/RequestKit.build/RequestKit-Swift.h"
+    requires objc
+}
