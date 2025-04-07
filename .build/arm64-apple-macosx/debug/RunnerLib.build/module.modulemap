@@ -1,0 +1,4 @@
+module RunnerLib {
+    header "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/RunnerLib.build/RunnerLib-Swift.h"
+    requires objc
+}

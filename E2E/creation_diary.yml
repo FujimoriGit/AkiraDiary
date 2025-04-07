@@ -1,0 +1,57 @@
+appId: morimori.Macho
+---
+# 日記リスト画面が表示されているときに実行すること
+- tapOn: "plus_circle"
+- takeScreenshot: snapshot/creation_diary
+- assertVisible: "Create Diary"
+- tapOn:
+    id: "textField_title"
+    index: 1
+- inputText: "Test"
+- tapOn:
+    id: "Return"
+- tapOn:
+    id: "textField_message"
+    index: 1
+- inputText: "Test"
+- tapOn:
+    id: "plus.circle.fill"
+    index: 0
+- takeScreenshot: snapshot/add_tag
+- tapOn:
+    id: "textField_tagName"
+- inputText: "TestTag"
+- tapOn: "Save"
+- tapOn:
+    id: "plus.circle.fill"
+    index: 1
+- takeScreenshot: snapshot/add_goal
+- tapOn:
+    id: "arrowtriangle.down.fill"
+- tapOn:
+    id: "plus"
+- tapOn:
+    id: "textField_training_type"
+- takeScreenshot: snapshot/add_training_type
+- inputText: "TestTrainingType"
+- tapOn: "Save"
+- tapOn:
+    id: "arrowtriangle.down.fill"
+- assertVisible: "TestTrainingType"
+- tapOn: "TestTrainingType"
+- tapOn:
+    id: "textField_number_of_sets"
+- tapOn:
+    id: "delete"
+- inputText: "3"
+- tapOn:
+    id: "textField_set_count"
+- tapOn:
+    id: "delete"
+- inputText: "3"
+- tapOn: "Save"
+- assertVisible: "TestTrainingType"
+- assertVisible: "TestTag"
+- assertVisible: "3 回, 3 セット"
+- takeScreenshot: snapshot/creation_diary_complete
+- tapOn: "Training Start!"
