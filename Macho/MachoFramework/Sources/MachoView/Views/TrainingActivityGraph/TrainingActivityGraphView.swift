@@ -53,7 +53,7 @@ struct TrainingActivityGraphView: View {
                                                             action: \.calendar))
                 }
                 .frame(maxHeight: .infinity)
-                .padding(.horizontal, Space.medium.rawValue)
+                .padding(.horizontal, .space(.medium))
             }
         }
         .toolbar {
@@ -89,21 +89,21 @@ private extension TrainingActivityGraphView {
                     Text("Filter")
                         .font(.macho(.subTitle))
                     Spacer()
-                        .frame(maxHeight: Space.medium.rawValue)
-                    VStack(spacing: Space.small.rawValue) {
+                        .frame(maxHeight: .space(.medium))
+                    VStack(spacing: .space(.small)) {
                         createStartActivityPeriodDateFilterRow()
                         createActivityPeriodFilterRow()
                         createTrainingTypeFilterRow()
                     }
                 }
-                .padding(.horizontal, Space.medium.rawValue)
+                .padding(.horizontal, .space(.medium))
                 .transition(
                     .move(edge: .top)
                     .combined(with: .opacity)
                 )
             }
             Spacer()
-                .frame(maxHeight: Space.large.rawValue)
+                .frame(maxHeight: .space(.large))
             Button {
                 store.send(.tappedFilterDisplayButton,
                            animation: .spring)
@@ -183,9 +183,9 @@ private extension TrainingActivityGraphView {
                     .padding(filterButtonPadding)
             }
             .frameButtonStyle(frameWidth: .zero)
-            Spacer(minLength: Space.large.rawValue)
+            Spacer(minLength: .space(.large))
             ScrollView(.horizontal) {
-                HStack(spacing: Space.small.rawValue) {
+                HStack(spacing: .space(.small)) {
                     ForEach(store.selectingTrainingTypeNameList, id: \.self) {
                         Text($0)
                             .font(.macho(.subTitle))
