@@ -285,22 +285,20 @@ private extension TrainingActivityGraphFeature {
                 
                 await send(.didReceiveTrainingTypeList(trainingTypeApi.fetchAll()))
             },
-            .merge(
-                .publisher {
-                    
-                    diaryListFetchApi.observeDiaryList()
-                        .receive(on: DispatchQueue.main)
-                        .map { .didReceiveDiaryData($0) }
-                }
-                    .cancellable(id: Cancellable.observeDiaryData),
-                .publisher {
-                    
-                    trainingTypeApi.getPublisher()
-                        .receive(on: DispatchQueue.main)
-                        .map { .didReceiveTrainingTypeList($0) }
-                }
-                    .cancellable(id: Cancellable.observeTrainingType)
-            )
+            .publisher {
+                
+                diaryListFetchApi.observeDiaryList()
+                    .receive(on: DispatchQueue.main)
+                    .map { .didReceiveDiaryData($0) }
+            }
+                .cancellable(id: Cancellable.observeDiaryData),
+            .publisher {
+                
+                trainingTypeApi.getPublisher()
+                    .receive(on: DispatchQueue.main)
+                    .map { .didReceiveTrainingTypeList($0) }
+            }
+                .cancellable(id: Cancellable.observeTrainingType)
         ])
     }
     
