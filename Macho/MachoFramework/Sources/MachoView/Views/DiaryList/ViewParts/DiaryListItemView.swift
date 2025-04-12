@@ -135,13 +135,15 @@ private extension DiaryListItemView {
     let diaryData = DiaryData(id: UUID(),
                               date: Date(),
                               title: "sample", mainText: "sample main text",
-                              goals: [TrainingContentData(id: UUID(),
-                                                          trainingType: .init(id: UUID(),
-                                                                              name: "腹筋"),
-                                                          goalNumberOfSets: 3,
-                                                          goalSetCount: 3,
-                                                          actualNumberOfSets: 3,
-                                                          actualSetCount: 3)],
+                              goals: [
+                                TrainingContentData(id: UUID(),
+                                                    trainingType: .init(id: UUID(),
+                                                                        name: "腹筋"),
+                                                    goalNumberOfSets: 3,
+                                                    goalSetCount: 3,
+                                                    actualNumberOfSets: 3,
+                                                    actualSetCount: 3)
+                              ],
                               tags: [TrainingTagData(id: UUID(), tagName: "xxx")],
                               startTime: Date(),
                               endTime: Date())

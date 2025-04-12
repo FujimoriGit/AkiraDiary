@@ -10,17 +10,18 @@ import SwiftUI
 struct DatePickerView: View {
     
     @Binding var date: Date
-    private let titleFontSize: CGFloat
+    private let titleFont: Font
     
     init(date: Binding<Date>,
-         titleFontSize: CGFloat = 14) {
+         titleFont: Font) {
+        
         _date = date
-        self.titleFontSize = titleFontSize
+        self.titleFont = titleFont
     }
     
     var body: some View {
-        Text(date.formatted(.localeDateTime))
-            .font(.system(size: titleFontSize))
+        Text(date.formatted(.localDate))
+            .font(titleFont)
             .foregroundStyle(Color(asset: CustomColor.appPrimaryTextColor))
             .overlay {
                 DatePicker(
@@ -41,7 +42,8 @@ struct DatePickerView: View {
         @State private var date = Date()
         
         var body: some View {
-            DatePickerView(date: $date)
+            DatePickerView(date: $date,
+                           titleFont: .macho(.subTitle))
         }
     }
     

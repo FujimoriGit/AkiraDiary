@@ -405,7 +405,7 @@ private extension DiaryListFeature {
         updatedState.diaries.sort { $0.date > $1.date }
         // フィルターの反映
         updatedState.filteredDiaries = getFilteringDiaryList(diaryList: updatedState.diaries,
-                                                                  filters: updatedState.currentFilters)
+                                                             filters: updatedState.currentFilters)
         return updatedState
     }
     
@@ -470,7 +470,7 @@ private extension DiaryListFeature {
         case .deleteItemSwipeAction:
             // アラート表示
             updateTargetState.alert = .createAlertStateWithCancel(.deleteDiaryItemConfirmAlert,
-                                                                  firstButtonHandler: 
+                                                                  firstButtonHandler:
                     .confirmDeleteItem(deleteItemId: id))
             
         case .editItemSwipeAction:

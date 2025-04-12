@@ -103,14 +103,22 @@ private extension DiaryClient {
     
     static func fetchDiaryList(_ realm: RealmAccessible, from startDate: Date, limit: Int) async -> [DiaryData] {
         
-        return await realm.read { diary in
+        let allDiaries: [DiaryData] = await realm.read { diary in
             
             // 開始日付以降の日付の日記を取得対象とする
             if diary.date <= startDate { return true }
             
             return false
         }
-        .prefix(limit).map(\.self)
+        
+        if limit == .zero {
+            
+            return allDiaries
+        }
+        else {
+            
+            return allDiaries.prefix(limit).map(\.self)
+        }
     }
     
     static func deleteDiary(_ realm: RealmAccessible, target: UUID) async -> Bool {
