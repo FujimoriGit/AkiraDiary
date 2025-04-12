@@ -67,13 +67,14 @@ struct CreatingDiaryUseCase: Equatable {
     
     func removeGoal(_ goal: Goal) -> EditEvent {
         
-        let targetGoals = edited?.goals ?? initial.goals
-        guard let targetIndex = targetGoals.firstIndex(of: goal) else {
+        var targetGoals = edited?.goals ?? initial.goals
+        guard let targetIndex = targetGoals.firstIndex(where: { $0.id == goal.id }) else {
             
             return .goals(edit())
         }
         
-        return .goals(edit(goals: targetGoals.dropFirst(targetIndex).map(\.self)))
+        targetGoals.remove(at: targetIndex)
+        return .goals(edit(goals: targetGoals))
     }
     
     func incrementActualSetCount(of goal: Goal) -> EditEvent {

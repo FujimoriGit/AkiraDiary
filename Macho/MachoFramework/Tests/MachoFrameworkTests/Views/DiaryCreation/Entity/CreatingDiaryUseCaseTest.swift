@@ -239,6 +239,22 @@ extension CreatingDiaryUseCaseTest.EditCase {
     }
     
     @Test
+    func 指定した目標を削除する() async throws {
+        
+        let initialGoals: [Goal] = [
+            .init(id: UUID(), trainingType: .abs, numberOfSets: 3, setCount: 3),
+            .init(id: UUID(), trainingType: .abs, numberOfSets: 1, setCount: 1)
+        ]
+        let initial = CreatingDiary.make(goals: initialGoals)
+        let sut = CreatingDiaryUseCase(initial: initial)
+        
+        let result = sut.removeGoal(initialGoals[1])
+        
+        let expected = CreatingDiary.make(goals: [initialGoals[0]])
+        #expect(result == .goals(.init(initial: initial, edited: expected)))
+    }
+    
+    @Test
     func 達成したセット数を1セット増やす() throws {
         
         let initialGoals: [Goal] = [
