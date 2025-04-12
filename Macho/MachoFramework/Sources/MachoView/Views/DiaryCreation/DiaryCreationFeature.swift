@@ -8,21 +8,6 @@
 import ComposableArchitecture
 import SwiftUI
 
-struct Tag: Equatable, Identifiable {
-    
-    var id: UUID { entity.id }
-    let entity: TrainingTagData
-    var isSelected = false
-}
-
-struct Goal: Equatable, Identifiable {
-    
-    let id: UUID
-    var trainingType: TrainingTypeData
-    var numberOfSets: Int
-    var setCount: Int
-}
-
 @Reducer
 struct DiaryCreationFeature: Sendable {
     
@@ -39,6 +24,7 @@ struct DiaryCreationFeature: Sendable {
         var goals: [Goal] = []
         var isEnableStartButton = false
         var animationsRunning = false
+        var textFieldFocusState: DiaryCreationTextFieldFocus?
         
         @Presents var destination: Destination.State?
     }
@@ -61,6 +47,8 @@ struct DiaryCreationFeature: Sendable {
         case tappedAddingGoalButton
         case deletedGoal(Goal)
         case editingGoal(Goal)
+        case didChangeFocusState(DiaryCreationTextFieldFocus?)
+        case tappedOutsideOfKeyboard
     }
     
     @Dependency(\.trainingTagApi) var trainingTagApi
@@ -171,6 +159,14 @@ struct DiaryCreationFeature: Sendable {
                                                                   numberOfSets: goal.numberOfSets,
                                                                   setCount: goal.setCount,
                                                                   isEnableSaveButton: true))
+                return .none
+                
+            case .didChangeFocusState(let newState):
+                state.textFieldFocusState = newState
+                return .none
+                
+            case .tappedOutsideOfKeyboard:
+                state.textFieldFocusState = nil
                 return .none
                 
             case .destination(.presented(.addGoal(.delegate(.saveGoal(let goal))))):
