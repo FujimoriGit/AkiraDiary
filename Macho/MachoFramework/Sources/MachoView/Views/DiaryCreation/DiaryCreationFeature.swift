@@ -27,6 +27,7 @@ struct DiaryCreationFeature: Sendable {
         var textFieldFocusState: DiaryCreationTextFieldFocus?
         
         @Presents var destination: Destination.State?
+        @Presents var alert: AlertState<Action.Alert>?
     }
     
     // MARK: - Action
@@ -49,6 +50,8 @@ struct DiaryCreationFeature: Sendable {
         case editingGoal(Goal)
         case didChangeFocusState(DiaryCreationTextFieldFocus?)
         case tappedOutsideOfKeyboard
+        case tappedNavigationBackButton
+        case alert(PresentationAction<Alert>)
     }
     
     @Dependency(\.trainingTagApi) var trainingTagApi
@@ -59,6 +62,7 @@ struct DiaryCreationFeature: Sendable {
     
     var body: some ReducerOf<Self> {
         
+        // swiftlint:disable:next closure_body_length
         Reduce { state, action in
             
             switch action {
@@ -66,12 +70,7 @@ struct DiaryCreationFeature: Sendable {
             case .onAppear:
                 logger.debug("onAppear")
                 return .concatenate(
-                    .publisher {
-                         
-                        return trainingTagApi.getTrainingTagPublisher()
-                            .receive(on: DispatchQueue.main)
-                            .map { .fetchedTags($0) }
-                    }.cancellable(id: TrainingTagsSubscriber()),
+                    addObserveTagEntity(),
                     fetchTags()
                 )
                 
@@ -106,8 +105,8 @@ struct DiaryCreationFeature: Sendable {
                     .run { [state] _ in
                         
                         await addDiary(state: state)
-                        await dismiss()
-                    }
+                    },
+                    popToPrev()
                 )
                 
             case .animateStartButton:
@@ -124,15 +123,7 @@ struct DiaryCreationFeature: Sendable {
             case .tappedTag(let tag):
                 withAnimation(.easeIn(duration: 0.15)) {
                     
-                    state.tags = state.tags.map {
-                        
-                        if $0.entity.id == tag.entity.id {
-                            
-                            return Tag(entity: $0.entity, isSelected: !$0.isSelected)
-                        }
-                        
-                        return $0
-                    }
+                    state.tags = updateTagSelectedState(target: tag, currentList: state.tags)
                 }
                 return .none
                 
@@ -169,6 +160,11 @@ struct DiaryCreationFeature: Sendable {
                 state.textFieldFocusState = nil
                 return .none
                 
+            case .tappedNavigationBackButton:
+                state.alert = .createAlertStateWithCancel(.confirmNoSavingDiary,
+                                                          firstButtonHandler: .tappedDismissAcceptButton)
+                return .none
+                
             case .destination(.presented(.addGoal(.delegate(.saveGoal(let goal))))):
                 guard let index = state.goals.firstIndex(where: { $0.trainingType == goal.trainingType }) else {
                     
@@ -180,11 +176,15 @@ struct DiaryCreationFeature: Sendable {
                 state.isEnableStartButton = isEnableStartButton(state: state)
                 return .none
                 
-            case .destination:
+            case .alert(.presented(.tappedDismissAcceptButton)):
+                return popToPrev()
+                
+            case .destination, .alert:
                 return .none
             }
         }
         .ifLet(\.$destination, action: \.destination)
+        .ifLet(\.$alert, action: \.alert)
     }
 }
 
@@ -234,14 +234,44 @@ private extension DiaryCreationFeature {
                          endTime: nil)
     }
     
-    func cancelChangesetObserve() -> Effect<Self.Action> {
+    func popToPrev() -> Effect<Self.Action> {
         
-        return .cancel(id: TrainingTagsSubscriber())
+        return .merge(
+            .cancel(id: TrainingTagsSubscriber()),
+            .run { _ in
+                
+                await dismiss()
+            }
+        )
     }
     
     func isEnableStartButton(state: State) -> Bool {
         
         return !(state.titleText.isEmpty || state.goals.isEmpty)
+    }
+    
+    func addObserveTagEntity() -> Effect<Self.Action> {
+        
+        return .publisher {
+             
+            return trainingTagApi.getTrainingTagPublisher()
+                .receive(on: DispatchQueue.main)
+                .map { .fetchedTags($0) }
+        }.cancellable(id: TrainingTagsSubscriber())
+    }
+    
+    func updateTagSelectedState(target: Tag, currentList: [Tag]) -> [Tag] {
+        
+        guard let targetIndex = currentList.firstIndex(where: { $0 == target }) else {
+            
+            return currentList
+        }
+        
+        var result = currentList
+        let currentTag = result[targetIndex]
+        result[targetIndex] = .init(entity: target.entity,
+                                    isSelected: !currentTag.isSelected)
+        return result
     }
 }
 
@@ -250,26 +280,20 @@ private extension DiaryCreationFeature {
 extension DiaryCreationFeature {
     
     @Reducer(state: .equatable, action: .equatable)
-    enum Destination: Equatable {
+    enum Destination {
         
         case addTag(AddTagFeature)
         case addGoal(AddGoalFeature)
+    }
+}
+
+// MARK: - extension (for alert)
+
+extension DiaryCreationFeature.Action {
+    
+    enum Alert {
         
-        var id: Int {
-            
-            switch self {
-                
-            case .addTag:
-                return 0
-                
-            case .addGoal:
-                return 1
-            }
-        }
-        
-        static func == (lhs: DiaryCreationFeature.Destination, rhs: DiaryCreationFeature.Destination) -> Bool {
-            
-            return lhs.id == rhs.id
-        }
+        /// 前画面を戻ることを了承するボタンを押下
+        case tappedDismissAcceptButton
     }
 }
