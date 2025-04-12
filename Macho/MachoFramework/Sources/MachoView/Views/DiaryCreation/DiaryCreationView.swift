@@ -68,6 +68,7 @@ struct DiaryCreationView: View {
                 }
             }
         }
+        .ignoresSafeArea(.keyboard, edges: .bottom)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 NavigationButton(.back) {
