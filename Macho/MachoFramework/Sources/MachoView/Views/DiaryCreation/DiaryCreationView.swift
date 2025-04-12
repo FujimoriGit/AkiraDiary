@@ -307,7 +307,9 @@ private extension DiaryCreationView {
     func editModeSaveButtonArea() -> some View {
         
         VStack(spacing: 16) {
-            finishButton() // TODO: トレーニングが終了している日記には表示しないようにする
+            if store.shouldShowFinishButton {
+                finishButton()
+            }
             editButton()
         }
     }
@@ -319,7 +321,7 @@ private extension DiaryCreationView {
                    color: .red,
                    isEnable: store.isEnableFinishButton) {
             
-            store.send(.trainingSaveButtonTapped)
+            store.send(.trainingFinishButtonTapped)
         }
     }
     

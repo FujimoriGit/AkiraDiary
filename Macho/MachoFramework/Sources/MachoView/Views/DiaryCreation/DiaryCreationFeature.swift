@@ -27,6 +27,7 @@ struct DiaryCreationFeature: Sendable {
         var textFieldFocusState: DiaryCreationTextFieldFocus?
         var isEnableSaveButton: Bool { useCase.canSave }
         var isEnableFinishButton: Bool { useCase.canFinish }
+        var shouldShowFinishButton: Bool { useCase.shouldShowFinishButton }
         var isEditMode: Bool { useCase.isEditMode }
         
         @Presents var destination: Destination.State?
@@ -99,36 +100,17 @@ struct DiaryCreationFeature: Sendable {
                 state = updateCreatingDiaryState(state.useCase.editMainText(mainText: text), state: state)
                 return .none
                 
-            case .trainingStartButtonTapped:
-                return .concatenate(
-                    .send(.animateStartButton),
-                    .run { [state] _ in
-                        
-                        await saveDiary(diary: state.useCase.edited)
-                    },
-                    popToPrev()
-                )
-                
-            case .trainingSaveButtonTapped:
-                return .concatenate(
-                    .send(.animateStartButton),
-                    .run { [state] _ in
-                        
-                        await saveDiary(diary: state.useCase.edited)
-                    },
-                    popToPrev()
-                )
+            case .trainingStartButtonTapped, .trainingSaveButtonTapped:
+                return saveEffect { [target = state.useCase.edited] in
+                    
+                    await saveDiary(diary: target)
+                }
                 
             case .trainingFinishButtonTapped:
-                return .concatenate(
-                    .send(.animateStartButton),
-                    .run { [state] _ in
-                        
-                        // TODO: トレーニングを終了状態に更新する
-                        await saveDiary(diary: state.useCase.edited)
-                    },
-                    popToPrev()
-                )
+                return saveEffect { [finishTarget = state.useCase.finishTarget] in
+                    
+                    await finishTraining(diary: finishTarget)
+                }
                 
             case .animateStartButton:
                 withAnimation(.easeIn(duration: 0.5)) {
@@ -218,10 +200,26 @@ private extension DiaryCreationFeature {
         }
     }
     
+    func saveEffect(saveAction: @escaping () async -> Void) -> Effect<Self.Action> {
+        
+        return .concatenate(
+            .send(.animateStartButton),
+            .run { _ in await saveAction() },
+            popToPrev()
+        )
+    }
+    
     func saveDiary(diary: CreatingDiary?) async {
         
         guard let diary,
               let entity = convertToDbEntity(diary: diary) else { return }
+        _ = await diaryListFetchApi.add(entity)
+    }
+    
+    func finishTraining(diary: CreatingDiary?) async {
+        
+        guard let diary,
+              let entity = convertToDbEntity(diary: diary.finish()) else { return }
         _ = await diaryListFetchApi.add(entity)
     }
     
@@ -244,7 +242,7 @@ private extension DiaryCreationFeature {
                      goals: diary.goals.map(\.entity),
                      tags: diary.tags.filter(\.isSelected).map { TagConverter.toEntity($0) },
                      startTime: createdAt,
-                     endTime: nil)
+                     endTime: diary.isFinished ? date() : nil)
     }
     
     func popToPrev() -> Effect<Self.Action> {
@@ -341,7 +339,8 @@ extension DiaryCreationFeature.State {
                                           title: diary.title,
                                           mainText: diary.mainText,
                                           goals: goals,
-                                          tags: tags)
+                                          tags: tags,
+                                          isFinished: diary.endTime != nil)
         
         useCase = .init(initial: creatingDiary)
         titleText = diary.title

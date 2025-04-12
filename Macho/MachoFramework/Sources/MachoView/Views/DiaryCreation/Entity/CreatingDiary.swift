@@ -17,6 +17,7 @@ struct CreatingDiary: Equatable {
     let mainText: String?
     let goals: [Goal]
     let tags: [Tag]
+    let isFinished: Bool
     
     var canSave: Bool {
         
@@ -25,6 +26,11 @@ struct CreatingDiary: Equatable {
         if goals.isEmpty { return false }
         
         return true
+    }
+    
+    var canFinish: Bool {
+        
+        return canSave && !isFinished
     }
     
     var isEditMode: Bool {
@@ -42,7 +48,19 @@ struct CreatingDiary: Equatable {
                      title: title ?? self.title,
                      mainText: mainText ?? self.mainText,
                      goals: goals ?? self.goals,
-                     tags: tags ?? self.tags)
+                     tags: tags ?? self.tags,
+                     isFinished: isFinished)
+    }
+    
+    func finish() -> Self {
+        
+        return .init(id: id,
+                     createdAt: createdAt,
+                     title: title,
+                     mainText: mainText,
+                     goals: goals,
+                     tags: tags,
+                     isFinished: true)
     }
 }
 
@@ -53,5 +71,6 @@ extension CreatingDiary {
                                      title: nil,
                                      mainText: nil,
                                      goals: [],
-                                     tags: [])
+                                     tags: [],
+                                     isFinished: false)
 }
