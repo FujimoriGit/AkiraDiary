@@ -76,6 +76,24 @@ struct CreatingDiaryUseCase: Equatable {
         return .goals(edit(goals: targetGoals.dropFirst(targetIndex).map(\.self)))
     }
     
+    func incrementActualSetCount(of goal: Goal) -> EditEvent {
+        
+        let targetGoals = edited?.goals ?? initial.goals
+        return .goals(edit(goals: getUpdateGoals(
+            updatedGoal: goal.incrementSet(),
+            current: targetGoals
+        )))
+    }
+    
+    func decrementActualSetCount(of goal: Goal) -> EditEvent {
+        
+        let targetGoals = edited?.goals ?? initial.goals
+        return .goals(edit(goals: getUpdateGoals(
+            updatedGoal: goal.decrementSet(),
+            current: targetGoals
+        )))
+    }
+    
     func selectTag(_ tag: Tag) -> EditEvent {
         
         let updateTags = edited?.tags ?? initial.tags
@@ -167,5 +185,17 @@ private extension CreatingDiaryUseCase {
             
             return .init(initial: initial, edited: nil)
         }
+    }
+    
+    func getUpdateGoals(updatedGoal: Goal, current: [Goal]) -> [Goal] {
+        
+        var updatedGoals = current
+        guard let targetIndex = updatedGoals.firstIndex(where: { $0.id == updatedGoal.id }) else {
+            
+            return current
+        }
+        
+        updatedGoals[targetIndex] = updatedGoal
+        return updatedGoals
     }
 }

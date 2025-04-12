@@ -54,6 +54,8 @@ struct DiaryCreationFeature: Sendable {
         case tappedAddingGoalButton
         case deletedGoal(Goal)
         case editingGoal(Goal)
+        case tappedAddActualSetButton(Goal)
+        case tappedMinusActualSetButton(Goal)
         case didChangeFocusState(DiaryCreationTextFieldFocus?)
         case tappedOutsideOfKeyboard
         case tappedNavigationBackButton
@@ -155,6 +157,20 @@ struct DiaryCreationFeature: Sendable {
                     setCount: goal.setCount,
                     isEnableSaveButton: true
                 ))
+                return .none
+                
+            case .tappedAddActualSetButton(let goal):
+                state = updateCreatingDiaryState(
+                    state.useCase.incrementActualSetCount(of: goal),
+                    state: state
+                )
+                return .none
+                
+            case .tappedMinusActualSetButton(let goal):
+                state = updateCreatingDiaryState(
+                    state.useCase.decrementActualSetCount(of: goal),
+                    state: state
+                )
                 return .none
                 
             case .didChangeFocusState(let newState):
@@ -331,7 +347,8 @@ extension DiaryCreationFeature.State {
             return .init(id: $0.id,
                          trainingType: trainingType,
                          numberOfSets: $0.goalNumberOfSets,
-                         setCount: $0.goalSetCount)
+                         setCount: $0.goalSetCount,
+                         actualSetCount: $0.actualSetCount ?? .zero)
         }
         let tags: [Tag] = diary.tags.map { TagConverter.toTag($0, isSelected: true) }
         let creatingDiary = CreatingDiary(id: diary.id,

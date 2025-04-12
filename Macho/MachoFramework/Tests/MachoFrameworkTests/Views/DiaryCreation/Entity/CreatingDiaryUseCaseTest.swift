@@ -239,6 +239,54 @@ extension CreatingDiaryUseCaseTest.EditCase {
     }
     
     @Test
+    func 達成したセット数を1セット増やす() throws {
+        
+        let initialGoals: [Goal] = [
+            .init(id: UUID(), trainingType: .abs, numberOfSets: 3, setCount: 3),
+            .init(id: UUID(), trainingType: .abs, numberOfSets: 2, setCount: 4),
+            .init(id: UUID(), trainingType: .abs, numberOfSets: 99, setCount: 3)
+        ]
+        let initial = CreatingDiary.make(goals: initialGoals)
+        let sut = CreatingDiaryUseCase(initial: initial)
+        
+        let result = sut.incrementActualSetCount(of: initialGoals[1])
+        
+        let expected = CreatingDiary.make(goals: [
+            initialGoals[0],
+            .init(id: initialGoals[1].id,
+                  trainingType: initialGoals[1].trainingType,
+                  numberOfSets: initialGoals[1].numberOfSets,
+                  setCount: initialGoals[1].setCount, actualSetCount: 1),
+            initialGoals[2]
+        ])
+        #expect(result == .goals(.init(initial: initial, edited: expected)))
+    }
+    
+    @Test
+    func 達成したセット数を1セット減らす() throws {
+        
+        let initialGoals: [Goal] = [
+            .init(id: UUID(), trainingType: .abs, numberOfSets: 3, setCount: 3, actualSetCount: 90),
+            .init(id: UUID(), trainingType: .abs, numberOfSets: 2, setCount: 4),
+            .init(id: UUID(), trainingType: .abs, numberOfSets: 99, setCount: 3)
+        ]
+        let initial = CreatingDiary.make(goals: initialGoals)
+        let sut = CreatingDiaryUseCase(initial: initial)
+        
+        let result = sut.decrementActualSetCount(of: initialGoals[0])
+        
+        let expected = CreatingDiary.make(goals: [
+            .init(id: initialGoals[0].id,
+                  trainingType: initialGoals[0].trainingType,
+                  numberOfSets: initialGoals[0].numberOfSets,
+                  setCount: initialGoals[0].setCount, actualSetCount: 89),
+            initialGoals[1],
+            initialGoals[2]
+        ])
+        #expect(result == .goals(.init(initial: initial, edited: expected)))
+    }
+    
+    @Test
     func タグを選択すると選択状態が切り替わる() throws {
         
         let initialTags: [MachoView.Tag] = [
