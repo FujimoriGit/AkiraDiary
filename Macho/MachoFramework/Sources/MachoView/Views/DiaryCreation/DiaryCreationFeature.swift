@@ -25,7 +25,8 @@ struct DiaryCreationFeature: Sendable {
         var goals: [Goal] = []
         var animationsRunning = false
         var textFieldFocusState: DiaryCreationTextFieldFocus?
-        var isEnableStartButton: Bool { useCase.canSave }
+        var isEnableSaveButton: Bool { useCase.canSave }
+        var isEnableFinishButton: Bool { useCase.canFinish }
         var isEditMode: Bool { useCase.isEditMode }
         
         @Presents var destination: Destination.State?
@@ -43,6 +44,7 @@ struct DiaryCreationFeature: Sendable {
         case messageTextChange(String)
         case trainingStartButtonTapped
         case trainingSaveButtonTapped
+        case trainingFinishButtonTapped
         case animateStartButton
         case destination(PresentationAction<Destination.Action>)
         case tappedAddingTagButton
@@ -112,6 +114,17 @@ struct DiaryCreationFeature: Sendable {
                     .send(.animateStartButton),
                     .run { [state] _ in
                         
+                        await saveDiary(diary: state.useCase.edited)
+                    },
+                    popToPrev()
+                )
+                
+            case .trainingFinishButtonTapped:
+                return .concatenate(
+                    .send(.animateStartButton),
+                    .run { [state] _ in
+                        
+                        // TODO: トレーニングを終了状態に更新する
                         await saveDiary(diary: state.useCase.edited)
                     },
                     popToPrev()

@@ -76,6 +76,37 @@ extension CreatingDiaryUseCaseTest.CanSaveCase {
         
         #expect(result == expected)
     }
+    
+    @Test(arguments: [
+        (CreatingDiary.make(), true),
+        (CreatingDiary.make(mainText: "edited message"), true),
+        (CreatingDiary.make(goals: [
+            .init(id: UUID(), trainingType: .abs, numberOfSets: 3, setCount: 3)
+        ]), true),
+        (CreatingDiary.make(tags: [
+            .init(id: CreatingDiary.defaultTag.id,
+                  tagName: CreatingDiary.defaultTag.tagName,
+                  isSelected: true)
+        ]), true),
+        (Optional(nilLiteral: ()), true),
+        (CreatingDiary.make(title: ""), false),
+        (CreatingDiary.make(mainText: ""), false),
+        (CreatingDiary.make(goals: []), false)
+    ])
+    func タイトルと本文と目標が設定されている場合はトレーニング終了可能となる(
+        inputEditedDiary: CreatingDiary?,
+        expected: Bool
+    ) throws {
+        
+        let sut = CreatingDiaryUseCase(
+            initial: CreatingDiary.make(),
+            edited: inputEditedDiary
+        )
+        
+        let result = sut.canFinish
+        
+        #expect(result == expected)
+    }
 }
 
 extension CreatingDiaryUseCaseTest.EditCase {

@@ -15,6 +15,8 @@ struct Goal: Equatable, Identifiable {
     var trainingType: TrainingTypeData
     var numberOfSets: Int
     var setCount: Int
+    var actualNumberOfSets: Int
+    var actualSetCount: Int
     
     var entity: TrainingContentData {
         
@@ -22,7 +24,22 @@ struct Goal: Equatable, Identifiable {
                      trainingType: trainingType,
                      goalNumberOfSets: numberOfSets,
                      goalSetCount: setCount,
-                     actualNumberOfSets: nil,
-                     actualSetCount: nil)
+                     actualNumberOfSets: actualNumberOfSets,
+                     actualSetCount: actualSetCount)
+    }
+    
+    init(id: UUID,
+         trainingType: TrainingTypeData,
+         numberOfSets: Int,
+         setCount: Int,
+         actualNumberOfSets: Int = 0,
+         actualSetCount: Int = 0) {
+        
+        self.id = id
+        self.trainingType = trainingType
+        self.numberOfSets = numberOfSets
+        self.setCount = setCount
+        self.actualNumberOfSets = actualNumberOfSets
+        self.actualSetCount = actualSetCount
     }
 }
