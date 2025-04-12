@@ -96,7 +96,7 @@ private extension TrainingTagClient {
     /// DBにタグを追加します.
     static func addTags(_ realm: RealmAccessible = RealmAccessor(), tag: TrainingTagData) async -> Bool {
         
-        guard await fetchAllTag(realm).contains(where: { $0.tagName == tag.tagName }) else {
+        if await fetchAllTag(realm).contains(where: { $0.tagName == tag.tagName }) {
             
             logger.error("same name already added.")
             return false
