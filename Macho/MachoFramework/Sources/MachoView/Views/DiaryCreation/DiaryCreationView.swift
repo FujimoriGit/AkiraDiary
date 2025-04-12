@@ -129,11 +129,23 @@ private extension DiaryCreationView {
             }
             .scrollIndicators(.hidden)
             
-            startButton(animationsRunning: store.animationsRunning, parentSize: parentSize) {
+            if store.isEditMode {
                 
-                store.send(.trainingStartButtonTapped)
+                editButton(animationsRunning: store.animationsRunning, parentSize: parentSize) {
+                    
+                    store.send(.trainingSaveButtonTapped)
+                }
             }
-            .padding(.bottom, startButtonBottomPadding)
+            else {
+                
+                startButton(animationsRunning: store.animationsRunning, parentSize: parentSize) {
+                    
+                    store.send(.trainingStartButtonTapped)
+                }
+            }
+            
+            Spacer()
+                .frame(maxHeight: startButtonBottomPadding)
         }
     }
     
@@ -297,6 +309,25 @@ private extension DiaryCreationView {
         }
         .frame(maxWidth: ViewUtil.calcWidth(size: parentSize, horizontalPadding: horizontalPadding),
                alignment: .leading)
+    }
+    
+    func editButton(animationsRunning: Bool,
+                    parentSize: CGSize,
+                    action: @escaping () -> Void) -> some View {
+        
+        Button(action: action, label: {
+            HStack {
+                Image(systemName: "figure.run.square.stack")
+                    .font(.system(size: 24))
+                    .symbolEffect(.bounce, value: animationsRunning)
+                Text("Save")
+                    .font(.system(size: textSize, weight: .bold))
+            }
+            .frame(maxWidth: ViewUtil.calcWidth(size: parentSize, horizontalPadding: horizontalPadding),
+                   minHeight: startButtonHeight)
+        })
+        .fillButtonStyle(backgroundColor: store.isEnableStartButton ? .orange : .gray)
+        .disabled(!store.isEnableStartButton)
     }
     
     func startButton(animationsRunning: Bool,

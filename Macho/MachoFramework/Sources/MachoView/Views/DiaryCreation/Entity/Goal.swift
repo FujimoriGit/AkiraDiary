@@ -15,4 +15,14 @@ struct Goal: Equatable, Identifiable {
     var trainingType: TrainingTypeData
     var numberOfSets: Int
     var setCount: Int
+    
+    var entity: TrainingContentData {
+        
+        return .init(id: id,
+                     trainingType: trainingType,
+                     goalNumberOfSets: numberOfSets,
+                     goalSetCount: setCount,
+                     actualNumberOfSets: nil,
+                     actualSetCount: nil)
+    }
 }
