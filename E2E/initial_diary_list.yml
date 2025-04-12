@@ -1,0 +1,6 @@
+appId: morimori.Macho
+---
+# インストール後にアプリを起動した時の日記リスト画面の確認
+- assertVisible: Diary List
+- assertVisible: 表示する日記がありません
+- takeScreenshot: snapshot/initial_diary_list
