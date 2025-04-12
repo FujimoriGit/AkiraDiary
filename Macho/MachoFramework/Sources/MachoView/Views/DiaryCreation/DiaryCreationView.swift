@@ -159,6 +159,8 @@ private extension DiaryCreationView {
                 
                 store.send(.longTappedTag(tag))
             }
+            .frame(maxWidth: .infinity,
+                   alignment: .leading)
         }
         .frame(maxWidth: ViewUtil.calcWidth(size: parentSize, horizontalPadding: horizontalPadding),
                alignment: .leading)
@@ -295,6 +297,32 @@ private extension DiaryCreationView {
 
 #Preview {
     DiaryCreationView(store: Store(initialState: DiaryCreationFeature.State()) {
+        
+        DiaryCreationFeature()
+    })
+}
+
+#Preview("タグあり(ひとつだけ)") {
+    DiaryCreationView(store: Store(initialState: DiaryCreationFeature.State(
+        tags: [.init(entity: .init(id: UUID(), tagName: "test"))]
+    )) {
+        
+        DiaryCreationFeature()
+    })
+}
+
+#Preview("タグあり(複数)") {
+    DiaryCreationView(store: Store(initialState: DiaryCreationFeature.State(
+        tags: [
+            .init(entity: .init(id: UUID(), tagName: "test1")),
+            .init(entity: .init(id: UUID(), tagName: "test2")),
+            .init(entity: .init(id: UUID(), tagName: "test3")),
+            .init(entity: .init(id: UUID(), tagName: "test4")),
+            .init(entity: .init(id: UUID(), tagName: "test5")),
+            .init(entity: .init(id: UUID(), tagName: "test6")),
+            .init(entity: .init(id: UUID(), tagName: "test7"))
+        ]
+    )) {
         
         DiaryCreationFeature()
     })
