@@ -18,6 +18,7 @@ struct AddGoalFeature: Sendable {
     @ObservableState
     struct State: Equatable {
         
+        var id: UUID?
         var trainingTypes: [TrainingTypeData] = []
         var selectedTrainingType: TrainingTypeData?
         var typeNameBeingAdded: String?
@@ -55,6 +56,7 @@ struct AddGoalFeature: Sendable {
     
     @Dependency(\.trainingTypeApi) var trainingTypeApi
     @Dependency(\.dismiss) var dismiss
+    @Dependency(\.uuid) var uuid
     
     // MARK: - body
     
@@ -101,7 +103,7 @@ struct AddGoalFeature: Sendable {
                     
                     guard let goalType = state.selectedTrainingType else { return }
                     
-                    let goal = Goal(id: UUID(),
+                    let goal = Goal(id: state.id ?? uuid(),
                                     trainingType: goalType,
                                     numberOfSets: state.numberOfSets,
                                     setCount: state.setCount)

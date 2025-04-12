@@ -7,8 +7,12 @@
 //  Copyright © Macho All rights reserved.
 //
 
-struct CreatingDiary {
+import Foundation
+
+struct CreatingDiary: Equatable {
     
+    let id: UUID?
+    let createdAt: Date?
     let title: String?
     let mainText: String?
     let goals: [Goal]
@@ -22,4 +26,32 @@ struct CreatingDiary {
         
         return true
     }
+    
+    var isEditMode: Bool {
+        
+        return id != nil && createdAt != nil && canSave
+    }
+    
+    func edit(title: String? = nil,
+              mainText: String? = nil,
+              goals: [Goal]? = nil,
+              tags: [Tag]? = nil) -> Self {
+        
+        return .init(id: self.id,
+                     createdAt: self.createdAt,
+                     title: title ?? self.title,
+                     mainText: mainText ?? self.mainText,
+                     goals: goals ?? self.goals,
+                     tags: tags ?? self.tags)
+    }
+}
+
+extension CreatingDiary {
+    
+    static let initial: Self = .init(id: nil,
+                                     createdAt: nil,
+                                     title: nil,
+                                     mainText: nil,
+                                     goals: [],
+                                     tags: [])
 }
