@@ -11,16 +11,16 @@ import Foundation
 
 struct DiaryList: Equatable {
     
-    let elements: [DiaryListItemFeature.State]
+    var elements: [DiaryListItemFeature.State]
     var hasElements: Bool {
         
         return !elements.isEmpty
     }
     
-    func getFilteredList(filters: [DiaryListFilterItem]) -> Self {
-        
-        if filters.isEmpty { return self }
-        let filteredElements = elements.filter { item in
+    func getFilteredList(filters: [DiaryListFilterItem]) -> [DiaryListItemFeature.State] {
+
+        if filters.isEmpty { return elements }
+        return elements.filter { item in
             
             return filters.contains {
                 
@@ -29,17 +29,22 @@ struct DiaryList: Equatable {
                                         tagList: item.tagList)
             }
         }
-        
-        return .init(elements: filteredElements)
     }
-}
-
-extension DiaryList {
     
-    init(adding elements: [DiaryData], current: [DiaryListItemFeature.State]) {
+    func getTargetDiaryById(_ id: UUID) -> DiaryListItemFeature.State? {
         
-        let addingDiaryItemList = elements.map { DiaryListItemFeature.State($0) }
-        var sortElements = addingDiaryItemList.reduce(into: current) { current, new in
+        return elements.first { $0.id == id }
+    }
+    
+    func getLoadStartDate() -> Date? {
+        
+        return elements.last?.date
+    }
+    
+    mutating func addLoadedDiaries(_ diaries: [DiaryData]) {
+        
+        let addingDiaryItemList = diaries.map { DiaryListItemFeature.State($0) }
+        var sortElements = addingDiaryItemList.reduce(into: elements) { current, new in
             
             if let targetIndex = current.firstIndex(where: { $0.id == new.id }) {
                 
@@ -55,17 +60,14 @@ extension DiaryList {
         self.elements = sortElements
     }
     
-    init(removing id: UUID, current: [DiaryListItemFeature.State]) {
+    mutating func deleteDiaryById(_ id: UUID) {
         
-        var removedList = current
-        guard let targetIndex = removedList.firstIndex(where: { $0.id == id }) else {
+        guard let targetIndex = elements.firstIndex(where: { $0.id == id }) else {
             
             assertionFailure("Nothing remove target id.")
-            self.elements = current
             return
         }
         
-        removedList.remove(at: targetIndex)
-        self.elements = removedList
+        elements.remove(at: targetIndex)
     }
 }

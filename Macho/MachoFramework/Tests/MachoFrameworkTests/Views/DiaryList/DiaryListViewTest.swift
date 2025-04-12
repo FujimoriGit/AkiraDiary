@@ -22,7 +22,7 @@ final class DiaryListViewTests: XCTestCase {
         
         let initialDiary = DiaryListItemFeature.State(.create(date: .distantFuture))
         let expectedAddedItem = DiaryListItemFeature.State(.create(date: .distantPast))
-        let expectedLoadedDiaries = IdentifiedArray(uniqueElements: [
+        let expectedLoadedDiaries = DiaryList(elements: [
             initialDiary,
             expectedAddedItem
         ])
@@ -36,7 +36,7 @@ final class DiaryListViewTests: XCTestCase {
         let viewState = DiaryListFeature.State.ViewState(hasDiaryItems: true)
         let store = TestStore(
             initialState: DiaryListFeature.State(
-                diaries: [initialDiary],
+                diaryList: .init(elements: [initialDiary]),
                 trackableList: trackableListState,
                 viewState: viewState
             ), reducer: { DiaryListFeature() }) {
@@ -55,8 +55,8 @@ final class DiaryListViewTests: XCTestCase {
         await store.receive(\.receiveLoadDiaryItems) {
             
             $0.viewState.isLoadingDiaries = false
-            $0.diaries = expectedLoadedDiaries
-            $0.filteredDiaries = expectedLoadedDiaries
+            $0.diaryList = expectedLoadedDiaries
+            $0.filteredDiaries = .init(uniqueElements: expectedLoadedDiaries.elements)
         }
     }
     
@@ -71,7 +71,7 @@ final class DiaryListViewTests: XCTestCase {
         
         let store = TestStore(
             initialState: DiaryListFeature.State(
-                diaries: [.init(.create())],
+                diaryList: .init(elements: [.init(.create())]),
                 trackableList: trackableListState,
                 viewState: viewState),
             reducer: { DiaryListFeature() })
@@ -113,7 +113,7 @@ final class DiaryListViewTests: XCTestCase {
         
         await store.receive(\.receiveLoadDiaryItems) {
             
-            $0.diaries = [expectedItem]
+            $0.diaryList = .init(elements: [expectedItem])
             $0.filteredDiaries = [expectedItem]
             $0.viewState.isLoadingDiaries = false
             $0.viewState.hasDiaryItems = true
@@ -132,7 +132,7 @@ final class DiaryListViewTests: XCTestCase {
         let store = TestStore(
             initialState: DiaryListFeature.State(
                 filteredDiaries: .init(uniqueElements: [initialFirstItem]),
-                diaries: .init(uniqueElements: [initialFirstItem]),
+                diaryList: .init(elements: [initialFirstItem]),
                 viewState: .init(hasDiaryItems: true)
             ),
             reducer: { DiaryListFeature() }
@@ -163,7 +163,7 @@ final class DiaryListViewTests: XCTestCase {
                 initialFirstItem,
                 fetchedNewItem
             ])
-            $0.diaries = expectedLoadedDiaries
+            $0.diaryList = .init(elements: expectedLoadedDiaries.elements)
             $0.filteredDiaries = expectedLoadedDiaries
             $0.viewState.isLoadingDiaries = false
             $0.viewState.hasDiaryItems = true
@@ -177,8 +177,10 @@ final class DiaryListViewTests: XCTestCase {
          ]
         
         let store = TestStore(
-            initialState: DiaryListFeature.State(filteredDiaries: diariesState,
-                                                 diaries: diariesState)) {
+            initialState: DiaryListFeature.State(
+                filteredDiaries: diariesState,
+                diaryList: .init(elements: diariesState.elements)
+            )) {
                 
             DiaryListFeature()
         }
@@ -200,9 +202,11 @@ final class DiaryListViewTests: XCTestCase {
         let viewState = DiaryListFeature.State.ViewState(hasDiaryItems: true)
         
         let store = TestStore(
-            initialState: DiaryListFeature.State(filteredDiaries: diariesState,
-                                                 diaries: diariesState,
-                                                 viewState: viewState)) {
+            initialState: DiaryListFeature.State(
+                filteredDiaries: diariesState,
+                diaryList: .init(elements: diariesState.elements),
+                viewState: viewState
+            )) {
                 
             DiaryListFeature()
         }
@@ -227,10 +231,12 @@ final class DiaryListViewTests: XCTestCase {
             firstButtonHandler: .confirmDeleteItem(deleteItemId: diariesState[0].id)
         )
         let store = TestStore(
-            initialState: DiaryListFeature.State(alert: deleteAlert,
-                                                 filteredDiaries: diariesState,
-                                                 diaries: diariesState,
-                                                 viewState: viewState)) {
+            initialState: DiaryListFeature.State(
+                alert: deleteAlert,
+                filteredDiaries: diariesState,
+                diaryList: .init(elements: diariesState.elements),
+                viewState: viewState
+            )) {
                 
             DiaryListFeature()
         }
@@ -245,7 +251,7 @@ final class DiaryListViewTests: XCTestCase {
         
         await store.receive(\.deletedDiaryItem) {
             
-            $0.diaries = .init(uniqueElements: [])
+            $0.diaryList = .init(elements: [])
             $0.filteredDiaries = .init(uniqueElements: [])
             $0.viewState.hasDiaryItems = false
         }
@@ -258,7 +264,10 @@ final class DiaryListViewTests: XCTestCase {
          ]
         
         let store = TestStore(
-            initialState: DiaryListFeature.State(filteredDiaries: diariesState, diaries: diariesState)) {
+            initialState: DiaryListFeature.State(
+                filteredDiaries: diariesState,
+                diaryList: .init(elements: diariesState.elements)
+            )) {
                 
             DiaryListFeature()
         }
@@ -281,9 +290,11 @@ final class DiaryListViewTests: XCTestCase {
             firstButtonHandler: .confirmEditItem(targetId: diariesState[0].id)
         )
         let store = TestStore(
-            initialState: DiaryListFeature.State(alert: alert,
-                                                 filteredDiaries: diariesState,
-                                                 diaries: diariesState)) {
+            initialState: DiaryListFeature.State(
+                alert: alert,
+                filteredDiaries: diariesState,
+                diaryList: .init(elements: diariesState.elements)
+            )) {
                 
             DiaryListFeature()
         }
@@ -349,7 +360,7 @@ final class DiaryListViewTests: XCTestCase {
         let testState = DiaryListFeature.State(
             destination: .init(childState: .init(viewState: .init(currentFilters: .init(uniqueElements: [])))),
             filteredDiaries: .init(),
-            diaries: .init(uniqueElements: [initialDiaryItem]),
+            diaryList: .init(elements: [initialDiaryItem]),
             viewState: .init(hasDiaryItems: false),
             currentFilters: initialFilters
         )

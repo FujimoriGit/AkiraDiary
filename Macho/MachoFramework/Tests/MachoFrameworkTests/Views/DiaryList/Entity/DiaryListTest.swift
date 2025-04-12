@@ -111,31 +111,41 @@ struct DiaryListTest {
         
         let result = sut.getFilteredList(filters: inputFilter)
         
-        let expectedResult = DiaryList(elements: expected.map { .init($0) })
-        #expect(result == expectedResult)
-        #expect(result.hasElements == !expected.isEmpty)
+        #expect(result == expected.map { .init($0) })
     }
     
     @Test(
         arguments: [
             (
+                DiaryList(elements: []),
                 [
-                    DiaryData.create(id: diaryIdList[1], date: .create(year: 2025, month: 2, day: 2)),
-                    DiaryData.create(id: diaryIdList[2], date: .create(year: 2024, month: 2, day: 2))
+                    DiaryData.create(id: diaryIdList[2], date: .create(year: 2024, month: 2, day: 2)),
+                    .create(id: diaryIdList[1], date: .create(year: 2025, month: 2, day: 2))
                 ],
                 [
                     DiaryData.create(id: diaryIdList[1], date: .create(year: 2025, month: 2, day: 2)),
-                    DiaryData.create(id: diaryIdList[0], date: .create(year: 2025, month: 2, day: 1)),
-                    DiaryData.create(id: diaryIdList[2], date: .create(year: 2024, month: 2, day: 2))
+                    .create(id: diaryIdList[2], date: .create(year: 2024, month: 2, day: 2))
                 ]
             ),
             (
+                DiaryList(elements: []),
                 [DiaryData.create(id: diaryIdList[0], date: .create(year: 2025, month: 2, day: 1), tag: [.fine])],
-                [DiaryData.create(id: diaryIdList[0], date: .create(year: 2025, month: 2, day: 1), tag: [.fine])]
+                [.create(id: diaryIdList[0], date: .create(year: 2025, month: 2, day: 1), tag: [.fine])]
+            ),
+            (
+                DiaryList(elements: [
+                    .init(.create(id: diaryIdList[1], date: .create(year: 2025, month: 2, day: 10)))
+                ]),
+                [DiaryData.create(id: diaryIdList[0], date: .create(year: 2025, month: 2, day: 1))],
+                [
+                    .create(id: diaryIdList[1], date: .create(year: 2025, month: 2, day: 10)),
+                    .create(id: diaryIdList[0], date: .create(year: 2025, month: 2, day: 1))
+                ]
             )
         ]
     )
     func 追加の日記リストは既存の日記リストにマージし日記作成日の降順にする(
+        initialList: DiaryList,
         addingDiaries: [DiaryData],
         expected: [DiaryData]
     ) throws {
@@ -144,13 +154,12 @@ struct DiaryListTest {
             .create(id: Self.diaryIdList[0], date: .create(year: 2025, month: 2, day: 1)),
         ]
             .map { .init($0) }
-        let sut = DiaryList(adding: addingDiaries, current: currentDiaryItems)
         
-        let result = sut.elements
+        var sut = initialList
+        sut.addLoadedDiaries(addingDiaries)
         
-        let expectedResult: [DiaryListItem] = expected.map { .init($0) }
-        #expect(result == expectedResult)
-        #expect(sut.hasElements == !expected.isEmpty)
+        let expected = DiaryList(elements: expected.map { .init($0) })
+        #expect(sut == expected)
     }
     
     @Test
@@ -160,11 +169,43 @@ struct DiaryListTest {
             .create(id: Self.diaryIdList[0], date: .create(year: 2025, month: 2, day: 1)),
         ]
             .map { .init($0) }
-        let sut = DiaryList(removing: Self.diaryIdList[0], current: currentDiaryItems)
+        var sut = DiaryList(elements: currentDiaryItems)
         
-        let result = sut.elements
+        sut.deleteDiaryById(Self.diaryIdList[0])
         
-        #expect(result == [])
+        #expect(sut.elements == [])
+    }
+    
+    @Test
+    func IDで指定した日記を取得する() async throws {
+        
+        let inputDiaries: [DiaryData] = [
+            .create(id: Self.diaryIdList[0]),
+            .create(id: Self.diaryIdList[1], tag: [.fine]),
+            .create(id: Self.diaryIdList[2],
+                    isAchieved: true,
+                    type: [.benchPress],
+                    tag: [.unfine])
+        ]
+        var sut = DiaryList(elements: inputDiaries.map { .init($0) })
+        
+        let result = try #require(sut.getTargetDiaryById(Self.diaryIdList[0]))
+        
+        #expect(result == .init(inputDiaries[0]))
+    }
+    
+    @Test
+    func 次の日記を取得するための日記リストの一番古い日付を返す() async throws {
+        
+        let inputDiaries: [DiaryData] = [
+            .create(id: Self.diaryIdList[0], date: .create(year: 2025, month: 2, day: 2)),
+            .create(id: Self.diaryIdList[1], date: .create(year: 2024, month: 2, day: 2))
+        ]
+        var sut = DiaryList(elements: inputDiaries.map { .init($0) })
+        
+        let result = try #require(sut.getLoadStartDate())
+        
+        #expect(result == inputDiaries[1].date)
     }
 }
 
