@@ -19,7 +19,7 @@ extension StackState where Element == DiaryListFeature.Path.State {
     
     static func getToEditScreenPath(_ diary: DiaryData) -> Self {
         
-        return .init([.editScreen(.init(contact: .init(id: UUID(), name: "")))])
+        return .init([.editScreen(.init())])
     }
     
     static func getToGraphScreenPath() -> Self {
