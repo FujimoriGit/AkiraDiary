@@ -66,11 +66,13 @@ struct TrainingActivityGraphView: View {
         .navigationBarBackButtonHidden()
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("Activity")
+        .alert(store: store.scope(state: \.$alert, action: \.alert))
         .navigationDestination(item: $store.scope(state: \.navigationDestination?.detailScreen,
                                                   action: \.navigationDestination.detailScreen)) {
             DiaryDetailView(store: $0)
         }
-        .fullScreenCover(item: $store.scope(state: \.popup, action: \.popup)) {
+        .fullScreenCover(item: $store.scope(state: \.popup,
+                                            action: \.popup)) {
             createPopupView($0.case)
         }
         .transaction { $0.disablesAnimations = true }
@@ -225,7 +227,7 @@ private extension TrainingActivityGraphView {
 #Preview {
     
     @Environment(\.calendar)
-    @Previewable  var calendar
+    @Previewable var calendar
     
     let absId = UUID()
     let benchPressId = UUID()
@@ -297,4 +299,33 @@ private extension TrainingActivityGraphView {
         }))
     }
     .environment(\.locale, Locale(identifier: "ja_JP"))
+}
+
+#Preview("日記なしのケース") {
+    
+    TrainingActivityGraphView(store: Store(
+        initialState: .init(),
+        reducer: { TrainingActivityGraphFeature() },
+        withDependencies: {
+            
+            // swiftlint:disable:next force_unwrapping
+            $0.defaultAppStorage = UserDefaults(suiteName: "日記なしのケース")!
+            $0.trainingTypeApi = .init(add: { _ in true },
+                                       update: { _ in true },
+                                       fetchAll: {
+                
+                return []
+            }, getPublisher: {
+                
+                return PassthroughSubject().eraseToAnyPublisher()
+            })
+            $0.diaryListFetchApi = .init(add: { _ in true },
+                                         fetch: { _, _ in [] },
+                                         deleteItem: { _ in },
+                                         observeDiaryList: {
+                
+                return PassthroughSubject().eraseToAnyPublisher()
+            })
+        }
+    ))
 }

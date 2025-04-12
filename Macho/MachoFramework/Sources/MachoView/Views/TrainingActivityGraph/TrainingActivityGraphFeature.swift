@@ -49,7 +49,7 @@ struct TrainingActivityGraphFeature {
         
         var isShowingFilter = true
         /// グラフ表示開始日付
-        var activityStartPeriod: Date = .now
+        var activityStartPeriod: Date = .distantPast
         /// グラフ表示期間
         var activityPeriod: ActivityPeriod = .week
         /// 表示トレーニングリスト
@@ -59,8 +59,10 @@ struct TrainingActivityGraphFeature {
         
         // MARK: Child Feature
         
-        var calendar = ActivityCalendarFeature.State(displayInterval: .init(start: .now, end: .now),
-                                                     decorationSources: [])
+        var calendar = ActivityCalendarFeature.State(
+            displayInterval: .init(start: .distantPast, end: .distantFuture),
+            decorationSources: []
+        )
     }
     
     // MARK: - action definition
@@ -104,10 +106,20 @@ struct TrainingActivityGraphFeature {
         /// 保存しているトレーニング種目取得時
         case didReceiveTrainingTypeList([TrainingTypeData])
         
+        // MARK: Delegate
+        
+        case delegate(Delegate)
+        
         // MARK: Child Feature
         
         /// カレンダーコンポーネントのイベント
         case calendar(ActivityCalendarFeature.Action)
+        
+        enum Delegate: Equatable {
+            
+            /// 日記データが存在しないアラートのボタンを押下した
+            case tappedEmptyDiaryAlertButton
+        }
         
         enum Alert: Equatable {
             
@@ -139,8 +151,17 @@ struct TrainingActivityGraphFeature {
             
             switch action {
                 
+            case .alert(.presented(.emptyActivityData)):
+                state.alert = nil
+                return .run { send in
+                    
+                    await send(.delegate(.tappedEmptyDiaryAlertButton))
+                }
+                
             case .alert:
-                // TODO: 未実装
+                return .none
+                
+            case .delegate:
                 return .none
                 
             case .popup(.presented(.selectTraining(.childAction(
@@ -205,6 +226,14 @@ struct TrainingActivityGraphFeature {
                 )
                 
             case .didReceiveDiaryData(let diaries):
+                if diaries.isEmpty {
+                    
+                    state.alert = .createAlertState(
+                        .emptyDiaryItemAlert,
+                        firstButtonHandler: .emptyActivityData
+                    )
+                    return .none
+                }
                 state.updateActivityResults(diaries)
                 return .none
                 

@@ -445,7 +445,75 @@ final class TrainingActivityGraphViewTest: XCTestCase {
     
     func test_画面表示中に日記が登録されていない場合はアラートを表示する() async throws {
         
-        // TODO: プロダクトコード未実装
+        // 準備
+        
+        let initialStartPeriod = Date.create(year: 2024, month: 7, day: 1)
+        let initialPeriod = ActivityPeriod.month
+        
+        let testStore = TestStore(initialState: TrainingActivityGraphFeature.State(),
+                                  reducer: { TrainingActivityGraphFeature() },
+                                  withDependencies: {
+            
+            $0.diaryListFetchApi = .createCustomValue(createDiaryListFetchApiRealmMock(
+                expectedFetchResult: []
+            ))
+            $0.trainingTypeApi = .createCustomValue(createTrainingTypeApiRealmMock(
+                expectedFetchResult: []
+            ))
+            $0.defaultAppStorage = createTestUserDefaults(
+                initialStartDate: initialStartPeriod,
+                initialPeriod: initialPeriod
+            )
+        })
+        
+        // 実行
+        
+        await testStore.send(.onAppear) {
+            
+            $0.activityStartPeriod = initialStartPeriod
+            $0.activityPeriod = initialPeriod
+            $0.calendar.displayInterval = .create(from: initialStartPeriod,
+                                                  period: initialPeriod)
+        }
+        
+        // 検証
+        
+        await testStore.receive(\.didReceiveTrainingTypeList)
+        
+        await testStore.receive(\.didReceiveDiaryData) {
+            
+            $0.alert = .createAlertState(.emptyDiaryItemAlert,
+                                         firstButtonHandler: .emptyActivityData)
+        }
+        
+        // 後始末
+        
+        await testStore.send(.tappedNavigationBackButton)
+    }
+    
+    func test_日記が登録されていないアラートのボタンを押下するとボタンを押下された処理を親画面へ伝える() async throws {
+        
+        // 準備
+        
+        let alert = AlertState<TrainingActivityGraphFeature.Action.Alert>.createAlertState(
+            .emptyDiaryItemAlert,
+            firstButtonHandler: .emptyActivityData
+        )
+        let testStore = TestStore(
+            initialState: TrainingActivityGraphFeature.State(alert: alert),
+            reducer: { TrainingActivityGraphFeature() }
+        )
+        
+        // 実行
+        
+        await testStore.send(.alert(.presented(.emptyActivityData))) {
+            
+            // 検証
+            
+            $0.alert = nil
+        }
+        
+        await testStore.receive(.delegate(.tappedEmptyDiaryAlertButton))
     }
 }
 

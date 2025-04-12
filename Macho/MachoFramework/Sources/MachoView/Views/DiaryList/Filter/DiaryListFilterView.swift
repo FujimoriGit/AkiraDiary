@@ -9,8 +9,10 @@ import Combine
 import ComposableArchitecture
 import SwiftUI
 
-struct DiaryListFilterView: View {
+struct DiaryListFilterView: PopUpableContentView {
     
+    typealias Feature = DiaryListFilterFeature
+        
     // MARK: - layout property
     
     // MARK: size property
@@ -44,11 +46,11 @@ struct DiaryListFilterView: View {
     
     // MARK: private property
     
-    @Bindable private var store: StoreOf<DiaryListFilterFeature>
+    @Bindable private var store: StoreOf<Feature>
     
     // MARK: initialize method
     
-    init(store: StoreOf<DiaryListFilterFeature>) {
+    init(store: some StoreOf<Feature>) {
         
         self.store = store
     }
@@ -56,18 +58,7 @@ struct DiaryListFilterView: View {
     // MARK: - view body property
     
     var body: some View {
-        ZStack {
-            GeometryReader { proxy in
-                Color(asset: CustomColor.dialogBackgroundColor)
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        store.send(.tappedOutsideArea)
-                    }
-                    .accessibilityAddTraits(.isButton)
-                createDialogView(parentSize: proxy.size)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
-        }
+        createDialogView()
         .onAppear {
             store.send(.onAppear)
         }
@@ -78,7 +69,7 @@ struct DiaryListFilterView: View {
 
 private extension DiaryListFilterView {
     
-    func createDialogView(parentSize: CGSize) -> some View {
+    func createDialogView() -> some View {
         ZStack(alignment: .topTrailing) {
             VStack(spacing: .zero) { // ダイアログエリア
                 Text("日記リストのフィルター設定")
@@ -89,19 +80,9 @@ private extension DiaryListFilterView {
                 createScrollArea()
             }
             .padding(.vertical, dialogPadding)
-            .frame(width: abs(parentSize.width - dialogPadding))
-            .background(Color(asset: CustomColor.appPrimaryBackgroundColor))
-            .borderModifier(cornerRadius: dialogCornerRadius)
-            Button(action: { // 閉じるボタン
+            PopUpCloseButton {
                 store.send(.tappedCloseButton)
-            }, label: {
-                Image(systemName: "xmark.circle")
-                    .resizable()
-                    .frame(width: iconSize.width, height: iconSize.height)
-            })
-            .frameButtonStyle(frameWidth: .zero,
-                              cornerRadius: iconSize.width / 2)
-            .padding(dialogPadding)
+            }
         }
     }
     

@@ -11,11 +11,6 @@ import Foundation
 @Reducer
 struct DiaryListFeature: Sendable {
     
-    // MARK: - Cancellable
-    
-    // フィルターテーブル監視のCancellable
-    struct FilterObserveCancellable: Hashable {}
-    
     // MARK: - State
     
     @ObservableState
@@ -24,7 +19,7 @@ struct DiaryListFeature: Sendable {
         // MARK: Presents States
         
         @Presents var alert: AlertState<Action.Alert>?
-        @Presents var destination: Destination.State?
+        @Presents var destination: PopUpFeature<DiaryListFilterFeature>.State?
         
         // MARK: Navigation States
         
@@ -53,7 +48,7 @@ struct DiaryListFeature: Sendable {
             // バウンスしているかつ、ロード中でない場合は日記リストの追加取得が行える状態と判断する
             return trackableList.isBouncedAtBottom && !viewState.isLoadingDiaries
         }
-        
+                
         struct ViewState: Equatable {
             
             /// スクロール中かどうか
@@ -74,7 +69,7 @@ struct DiaryListFeature: Sendable {
         /// アラートの表示
         case alert(PresentationAction<Alert>)
         /// モーダル遷移による画面表示
-        case destination(PresentationAction<Destination.Action>)
+        case destination(PresentationAction<PopUpFeature<DiaryListFilterFeature>.Action>)
         
         // MARK: Navigation Action
         
@@ -91,8 +86,6 @@ struct DiaryListFeature: Sendable {
         
         /// 画面表示時のアクション
         case onAppearView
-        /// 画面非表示時のアクション
-        case onDisappearView
         /// フィルターボタン押下時のアクション
         case tappedFilterButton
         /// グラフボタン押下時のアクション
@@ -148,8 +141,10 @@ struct DiaryListFeature: Sendable {
                 DiaryListItemFeature()
             }
             .forEach(\.path, action: \.path)
-            .ifLet(\.$destination, action: \.destination)
             .ifLet(\.$alert, action: \.alert)
+            .ifLet(\.$destination, action: \.destination) {
+                PopUpFeature<DiaryListFilterFeature>()
+            }
     }
 }
 
@@ -167,10 +162,9 @@ private extension DiaryListFeature {
                 
             case .alert(.presented(.confirmEditItem(targetId: let id))):
                 // TODO: 編集画面への遷移を実装する
-                logger.info("confirmEditItem(id=\(id)).")
-                state.path.append(.editScreen(AddContactFeature.State(contact: .init(id: uuid.callAsFunction(),
-                                                                                     name: ""))))
-                return cancelObserver()
+                logger.info("tapped edit button(id=\(id)).")
+                state.path = .getToEditScreenPath()
+                return .none
                 
             case .alert(.presented(.confirmDeleteItem(deleteItemId: let id))):
                 return deleteDiaryListItem(id)
@@ -178,15 +172,18 @@ private extension DiaryListFeature {
             case .alert:
                 return .none
                 
-            case let .destination(.presented(.filterScreen(delegate))):
-                if needDismissFilterView(delegate) {
+            case .destination(.presented(.childAction(.delegate(.confirmedFilter(let filters))))):
+                return .run { send in
                     
-                    state.destination = nil
+                    await send(.receiveLoadDiaryListFilter(filters: filters))
                 }
                 
+            case .destination:
                 return .none
                 
-            case .destination:
+            case .path(.element(id: state.path.ids.last,
+                                action: .graphScreen(.delegate(.tappedEmptyDiaryAlertButton)))):
+                state.path = .getToCreationScreenPath()
                 return .none
                 
             case .path:
@@ -197,13 +194,8 @@ private extension DiaryListFeature {
                 state.viewState.isLoadingDiaries = true
                 return initialLoadDiaryListInfo()
                 
-            case .onDisappearView:
-                logger.info("onDisappearView")
-                return cancelObserver()
-                
                 // 日記項目のComponentのDelegateAction
             case .diaries(.element(let id, let delegateAction)):
-                logger.info("diaries delegate action(id: \(id), action: \(delegateAction)).")
                 state = getUpdatedStateOnDiaryListItemDelegate(state: state,
                                                                delegate: delegateAction,
                                                                id: id)
@@ -214,9 +206,7 @@ private extension DiaryListFeature {
                 state.viewState.isScrolling = state.trackableList.isScrolling
                 
                 guard state.canReloadWithScroll else { return .none }
-                
-                logger.debug("start loading diary items with list scroll.")
-                
+                                
                 // ロード中にStateを更新する
                 state.viewState.isLoadingDiaries = true
                 // バウンスした際はデータをリロードする
@@ -226,34 +216,30 @@ private extension DiaryListFeature {
                 return .none
                 
             case .tappedFilterButton:
-                logger.info("tappedFilterButton")
-                state.destination = .filterScreen(.init())
+                state.destination = .init(childState: .init())
                 return .none
                 
             case .tappedGraphButton:
-                logger.info("tappedGraphButton")
-                state.path.append(.graphScreen(.init()))
-                return cancelObserver()
+                state.path = .getToGraphScreenPath()
+                return .none
                 
             case .tappedCreateNewDiaryButton:
-                logger.info("tappedCreateNewDiaryButton")
-                // TODO: 日記作成画面表示を実行
-                state.path.append(.createScreen(DiaryCreationFeature.State()))
-                return cancelObserver()
+                state.path = .getToCreationScreenPath()
+                return .none
                 
-            case .receiveLoadDiaryItems(let items):
-                logger.info("receiveLoadDiaryItems(items: \(items))")
-                // stateの更新
-                state = getUpdatedStateAfterReloadDiary(receive: items, state: state)
+            case .receiveLoadDiaryItems(let fetchedDiaries):
+                logger.info("receiveLoadDiaryItems(\(fetchedDiaries))")
+                let diaryList = DiaryList(adding: fetchedDiaries,
+                                          current: state.diaries.elements)
+                state = getUpdatedDiaryList(updatedList: diaryList, currentState: state)
+                // リロード中フラグを倒す
+                state.viewState.isLoadingDiaries = false
                 return .none
                 
             case .deletedDiaryItem(let id):
                 logger.info("deletedDiaryItem(id: \(id))")
-                // 日記リストの更新
-                state.diaries.remove(id: id)
-                state = updateDiaries(newDiaries: state.diaries, state: state)
-                // 日記リストの有無更新
-                state.viewState.hasDiaryItems = !state.filteredDiaries.isEmpty
+                let diaryList = DiaryList(removing: id, current: state.diaries.elements)
+                state = getUpdatedDiaryList(updatedList: diaryList, currentState: state)
                 
                 return .none
                 
@@ -262,10 +248,9 @@ private extension DiaryListFeature {
                 
                 // 現在のフィルターを更新
                 state.currentFilters = filters
-                // 日記リストが存在しない場合は何もしない
-                if state.diaries.isEmpty { return .none }
                 // 日記リストのフィルター反映
-                state = updateDiaries(newDiaries: state.diaries, state: state)
+                let diaryList = DiaryList(elements: state.diaries.elements)
+                state = getUpdatedDiaryList(updatedList: diaryList, currentState: state)
                 
                 return .none
             }
@@ -278,7 +263,7 @@ private extension DiaryListFeature {
 extension DiaryListFeature {
     
     @Reducer(state: .equatable, action: .equatable)
-    enum Path: Equatable {
+    enum Path {
         
         // 日記編集画面
         case editScreen(AddContactFeature)
@@ -288,55 +273,6 @@ extension DiaryListFeature {
         case graphScreen(TrainingActivityGraphFeature)
         // 詳細画面
         case detailScreen(DiaryDetailFeature)
-        
-        var id: Int {
-            
-            switch self {
-                
-            case .editScreen:
-                return 0
-                
-            case .createScreen:
-                return 1
-                
-            case .graphScreen:
-                return 2
-                
-            case .detailScreen:
-                return 3
-            }
-        }
-        
-        static func == (lhs: DiaryListFeature.Path, rhs: DiaryListFeature.Path) -> Bool {
-            
-            return lhs.id == rhs.id
-        }
-    }
-}
-
-// MARK: - Presentation Destination Definition
-
-extension DiaryListFeature {
-    
-    @Reducer(state: .equatable, action: .equatable)
-    enum Destination: Equatable {
-        
-        // フィルター画面
-        case filterScreen(DiaryListFilterFeature)
-        
-        var id: Int {
-            
-            switch self {
-                
-            case .filterScreen:
-                return 0
-            }
-        }
-        
-        static func == (lhs: DiaryListFeature.Destination, rhs: DiaryListFeature.Destination) -> Bool {
-            
-            return lhs.id == rhs.id
-        }
     }
 }
 
@@ -352,15 +288,9 @@ private extension DiaryListFeature {
             .run { send in
                 
                 let currentFilterList = await diaryListFilterApi.fetchFilterList()
-                return await send(.receiveLoadDiaryListFilter(filters: currentFilterList))
+                await send(.receiveLoadDiaryListFilter(filters: currentFilterList))
             },
-            loadDiaryListItem(date.now),
-            .publisher {
-                
-                return diaryListFilterApi.getFilterListObserver()
-                    .receive(on: DispatchQueue.main)
-                    .map { .receiveLoadDiaryListFilter(filters: $0) }
-            }.cancellable(id: FilterObserveCancellable())
+            loadDiaryListItem(date.now)
         )
     }
     
@@ -377,75 +307,21 @@ private extension DiaryListFeature {
         }
     }
     
-    /// 日記リストのリロード処理後の更新したStateを返す
-    /// - Parameters:
-    ///   - receive: 日記リストのリロードで取得したリスト
-    ///   - state: 更新前のState
-    func getUpdatedStateAfterReloadDiary(receive diaries: [DiaryData], state: State) -> State {
+    func getUpdatedDiaryList(updatedList: DiaryList, currentState: State) -> State {
         
-        var updatedState = state
-        // Stateの更新
-        diaries.forEach { updatedState.diaries.updateOrAppend(.init($0)) }
-        updatedState = updateDiaries(newDiaries: updatedState.diaries, state: updatedState)
-        // リロード中フラグを倒す
-        updatedState.viewState.isLoadingDiaries = false
-        // 表示中リスト有無のフラグ更新
-        updatedState.viewState.hasDiaryItems = !updatedState.filteredDiaries.isEmpty
+        var updatedState = currentState
+        updatedState.diaries = .init(uniqueElements: updatedList.elements)
         
-        logger.debug("did end update diaries(\(state.diaries))")
+        let filteredDiaryList = updatedList.getFilteredList(filters: currentState.currentFilters)
+        updatedState.filteredDiaries = .init(
+            uniqueElements: filteredDiaryList.elements
+        )
+        updatedState.viewState.hasDiaryItems = filteredDiaryList.hasElements
         return updatedState
-    }
-    
-    func updateDiaries(newDiaries: IdentifiedArrayOf<DiaryListItemFeature.State>, state: State) -> State {
-        
-        var updatedState = state
-        
-        // 日記の作成日付で降順にソートする
-        updatedState.diaries = newDiaries
-        updatedState.diaries.sort { $0.date > $1.date }
-        // フィルターの反映
-        updatedState.filteredDiaries = getFilteringDiaryList(diaryList: updatedState.diaries,
-                                                             filters: updatedState.currentFilters)
-        return updatedState
-    }
-    
-    /// フィルターを反映した日記リストのを返す
-    /// - Parameters:
-    ///   - diaryList: 更新対象の日記リスト
-    ///   - filters: フィルター
-    func getFilteringDiaryList(diaryList: IdentifiedArrayOf<DiaryListItemFeature.State>,
-                               filters: [DiaryListFilterItem]) -> IdentifiedArrayOf<DiaryListItemFeature.State> {
-        
-        // フィルタリング処理
-        let filteredList = diaryList.filter { item in
-            
-            return filters.isEmpty ? true : filters.contains {
-                $0.isMatchFilter(isAchieved: item.isWin,
-                                 trainingList: item.trainingList,
-                                 tagList: item.tagList)
-            }
-        }
-        
-        logger.debug("did finish filtering(before: \(diaryList), after: \(filteredList), filter: \(filters))")
-        return filteredList
-    }
-    
-    func needDismissFilterView(_ delegate: DiaryListFilterFeature.Action) -> Bool {
-        
-        switch delegate {
-            
-        case .tappedOutsideArea, .tappedCloseButton:
-            return true
-            
-        default:
-            return false
-        }
     }
     
     func deleteDiaryListItem(_ id: UUID) -> Effect<DiaryListFeature.Action> {
-        
-        logger.info("confirmDeleteItem(id=\(id)).")
-        
+                
         return .run { send in
             
             try await diaryListFetchClient.deleteItem(id)
@@ -464,26 +340,25 @@ private extension DiaryListFeature {
         case .tappedDiaryItem:
             if let diary = state.diaries.first(where: { $0.id == id }) {
                 
-                updateTargetState.path.append(.detailScreen(.init(diary: diary.entity)))
+                updateTargetState.path = .getToDetailScreenPath(diary.entity)
             }
             
         case .deleteItemSwipeAction:
             // アラート表示
-            updateTargetState.alert = .createAlertStateWithCancel(.deleteDiaryItemConfirmAlert,
-                                                                  firstButtonHandler:
-                    .confirmDeleteItem(deleteItemId: id))
+            updateTargetState.alert = .createAlertStateWithCancel(
+                .deleteDiaryItemConfirmAlert,
+                firstButtonHandler:
+                        .confirmDeleteItem(deleteItemId: id)
+            )
             
         case .editItemSwipeAction:
             // アラート表示
-            updateTargetState.alert = .createAlertStateWithCancel(.editDiaryItemConfirmAlert,
-                                                                  firstButtonHandler: .confirmEditItem(targetId: id))
+            updateTargetState.alert = .createAlertStateWithCancel(
+                .editDiaryItemConfirmAlert,
+                firstButtonHandler: .confirmEditItem(targetId: id)
+            )
         }
         
         return updateTargetState
-    }
-    
-    func cancelObserver() -> Effect<Action> {
-        
-        return .cancel(id: FilterObserveCancellable())
     }
 }
