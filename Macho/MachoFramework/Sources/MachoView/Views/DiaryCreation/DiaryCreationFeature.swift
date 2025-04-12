@@ -297,3 +297,28 @@ extension DiaryCreationFeature.Action {
         case tappedDismissAcceptButton
     }
 }
+
+// MARK: - extension (for state)
+
+extension DiaryCreationFeature.State {
+    
+    init(editTarget diary: DiaryData) {
+        
+        titleText = diary.title
+        messageText = diary.mainText
+        tags = diary.tags.map { .init(entity: $0, isSelected: true) }
+        goals = diary.goals.compactMap {
+            
+            guard let trainingType = $0.trainingType else {
+                
+                assertionFailure("Unexpected value: trainingType is nil.")
+                return nil
+            }
+            return .init(id: $0.id,
+                         trainingType: trainingType,
+                         numberOfSets: $0.goalNumberOfSets,
+                         setCount: $0.goalSetCount)
+        }
+        
+    }
+}

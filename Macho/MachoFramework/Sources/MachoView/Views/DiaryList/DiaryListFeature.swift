@@ -163,7 +163,8 @@ private extension DiaryListFeature {
             case .alert(.presented(.confirmEditItem(targetId: let id))):
                 // TODO: 編集画面への遷移を実装する
                 logger.info("tapped edit button(id=\(id)).")
-                state.path = .getToEditScreenPath()
+                guard let targetDiary = state.diaries.first(where: { $0.id == id }) else { return .none }
+                state.path = .getToEditScreenPath(targetDiary.entity)
                 return .none
                 
             case .alert(.presented(.confirmDeleteItem(deleteItemId: let id))):
@@ -266,7 +267,7 @@ extension DiaryListFeature {
     enum Path {
         
         // 日記編集画面
-        case editScreen(AddContactFeature)
+        case editScreen(DiaryCreationFeature)
         // 日記作成画面
         case createScreen(DiaryCreationFeature)
         // グラフ画面
