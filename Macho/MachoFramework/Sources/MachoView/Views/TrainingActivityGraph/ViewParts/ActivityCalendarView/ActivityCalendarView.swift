@@ -30,7 +30,7 @@ struct ActivityCalendarView: View {
     var body: some View {
         CalendarView(initialDate: store.initialDisplayDate,
                      interval: store.displayInterval,
-                     decorationDic: store.decorationDic) {
+                     decorationSources: store.decorationSources) {
             store.send(.delegate(.selectedDay($0)))
         }
                      .frame(maxWidth: .infinity,
@@ -42,8 +42,9 @@ struct ActivityCalendarView: View {
 
 #Preview {
     
-    @Previewable @Environment(\.calendar)
-    var calendar
+    @Environment(\.calendar)
+    @Previewable var calendar
+    
     let interval = DateInterval(start: Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date(),
                                 end: Date())
     let activityResults = ActivityResults([
@@ -63,7 +64,7 @@ struct ActivityCalendarView: View {
               startTime: nil,
               endTime: nil),
         .init(id: UUID(),
-              date: calendar.date(byAdding: .day, value: 1, to: interval.start)!,
+              date: calendar.date(byAdding: .day, value: 1, to: interval.start)!, // swiftlint:disable:this force_unwrapping
               title: "Test2",
               mainText: "",
               goals: [
@@ -84,7 +85,7 @@ struct ActivityCalendarView: View {
     
     ActivityCalendarView(store: Store(initialState: .init(
         displayInterval: interval,
-        decorationDic: activityResults.buildCalendarDecorator()
+        decorationSources: activityResults.buildCalendarDecorator()
     )) {
         ActivityCalendarFeature()
     })

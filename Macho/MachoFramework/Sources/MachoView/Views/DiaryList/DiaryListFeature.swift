@@ -161,6 +161,7 @@ private extension DiaryListFeature {
             switch action {
                 
             case .alert(.presented(.confirmEditItem(targetId: let id))):
+                // TODO: 編集画面への遷移を実装する
                 logger.info("tapped edit button(id=\(id)).")
                 guard let targetDiary = state.diaries.first(where: { $0.id == id }) else { return .none }
                 state.path = .getToEditScreenPath(targetDiary.entity)

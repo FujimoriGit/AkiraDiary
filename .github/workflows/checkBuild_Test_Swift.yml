@@ -50,20 +50,9 @@ jobs:
       - name: Show Xcode version
         run: xcodebuild -version
 
-<<<<<<< HEAD
-      # Rudy製ライブラリのキャッシュ
-      - name: Cache Gems
-        uses: actions/cache@v4.2.0
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-gems-
-=======
       # xcbeautifyをインストール
       - name: Install xcbeautify
         run: brew install xcbeautify
->>>>>>> origin/BR_develop-1.0
 
       # DangerJSをインストール
       - name: Install Dnager JS

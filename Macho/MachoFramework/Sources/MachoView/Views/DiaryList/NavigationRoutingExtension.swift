@@ -12,14 +12,20 @@ import Foundation
 
 extension StackState where Element == DiaryListFeature.Path.State {
     
-    static func getToCreationScreenPath() -> Self { .init([.createScreen(.init())]) }
+    static func getToCreationScreenPath() -> Self {
+        
+        return .init([.createScreen(.init())])
+    }
     
     static func getToEditScreenPath(_ diary: DiaryData) -> Self {
         
-        .init([.editScreen(.init(editTarget: diary))])
+        return .init([.editScreen(.init(contact: .init(id: UUID(), name: "")))])
     }
     
-    static func getToGraphScreenPath() -> Self { .init([.graphScreen(.init())]) }
+    static func getToGraphScreenPath() -> Self {
+        
+        return .init([.graphScreen(.init())])
+    }
     
     static func getToDetailScreenPath(_ diary: DiaryData) -> Self {
         
