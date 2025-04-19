@@ -28,12 +28,15 @@ struct DiaryListItemFeature: Sendable {
         var message: String { entity.mainText }
         /// 日記の作成日付
         var date: Date { entity.date }
-        /// 目標達成したかどうか
-        var isWin: Bool { entity.isAchieved }
         /// 日記に登録したトレーニング種別のID
         var trainingList: [UUID] { entity.goals.compactMap { $0.trainingType?.id } }
         /// 日記に登録したタグのID
         var tagList: [UUID] { entity.tags.map(\.id) }
+        /// 日記のトレーニング状況の状態
+        var diaryState: DiaryStatus {
+            
+            entity.endTime == nil ? .training : .finished(isAchieved: entity.isAchieved)
+        }
     }
     
     enum Action: Sendable {

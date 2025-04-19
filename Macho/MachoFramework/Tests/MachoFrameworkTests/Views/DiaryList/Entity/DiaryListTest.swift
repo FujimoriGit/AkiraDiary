@@ -13,63 +13,61 @@ import Testing
 
 struct DiaryListTest {
     
-    static let diaryIdList = (1...4).map { _ in UUID() }
+    static let diaryIdList = (1...5).map { _ in UUID() }
     
     typealias DiaryListItem = DiaryListItemFeature.State
-
+    
     @Test(
         "日記リストのフィルタリング処理は、フィルターにマッチする項目が一つでもある日記のリストを返す",
         arguments: [
             (
                 [DiaryListFilterItem.notAchieved],
-                [DiaryData.create(id: Self.diaryIdList[1],
-                                  isAchieved: false,
-                                  type: [.abs])]
+                [DiaryData.createData(id: Self.diaryIdList[1], isAchieved: false, type: [.abs])]
             ),
             (
                 [DiaryListFilterItem.achieved],
                 [
-                    DiaryData.create(id: Self.diaryIdList[0]),
-                    .create(id: Self.diaryIdList[2], tag: [.fine]),
-                    .create(id: Self.diaryIdList[3],
-                            isAchieved: true,
-                            type: [.benchPress],
-                            tag: [.unfine])
+                    DiaryData.createData(id: Self.diaryIdList[0]),
+                    .createData(id: Self.diaryIdList[2], tag: [.fine]),
+                    .createData(id: Self.diaryIdList[3],
+                                isAchieved: true,
+                                type: [.benchPress],
+                                tag: [.unfine])
                 ]
             ),
             (
                 [DiaryListFilterItem.create(.fine)],
-                [DiaryData.create(id: Self.diaryIdList[2], tag: [.fine])]
+                [DiaryData.createData(id: Self.diaryIdList[2], tag: [.fine])]
             ),
             (
                 [DiaryListFilterItem.create(.unfine)],
-                [DiaryData.create(id: Self.diaryIdList[3],
-                                  isAchieved: true,
-                                  type: [.benchPress],
-                                  tag: [.unfine])]
+                [DiaryData.createData(id: Self.diaryIdList[3],
+                                      isAchieved: true,
+                                      type: [.benchPress],
+                                      tag: [.unfine])]
             ),
             (
                 [DiaryListFilterItem.create(.abs)],
-                [DiaryData.create(id: Self.diaryIdList[1],
-                                  isAchieved: false,
-                                  type: [.abs])]
+                [DiaryData.createData(id: Self.diaryIdList[1],
+                                      isAchieved: false,
+                                      type: [.abs])]
             ),
             (
                 [DiaryListFilterItem.create(.benchPress)],
-                [DiaryData.create(id: Self.diaryIdList[3],
-                                  isAchieved: true,
-                                  type: [.benchPress],
-                                  tag: [.unfine])]
+                [DiaryData.createData(id: Self.diaryIdList[3],
+                                      isAchieved: true,
+                                      type: [.benchPress],
+                                      tag: [.unfine])]
             ),
             (
                 [DiaryListFilterItem.achieved, .create(.fine), .create(.benchPress)],
                 [
-                    DiaryData.create(id: Self.diaryIdList[0]),
-                    .create(id: Self.diaryIdList[2], tag: [.fine]),
-                    .create(id: Self.diaryIdList[3],
-                            isAchieved: true,
-                            type: [.benchPress],
-                            tag: [.unfine])
+                    DiaryData.createData(id: Self.diaryIdList[0]),
+                    .createData(id: Self.diaryIdList[2], tag: [.fine]),
+                    .createData(id: Self.diaryIdList[3],
+                                isAchieved: true,
+                                type: [.benchPress],
+                                tag: [.unfine])
                 ]
             ),
             (
@@ -80,16 +78,27 @@ struct DiaryListTest {
                     .create(.abs)
                 ],
                 [
-                    DiaryData.create(id: Self.diaryIdList[0]),
-                    .create(id: Self.diaryIdList[1], isAchieved: false, type: [.abs]),
-                    .create(id: Self.diaryIdList[2], tag: [.fine]),
-                    .create(id: Self.diaryIdList[3],
-                            isAchieved: true,
-                            type: [.benchPress],
-                            tag: [.unfine])
+                    DiaryData.createData(id: Self.diaryIdList[0]),
+                    .createData(id: Self.diaryIdList[1], isAchieved: false, type: [.abs]),
+                    .createData(id: Self.diaryIdList[2], tag: [.fine]),
+                    .createData(id: Self.diaryIdList[3],
+                                isAchieved: true,
+                                type: [.benchPress],
+                                tag: [.unfine])
                 ]
             ),
-            ([DiaryListFilterItem.create(.init(id: UUID(), tagName: "Test"))], [])
+            ([DiaryListFilterItem.create(.init(id: UUID(), tagName: "Test"))], []),
+            (
+                [DiaryListFilterItem.training],
+                [DiaryData.createData(id: Self.diaryIdList[4], isFinished: false)]
+            ),
+            (
+                [
+                    DiaryListFilterItem.training,
+                    DiaryListFilterItem.create(.init(id: UUID(), tagName: "Test"))
+                ],
+                [DiaryData.createData(id: Self.diaryIdList[4], isFinished: false)]
+            )
         ]
     )
     func フィルタリング処理の確認(
@@ -98,13 +107,14 @@ struct DiaryListTest {
     ) throws {
         
         let inputDiaries: [DiaryData] = [
-            .create(id: Self.diaryIdList[0]),
-            .create(id: Self.diaryIdList[1], isAchieved: false, type: [.abs]),
-            .create(id: Self.diaryIdList[2], tag: [.fine]),
-            .create(id: Self.diaryIdList[3],
-                    isAchieved: true,
-                    type: [.benchPress],
-                    tag: [.unfine])
+            .createData(id: Self.diaryIdList[0]),
+            .createData(id: Self.diaryIdList[1], isAchieved: false, type: [.abs]),
+            .createData(id: Self.diaryIdList[2], tag: [.fine]),
+            .createData(id: Self.diaryIdList[3],
+                        isAchieved: true,
+                        type: [.benchPress],
+                        tag: [.unfine]),
+            .createData(id: Self.diaryIdList[4], isFinished: false),
         ]
         
         let sut = DiaryList(elements: inputDiaries.map { .init($0) })
@@ -129,8 +139,8 @@ struct DiaryListTest {
             ),
             (
                 DiaryList(elements: []),
-                [DiaryData.create(id: diaryIdList[0], date: .create(year: 2025, month: 2, day: 1), tag: [.fine])],
-                [.create(id: diaryIdList[0], date: .create(year: 2025, month: 2, day: 1), tag: [.fine])]
+                [DiaryData.createData(id: diaryIdList[0], date: .create(year: 2025, month: 2, day: 1), tag: [.fine])],
+                [DiaryData.createData(id: diaryIdList[0], date: .create(year: 2025, month: 2, day: 1), tag: [.fine])]
             ),
             (
                 DiaryList(elements: [
@@ -138,7 +148,7 @@ struct DiaryListTest {
                 ]),
                 [DiaryData.create(id: diaryIdList[0], date: .create(year: 2025, month: 2, day: 1))],
                 [
-                    .create(id: diaryIdList[1], date: .create(year: 2025, month: 2, day: 10)),
+                    DiaryData.create(id: diaryIdList[1], date: .create(year: 2025, month: 2, day: 10)),
                     .create(id: diaryIdList[0], date: .create(year: 2025, month: 2, day: 1))
                 ]
             )
@@ -180,12 +190,12 @@ struct DiaryListTest {
     func IDで指定した日記を取得する() async throws {
         
         let inputDiaries: [DiaryData] = [
-            .create(id: Self.diaryIdList[0]),
-            .create(id: Self.diaryIdList[1], tag: [.fine]),
-            .create(id: Self.diaryIdList[2],
-                    isAchieved: true,
-                    type: [.benchPress],
-                    tag: [.unfine])
+            .createData(id: Self.diaryIdList[0]),
+            .createData(id: Self.diaryIdList[1], tag: [.fine]),
+            .createData(id: Self.diaryIdList[2],
+                        isAchieved: true,
+                        type: [.benchPress],
+                        tag: [.unfine])
         ]
         var sut = DiaryList(elements: inputDiaries.map { .init($0) })
         
@@ -198,8 +208,8 @@ struct DiaryListTest {
     func 次の日記を取得するための日記リストの一番古い日付を返す() async throws {
         
         let inputDiaries: [DiaryData] = [
-            .create(id: Self.diaryIdList[0], date: .create(year: 2025, month: 2, day: 2)),
-            .create(id: Self.diaryIdList[1], date: .create(year: 2024, month: 2, day: 2))
+            .createData(id: Self.diaryIdList[0], date: .create(year: 2025, month: 2, day: 2)),
+            .createData(id: Self.diaryIdList[1], date: .create(year: 2024, month: 2, day: 2))
         ]
         var sut = DiaryList(elements: inputDiaries.map { .init($0) })
         
@@ -211,18 +221,25 @@ struct DiaryListTest {
 
 fileprivate extension DiaryData {
     
-    static func create(id: UUID,
-                       date: Date = .create(year: 2025, month: 2, day: 1),
-                       isAchieved: Bool = true,
-                       type trainingType: [TrainingTypeData] = [],
-                       tag: [TrainingTagData] = []) -> Self {
+    static let defaultEndDate: Date = .create(year: 2025, month: 1, day: 1)
+    
+    static func createData(id: UUID,
+                           date: Date = .create(year: 2025, month: 2, day: 1),
+                           isAchieved: Bool = true,
+                           type trainingType: [TrainingTypeData] = [],
+                           tag: [TrainingTagData] = [],
+                           isFinished: Bool = true) -> Self {
         
         let goals: [TrainingContentData] = trainingType.map {
             .create(id: id,
                     trainingType: $0,
                     isAchieved: isAchieved)
         }
-        return .create(id: id, date: date, goals: goals, tags: tag)
+        return .create(id: id,
+                       date: date,
+                       goals: goals,
+                       tags: tag,
+                       endTime: isFinished ? Self.defaultEndDate : nil)
     }
 }
 
@@ -234,6 +251,9 @@ fileprivate extension DiaryListFilterItem {
     static let notAchieved: Self = .init(target: .achievement,
                                          filterItemId: UUID(DiaryListFilterTarget.achievement.num),
                                          value: "達成していない")
+    static let training: Self = .init(target: .achievement,
+                                      filterItemId: UUID(DiaryListFilterTarget.achievement.num),
+                                      value: "トレーニング中")
     
     static func create(_ tag: TrainingTagData) -> Self {
         

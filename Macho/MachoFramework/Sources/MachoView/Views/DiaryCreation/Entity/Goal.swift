@@ -27,17 +27,22 @@ struct Goal: Equatable, Identifiable {
                      actualSetCount: actualSetCount)
     }
     
+    var isAchieved: Bool {
+        
+        return setCount <= actualSetCount
+    }
+    
     init(id: UUID,
          trainingType: TrainingTypeData,
          numberOfSets: Int,
          setCount: Int,
-         actualSetCount: Int = 0) {
+         actualSetCount: Int? = 0) {
         
         self.id = id
         self.trainingType = trainingType
         self.numberOfSets = numberOfSets
         self.setCount = setCount
-        self.actualSetCount = actualSetCount
+        self.actualSetCount = actualSetCount ?? 0
     }
     
     func incrementSet() -> Self {

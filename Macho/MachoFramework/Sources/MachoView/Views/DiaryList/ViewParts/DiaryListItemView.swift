@@ -25,7 +25,7 @@ struct DiaryListItemView: View {
     
     // MARK: size property
     
-    private let winLoseLabelFontSize: CGFloat = 25
+    private let diaryStatusIconSize: CGFloat = 25
     private let titleFontSize: CGFloat = 20
     private let messageFontSize: CGFloat = 14
     private let dateFontSize: CGFloat = 10
@@ -69,7 +69,7 @@ private extension DiaryListItemView {
     func createDiaryItemContent() -> some View {
         VStack {
             HStack(spacing: .zero) {
-                createWinLoseIcon(isWin: store.isWin)
+                createDiaryStatusIcon()
                 Spacer()
                     .frame(width: winLoseLabelTrailingPadding)
                 VStack(spacing: .zero) {
@@ -88,9 +88,9 @@ private extension DiaryListItemView {
         }
     }
     
-    func createWinLoseIcon(isWin: Bool) -> some View {
-        AchieveIconView(isAchieved: isWin,
-                        size: winLoseLabelFontSize)
+    func createDiaryStatusIcon() -> some View {
+        DiaryStatusIconView(status: store.diaryState,
+                            size: diaryStatusIconSize)
     }
     
     func createTopContents(title: String, date: String) -> some View {
@@ -147,12 +147,26 @@ private extension DiaryListItemView {
                               tags: [TrainingTagData(id: UUID(), tagName: "xxx")],
                               startTime: Date(),
                               endTime: Date())
+    let trainingStatusData = DiaryData(id: UUID(),
+                                       date: Date(),
+                                       title: "sample", mainText: "sample main text",
+                                       goals: [
+                                        TrainingContentData(id: UUID(),
+                                                            trainingType: .init(id: UUID(),
+                                                                                name: "腹筋"),
+                                                            goalNumberOfSets: 3,
+                                                            goalSetCount: 3,
+                                                            actualNumberOfSets: 3,
+                                                            actualSetCount: 3)
+                                       ],
+                                       tags: [],
+                                       startTime: Date(), endTime: nil)
     ScrollView {
         LazyVStack(spacing: .zero) {
             DiaryListItemView(store: Store(initialState: DiaryListItemFeature.State(diaryData)) {
                 DiaryListItemFeature()
             })
-            DiaryListItemView(store: Store(initialState: DiaryListItemFeature.State(diaryData)) {
+            DiaryListItemView(store: Store(initialState: DiaryListItemFeature.State(trainingStatusData)) {
                 DiaryListItemFeature()
             })
         }

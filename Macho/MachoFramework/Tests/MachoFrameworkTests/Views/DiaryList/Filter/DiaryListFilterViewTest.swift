@@ -17,6 +17,7 @@ final class DiaryListFilterViewTest: XCTestCase {
     
     private static let notAchievementId = UUID(DiaryListFilterTarget.achievement.num)
     private static let achievementId = UUID(DiaryListFilterTarget.achievement.num)
+    private static let trainingId = UUID(DiaryListFilterTarget.achievement.num)
     
     // DBに保存されているトレーニング種目のリスト
     private static let expectedSelectableTrainingValues: [TrainingTypeEntity] = [
@@ -34,6 +35,7 @@ final class DiaryListFilterViewTest: XCTestCase {
     private static let expectedSelectableFilterValues: [DiaryListFilterItem] = [
         DiaryListFilterItem(target: .achievement, filterItemId: notAchievementId, value: "達成していない"),
         DiaryListFilterItem(target: .achievement, filterItemId: achievementId, value: "達成している"),
+        DiaryListFilterItem(target: .achievement, filterItemId: trainingId, value: "トレーニング中"),
         DiaryListFilterItem(target: .trainingType,
                             filterItemId: TrainingTypeEntity.abs.id,
                             value: TrainingTypeEntity.abs.name),
@@ -58,7 +60,7 @@ final class DiaryListFilterViewTest: XCTestCase {
         // Viewで受信するフィルターの期待値生成
         let expectedReceiveFilters = IdentifiedArrayOf(uniqueElements: [
             Self.expectedSelectableFilterValues[1],
-            Self.expectedSelectableFilterValues[2]
+            Self.expectedSelectableFilterValues[3]
         ])
         
         let mockRealm = RealmAccessorMock(fetchEntity: expectedReceiveFilters.elements.map(\.entity))
@@ -76,7 +78,7 @@ final class DiaryListFilterViewTest: XCTestCase {
         // 実行
         
         await testStore.send(.onAppear)
-        await testStore.receive(.receiveFetchSelectableFilterRes(Self.expectedSelectableFilterValues)) {
+        await testStore.receive(\.receiveFetchSelectableFilterRes) {
             
             $0.selectableFilterValues = Self.expectedSelectableFilterValues
         }
@@ -94,7 +96,7 @@ final class DiaryListFilterViewTest: XCTestCase {
                 
         let settingFilters = IdentifiedArrayOf(uniqueElements: [
             Self.expectedSelectableFilterValues[1],
-            Self.expectedSelectableFilterValues[2]
+            Self.expectedSelectableFilterValues[3]
         ])
         
         let testStore = TestStore(initialState: .init(viewState: .init(currentFilters: settingFilters))) {
@@ -117,8 +119,8 @@ final class DiaryListFilterViewTest: XCTestCase {
         
         let allFilter = IdentifiedArrayOf(uniqueElements: [
             Self.expectedSelectableFilterValues[1],
-            Self.expectedSelectableFilterValues[2],
-            Self.expectedSelectableFilterValues[3]
+            Self.expectedSelectableFilterValues[3],
+            Self.expectedSelectableFilterValues[4]
         ])
         
         let expectedFilters = IdentifiedArrayOf(uniqueElements: [
@@ -160,13 +162,13 @@ final class DiaryListFilterViewTest: XCTestCase {
                 
         let allFilter = IdentifiedArrayOf(uniqueElements: [
             Self.expectedSelectableFilterValues[1],
-            Self.expectedSelectableFilterValues[2],
-            Self.expectedSelectableFilterValues[3]
+            Self.expectedSelectableFilterValues[3],
+            Self.expectedSelectableFilterValues[4]
         ])
         
         let expectedFilters = IdentifiedArrayOf(uniqueElements: [
             Self.expectedSelectableFilterValues[1],
-            Self.expectedSelectableFilterValues[2]
+            Self.expectedSelectableFilterValues[3]
         ])
         
         let testPublisher = PassthroughSubject<[DiaryListFilterItem], Never>()
@@ -186,7 +188,7 @@ final class DiaryListFilterViewTest: XCTestCase {
         
         // 実行
         
-        let deleteFilter = Self.expectedSelectableFilterValues[3]
+        let deleteFilter = Self.expectedSelectableFilterValues[4]
         await testStore.send(.tappedFilterItemDeleteButton(filter: deleteFilter))
         await testStore.receive(\.receiveDidChangeFilterItems) {
             
@@ -202,13 +204,13 @@ final class DiaryListFilterViewTest: XCTestCase {
         
         let allFilter = IdentifiedArrayOf(uniqueElements: [
             Self.expectedSelectableFilterValues[1],
-            Self.expectedSelectableFilterValues[2]
+            Self.expectedSelectableFilterValues[3]
         ])
         
         let expectedFilters = IdentifiedArrayOf(uniqueElements: [
             Self.expectedSelectableFilterValues[1],
-            Self.expectedSelectableFilterValues[2],
-            Self.expectedSelectableFilterValues[3]
+            Self.expectedSelectableFilterValues[3],
+            Self.expectedSelectableFilterValues[4]
         ])
 
         let testPublisher = PassthroughSubject<[DiaryListFilterItem], Never>()
@@ -227,7 +229,7 @@ final class DiaryListFilterViewTest: XCTestCase {
         
         // 実行
         
-        let addFilter = Self.expectedSelectableFilterValues[3]
+        let addFilter = Self.expectedSelectableFilterValues[4]
         await testStore.send(.tappedFilterMenuItem(filter: addFilter))
         await testStore.receive(\.receiveDidChangeFilterItems) {
             

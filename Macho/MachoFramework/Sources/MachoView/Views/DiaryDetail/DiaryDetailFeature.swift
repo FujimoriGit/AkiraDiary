@@ -37,11 +37,11 @@ struct DiaryDetailFeature {
         /// 日記のメッセージ
         private(set) var message: String
         /// 日記のタグ
-        private(set) var tags: [TrainingTagData]
+        private(set) var tags: [Tag]
         /// 日記に設定したトレーニングの総合結果
         private(set) var totalResult: TotalTrainingResult
         /// 日記に設定したトレーニング種目毎の結果
-        private(set) var trainings: [TrainingTypeResult]
+        private(set) var trainings: [Goal]
     }
     
     // MARK: - Action
@@ -147,17 +147,17 @@ extension DiaryDetailFeature.State {
         diaryId = diary.id
         title = diary.title
         message = diary.mainText
-        tags = diary.tags
+        tags = diary.tags.map { TagConverter.toTag($0) }
         totalResult = TotalTrainingResult(diary)
-        trainings = diary.goals.map { TrainingTypeResult($0) }
+        trainings = diary.goals.compactMap { GoalConverter.toGoal($0) }
     }
     
     mutating func updateDiary(_ diary: DiaryData) {
         
         title = diary.title
         message = diary.mainText
-        tags = diary.tags
+        tags = diary.tags.map { TagConverter.toTag($0) }
         totalResult = TotalTrainingResult(diary)
-        trainings = diary.goals.map { TrainingTypeResult($0) }
+        trainings = diary.goals.compactMap { GoalConverter.toGoal($0) }
     }
 }

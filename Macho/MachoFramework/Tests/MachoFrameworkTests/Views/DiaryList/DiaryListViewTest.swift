@@ -86,7 +86,8 @@ final class DiaryListViewTests: XCTestCase {
     
     func test_画面表示時に前回のフィルター内容でフィルタリングした日記リストを表示する() async {
         
-        let expectedItem = DiaryListItemFeature.State(.create(goals: [.create(isAchieved: false)]))
+        let expectedItem = DiaryListItemFeature.State(.create(goals: [.create(isAchieved: false)],
+                                                              endTime: Date()))
         let receivedFilters = [DiaryListFilterItem(target: .achievement, filterItemId: Self.achievementId, value: "達成していない")]
         
         let store = TestStore(initialState: DiaryListFeature.State(),
