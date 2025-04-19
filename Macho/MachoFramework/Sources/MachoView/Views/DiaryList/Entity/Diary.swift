@@ -38,7 +38,8 @@ extension Diary {
         self.tags = tags
         if let endTime {
             
-            let info = DiaryFinishInfo(isAchieved: goals.isAchieved, endTime: endTime)
+            let info = DiaryFinishInfo(isAchieved: Self.isAchievedAllGoals(goals),
+                                       endTime: endTime)
             status = .finished(info)
         }
         else {
@@ -46,12 +47,9 @@ extension Diary {
             status = .training
         }
     }
-}
-
-extension Array where Element == Goal {
     
-    var isAchieved: Bool {
+    private static func isAchievedAllGoals(_ goals: [Goal]) -> Bool {
         
-        return !contains { !$0.isAchieved }
+        return !goals.contains { !$0.isAchieved }
     }
 }
