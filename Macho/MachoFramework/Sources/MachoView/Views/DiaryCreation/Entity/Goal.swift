@@ -36,13 +36,13 @@ struct Goal: Equatable, Identifiable {
          trainingType: TrainingTypeData,
          numberOfSets: Int,
          setCount: Int,
-         actualSetCount: Int? = 0) {
+         actualSetCount: Int = 0) {
         
         self.id = id
         self.trainingType = trainingType
         self.numberOfSets = numberOfSets
         self.setCount = setCount
-        self.actualSetCount = actualSetCount ?? 0
+        self.actualSetCount = actualSetCount
     }
     
     func incrementSet() -> Self {

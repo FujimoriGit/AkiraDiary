@@ -16,6 +16,6 @@ enum GoalConverter {
                      trainingType: trainingType,
                      numberOfSets: entity.goalNumberOfSets,
                      setCount: entity.goalSetCount,
-                     actualSetCount: entity.actualSetCount)
+                     actualSetCount: entity.actualSetCount ?? 0)
     }
 }
