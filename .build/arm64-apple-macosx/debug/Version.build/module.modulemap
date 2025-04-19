@@ -1,0 +1,4 @@
+module Version {
+    header "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Version.build/Version-Swift.h"
+    requires objc
+}

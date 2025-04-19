@@ -125,7 +125,6 @@ extension CreatingDiaryUseCaseTest.CanSaveCase {
         CreatingDiaryUseCase.init(initial: .make(isFinished: true)),
         .init(initial: .make(isFinished: true), edited: .make(title: "edit")),
         .init(initial: .make(isFinished: true), edited: .make(title: "edit", isFinished: true)),
-        .init(initial: .make(isFinished: true), edited: .make(title: "edit"))
     ])
     func 日記のトレーニングが終了している場合は終了ボタンは表示しない(useCase: CreatingDiaryUseCase) throws {
                 

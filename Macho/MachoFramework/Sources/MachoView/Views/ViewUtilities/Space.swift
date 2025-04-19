@@ -9,9 +9,17 @@
 
 import Foundation
 
-enum Space: CGFloat {
+extension CGFloat {
     
-    case small = 8
-    case medium = 16
-    case large = 24
+    static func space(_ type: Space) -> Self {
+        
+        return type.rawValue
+    }
+    
+    enum Space: CGFloat {
+        
+        case small = 8
+        case medium = 16
+        case large = 24
+    }
 }

@@ -27,6 +27,7 @@ struct AddTagView: View {
         NavigationStack {
             Form {
                 TextField("Name", text: $store.tagName.sending(\.setTagName))
+                    .accessibilityId(.textField("tagName"))
                 Button("Save") {
                     store.send(.saveButtonTapped)
                 }
