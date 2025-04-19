@@ -235,7 +235,8 @@ fileprivate extension Array where Element == Diary {
             
             return .create(id: $0.id,
                            date: $0.date,
-                           goals: [.create(trainingType: $0.trainingType,
+                           goals: [.create(trainingType: .init(id: $0.trainingType.id,
+                                                               name: $0.trainingType.name),
                                            isAchieved: $0.isAchieved)])
         }
     }

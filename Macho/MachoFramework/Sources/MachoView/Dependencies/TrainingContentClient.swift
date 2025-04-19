@@ -107,7 +107,7 @@ private extension TrainingContentClient {
         let records = goals.map {
             
             return TrainingContentEntity(id: $0.id,
-                                         trainingType: $0.trainingType,
+                                         trainingType: TrainingTypeConverter.toEntity($0.trainingType),
                                          goalNumberOfSets: $0.numberOfSets,
                                          goalSetCount: $0.setCount,
                                          actualNumberOfSets: nil,

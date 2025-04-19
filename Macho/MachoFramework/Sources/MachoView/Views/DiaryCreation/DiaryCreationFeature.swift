@@ -153,7 +153,7 @@ struct DiaryCreationFeature: Sendable {
             case .editingGoal(let goal):
                 state.destination = .addGoal(AddGoalFeature.State(
                     id: goal.id,
-                    selectedTrainingType: goal.trainingType,
+                    selectedTrainingType: TrainingTypeConverter.toEntity(goal.trainingType),
                     numberOfSets: goal.numberOfSets,
                     setCount: goal.setCount,
                     isEnableSaveButton: true
@@ -255,7 +255,7 @@ private extension DiaryCreationFeature {
                      date: createdAt,
                      title: title,
                      mainText: mainText,
-                     goals: diary.goals.map(\.entity),
+                     goals: diary.goals.map { GoalConverter.toEntity($0) },
                      tags: diary.tags.filter(\.isSelected).map { SelectionTagConverter.toEntity($0) },
                      startTime: createdAt,
                      endTime: diary.isFinished ? date() : nil)

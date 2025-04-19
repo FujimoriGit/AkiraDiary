@@ -13,7 +13,7 @@ import Foundation
 extension Goal {
     
     static func create(id: UUID = UUID(),
-                       trainingType: TrainingTypeData = .abs,
+                       trainingType: TrainingType = .abs,
                        isAchieved: Bool = true) -> Self {
         
         return .init(id: id,

@@ -17,3 +17,13 @@ extension TrainingTypeData {
     /// ベンチプレス
     static let benchPress = TrainingTypeData(id: UUID(), name: "ベンチプレス")
 }
+
+extension TrainingType {
+    
+    /// 腹筋
+    static let abs = TrainingType(id: TrainingTypeData.abs.id,
+                                  name: TrainingTypeData.abs.name)
+    /// ベンチプレス
+    static let benchPress = TrainingType(id: TrainingTypeData.benchPress.id,
+                                         name: TrainingTypeData.benchPress.name)
+}
