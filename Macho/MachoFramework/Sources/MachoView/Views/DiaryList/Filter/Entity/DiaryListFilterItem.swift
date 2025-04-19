@@ -56,9 +56,9 @@ private extension DiaryListFilterItem {
         case .training:
             return achievement == .training
             
-        case .finished(let isAchieved):
+        case .finished(let info):
             guard achievement != .training else { return false }
-            return isAchieved == (achievement == .achieved)
+            return info.isAchieved == (achievement == .achieved)
         }
     }
 }

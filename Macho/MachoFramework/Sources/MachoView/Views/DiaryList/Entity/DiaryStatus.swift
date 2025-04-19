@@ -9,8 +9,8 @@
 
 import Foundation
 
-enum DiaryStatus {
+enum DiaryStatus: Equatable {
     
     case training
-    case finished(isAchieved: Bool)
+    case finished(DiaryFinishInfo)
 }

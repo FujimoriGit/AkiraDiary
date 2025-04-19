@@ -23,4 +23,14 @@ extension TrainingContentData {
                      actualNumberOfSets: isAchieved ? 3 : 1,
                      actualSetCount: 3)
     }
+    
+    init(_ goal: Goal) {
+        
+        self.init(id: goal.id,
+                  trainingType: goal.trainingType,
+                  goalNumberOfSets: goal.numberOfSets,
+                  goalSetCount: goal.setCount,
+                  actualNumberOfSets: nil,
+                  actualSetCount: goal.actualSetCount)
+    }
 }

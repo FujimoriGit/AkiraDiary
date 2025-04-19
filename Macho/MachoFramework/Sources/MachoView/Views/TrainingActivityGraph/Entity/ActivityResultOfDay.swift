@@ -23,21 +23,22 @@ struct ActivityResultOfDay: Equatable {
 
 extension ActivityResultOfDay {
     
-    init(dayOfdiaries: [DiaryData]) {
+    init(dayOfDiaries: [Diary]) {
         
-        if dayOfdiaries.isEmpty {
+        if dayOfDiaries.isEmpty {
             
             // 空の配列が入力されることを想定していない
             assertionFailure("Empty diaries.")
         }
         
         targetDate = Calendar.current.dateComponents([.year, .month, .day],
-                                                     from: dayOfdiaries[0].date)
-        activities = dayOfdiaries.map {
+                                                     from: dayOfDiaries[0].createdAt)
+        activities = dayOfDiaries.compactMap {
             
-            .init(id: $0.id,
-                  title: $0.title,
-                  isAchieved: $0.isAchieved)
+            guard case .finished(let finishInfo) = $0.status else { return nil }
+            return .init(id: $0.id,
+                         title: $0.title,
+                         isAchieved: finishInfo.isAchieved)
         }
     }
 }

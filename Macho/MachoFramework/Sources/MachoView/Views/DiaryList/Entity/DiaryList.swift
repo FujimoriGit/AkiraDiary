@@ -41,7 +41,7 @@ struct DiaryList: Equatable {
         return elements.last?.date
     }
     
-    mutating func addLoadedDiaries(_ diaries: [DiaryData]) {
+    mutating func addLoadedDiaries(_ diaries: [Diary]) {
         
         let addingDiaryItemList = diaries.map { DiaryListItemFeature.State($0) }
         var sortElements = addingDiaryItemList.reduce(into: elements) { current, new in

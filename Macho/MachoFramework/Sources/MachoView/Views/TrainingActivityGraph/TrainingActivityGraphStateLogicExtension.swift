@@ -33,7 +33,7 @@ extension TrainingActivityGraphFeature.State {
     mutating func updateActivityResults(_ diaries: [DiaryData]) {
         
         activityResultList = .init(
-            diaries,
+            diaries.map { DiaryConverter.toDiary($0) },
             periodFilter: .init(
                 startPeriodDate: activityStartPeriod,
                 period: activityPeriod

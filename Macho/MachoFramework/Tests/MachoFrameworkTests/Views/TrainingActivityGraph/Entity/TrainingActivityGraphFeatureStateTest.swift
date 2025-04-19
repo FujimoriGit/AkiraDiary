@@ -116,7 +116,7 @@ struct TrainingActivityGraphFeatureStateTest {
         
         // 対象メソッドの実行
         
-        state.updateActivityResults(inputDiaries)
+        state.updateActivityResults(inputDiaries.map { .init($0) })
         
         // 検証
         
@@ -166,7 +166,7 @@ extension TrainingActivityGraphFeatureStateTest {
 
 private extension TrainingActivityGraphFeatureStateTest {
     
-    func createDiaries(_ params: (id: UUID, date: Date, isAchieved: Bool)...) -> [DiaryData] {
+    func createDiaries(_ params: (id: UUID, date: Date, isAchieved: Bool)...) -> [Diary] {
         
         return params.map {
             

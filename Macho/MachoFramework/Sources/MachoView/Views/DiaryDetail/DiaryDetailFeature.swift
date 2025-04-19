@@ -102,8 +102,8 @@ struct DiaryDetailFeature {
                     }
                 )
                 
-            case .didReceivedDiary(let diary):
-                state.updateDiary(diary)
+            case .didReceivedDiary(let entity):
+                state.updateDiary(DiaryConverter.toDiary(entity))
                 return .none
             }
         }
@@ -142,22 +142,22 @@ private extension DiaryDetailFeature {
 
 extension DiaryDetailFeature.State {
     
-    init(diary: DiaryData) {
+    init(diary: Diary) {
         
         diaryId = diary.id
         title = diary.title
         message = diary.mainText
-        tags = diary.tags.map { TagConverter.toTag($0) }
+        tags = diary.tags
         totalResult = TotalTrainingResult(diary)
-        trainings = diary.goals.compactMap { GoalConverter.toGoal($0) }
+        trainings = diary.goals
     }
     
-    mutating func updateDiary(_ diary: DiaryData) {
+    mutating func updateDiary(_ diary: Diary) {
         
         title = diary.title
         message = diary.mainText
-        tags = diary.tags.map { TagConverter.toTag($0) }
+        tags = diary.tags
         totalResult = TotalTrainingResult(diary)
-        trainings = diary.goals.compactMap { GoalConverter.toGoal($0) }
+        trainings = diary.goals
     }
 }

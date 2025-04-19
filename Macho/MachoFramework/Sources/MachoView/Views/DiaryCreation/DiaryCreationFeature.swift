@@ -335,17 +335,17 @@ extension DiaryCreationFeature.Action {
 
 extension DiaryCreationFeature.State {
     
-    init(editTarget diary: DiaryData) {
+    init(editTarget diary: Diary) {
         
-        let goals: [Goal] = diary.goals.compactMap { GoalConverter.toGoal($0) }
-        let tags: [SelectionTag] = diary.tags.map { SelectionTagConverter.toTag($0, isSelected: true) }
+        let goals: [Goal] = diary.goals
+        let tags: [SelectionTag] = diary.tags.map { .init(tag: $0, isSelected: true) }
         let creatingDiary = CreatingDiary(id: diary.id,
-                                          createdAt: diary.date,
+                                          createdAt: diary.createdAt,
                                           title: diary.title,
                                           mainText: diary.mainText,
                                           goals: goals,
                                           tags: tags,
-                                          isFinished: diary.endTime != nil)
+                                          isFinished: diary.status != .training)
         
         useCase = .init(initial: creatingDiary)
         titleText = diary.title

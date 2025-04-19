@@ -16,7 +16,7 @@ struct ActivityResults: Equatable {
         resultList = []
     }
     
-    init(_ diaries: [DiaryData],
+    init(_ diaries: [Diary],
          periodFilter: ActivityPeriodFilter,
          trainingTypeFilter: ActivityGraphTrainingTypeFilter) {
         
@@ -24,12 +24,13 @@ struct ActivityResults: Equatable {
             
             return periodFilter.isMatch($0) && trainingTypeFilter.isMatch($0)
         }
-        resultList = diaries.reduce(into: [[DiaryData]]()) { partialResult, diary in
+        resultList = diaries.reduce(into: [[Diary]]()) { partialResult, diary in
             
-            let targetDateComponent = Calendar.current.dateComponents([.year, .month, .day], from: diary.date)
+            let targetDateComponent = Calendar.current
+                .dateComponents([.year, .month, .day], from: diary.createdAt)
             let targetIndex = partialResult.firstIndex {
                 
-                guard let diaryDate = $0.first?.date else { return false }
+                guard let diaryDate = $0.first?.createdAt else { return false }
                 return Calendar.current.date(diaryDate, matchesComponents: targetDateComponent)
             }
             
@@ -40,7 +41,7 @@ struct ActivityResults: Equatable {
             }
             partialResult[targetIndex].append(diary)
         }
-        .map { ActivityResultOfDay(dayOfdiaries: $0) }
+        .map { ActivityResultOfDay(dayOfDiaries: $0) }
     }
     
     /// カレンダーの各日のコンポーネントにデコレーションするクラスを生成する

@@ -14,9 +14,9 @@ struct ActivityPeriodFilter {
     let startPeriodDate: Date
     let period: ActivityPeriod
     
-    func isMatch(_ diary: DiaryData) -> Bool {
+    func isMatch(_ diary: Diary) -> Bool {
         
-        return period.getDateInterval(startPeriodDate).contains(diary.date)
+        return period.getDateInterval(startPeriodDate).contains(diary.createdAt)
     }
 }
 

@@ -29,14 +29,14 @@ struct ActivityGraphTrainingTypeFilter {
         }
     }
     
-    func isMatch(_ diary: DiaryData) -> Bool {
+    func isMatch(_ diary: Diary) -> Bool {
         
         // 選択中のトレーニング種目のフィルターがなければ、全てマッチとして扱う
         if selectedIdList.isEmpty { return true }
         
         return selectedIdList.contains {
             
-            return diary.goals.compactMap(\.trainingType?.id.uuidString).contains($0)
+            return diary.goals.map(\.trainingType.id.uuidString).contains($0)
         }
     }
 }
