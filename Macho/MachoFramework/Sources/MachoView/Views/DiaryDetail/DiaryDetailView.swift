@@ -55,38 +55,33 @@ struct DiaryDetailView: View {
     // MARK: - view body
     
     var body: some View {
-        NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
-            ZStack {
-                createContentsArea()
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigation) {
-                    NavigationButton(.back) {
-                        store.send(.tappedBackNavigationButton)
-                    }
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    // swiftlint:disable:next accessibility_label_for_image
-                    NavigationButton(.other(icon: Image(systemName: "pencil"))) {
-                        store.send(.tappedEditButton)
-                    }
+        ZStack {
+            createContentsArea()
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                NavigationButton(.back) {
+                    store.send(.tappedBackNavigationButton)
                 }
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle("Detail")
-        } destination: { store in
-            switch store.case {
-                
-            case .editDiaryView(let store):
-                // TODO: 仮の遷移先のため実装完了したら編集画面への遷移を実装する
-                AddContactView(store: store)
+            ToolbarItem(placement: .topBarTrailing) {
+                // swiftlint:disable:next accessibility_label_for_image
+                NavigationButton(.other(icon: Image(systemName: "pencil"))) {
+                    store.send(.tappedEditButton)
+                }
             }
+        }
+        .navigationBarBackButtonHidden()
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("Detail")
+        .navigationDestination(item: $store.scope(
+            state: \.navigationDestination?.editDiaryView,
+            action: \.navigationDestination.editDiaryView
+        )) {
+            AddContactView(store: $0)
         }
         .onAppear {
             store.send(.onAppear)
-        }
-        .onDisappear {
-            store.send(.onDisappear)
         }
     }
 }
@@ -241,6 +236,8 @@ private extension DiaryDetailView {
                                        tags: [tag1, tag2, tag3],
                                        startTime: Date(),
                                        endTime: Date())
-    DiaryDetailView(store: Store(initialState: DiaryDetailFeature.State(diary: initialDiaryEntity),
-                                 reducer: { DiaryDetailFeature() }))
+    NavigationView {
+        DiaryDetailView(store: Store(initialState: DiaryDetailFeature.State(diary: initialDiaryEntity),
+                                     reducer: { DiaryDetailFeature() }))
+    }
 }

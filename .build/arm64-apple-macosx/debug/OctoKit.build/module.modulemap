@@ -1,0 +1,4 @@
+module OctoKit {
+    header "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/OctoKit.build/OctoKit-Swift.h"
+    requires objc
+}

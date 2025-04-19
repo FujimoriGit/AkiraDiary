@@ -19,8 +19,6 @@ struct ActivityResultOfDay: Equatable {
         // 全ての日記が目標達成している場合は、その日付の目標達成とみなす
         return !activities.contains { !$0.isAchieved }
     }
-    
-    var calendarDecoration: ActivityResultDecoration { ActivityResultDecoration(activityResult: self) }
 }
 
 extension ActivityResultOfDay {
@@ -35,9 +33,12 @@ extension ActivityResultOfDay {
         
         targetDate = Calendar.current.dateComponents([.year, .month, .day],
                                                      from: dayOfdiaries[0].date)
-        activities = dayOfdiaries.map { .init(id: $0.id,
-                                              title: $0.title,
-                                              isAchieved: $0.isAchieved) }
+        activities = dayOfdiaries.map {
+            
+            .init(id: $0.id,
+                  title: $0.title,
+                  isAchieved: $0.isAchieved)
+        }
     }
 }
 

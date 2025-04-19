@@ -1,0 +1,4 @@
+module DangerDependenciesResolver {
+    header "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/DangerDependenciesResolver.build/DangerDependenciesResolver-Swift.h"
+    requires objc
+}

@@ -110,7 +110,11 @@ private extension SelectTrainingTypeContentView {
         }
         // TODO: 色は仮決め
         .fillButtonStyle(foregroundColor: Color(asset: CustomColor.fillButtonForegroundColor),
-                         backgroundColor: Color(asset: isSelectingTrainingType ? CustomColor.fillButtonBackgroundColor : CustomColor.deleteSwipeBackgroundColor),
+                         backgroundColor: Color(
+                            asset: isSelectingTrainingType ?
+                            CustomColor.fillButtonBackgroundColor :
+                                CustomColor.deleteSwipeBackgroundColor
+                         ),
                          cornerRadius: trainingTypeContentRadius)
     }
     
@@ -143,7 +147,7 @@ private extension SelectTrainingTypeContentView {
                      reducer: { PopUpFeature() },
                      withDependencies: {
                          $0.trainingTypeApi = TrainingTypeClient(add: { _ in false },
-                                                                 update: {_ in false },
+                                                                 update: { _ in false },
                                                                  fetchAll: {
                              return selectableTrainingTypeList
                          }, getPublisher: {
