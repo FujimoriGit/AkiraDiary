@@ -26,6 +26,7 @@ struct AddTrainingTypeView: View {
             Form {
                 TextField("Event Name",
                           text: $store.name.sending(\.setName))
+                .accessibilityId(.textField("training_type"))
                 Button("Save") {
                     store.send(.saveButtonTapped)
                 }

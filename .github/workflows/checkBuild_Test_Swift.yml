@@ -19,6 +19,8 @@ env:
   # チェックアウト
   DEVELOPER_DIR: /Applications/Xcode_16.1.app
   WORKSPACE_DIR: ./Macho/Macho.xcworkspace
+  GOOGLE_SERVICE_INFO_PLIST_PATH: ./Macho/Macho/GoogleService-Info.plist
+  SPM_PACKAGE_RESOLVED_FILE_PATH: Macho/Macho.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
 
 jobs:
   build:
@@ -27,8 +29,15 @@ jobs:
     runs-on: macos-latest
 
     steps:
+      # fetch-depth の計算
+      - run: echo "fetch_depth=$(( commits + 1 ))" >> $GITHUB_ENV
+        env:
+          commits: ${{ github.event.pull_request.commits }}
+
       # チェックアウト(リポジトリからソースコードを取得)
       - uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: ${{ env.fetch_depth }}
 
       # Xcodeの一覧出力
       - name: Show Xcode list
@@ -42,47 +51,44 @@ jobs:
       - name: Show Xcode version
         run: xcodebuild -version
 
-      # Rudy製ライブラリのキャッシュ
-      - name: Cache Gems
-        uses: actions/cache@v4.2.0
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-gems-
+      # xcbeautifyをインストール
+      - name: Install xcbeautify
+        run: brew install xcbeautify
 
-      # Rudy製ライブラリのインストール
-      - name: Install Bundled Gems
-        run: |
-          bundle config path vendor/bundle
-          bundle install --jobs 4 --retry 3
+      # DangerJSをインストール
+      - name: Install Dnager JS
+        run: npm install -g danger
 
       # SPMのライブラリのキャッシュ
       - name: Cache Swift Packages
         uses: actions/cache@v4.2.0
         with:
           path: SourcePackages
-          key: ${{ runner.os }}-spm-${{ hashFiles('*.xcodeproj/project.xcworkspace/ xcshareddata/swiftpm/Package.resolved') }}
+          key: ${{ runner.os }}-spm-${{ hashFiles(env.SPM_PACKAGE_RESOLVED_FILE_PATH) }}
           restore-keys: ${{ runner.os }}-spm-
 
+      # FirebaseのInfo.plistを復元
+      - name: decode Info.plist for firebase
+        run: |
+          echo ${{ secrets.FIREBASE_INFO }} | base64 -o ${{ env.GOOGLE_SERVICE_INFO_PLIST_PATH }} -D
+
       # ビルド
-      - name: Xcode build
+      - name: Xcode Resolve Package Dependencies
         run: set -o pipefail &&
           xcodebuild
           -workspace ${WORKSPACE_DIR}
           -scheme Macho
-          -destination 'platform=iOS Simulator,OS=18.1,name=iPhone 16 Pro'
           -configuration Debug
           -clonedSourcePackagesDirPath SourcePackages
           -skipPackagePluginValidation
           -skipMacroValidation
           -scmProvider xcode
-          clean build |
-          bundle exec xcpretty
+          -resolvePackageDependencies
 
       # 単体テストの実行
       - name: Xcode test
-        run: xcodebuild
+        run: set -o pipefail &&
+          xcodebuild
           -workspace ${WORKSPACE_DIR}
           -configuration Debug
           -destination 'platform=iOS Simulator,OS=18.1,name=iPhone 16 Pro'
@@ -93,11 +99,13 @@ jobs:
           -scmProvider xcode
           -skip-testing MachoUITests
           -clonedSourcePackagesDirPath SourcePackages
+          -resultBundlePath 'Build/test.xcresult'
+          -enableCodeCoverage YES
           clean test |
-          bundle exec xcpretty --report html
+          xcbeautify --renderer github-actions
 
-      - name: Upload test result
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results
-          path: build/reports
+      # テスト結果の確認
+      - name: Analyze Danger
+        run: swift run danger-swift ci
+        env:
+          GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_TOKEN }}
