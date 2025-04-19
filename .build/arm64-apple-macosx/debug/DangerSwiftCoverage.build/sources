@@ -1,0 +1,10 @@
+/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-coverage/Sources/DangerSwiftCoverage/DangerSwiftCoverage.swift
+/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-coverage/Sources/DangerSwiftCoverage/Models/ExcludedTarget.swift
+/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-coverage/Sources/DangerSwiftCoverage/Models/Report.swift
+/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-coverage/Sources/DangerSwiftCoverage/Models/SPMCoverage.swift
+/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-coverage/Sources/DangerSwiftCoverage/Models/XcodeBuildCoverage.swift
+/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-coverage/Sources/DangerSwiftCoverage/SPM/SPMCoverageParser.swift
+/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-coverage/Sources/DangerSwiftCoverage/ShellOutExecutor.swift
+/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-coverage/Sources/DangerSwiftCoverage/XcodeBuild/XcCovJSONParser.swift
+/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-coverage/Sources/DangerSwiftCoverage/XcodeBuild/XcodeBuildCoverageParser.swift
+/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/danger-swift-coverage/Sources/DangerSwiftCoverage/XcodeBuild/XcresultBundleFinder.swift

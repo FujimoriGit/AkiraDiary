@@ -41,14 +41,14 @@ struct DetailDayOfActivityView: PopUpableContentView {
                 }
             }
             Spacer()
-                .frame(maxHeight: Space.large.rawValue)
+                .frame(maxHeight: .space(.large))
             VStack(alignment: .leading,
-                   spacing: Space.small.rawValue) {
+                   spacing: .space(.small)) {
                 ForEach(store.activities, id: \.id) {
                     createActivityButton($0)
                 }
             }
-            .padding(.leading, Space.medium.rawValue)
+                   .padding(.leading, .space(.medium))
         }
     }
 }
@@ -71,7 +71,7 @@ private extension DetailDayOfActivityView {
         Button {
             store.send(.delegate(.tappedActivityArea(diaryId: activity.id)))
         } label: {
-            HStack(spacing: Space.medium.rawValue) {
+            HStack(spacing: .space(.medium)) {
                 createAchievedIcon(activity.isAchieved)
                 Text(activity.title)
                     .font(.macho(.description))

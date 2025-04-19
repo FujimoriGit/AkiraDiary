@@ -1,0 +1,35 @@
+{
+  "": {
+    "swift-dependencies": "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Runner.build/master.swiftdeps"
+  },
+  "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/swift/Sources/Runner/Commands/Edit.swift": {
+    "dependencies": "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Runner.build/Edit.d",
+    "object": "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Runner.build/Edit.swift.o",
+    "swiftmodule": "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Runner.build/Edit~partial.swiftmodule",
+    "swift-dependencies": "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Runner.build/Edit.swiftdeps"
+  },
+  "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/swift/Sources/Runner/Commands/RunDangerJS.swift": {
+    "dependencies": "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Runner.build/RunDangerJS.d",
+    "object": "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Runner.build/RunDangerJS.swift.o",
+    "swiftmodule": "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Runner.build/RunDangerJS~partial.swiftmodule",
+    "swift-dependencies": "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Runner.build/RunDangerJS.swiftdeps"
+  },
+  "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/swift/Sources/Runner/Commands/Runner.swift": {
+    "dependencies": "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Runner.build/Runner.d",
+    "object": "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Runner.build/Runner.swift.o",
+    "swiftmodule": "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Runner.build/Runner~partial.swiftmodule",
+    "swift-dependencies": "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Runner.build/Runner.swiftdeps"
+  },
+  "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/swift/Sources/Runner/MarathonScriptManager.swift": {
+    "dependencies": "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Runner.build/MarathonScriptManager.d",
+    "object": "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Runner.build/MarathonScriptManager.swift.o",
+    "swiftmodule": "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Runner.build/MarathonScriptManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Runner.build/MarathonScriptManager.swiftdeps"
+  },
+  "/Users/satoutaichi/work/product/AkiraDiary/.build/checkouts/swift/Sources/Runner/main.swift": {
+    "dependencies": "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Runner.build/main.d",
+    "object": "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Runner.build/main.swift.o",
+    "swiftmodule": "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Runner.build/main~partial.swiftmodule",
+    "swift-dependencies": "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Runner.build/main.swiftdeps"
+  }
+}

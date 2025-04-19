@@ -9,7 +9,9 @@ import ComposableArchitecture
 import Foundation
 
 @Reducer
-struct PopUpFeature<ChildContentFeature: PopUpableContentFeature> where ChildContentFeature.State: Equatable & Sendable, ChildContentFeature.Action: PopUpableContentAction {
+struct PopUpFeature<ChildContentFeature: PopUpableContentFeature> where
+ChildContentFeature.State: Equatable & Sendable,
+ChildContentFeature.Action: PopUpableContentAction {
     
     struct DebounceId: Hashable {}
     

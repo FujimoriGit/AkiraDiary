@@ -33,6 +33,20 @@ private extension RealmFactory {
     static func getConfiguration() -> Realm.Configuration {
         
         let schemeVersion = RealmSchemaVersion(value: 1)
+        
+        let dir = URL.applicationSupportDirectory
+        if !FileManager.default.fileExists(atPath: dir.path()) {
+            
+            do {
+                
+                try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+            }
+            catch {
+                
+                logger.error("Failed create directory: \(dir)")
+            }
+        }
+        
         let fileUrl = FileManager.default
             .urls(for: .applicationSupportDirectory, in: .userDomainMask).first?
             .appending(path: "db.realm")
