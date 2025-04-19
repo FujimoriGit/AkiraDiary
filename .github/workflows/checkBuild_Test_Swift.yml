@@ -20,6 +20,7 @@ env:
   DEVELOPER_DIR: /Applications/Xcode_16.1.app
   WORKSPACE_DIR: ./Macho/Macho.xcworkspace
   GOOGLE_SERVICE_INFO_PLIST_PATH: ./Macho/Macho/GoogleService-Info.plist
+  SPM_PACKAGE_RESOLVED_FILE_PATH: Macho/Macho.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
 
 jobs:
   build:
@@ -63,7 +64,7 @@ jobs:
         uses: actions/cache@v4.2.0
         with:
           path: SourcePackages
-          key: ${{ runner.os }}-spm-${{ hashFiles('*.xcodeproj/project.xcworkspace/ xcshareddata/swiftpm/Package.resolved') }}
+          key: ${{ runner.os }}-spm-${{ hashFiles(env.SPM_PACKAGE_RESOLVED_FILE_PATH) }}
           restore-keys: ${{ runner.os }}-spm-
 
       # FirebaseのInfo.plistを復元
