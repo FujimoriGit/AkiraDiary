@@ -7,7 +7,6 @@
 //  Copyright © Macho All rights reserved.
 //
 
-
 enum GoalConverter {
     
     static func toGoal(_ entity: TrainingContentData) -> Goal? {
