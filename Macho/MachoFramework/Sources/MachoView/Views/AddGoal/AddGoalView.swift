@@ -32,10 +32,12 @@ struct AddGoalView: View {
                           value: $store.numberOfSets.sending(\.setNumberOfSets),
                           formatter: NumberFormatter())
                 .accessibilityId(.textField("number_of_sets"))
+                .keyboardType(.asciiCapableNumberPad)
                 TextField("Set Count",
                           value: $store.setCount.sending(\.setCount),
                           formatter: NumberFormatter())
                 .accessibilityId(.textField("set_count"))
+                .keyboardType(.asciiCapableNumberPad)
                 Button("Save") {
                     store.send(.saveButtonTapped)
                 }
@@ -74,7 +76,6 @@ private extension AddGoalView {
                     }
                 }
             }
-            
             Button {
                 store.send(.addingTrainingType)
             } label: {
