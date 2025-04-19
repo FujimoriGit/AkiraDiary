@@ -109,7 +109,7 @@ struct TrainingActivityGraphFeatureStateTest {
         let inputDiaries = createDiaries(
             (diaryId_1, .create(year: 2025, month: 1, day: 1), true)
         )
-        let initialCalendar = ActivityCalendarFeature.State(displayInterval: .init(start: .now, duration: .zero), decorationDic: [:])
+        let initialCalendar = ActivityCalendarFeature.State(displayInterval: .init(start: .now, duration: .zero), decorationSources: [])
         var state = TrainingActivityGraphFeature.State(activityStartPeriod: .create(year: 2025, month: 1, day: 1),
                                                        activityPeriod: .month,
                                                        calendar: initialCalendar)
@@ -133,8 +133,11 @@ struct TrainingActivityGraphFeatureStateTest {
                                 period: .month),
             trainingTypeFilter: .init(selectedIdList: [])
         )
-        expectedState.calendar.decorationDic = [
-            .createDay(year: 2025, month: 1, day: 1): ActivityResultDecoration(activityResult: .init(dayOfDiaries: createDiaries((diaryId_1, .create(year: 2025, month: 1, day: 1), true))))
+        expectedState.calendar.decorationSources = [
+            .init(
+                isAchievedOfDay: true,
+                targetDay: .createDay(year: 2025, month: 1, day: 1)
+            )
          ]
         #expect(state == expectedState)
     }
@@ -157,7 +160,7 @@ extension TrainingActivityGraphFeatureStateTest {
     struct ExpectedAsActivityResult {
         
         let activityResults: ActivityResults
-        let decorationDic: [DateComponents: ActivityResultDecoration]
+        let decorationSources: [ActivityResultDecorationSource]
     }
 }
 

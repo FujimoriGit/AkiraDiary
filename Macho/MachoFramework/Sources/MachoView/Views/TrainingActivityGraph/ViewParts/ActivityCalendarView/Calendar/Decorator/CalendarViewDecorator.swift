@@ -13,13 +13,13 @@ final class CalendarViewDecorator: NSObject, UICalendarViewDelegate {
     
     // MARK: - public property
     
-    var componentsDecorationDic: [DateComponents: ActivityResultDecoration]
+    var componentsDecorationSources: [ActivityResultDecorationSource]
     
     // MARK: - initialize method
     
-    init(componentsDecorationDic: [DateComponents: ActivityResultDecoration]) {
+    init(_ componentsDecorationSources: [ActivityResultDecorationSource]) {
         
-        self.componentsDecorationDic = componentsDecorationDic
+        self.componentsDecorationSources = componentsDecorationSources
     }
     
     // MARK: - public method
@@ -28,7 +28,22 @@ final class CalendarViewDecorator: NSObject, UICalendarViewDelegate {
     func calendarView(_ calendarView: UICalendarView,
                       decorationFor dateComponents: DateComponents) -> UICalendarView.Decoration? {
         
-        guard let targetKey = componentsDecorationDic.keys.first(where: { dateComponents.isMatchDate($0) }) else { return nil }
-        return componentsDecorationDic[targetKey]?.getDecoration()
+        guard let decorationInfo = componentsDecorationSources.first(where: {
+            
+            dateComponents.isMatchDate($0.targetDay)
+        }) else { return nil }
+        return getDecoration(decorationInfo)
+    }
+}
+
+private extension CalendarViewDecorator {
+    
+    func getDecoration(_ decorationInfo: ActivityResultDecorationSource) -> UICalendarView.Decoration {
+        
+        let systemImageName = decorationInfo.isAchievedOfDay ? "checkmark" : "xmark"
+        let imageColor = decorationInfo.isAchievedOfDay ?
+        UIColor(asset: CustomColor.winColor) :
+        UIColor(asset: CustomColor.loseColor)
+        return .image(UIImage(systemName: systemImageName), color: imageColor)
     }
 }

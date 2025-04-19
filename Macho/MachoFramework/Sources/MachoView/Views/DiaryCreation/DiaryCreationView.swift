@@ -112,8 +112,10 @@ private extension DiaryCreationView {
         LazyVStack {
             ScrollView {
                 titleTextField(parentSize: parentSize)
+                    .accessibilityId(.textField("title"))
                 
                 messageTextField(parentSize: parentSize)
+                    .accessibilityId(.textField("message"))
                 
                 Spacer()
                     .frame(height: placeholderToTagsPadding)

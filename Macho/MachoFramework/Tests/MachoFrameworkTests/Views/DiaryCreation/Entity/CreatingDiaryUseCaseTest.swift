@@ -381,7 +381,6 @@ fileprivate extension CreatingDiary {
                      tags: [SelectionTag] = [defaultTag],
                      isFinished: Bool = false) -> Self {
         
-        
         return .init(
             id: id,
             createdAt: createdAt,
