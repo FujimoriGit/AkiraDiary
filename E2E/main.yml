@@ -13,3 +13,7 @@ appId: morimori.Macho
 
 # 作成した日記を削除できることを確認
 - runFlow: "delete_diary.yml"
+
+# 日記の編集を確認
+- runFlow: "creation_diary.yml"
+- runFlow: "edit_diary/edit_diary.yml"

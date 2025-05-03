@@ -1,0 +1,94 @@
+appId: morimori.Macho
+---
+# 日記が一つだけ存在しかつトレーニング中に実行可能
+- swipe:
+    from:
+      text: "日記項目ボタン"
+    start: 85%,25%
+    end: 26%,24%
+    duration: 950
+- tapOn: "Edit"
+- assertVisible: "日記の編集を行いますか？"
+- tapOn: "Cancel"
+- swipe:
+    from:
+      text: "日記項目ボタン"
+    start: 85%,25%
+    end: 26%,24%
+    duration: 950
+- tapOn: "Edit"
+- tapOn: "OK"
+# 編集画面で日記の項目が入力されていることを確認
+- runFlow:
+    file: check_create_diary_value.yml
+    env:
+      TITLE: "TestTitle"
+      MESSAGE: "TestMessage"
+      TAGNAME: "TestTag"
+      TRAINING_TYPE_NAME: "TestTrainingType"
+      COUNT_PER_SET: "3"
+      SET_COUNT: "3"
+      ARCHIVE_SET_COUNT: "0"
+- assertVisible: "Finish Training!!"
+- assertVisible: "Continue Training"
+# 編集
+- tapOn:
+    id: "textField_title"
+    index: 1
+- inputText: "2"
+- tapOn:
+    id: "Return"
+- tapOn:
+    id: "textField_message"
+    index: 1
+- inputText: "2"
+- tapOn: "キーボードを閉じる"
+- tapOn: "TestTag"
+- tapOn:
+    id: "plus"
+# 編集後に引き続きトレーニングを行うケースの確認
+- tapOn: "Continue Training"
+- assertVisible: "TestTitle2"
+- assertVisible: "TestMessage2"
+- assertVisible: "figure.highintensity.intervaltraining"
+# 再度編集画面へ遷移
+- swipe:
+    from:
+      text: "日記項目ボタン"
+    start: 85%,25%
+    end: 26%,24%
+    duration: 950
+- tapOn: "Edit"
+- tapOn: "OK"
+# 編集画面で日記の項目が入力されていることを確認
+- runFlow:
+    file: check_create_diary_value.yml
+    env:
+      TITLE: "TestTitle2"
+      MESSAGE: "TestMessage2"
+      TAGNAME: "TestTag"
+      TRAINING_TYPE_NAME: "TestTrainingType"
+      COUNT_PER_SET: "3"
+      SET_COUNT: "3"
+      ARCHIVE_SET_COUNT: "1"
+- tapOn: "Finish Training!!"
+- assertVisible: "TestTitle2"
+- assertVisible: "TestMessage2"
+- assertVisible: "Lose"
+# 再度編集画面へ遷移
+- swipe:
+    from:
+      text: "日記項目ボタン"
+    start: 85%,25%
+    end: 26%,24%
+    duration: 950
+- tapOn: "Edit"
+- tapOn: "OK"
+- tapOn:
+    id: "plus"
+- tapOn:
+    id: "plus"
+- tapOn: "Continue Training"
+- assertVisible: "TestTitle2"
+- assertVisible: "TestMessage2"
+- assertVisible: "Win"

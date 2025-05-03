@@ -7,13 +7,13 @@ appId: morimori.Macho
 - tapOn:
     id: "textField_title"
     index: 1
-- inputText: "Test"
+- inputText: "TestTitle"
 - tapOn:
     id: "Return"
 - tapOn:
     id: "textField_message"
     index: 1
-- inputText: "Test"
+- inputText: "TestMessage"
 - tapOn: "キーボードを閉じる"
 - tapOn:
     id: "plus.circle.fill"
@@ -54,4 +54,5 @@ appId: morimori.Macho
 - assertVisible: "3 回, 3 セット"
 - takeScreenshot: snapshot/creation_diary_complete
 - tapOn: "Training Start!"
-- assertVisible: "Test"
+- assertVisible: "TestTitle"
+- assertVisible: "TestMessage"
