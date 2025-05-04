@@ -25,3 +25,16 @@ appId: morimori.Macho
       ACHIEVE_STATUE: "達成している"
       TRAINING_TYPE_NAME: "TestTrainingType"
       TAG_NAME: "TestTag"
+
+# 日記詳細画面確認
+- runFlow:
+    file: "detail_diary.yml"
+    env:
+      TITLE: "TestTitle2"
+      MESSAGE: "TestMessage2"
+      ACHIVE_STATUS: "Win"
+      TAG_NAME: "TestTag"
+      TRAINING_TYPE_NAME: "TestTrainingType"
+      COUNT_PER_SET: "3"
+      SET_COUNT: "3"
+      ACHIVE_SET_COUNT: "3"
