@@ -2,6 +2,7 @@ appId: morimori.Macho
 ---
 # 日記リスト画面が表示されているときに実行すること
 - tapOn: "日記項目ボタン"
+- takeScreenshot: snapshot/detail_diary_view.png
 - assertVisible: "Detail"
 - assertVisible: "Edit"
 # 日記内容の確認

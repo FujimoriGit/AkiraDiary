@@ -2,6 +2,7 @@ appId: morimori.Macho
 ---
 # 日記リスト画面にいて、日記が一つだけ存在する時に実行可能
 - tapOn: "filter"
+- takeScreenshot: snapshot/filter_diary_list_view.png
 - assertVisible: "日記リストのフィルター設定"
 - tapOn: "目標達成状況"
 - tapOn: "${ACHIEVE_STATUE}"

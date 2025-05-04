@@ -31,6 +31,7 @@ appId: morimori.Macho
       ARCHIVE_SET_COUNT: "0"
 - assertVisible: "Finish Training!!"
 - assertVisible: "Continue Training"
+- takeScreenshot: snapshot/edit_diary_view.png
 # 編集
 - tapOn:
     id: "textField_title"
