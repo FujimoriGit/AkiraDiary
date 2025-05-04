@@ -17,3 +17,11 @@ appId: morimori.Macho
 # 日記の編集を確認
 - runFlow: "creation_diary.yml"
 - runFlow: "edit_diary/edit_diary.yml"
+
+# 日記リストのフィルター画面を確認
+- runFlow:
+    file: "filter_diary_list.yml"
+    env:
+      ACHIEVE_STATUE: "達成している"
+      TRAINING_TYPE_NAME: "TestTrainingType"
+      TAG_NAME: "TestTag"
