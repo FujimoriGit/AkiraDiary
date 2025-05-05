@@ -15,7 +15,7 @@ UDID=""
 
 # 1行ずつ読み取り
 while IFS= read -r line; do
-  # セクション（-- iOS 17.5 --）の検出
+  # セクション（-- iOS XX --）の検出
   if echo "$line" | grep -q -- "-- $IOS_VERSION --"; then
     FOUND_SECTION=1
     continue
