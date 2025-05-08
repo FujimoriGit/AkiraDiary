@@ -5,10 +5,6 @@ name: regression_test
 
 on:
   workflow_dispatch:
-  pull_request:
-    branches:
-      - "BR_develop**"
-      - "BR_topic/**"
 
 env:
   # チェックアウト
