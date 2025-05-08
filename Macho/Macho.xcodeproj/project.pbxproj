@@ -574,8 +574,6 @@
 					"-ObjC",
 					"-all_load",
 					"-dead_strip",
-					"-Xlinker",
-					"-no_deduplicate",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = morimori.Macho;
 				PRODUCT_NAME = "$(TARGET_NAME)";
