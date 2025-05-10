@@ -77,7 +77,7 @@ jobs:
       - name: Xcode Resolve Package Dependencies
         run: set -o pipefail &&
           xcodebuild
-          -workspace "${WORKSPACE_DIR}""
+          -workspace "${WORKSPACE_DIR}"
           -scheme Macho
           -configuration "$BUILD_CONFIG"
           -destination "$DESTINATION"
