@@ -73,6 +73,23 @@ jobs:
         run: |
           echo ${{ secrets.FIREBASE_INFO }} | base64 -o ${{ env.GOOGLE_SERVICE_INFO_PLIST_PATH }} -D
 
+      - name: debug
+        run: |
+          echo $DESTINATION
+
+      # SPMライブラリ依存解決
+      - name: Xcode Resolve Package Dependencies
+        run: set -o pipefail &&
+          xcodebuild
+          -workspace "${WORKSPACE_DIR}"
+          -scheme Macho
+          -configuration "$BUILD_CONFIG"
+          -clonedSourcePackagesDirPath SourcePackages
+          -skipPackagePluginValidation
+          -skipMacroValidation
+          -scmProvider xcode
+          -resolvePackageDependencies
+
       # ビルド
       - name: Xcode Resolve Package Dependencies
         run: set -o pipefail &&
@@ -86,8 +103,7 @@ jobs:
           -skipPackagePluginValidation
           -skipMacroValidation
           -scmProvider xcode
-          clean build |
-          xcbeautify
+          build | xcbeautify
 
       # アプリインストール
       - name: Install app
