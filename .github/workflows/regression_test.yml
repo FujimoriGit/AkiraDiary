@@ -18,7 +18,6 @@ env:
   SPM_PACKAGE_RESOLVED_FILE_PATH: Macho/Macho.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
   DERIVED_DATA_PATH: "./Build/DerivedData"
   APP_NAME: "Macho"
-  APP_PATH: "$DERIVED_DATA_PATH/Build/Products/$BUILD_CONFIG-iphonesimulator/$APP_NAME.app"
   BUILD_CONFIG: "Debug"
   SIM_NAME: "iPhone 16 Pro"
   SIM_OS_VERSION: "18.1"
@@ -73,15 +72,11 @@ jobs:
         run: |
           echo ${{ secrets.FIREBASE_INFO }} | base64 -o ${{ env.GOOGLE_SERVICE_INFO_PLIST_PATH }} -D
 
-      - name: debug
-        run: |
-          echo $DESTINATION
-
       # SPMライブラリ依存解決
       - name: Xcode Resolve Package Dependencies
         run: set -o pipefail &&
           xcodebuild
-          -workspace "${WORKSPACE_DIR}"
+          -workspace "$WORKSPACE_DIR"
           -scheme Macho
           -configuration "$BUILD_CONFIG"
           -clonedSourcePackagesDirPath SourcePackages
@@ -92,7 +87,9 @@ jobs:
 
       # ビルド
       - name: Xcode Resolve Package Dependencies
-        run: set -o pipefail &&
+        run: |
+          DESTINATION="platform=iOS Simulator,OS=$SIM_OS_VERSION,name=$SIM_NAME"
+          set -o pipefail &&
           xcodebuild
           -workspace "${WORKSPACE_DIR}"
           -scheme Macho
@@ -108,6 +105,7 @@ jobs:
       # アプリインストール
       - name: Install app
         run: |
+          APP_PATH="$DERIVED_DATA_PATH/Build/Products/$BUILD_CONFIG-iphonesimulator/$APP_NAME.app"
           xcrun simctl install booted "$APP_PATH"
 
       # E2Eテスト実行
