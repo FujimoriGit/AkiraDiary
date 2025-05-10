@@ -21,7 +21,6 @@ env:
   BUILD_CONFIG: "Debug"
   SIM_NAME: "iPhone 16 Pro"
   SIM_OS_VERSION: "18.1"
-  DESTINATION: "platform=iOS Simulator,OS=$SIM_OS_VERSION,name=$SIM_NAME"
 
 jobs:
   build:
@@ -76,12 +75,14 @@ jobs:
 
       # ビルド
       - name: App Build
-        run: set -o pipefail &&
+        run: |
+          DESTINATION: "platform=iOS Simulator,OS=$SIM_OS_VERSION,name=$SIM_NAME"
+          set -o pipefail &&
           xcodebuild
           -workspace "$WORKSPACE_DIR"
           -scheme Macho
           -configuration "$BUILD_CONFIG"
-          -destination 'platform=iOS Simulator,OS=18.1,name=iPhone 16 Pro'
+          -destination "$DESTINATION"
           -derivedDataPath "$DERIVED_DATA_PATH"
           -clonedSourcePackagesDirPath SourcePackages
           -skipPackagePluginValidation
