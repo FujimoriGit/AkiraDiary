@@ -88,13 +88,12 @@ jobs:
       # ビルド
       - name: Xcode Resolve Package Dependencies
         run: |
-          DESTINATION="platform=iOS Simulator,OS=$SIM_OS_VERSION,name=$SIM_NAME"
           set -o pipefail &&
           xcodebuild
           -workspace "${WORKSPACE_DIR}"
           -scheme Macho
           -configuration "$BUILD_CONFIG"
-          -destination "$DESTINATION"
+          -destination 'platform=iOS Simulator,OS=18.1,name=iPhone 16 Pro'
           -derivedDataPath "$DERIVED_DATA_PATH"
           -clonedSourcePackagesDirPath SourcePackages
           -skipPackagePluginValidation
