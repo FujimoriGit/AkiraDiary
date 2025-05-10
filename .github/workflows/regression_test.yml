@@ -6,7 +6,8 @@ name: regression_test
 on:
   pull_request:
     branches:
-      - "*"
+      - "BR_develop**"
+      - "BR_topic/**"
   workflow_dispatch:
 
 env:
