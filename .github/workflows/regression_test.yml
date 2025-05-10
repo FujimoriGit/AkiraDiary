@@ -4,6 +4,9 @@
 name: regression_test
 
 on:
+  pull_request:
+    branches:
+      - "develop/#82_add_e2e_env_create_script"
   workflow_dispatch:
 
 env:
