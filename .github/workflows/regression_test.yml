@@ -76,7 +76,7 @@ jobs:
       # ビルド
       - name: App Build
         run: |
-          DESTINATION: "platform=iOS Simulator,OS=$SIM_OS_VERSION,name=$SIM_NAME"
+          DESTINATION="platform=iOS Simulator,OS=$SIM_OS_VERSION,name=$SIM_NAME"
           set -o pipefail &&
           xcodebuild
           -workspace "$WORKSPACE_DIR"
