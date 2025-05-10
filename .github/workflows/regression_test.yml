@@ -4,10 +4,6 @@
 name: regression_test
 
 on:
-  pull_request:
-    branches:
-      - "BR_develop**"
-      - "BR_topic/**"
   workflow_dispatch:
 
 env:
@@ -66,12 +62,6 @@ jobs:
       - name: decode Info.plist for firebase
         run: |
           echo ${{ secrets.FIREBASE_INFO }} | base64 -o ${{ env.GOOGLE_SERVICE_INFO_PLIST_PATH }} -D
-
-      - name: Debug
-        run: |
-          pwd
-          ls -l
-          ls -l $WORKSPACE_DIR
 
       # ビルド
       - name: App Build
