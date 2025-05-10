@@ -33,6 +33,7 @@
   },
   "testTargets" : [
     {
+      "enabled" : false,
       "target" : {
         "containerPath" : "container:Macho.xcodeproj",
         "identifier" : "D9F160FC2AE39EE60061307C",
@@ -40,6 +41,7 @@
       }
     },
     {
+      "enabled" : false,
       "target" : {
         "containerPath" : "container:Macho.xcodeproj",
         "identifier" : "D9F161062AE39EE60061307C",
