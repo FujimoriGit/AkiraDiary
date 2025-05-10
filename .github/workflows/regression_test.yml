@@ -43,10 +43,6 @@ jobs:
       - name: "Boot Simulator"
         run: scripts/boot_simulator.sh "$SIM_NAME" "iOS $SIM_OS_VERSION"
 
-      # Xcodeの一覧出力
-      - name: Show Xcode list
-        run: ls /Applications | grep 'Xcode'
-
       # Xcodeのバージョン選択
       - name: Select Xcode version
         run: sudo xcode-select -s '${{ env.DEVELOPER_DIR }}/Contents/Developer'
@@ -72,25 +68,17 @@ jobs:
         run: |
           echo ${{ secrets.FIREBASE_INFO }} | base64 -o ${{ env.GOOGLE_SERVICE_INFO_PLIST_PATH }} -D
 
-      # SPMライブラリ依存解決
-      - name: Xcode Resolve Package Dependencies
+      - name: Debug
+        run: |
+          pwd
+          ls -l
+          ls -l $WORKSPACE_DIR
+
+      # ビルド
+      - name: App Build
         run: set -o pipefail &&
           xcodebuild
           -workspace "$WORKSPACE_DIR"
-          -scheme Macho
-          -configuration "$BUILD_CONFIG"
-          -clonedSourcePackagesDirPath SourcePackages
-          -skipPackagePluginValidation
-          -skipMacroValidation
-          -scmProvider xcode
-          -resolvePackageDependencies
-
-      # ビルド
-      - name: Xcode Resolve Package Dependencies
-        run: |
-          set -o pipefail &&
-          xcodebuild
-          -workspace "${WORKSPACE_DIR}"
           -scheme Macho
           -configuration "$BUILD_CONFIG"
           -destination 'platform=iOS Simulator,OS=18.1,name=iPhone 16 Pro'
