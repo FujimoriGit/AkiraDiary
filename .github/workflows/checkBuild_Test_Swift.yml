@@ -143,7 +143,7 @@ jobs:
           -clonedSourcePackagesDirPath SourcePackages
           -resultBundlePath 'Build/test.xcresult'
           -enableCodeCoverage YES
-          test | xcbeautify --renderer github-actions
+          test
 
       # テスト結果の確認
       - name: Analyze Danger
