@@ -17,7 +17,7 @@ on:
 
 env:
   # チェックアウト
-  DEVELOPER_DIR: /Applications/Xcode_16.1.app
+  DEVELOPER_DIR: /Applications/Xcode_16.3.app
   WORKSPACE_DIR: ./Macho/Macho.xcworkspace
   GOOGLE_SERVICE_INFO_PLIST_PATH: ./Macho/Macho/GoogleService-Info.plist
   SPM_PACKAGE_RESOLVED_FILE_PATH: Macho/Macho.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
@@ -70,7 +70,7 @@ jobs:
   build:
     if: ${{ github.event.issue.pull_request && github.event.comment.body == 'test-this-please' || !github.event.issue.pull_request }}
     # 実行環境はmacosに設定
-    runs-on: macos-latest
+    runs-on: macos-15
     needs: determine-test-scheme
     steps:
       # fetch-depth の計算
@@ -143,8 +143,7 @@ jobs:
           -clonedSourcePackagesDirPath SourcePackages
           -resultBundlePath 'Build/test.xcresult'
           -enableCodeCoverage YES
-          clean test |
-          xcbeautify --renderer github-actions
+          test | xcbeautify --renderer github-actions
 
       # テスト結果の確認
       - name: Analyze Danger
