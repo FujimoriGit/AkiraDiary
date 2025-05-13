@@ -6,7 +6,6 @@ opt_in_rules:
   - all
 disabled_rules:
   - anonymous_argument_in_multiline_closure
-  - anyobject_protocol
   - conditional_returns_on_newline
   - contrasted_opening_brace
   - convenience_type
@@ -18,7 +17,6 @@ disabled_rules:
   - file_types_order
   - function_default_parameter_at_end
   - indentation_width
-  - inert_defer
   - missing_docs
   - multiline_arguments
   - multiline_arguments_brackets
@@ -36,7 +34,6 @@ disabled_rules:
   - switch_case_on_newline
   - trailing_closure
   - type_contents_order
-  - unused_capture_list
   - vertical_whitespace_between_cases
   - trailing_whitespace
   - vertical_whitespace_opening_braces
@@ -49,13 +46,10 @@ disabled_rules:
   - implicit_return
   # fileprivate を避ける理由がよくわからぬ！
   - private_over_fileprivate
+  - file_header
+  - file_name
 
 # Configurations
-attributes:
-  always_on_line_above:
-    - "@ConfigurationElement"
-    - "@OptionGroup"
-    - "@RuleConfigurationDescriptionBuilder"
 balanced_xctest_lifecycle: &unit_test_configuration
   test_parent_classes:
     - SwiftLintTestCase
@@ -64,13 +58,6 @@ closure_body_length:
   warning: 50
   error: 100
 empty_xctest_method: *unit_test_configuration
-file_name:
-  excluded:
-    - Exports.swift
-    - GeneratedTests.swift
-    - RuleConfigurationMacros.swift
-    - SwiftSyntax+SwiftLint.swift
-    - TestHelpers.swift
 final_test_case: *unit_test_configuration
 function_body_length: 60
 identifier_name:

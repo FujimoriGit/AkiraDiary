@@ -1,6 +1,15 @@
 {
-  "originHash" : "2fb56891fb010ad21a6ef309fde70629a0052bf0044e00aab493304d24a54a38",
+  "originHash" : "91d3b9aaa1ab49c1d544d3832b5e7d8f3d04254cac23919164ada5302f060a6f",
   "pins" : [
+    {
+      "identity" : "danger-swift-coverage",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/f-meloni/danger-swift-coverage",
+      "state" : {
+        "revision" : "6a21a6e595e2b13443428942ce128b3ba6b827ee",
+        "version" : "1.2.1"
+      }
+    },
     {
       "identity" : "logger",
       "kind" : "remoteSourceControl",

@@ -22,6 +22,40 @@
       {
         "basedOn" : null,
         "packageRef" : {
+          "identity" : "danger-swift-coverage",
+          "kind" : "remoteSourceControl",
+          "location" : "https://github.com/f-meloni/danger-swift-coverage",
+          "name" : "danger-swift-coverage"
+        },
+        "state" : {
+          "checkoutState" : {
+            "revision" : "6a21a6e595e2b13443428942ce128b3ba6b827ee",
+            "version" : "1.2.1"
+          },
+          "name" : "sourceControlCheckout"
+        },
+        "subpath" : "danger-swift-coverage"
+      },
+      {
+        "basedOn" : null,
+        "packageRef" : {
+          "identity" : "danger-swift-xcodesummary",
+          "kind" : "remoteSourceControl",
+          "location" : "https://github.com/f-meloni/danger-swift-xcodesummary",
+          "name" : "DangerXCodeSummary"
+        },
+        "state" : {
+          "checkoutState" : {
+            "revision" : "289d5136cead3d4b1eae509acc3f0b044252fc6c",
+            "version" : "1.2.1"
+          },
+          "name" : "sourceControlCheckout"
+        },
+        "subpath" : "danger-swift-xcodesummary"
+      },
+      {
+        "basedOn" : null,
+        "packageRef" : {
           "identity" : "logger",
           "kind" : "remoteSourceControl",
           "location" : "https://github.com/shibapm/Logger",
@@ -121,7 +155,10 @@
         },
         "subpath" : "Version"
       }
+    ],
+    "prebuilts" : [
+
     ]
   },
-  "version" : 6
+  "version" : 7
 }

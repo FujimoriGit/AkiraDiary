@@ -35,6 +35,7 @@ struct AddTagFeature: Sendable {
     
     @Dependency(\.trainingTagClient) var trainingTagApi
     @Dependency(\.dismiss) var dismiss
+    @Dependency(\.uuid) var uuid
     
     // MARK: - body
     
@@ -74,7 +75,14 @@ private extension AddTagFeature {
     
     func saveTag(tagName: String) async {
         
-        let entity = TrainingTagData(id: UUID(), tagName: tagName)
+        let currentTagList = await trainingTagApi.fetchAll()
+        if currentTagList.contains(where: { $0.tagName == tagName }) {
+            
+            logger.error("same name already added.")
+            return
+        }
+        
+        let entity = TrainingTagData(id: uuid(), tagName: tagName)
         _ = await trainingTagApi.add(entity)
     }
     

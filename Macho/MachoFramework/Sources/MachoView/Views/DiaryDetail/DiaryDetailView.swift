@@ -44,6 +44,7 @@ struct DiaryDetailView: View {
     private let tagCornerRadius: CGFloat = 10
     
     private let defaultMessageLineLimit = 3
+    private let resultDescriptionTextFormat = ":%dセット%d回"
     
     // MARK: - initialize method
     
@@ -55,38 +56,33 @@ struct DiaryDetailView: View {
     // MARK: - view body
     
     var body: some View {
-        NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
-            ZStack {
-                createContentsArea()
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigation) {
-                    NavigationButton(.back) {
-                        store.send(.tappedBackNavigationButton)
-                    }
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    // swiftlint:disable:next accessibility_label_for_image
-                    NavigationButton(.other(icon: Image(systemName: "pencil"))) {
-                        store.send(.tappedEditButton)
-                    }
+        ZStack {
+            createContentsArea()
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                NavigationButton(.back) {
+                    store.send(.tappedBackNavigationButton)
                 }
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle("Detail")
-        } destination: { store in
-            switch store.case {
-                
-            case .editDiaryView(let store):
-                // TODO: 仮の遷移先のため実装完了したら編集画面への遷移を実装する
-                AddContactView(store: store)
+            ToolbarItem(placement: .topBarTrailing) {
+                // swiftlint:disable:next accessibility_label_for_image
+                NavigationButton(.other(icon: Image(systemName: "pencil"))) {
+                    store.send(.tappedEditButton)
+                }
             }
+        }
+        .navigationBarBackButtonHidden()
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("Detail")
+        .navigationDestination(item: $store.scope(
+            state: \.navigationDestination?.editDiaryView,
+            action: \.navigationDestination.editDiaryView
+        )) {
+            AddContactView(store: $0)
         }
         .onAppear {
             store.send(.onAppear)
-        }
-        .onDisappear {
-            store.send(.onDisappear)
         }
     }
 }
@@ -172,7 +168,7 @@ private extension DiaryDetailView {
         }
     }
     
-    func createResultPerTrainingSectionView(_ trainingResultList: [TrainingTypeResult]) -> some View {
+    func createResultPerTrainingSectionView(_ trainingResultList: [Goal]) -> some View {
         VStack(alignment: .leading, spacing: resultPerTrainingSectionVerticalSpace) {
             ForEach(trainingResultList) {
                 createResultPerTrainingItemView($0)
@@ -181,9 +177,9 @@ private extension DiaryDetailView {
         }
     }
     
-    func createResultPerTrainingItemView(_ resultItem: TrainingTypeResult) -> some View {
+    func createResultPerTrainingItemView(_ resultItem: Goal) -> some View {
         HStack(spacing: .zero) {
-            Text(resultItem.trainingName)
+            Text(resultItem.trainingType.name)
                 .font(.system(size: sectionTitleFontSize, weight: .bold))
                 .frame(maxHeight: .infinity,
                        alignment: .topLeading)
@@ -191,8 +187,8 @@ private extension DiaryDetailView {
                 .frame(width: trainingNameTrailingPadding)
             VStack(spacing: .zero) {
                 Spacer()
-                Text(resultItem.goalResultText)
-                Text(resultItem.actualResultText)
+                Text("目標\(String(format: resultDescriptionTextFormat, resultItem.setCount, resultItem.numberOfSets))")
+                Text("達成セット数: \(resultItem.actualSetCount)")
             }
             .font(.system(size: trainingDetailTextFontSize))
             Spacer()
@@ -223,25 +219,24 @@ private extension DiaryDetailView {
 // MARK: - preview
 
 #Preview {
-    let goal1 = TrainingContentData(id: UUID(),
-                                    trainingType: TrainingTypeData(id: UUID(), name: "腹筋"),
-                                    goalNumberOfSets: 3,
-                                    goalSetCount: 3,
-                                    actualNumberOfSets: 3,
-                                    actualSetCount: 3,
-                                    isAchieved: true)
-    let tag1 = TrainingTagData(id: UUID(), tagName: "XXX")
-    let tag2 = TrainingTagData(id: UUID(), tagName: "ZZZZZZZ")
-    let tag3 = TrainingTagData(id: UUID(), tagName: "UUUUU")
-    let initialDiaryEntity = DiaryData(id: UUID(),
-                                       date: Date(),
-                                       title: "Preview",
-                                       // swiftlint:disable:next line_length
-                                       mainText: "preview sample message\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-                                       goals: [goal1],
-                                       tags: [tag1, tag2, tag3],
-                                       startTime: Date(),
-                                       endTime: Date())
-    DiaryDetailView(store: Store(initialState: DiaryDetailFeature.State(diary: initialDiaryEntity),
-                                 reducer: { DiaryDetailFeature() }))
+    let goal1 = Goal(id: UUID(),
+                     trainingType: .init(id: UUID(), name: "腹筋"),
+                     numberOfSets: 3,
+                     setCount: 3,
+                     actualSetCount: 3)
+    let tag1 = Tag(id: UUID(), tagName: "XXX")
+    let tag2 = Tag(id: UUID(), tagName: "ZZZZZZZ")
+    let tag3 = Tag(id: UUID(), tagName: "UUUUU")
+    let initialDiaryEntity = Diary(id: UUID(),
+                                   createdAt: .now,
+                                   title: "Preview",
+                                   // swiftlint:disable:next line_length
+                                   mainText: "preview sample message\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                                   goals: [goal1],
+                                   tags: [tag1, tag2, tag3],
+                                   endTime: Date())
+    NavigationView {
+        DiaryDetailView(store: Store(initialState: DiaryDetailFeature.State(diary: initialDiaryEntity),
+                                     reducer: { DiaryDetailFeature() }))
+    }
 }

@@ -13,7 +13,7 @@ struct DiaryCreationView: View {
     // MARK: - Store
     
     @Bindable private var store: StoreOf<DiaryCreationFeature>
-    @State private var animationsRunning = false
+    @FocusState private var textFieldFocusState: DiaryCreationTextFieldFocus?
     
     // MARK: - initialize
     
@@ -53,9 +53,30 @@ struct DiaryCreationView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            createView(parentSize: geometry.size)
-                .frame(maxWidth: geometry.size.width, minHeight: geometry.size.height)
+            ZStack {
+                createView(parentSize: geometry.size)
+                    .frame(maxWidth: geometry.size.width, minHeight: geometry.size.height)
+                if textFieldFocusState != nil {
+                    Color.clear.contentShape(Rectangle())
+                        .accessibilityAddTraits(.isButton)
+                        .accessibilityLabel("キーボードを閉じる")
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            store.send(.tappedOutsideOfKeyboard)
+                        }
+                }
+            }
         }
+        .ignoresSafeArea(.keyboard, edges: .bottom)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                NavigationButton(.back) {
+                    store.send(.tappedNavigationBackButton)
+                }
+            }
+        }
+        .navigationBarBackButtonHidden()
         .navigationTitle("Create Diary")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $store.scope(state: \.destination, action: \.destination)) { destination in
@@ -72,10 +93,13 @@ struct DiaryCreationView: View {
                 }
             }
         }
+        .alert(store: store.scope(state: \.$alert, action: \.alert))
         .onAppear {
             
             store.send(.onAppear)
         }
+        .synchronize($store.textFieldFocusState.sending(\.didChangeFocusState),
+                     $textFieldFocusState)
     }
 }
 
@@ -88,8 +112,10 @@ private extension DiaryCreationView {
         LazyVStack {
             ScrollView {
                 titleTextField(parentSize: parentSize)
+                    .accessibilityId(.textField("title"))
                 
                 messageTextField(parentSize: parentSize)
+                    .accessibilityId(.textField("message"))
                 
                 Spacer()
                     .frame(height: placeholderToTagsPadding)
@@ -103,11 +129,17 @@ private extension DiaryCreationView {
             }
             .scrollIndicators(.hidden)
             
-            startButton(animationsRunning: store.animationsRunning, parentSize: parentSize) {
-                
-                store.send(.trainingStartButtonTapped)
+            if store.isEditMode {
+ 
+                editModeSaveButtonArea()
             }
-            .padding(.bottom, startButtonBottomPadding)
+            else {
+                
+                startButton()
+            }
+            
+            Spacer()
+                .frame(maxHeight: startButtonBottomPadding)
         }
     }
     
@@ -115,6 +147,7 @@ private extension DiaryCreationView {
         VStack(alignment: .leading) {
             Text("title")
             TextField("\(formatter.string(from: Date()))", text: $store.titleText.sending(\.titleTextChange))
+                .focused($textFieldFocusState, equals: .title)
                 .padding(8)
                 .overlay(RoundedRectangle(cornerRadius: textEditorCornerRadius)
                     .stroke(Color(uiColor: .systemGray2), lineWidth: lineWidth))
@@ -127,6 +160,7 @@ private extension DiaryCreationView {
             Text("message")
             ZStack(alignment: .topLeading) {
                 TextEditor(text: $store.messageText.sending(\.messageTextChange))
+                    .focused($textFieldFocusState, equals: .message)
                     .padding(textEditorPadding)
                     .overlay(RoundedRectangle(cornerRadius: textEditorCornerRadius)
                         .stroke(Color(uiColor: .systemGray2), lineWidth: lineWidth))
@@ -157,6 +191,8 @@ private extension DiaryCreationView {
                 
                 store.send(.longTappedTag(tag))
             }
+            .frame(maxWidth: .infinity,
+                   alignment: .leading)
         }
         .frame(maxWidth: ViewUtil.calcWidth(size: parentSize, horizontalPadding: horizontalPadding),
                alignment: .leading)
@@ -185,33 +221,33 @@ private extension DiaryCreationView {
                alignment: .leading)
     }
     
-    func tags(tapAction: @escaping (Tag) -> Void,
-              longPressAction: @escaping (Tag) -> Void) -> some View {
+    func tags(tapAction: @escaping (SelectionTag) -> Void,
+              longPressAction: @escaping (SelectionTag) -> Void) -> some View {
         
         FlowLayout(alignment: .leading, spacing: 8) {
-            ForEach(store.tags, id: \.id) { tag in
+            ForEach(store.tags, id: \.id) { selectionTag in
                 // tapとlongPressのイベントをハンドルするため、actionでは何もしない
                 Button(action: {}, label: {
                     HStack(spacing: 4) {
-                        Text(tag.entity.tagName)
-                            .font(.system(size: textSize, weight: tag.isSelected ? .semibold : .regular))
+                        Text(selectionTag.tag.tagName)
+                            .font(.system(size: textSize, weight: selectionTag.isSelected ? .semibold : .regular))
                         
-                        Image(systemName: tag.isSelected ? "checkmark.circle.fill" : "circle.dashed")
+                        Image(systemName: selectionTag.isSelected ? "checkmark.circle.fill" : "circle.dashed")
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundStyle(.white)
-                            .symbolEffect(.bounce, value: tag.isSelected)
+                            .symbolEffect(.bounce, value: selectionTag.isSelected)
                     }
                     .padding(tagPadding)
-                    .background(tag.isSelected ? .indigo : .gray)
+                    .background(selectionTag.isSelected ? .indigo : .gray)
                     .foregroundStyle(.white)
                     .cornerRadius(14)
                     .onTapGesture {
                         
-                        tapAction(tag)
+                        tapAction(selectionTag)
                     }
                     .onLongPressGesture {
                         
-                        longPressAction(tag)
+                        longPressAction(selectionTag)
                     }
                 })
             }
@@ -229,6 +265,18 @@ private extension DiaryCreationView {
                     Text("\(goal.numberOfSets) 回, \(goal.setCount) セット")
                         .font(.system(size: 16))
                         .foregroundStyle(.white)
+                }
+                Spacer()
+                if store.isEditMode {
+                    HStack(spacing: 8) {
+                        Text("達成セット: \(goal.actualSetCount)")
+                        editActualSetCountButton(iconName: "plus") {
+                            store.send(.tappedAddActualSetButton(goal))
+                        }
+                        editActualSetCountButton(iconName: "minus") {
+                            store.send(.tappedMinusActualSetButton(goal))
+                        }
+                    }
                 }
             }
             .clipped()
@@ -255,6 +303,17 @@ private extension DiaryCreationView {
         .frame(minHeight: (goalCellHeight + goalCellMargin) * CGFloat(store.goals.count))
     }
     
+    func editActualSetCountButton(iconName: String, action: @escaping () -> Void) -> some View {
+        Button {
+            action()
+        } label: {
+            Image(systemName: iconName)
+                .frame(width: 16, height: 16)
+                .padding(8)
+        }
+        .fillButtonStyle(cornerRadius: 12)
+    }
+    
     func addingButton(title: String, parentSize: CGSize, action: @escaping () -> Void) -> some View {
         
         HStack {
@@ -269,30 +328,103 @@ private extension DiaryCreationView {
                alignment: .leading)
     }
     
-    func startButton(animationsRunning: Bool,
-                     parentSize: CGSize,
-                     action: @escaping () -> Void) -> some View {
+    func editModeSaveButtonArea() -> some View {
+        
+        VStack(spacing: 16) {
+            if store.shouldShowFinishButton {
+                finishButton()
+            }
+            editButton()
+        }
+    }
+    
+    func finishButton() -> some View {
+        
+        saveButton(title: "Finish Training!!",
+                   iconName: "flame.fill",
+                   color: .red,
+                   isEnable: store.isEnableFinishButton) {
+            
+            store.send(.trainingFinishButtonTapped)
+        }
+    }
+    
+    func editButton() -> some View {
+        
+        saveButton(title: "Continue Training",
+                   iconName: "figure.run",
+                   color: .orange,
+                   isEnable: store.isEnableSaveButton) {
+            
+            store.send(.trainingSaveButtonTapped)
+        }
+    }
+    
+    func startButton() -> some View {
+        
+        saveButton(title: "Training Start!",
+                   iconName: "figure.run.square.stack",
+                   color: .orange,
+                   isEnable: store.isEnableSaveButton) {
+            
+            store.send(.trainingStartButtonTapped)
+        }
+    }
+    
+    func saveButton(title: String,
+                    iconName: String,
+                    color: Color,
+                    isEnable: Bool,
+                    action: @escaping () -> Void) -> some View {
         
         Button(action: action, label: {
             HStack {
-                Image(systemName: "figure.run.square.stack")
+                Image(systemName: iconName)
                     .font(.system(size: 24))
-                    .symbolEffect(.bounce, value: animationsRunning)
-                Text("Training Start!")
+                    .symbolEffect(.bounce, value: store.animationsRunning)
+                Text(title)
                     .font(.system(size: textSize, weight: .bold))
             }
-            .frame(maxWidth: ViewUtil.calcWidth(size: parentSize, horizontalPadding: horizontalPadding),
+            .frame(maxWidth: .infinity,
                    minHeight: startButtonHeight)
         })
-        .fillButtonStyle(backgroundColor: store.isEnableStartButton ? .orange : .gray)
-        .disabled(!store.isEnableStartButton)
+        .fillButtonStyle(backgroundColor: isEnable ? color : .gray)
+        .disabled(!isEnable)
+        .padding(.horizontal, horizontalPadding)
     }
 }
 
 // MARK: - preview
 
 #Preview {
-    DiaryCreationView(store: Store(initialState: DiaryCreationFeature.State()) {
+    NavigationStack {
+        DiaryCreationView(store: Store(initialState: DiaryCreationFeature.State()) {
+            DiaryCreationFeature()
+        })
+    }
+}
+
+#Preview("タグあり(ひとつだけ)") {
+    DiaryCreationView(store: Store(initialState: DiaryCreationFeature.State(
+        tags: [.init(id: UUID(), tagName: "test", isSelected: false)]
+    )) {
+        
+        DiaryCreationFeature()
+    })
+}
+
+#Preview("タグあり(複数)") {
+    DiaryCreationView(store: Store(initialState: DiaryCreationFeature.State(
+        tags: [
+            .init(id: UUID(), tagName: "test1", isSelected: true),
+            .init(id: UUID(), tagName: "test2", isSelected: true),
+            .init(id: UUID(), tagName: "test3", isSelected: false),
+            .init(id: UUID(), tagName: "test4", isSelected: false),
+            .init(id: UUID(), tagName: "test5", isSelected: false),
+            .init(id: UUID(), tagName: "test6", isSelected: false),
+            .init(id: UUID(), tagName: "test7", isSelected: false)
+        ]
+    )) {
         
         DiaryCreationFeature()
     })

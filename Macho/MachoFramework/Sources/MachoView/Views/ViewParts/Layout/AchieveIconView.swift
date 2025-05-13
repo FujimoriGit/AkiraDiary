@@ -32,7 +32,7 @@ struct AchieveIconView: View {
         Text(isAchieved ? "Win" : "Lose")
             .font(.system(size: size,
                           weight: .heavy))
-            .foregroundStyle(isAchieved ? Color(asset: CustomColor.winColor) : Color(asset: CustomColor.loseColor))
+            .foregroundStyle(Color.getWinOrLoseColorByIsAchieved(isAchieved))
     }
 }
 

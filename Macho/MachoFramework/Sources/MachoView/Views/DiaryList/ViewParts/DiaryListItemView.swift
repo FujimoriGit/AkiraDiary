@@ -26,7 +26,7 @@ struct DiaryListItemView: View {
     
     // MARK: size property
     
-    private let winLoseLabelFontSize: CGFloat = 25
+    private let diaryStatusIconSize: CGFloat = 25
     private let titleFontSize: CGFloat = 20
     private let messageFontSize: CGFloat = 14
     private let dateFontSize: CGFloat = 10
@@ -70,7 +70,7 @@ private extension DiaryListItemView {
     func createDiaryItemContent() -> some View {
         VStack {
             HStack(spacing: .zero) {
-                createWinLoseIcon(isWin: store.isWin)
+                createDiaryStatusIcon()
                 Spacer()
                     .frame(width: winLoseLabelTrailingPadding)
                 VStack(spacing: .zero) {
@@ -89,9 +89,9 @@ private extension DiaryListItemView {
         }
     }
     
-    func createWinLoseIcon(isWin: Bool) -> some View {
-        AchieveIconView(isAchieved: isWin,
-                        size: winLoseLabelFontSize)
+    func createDiaryStatusIcon() -> some View {
+        DiaryStatusIconView(status: store.diaryState,
+                            size: diaryStatusIconSize)
     }
     
     func createTopContents(title: String, date: String) -> some View {
@@ -133,28 +133,30 @@ private extension DiaryListItemView {
 // MARK: - preview block
 
 #Preview {
-    let diaryData = DiaryData(
-        id: UUID(),
-        date: Date(),
-        title: "sample", mainText: "sample main text",
-        goals: [
-            TrainingContentData(id: UUID(),
-                                trainingType: .init(id: UUID(), name: "腹筋"),
-                                goalNumberOfSets: 3,
-                                goalSetCount: 3,
-                                actualNumberOfSets: 3,
-                                actualSetCount: 3, isAchieved: true)
-        ],
-        tags: [.init(id: UUID(), tagName: "xxx")],
-        startTime: Date(),
-        endTime: Date()
-    )
+    let winDiaryData = Diary(id: UUID(),
+                             createdAt: Date(),
+                             title: "sample", mainText: "sample main text",
+                             goals: [], tags: [],
+                             status: .finished(.init(isAchieved: true, endTime: .now)))
+    let loseDiaryData = Diary(id: UUID(),
+                              createdAt: Date(),
+                              title: "sample2", mainText: "sample main text",
+                              goals: [], tags: [],
+                              status: .finished(.init(isAchieved: false, endTime: .now)))
+    let trainingStatusData = Diary(id: UUID(),
+                                   createdAt: Date(),
+                                   title: "sample3", mainText: "sample main text",
+                                   goals: [], tags: [],
+                                   status: .training)
     ScrollView {
         LazyVStack(spacing: .zero) {
-            DiaryListItemView(store: Store(initialState: .init(entity: diaryData)) {
+            DiaryListItemView(store: Store(initialState: DiaryListItemFeature.State(winDiaryData)) {
                 DiaryListItemFeature()
             })
-            DiaryListItemView(store: Store(initialState: .init(entity: diaryData)) {
+            DiaryListItemView(store: Store(initialState: DiaryListItemFeature.State(loseDiaryData)) {
+                DiaryListItemFeature()
+            })
+            DiaryListItemView(store: Store(initialState: DiaryListItemFeature.State(trainingStatusData)) {
                 DiaryListItemFeature()
             })
         }

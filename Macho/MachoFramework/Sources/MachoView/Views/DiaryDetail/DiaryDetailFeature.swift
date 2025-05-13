@@ -25,7 +25,7 @@ struct DiaryDetailFeature {
         
         // MARK: path
         
-        var path = StackState<Path.State>()
+        @Presents var navigationDestination: Path.State?
         
         // MARK: view state
         
@@ -38,11 +38,11 @@ struct DiaryDetailFeature {
         /// 日記のメッセージ
         private(set) var message: String
         /// 日記のタグ
-        private(set) var tags: [TrainingTagData]
+        private(set) var tags: [Tag]
         /// 日記に設定したトレーニングの総合結果
         private(set) var totalResult: TotalTrainingResult
         /// 日記に設定したトレーニング種目毎の結果
-        private(set) var trainings: [TrainingTypeResult]
+        private(set) var trainings: [Goal]
     }
     
     // MARK: - Action
@@ -51,14 +51,12 @@ struct DiaryDetailFeature {
         
         // MARK: Navigation Action
         
-        case path(StackActionOf<Path>)
+        case navigationDestination(PresentationAction<Path.Action>)
         
         // MARK: Event Action
         
         /// 画面表示時
         case onAppear
-        /// 画面非表示時
-        case onDisappear
         /// 編集ボタン押下時
         case tappedEditButton
         /// 戻るボタン押下時
@@ -99,7 +97,7 @@ struct DiaryDetailFeature {
             
             switch action {
                 
-            case .path:
+            case .navigationDestination:
                 return .none
                 
             case .onAppear:
@@ -109,13 +107,10 @@ struct DiaryDetailFeature {
                     await send(.observePublisher(.observeDiaryList(publisher)))
                 }
                 
-            case .onDisappear:
-                return .cancel(id: DiaryObserveCancellable())
-                
             case .tappedEditButton:
                 // TODO: 編集画面ができたら正しいStateを設定する
-                state.path.append(.editDiaryView(.init(contact: .init(id: .init(.zero), name: "sample"))))
-                return .none
+                state.navigationDestination = .editDiaryView(.init(contact: .init(id: .init(.zero), name: "sample")))
+                return .cancel(id: DiaryObserveCancellable())
                 
             case .tappedBackNavigationButton:
                 return .concatenate(
@@ -126,15 +121,15 @@ struct DiaryDetailFeature {
                     }
                 )
                 
-            case .didReceivedDiary(let diary):
-                state.updateDiary(diary)
+            case .didReceivedDiary(let entity):
+                state.updateDiary(DiaryConverter.toDiary(entity))
                 return .none
                 
             case .observePublisher(.observeDiaryList(let publisher)):
                 return addObserveDiaryData(publisher: publisher, targetId: state.diaryId)
             }
         }
-        .forEach(\.path, action: \.path)
+        .ifLet(\.$navigationDestination, action: \.navigationDestination)
     }
 }
 
@@ -143,24 +138,10 @@ struct DiaryDetailFeature {
 extension DiaryDetailFeature {
     
     @Reducer(state: .equatable, action: .equatable)
-    enum Path: Equatable {
+    enum Path {
         
         // TODO: 編集画面ができたら変更する
         case editDiaryView(AddContactFeature)
-        
-        var id: Int {
-            
-            switch self {
-                
-            case .editDiaryView:
-                return 0
-            }
-        }
-        
-        static func == (lhs: DiaryDetailFeature.Path, rhs: DiaryDetailFeature.Path) -> Bool {
-            
-            return lhs.id == rhs.id
-        }
     }
 }
 
@@ -172,8 +153,8 @@ private extension DiaryDetailFeature {
                              targetId: UUID) -> EffectOf<Self> {
         
         return .publisher {
-            
             publisher
+                .receive(on: DispatchQueue.main)
                 .compactMap { $0.first { $0.id == targetId } }
                 .map { Action.didReceivedDiary($0) }
                 .eraseToAnyPublisher()
@@ -184,22 +165,22 @@ private extension DiaryDetailFeature {
 
 extension DiaryDetailFeature.State {
     
-    init(diary: DiaryData) {
+    init(diary: Diary) {
         
         diaryId = diary.id
         title = diary.title
         message = diary.mainText
         tags = diary.tags
         totalResult = TotalTrainingResult(diary)
-        trainings = diary.goals.map { TrainingTypeResult($0) }
+        trainings = diary.goals
     }
     
-    mutating func updateDiary(_ diary: DiaryData) {
+    mutating func updateDiary(_ diary: Diary) {
         
         title = diary.title
         message = diary.mainText
         tags = diary.tags
         totalResult = TotalTrainingResult(diary)
-        trainings = diary.goals.map { TrainingTypeResult($0) }
+        trainings = diary.goals
     }
 }

@@ -131,9 +131,6 @@ private extension SelectTrainingTypeContentViewTest {
     func getMockTrainingTypeClientWithSetup(expectedFetchEntity: [TrainingTypeData]) async throws -> TrainingTypeClient {
         
         let realm = try await RealmTestHelper.getMockRealm()
-        let mockClient = TrainingTypeClient.getMockClient(realm: realm)
-        await RealmTestHelper.setupTrainingTypeList(mockClient,
-                                                    typeList: expectedFetchEntity)
-        return mockClient
+        return await TrainingTypeClient.getMockClient(realm: realm, initialValue: expectedFetchEntity)
     }
 }

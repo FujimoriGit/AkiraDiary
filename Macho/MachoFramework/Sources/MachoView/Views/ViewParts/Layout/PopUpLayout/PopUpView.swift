@@ -60,10 +60,17 @@ private extension PopUpView {
 }
 
 #Preview("default") {
-    PopUpView<SelectTrainingTypeContentView, SelectTrainingTypeContentFeature>(
-        store: Store(initialState: PopUpFeature.State(
-            childState: .init(selectingTrainingTypeList: [TrainingTypeData]())
-        ),
-                     reducer: { PopUpFeature() })
+    PopUpView<
+        SelectTrainingTypeContentView,
+        SelectTrainingTypeContentFeature
+    >(
+        store: Store(
+            initialState: PopUpFeature.State(
+                childState: .init(
+                    selectingTrainingTypeList: [TrainingTypeData]()
+                )
+            ),
+            reducer: { PopUpFeature() }
+        )
     )
 }

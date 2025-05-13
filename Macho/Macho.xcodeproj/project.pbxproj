@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BC0940B52B5B6CAD00E11B53 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BC0940B42B5B6CAD00E11B53 /* MachoFramework */; };
-		BC0940D02B6F532100E11B53 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BC0940CF2B6F532100E11B53 /* MachoFramework */; };
-		BC0940D22B6F6B0100E11B53 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BC0940D12B6F6B0100E11B53 /* MachoFramework */; };
-		BC66F7512D72D19100CEC2AE /* MachoFramework in Embed Frameworks */ = {isa = PBXBuildFile; productRef = BC0940B42B5B6CAD00E11B53 /* MachoFramework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		BC66F7532D72D19A00CEC2AE /* MachoFramework in Embed Frameworks */ = {isa = PBXBuildFile; productRef = BC0940CF2B6F532100E11B53 /* MachoFramework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		BC66F7552D72D19C00CEC2AE /* MachoFramework in Embed Frameworks */ = {isa = PBXBuildFile; productRef = BC0940D12B6F6B0100E11B53 /* MachoFramework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		BC5D7F382DCF25A4006F018B /* MachoFramework in Embed Frameworks */ = {isa = PBXBuildFile; productRef = BCEA14EF2D601A630045B580 /* MachoFramework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		BC98AEA22D4CA4F400EFD0BF /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = BC98AEA12D4CA4F400EFD0BF /* FirebaseCrashlytics */; };
+		BC98AEA52D4CA61500EFD0BF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC98AEA42D4CA61500EFD0BF /* GoogleService-Info.plist */; };
+		BC98AEA72D4CA66200EFD0BF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC98AEA62D4CA66200EFD0BF /* AppDelegate.swift */; };
+		BC98AEA92D4CA71200EFD0BF /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = BC98AEA82D4CA71200EFD0BF /* FirebaseAnalytics */; };
+		BCEA14FC2D603A340045B580 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BCEA14FB2D603A340045B580 /* MachoFramework */; };
 		D9F160F12AE39EE40061307C /* MachoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F160F02AE39EE40061307C /* MachoApp.swift */; };
 		D9F160F52AE39EE60061307C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9F160F42AE39EE60061307C /* Assets.xcassets */; };
 		D9F160F82AE39EE60061307C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9F160F72AE39EE60061307C /* Preview Assets.xcassets */; };
@@ -39,24 +39,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		BCEA14F42D601D6D0045B580 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				BC66F7512D72D19100CEC2AE /* MachoFramework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		BC66F7542D72D19A00CEC2AE /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				BC66F7532D72D19A00CEC2AE /* MachoFramework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -67,7 +55,17 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				BC66F7552D72D19C00CEC2AE /* MachoFramework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BCEA14F42D601D6D0045B580 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				BC5D7F382DCF25A4006F018B /* MachoFramework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -76,6 +74,8 @@
 
 /* Begin PBXFileReference section */
 		BC0940B62B5BC57C00E11B53 /* Macho.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = Macho.xctestplan; path = ../Macho.xctestplan; sourceTree = "<group>"; };
+		BC98AEA42D4CA61500EFD0BF /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		BC98AEA62D4CA66200EFD0BF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D9D72B912AED1A14007668FA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D9F160ED2AE39EE40061307C /* Macho.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Macho.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9F160F02AE39EE40061307C /* MachoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachoApp.swift; sourceTree = "<group>"; };
@@ -93,6 +93,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC98AEA22D4CA4F400EFD0BF /* FirebaseCrashlytics in Frameworks */,
+				BC98AEA92D4CA71200EFD0BF /* FirebaseAnalytics in Frameworks */,
 				BCEA14FC2D603A340045B580 /* MachoFramework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -146,10 +148,12 @@
 		D9F160EF2AE39EE40061307C /* Macho */ = {
 			isa = PBXGroup;
 			children = (
+				BC98AEA62D4CA66200EFD0BF /* AppDelegate.swift */,
 				D9D72B912AED1A14007668FA /* Info.plist */,
 				D9F160F02AE39EE40061307C /* MachoApp.swift */,
 				D9F160F42AE39EE60061307C /* Assets.xcassets */,
 				D9F160F62AE39EE60061307C /* Preview Content */,
+				BC98AEA42D4CA61500EFD0BF /* GoogleService-Info.plist */,
 			);
 			path = Macho;
 			sourceTree = "<group>";
@@ -189,7 +193,8 @@
 				D9F160E92AE39EE40061307C /* Sources */,
 				D9F160EA2AE39EE40061307C /* Frameworks */,
 				D9F160EB2AE39EE40061307C /* Resources */,
-				BC66F7522D72D19100CEC2AE /* Embed Frameworks */,
+				BCEA14F42D601D6D0045B580 /* Embed Frameworks */,
+				BC98AEA32D4CA52B00EFD0BF /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -197,6 +202,8 @@
 			);
 			name = Macho;
 			packageProductDependencies = (
+				BC98AEA12D4CA4F400EFD0BF /* FirebaseCrashlytics */,
+				BC98AEA82D4CA71200EFD0BF /* FirebaseAnalytics */,
 				BCEA14EF2D601A630045B580 /* MachoFramework */,
 				BCEA14FB2D603A340045B580 /* MachoFramework */,
 			);
@@ -279,6 +286,7 @@
 			);
 			mainGroup = D9F160E42AE39EE40061307C;
 			packageReferences = (
+				BC98AEA02D4CA4F400EFD0BF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				BCEA14FA2D603A340045B580 /* XCLocalSwiftPackageReference "MachoFramework" */,
 			);
 			productRefGroup = D9F160EE2AE39EE40061307C /* Products */;
@@ -299,6 +307,7 @@
 			files = (
 				D9F160F82AE39EE60061307C /* Preview Assets.xcassets in Resources */,
 				D9F160F52AE39EE60061307C /* Assets.xcassets in Resources */,
+				BC98AEA52D4CA61500EFD0BF /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -318,11 +327,41 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		BC98AEA32D4CA52B00EFD0BF /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GoogleService-Info.plist",
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}.debug.dylib",
+				"${DWARF_DSYM_FOLDER_PATH}/MachoFramework.framework.dSYM/Contents/Resources/DWARF/MachoFramework",
+				"${DWARF_DSYM_FOLDER_PATH}/MachoFramework.framework.dSYM",
+				"${DWARF_DSYM_FOLDER_PATH}/MachoFramework.framework.dSYM/Contents/Resources/Info.plist",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\nif [ \"$CONFIGURATION\" != \"Debug\" ]; then\n    \"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/upload-symbols\" \\\n        -gsp \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleService-Info.plist\" \\\n        -p ios \"${DWARF_DSYM_FOLDER_PATH}\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		D9F160E92AE39EE40061307C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC98AEA72D4CA66200EFD0BF /* AppDelegate.swift in Sources */,
 				D9F160F12AE39EE40061307C /* MachoApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -486,6 +525,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_ASSET_PATHS = "\"Macho/Preview Content\"";
 				DEVELOPMENT_TEAM = 56LYVN6DMF;
 				ENABLE_PREVIEWS = YES;
@@ -501,6 +541,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				NEW_SETTING = "";
+				"NEW_SETTING[arch=*]" = "";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = morimori.Macho;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -531,6 +574,8 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				NEW_SETTING = "";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = morimori.Macho;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -663,7 +708,28 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		BC98AEA02D4CA4F400EFD0BF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = exactVersion;
+				version = 11.7.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		BC98AEA12D4CA4F400EFD0BF /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BC98AEA02D4CA4F400EFD0BF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
+		};
+		BC98AEA82D4CA71200EFD0BF /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BC98AEA02D4CA4F400EFD0BF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
 		BCEA14EF2D601A630045B580 /* MachoFramework */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MachoFramework;

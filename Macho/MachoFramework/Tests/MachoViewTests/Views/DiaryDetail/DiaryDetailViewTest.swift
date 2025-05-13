@@ -27,9 +27,9 @@ final class DiaryDetailViewTest: XCTestCase {
         let isDismissInvoked = LockIsolated(false)
         // 日記監視を制御するPublisher生成
         let mockRealm = try await RealmTestHelper.getMockRealm()
-        let mockClient = DiaryEntityClient.getMockClient(realm: mockRealm)
+        let mockClient = await DiaryEntityClient.getMockClient(realm: mockRealm, initialValue: [])
         
-        let testStore = TestStore(initialState: DiaryDetailFeature.State(diary: Self.sampleDiaryEntity1),
+        let testStore = TestStore(initialState: .init(diary: Self.sampleDiaryEntity1),
                                   reducer: { DiaryDetailFeature() },
                                   withDependencies: {
             $0.diaryEntityClient = mockClient
@@ -40,7 +40,7 @@ final class DiaryDetailViewTest: XCTestCase {
         await testStore.receive(\.observePublisher)
         
         // 監視対象と対象外の日記更新
-        let addResult = await mockClient.add(Self.updatedSampleDiaryEntity1)
+        let addResult = await mockClient.add(.init(Self.updatedSampleDiaryEntity1))
         XCTAssertTrue(addResult)
         
         await testStore.receive(\.didReceivedDiary) {
@@ -62,7 +62,7 @@ final class DiaryDetailViewTest: XCTestCase {
     func testOnTappedEdit() async throws {
         
         let mockRealm = try await RealmTestHelper.getMockRealm()
-        let mockClient = DiaryEntityClient.getMockClient(realm: mockRealm)
+        let mockClient = await DiaryEntityClient.getMockClient(realm: mockRealm, initialValue: [])
         let testStore = TestStore(initialState: DiaryDetailFeature.State(diary: Self.sampleDiaryEntity1),
                                   reducer: { DiaryDetailFeature() },
                                   withDependencies: {
@@ -76,9 +76,8 @@ final class DiaryDetailViewTest: XCTestCase {
         await testStore.send(.tappedEditButton) {
             
             // TODO: 編集画面が実装されたら正しい値を入れる
-            $0.path.append(.editDiaryView(.init(contact: .init(id: .init(.zero), name: "sample"))))
+            $0.navigationDestination = .editDiaryView(.init(contact: .init(id: .init(.zero), name: "sample")))
         }
-        await testStore.send(.onDisappear)
     }
     
     /// 日記監視挙動の確認
@@ -93,7 +92,7 @@ final class DiaryDetailViewTest: XCTestCase {
         let isDismissInvoked = LockIsolated(false)
         
         let mockRealm = try await RealmTestHelper.getMockRealm()
-        let mockClient = DiaryEntityClient.getMockClient(realm: mockRealm)
+        let mockClient = await DiaryEntityClient.getMockClient(realm: mockRealm, initialValue: [])
         
         let testStore = TestStore(initialState: DiaryDetailFeature.State(diary: Self.sampleDiaryEntity1),
                                   reducer: { DiaryDetailFeature() },
@@ -107,13 +106,13 @@ final class DiaryDetailViewTest: XCTestCase {
         await testStore.receive(\.observePublisher)
         
         // 監視対象と異なる日記が更新する
-        let addResult = await mockClient.add(Self.sampleDiaryEntity2)
+        let addResult = await mockClient.add(.init(Self.sampleDiaryEntity2))
         XCTAssertTrue(addResult)
-                
-        await testStore.send(.onDisappear)
         
         // dismissしていないか確認
         XCTAssertFalse(isDismissInvoked.value)
+        
+        await testStore.send(.tappedBackNavigationButton)
     }
 }
 
@@ -121,49 +120,28 @@ final class DiaryDetailViewTest: XCTestCase {
 
 private extension DiaryDetailViewTest {
     
-    static let sampleDiaryGoal1 = TrainingContentData(id: UUID(),
-                                                              trainingType: TrainingTypeData(id: UUID(), name: "腹筋"),
-                                                              goalNumberOfSets: 3,
-                                                              goalSetCount: 3,
-                                                              actualNumberOfSets: 3,
-                                                              actualSetCount: 3,
-                                                              isAchieved: true)
-    static let sampleDiaryGoal2 = TrainingContentData(id: UUID(),
-                                                              trainingType: TrainingTypeData(id: UUID(), name: "ベンチプレス"),
-                                                              goalNumberOfSets: 2,
-                                                              goalSetCount: 1,
-                                                              actualNumberOfSets: 1,
-                                                              actualSetCount: 1,
-                                                              isAchieved: false)
-    
-    static let sampleDiaryTag1 = TrainingTagData(id: UUID(), tagName: "tag1")
-    static let sampleDiaryTag2 = TrainingTagData(id: UUID(), tagName: "tag2")
+    static let sampleDiaryGoal1 = Goal.create(trainingType: .abs, isAchieved: true)
+    static let sampleDiaryGoal2 = Goal.create(trainingType: .benchPress, isAchieved: false)
     
     static let sampleDiaryEntity1Id = UUID()
     static let sampleDiaryEntity2Id = UUID()
     
-    static let sampleDiaryEntity1 = DiaryData(id: sampleDiaryEntity1Id,
-                                                      date: Date(),
-                                                      title: "sample1",
-                                                      mainText: "sample1 message",
-                                                      goals: [sampleDiaryGoal1],
-                                                      tags: [sampleDiaryTag1],
-                                                      startTime: Date(),
-                                                      endTime: nil)
-    static let updatedSampleDiaryEntity1 = DiaryData(id: sampleDiaryEntity1Id,
-                                                             date: Date(),
-                                                             title: "updated_sample1",
-                                                             mainText: "updated_sample1 message",
-                                                             goals: [sampleDiaryGoal1],
-                                                             tags: [sampleDiaryTag1],
-                                                             startTime: Date(),
-                                                             endTime: nil)
-    static let sampleDiaryEntity2 = DiaryData(id: sampleDiaryEntity2Id,
-                                                      date: Date(),
-                                                      title: "sample2",
-                                                      mainText: "sample2 message",
-                                                      goals: [sampleDiaryGoal2],
-                                                      tags: [sampleDiaryTag2],
-                                                      startTime: Date(),
-                                                      endTime: nil)
+    static let sampleDiaryEntity1 = Diary.create(
+        id: sampleDiaryEntity1Id,
+        title: "sample1",
+        mainText: "sample1 message",
+        tags: [.fine]
+    )
+    static let updatedSampleDiaryEntity1 = Diary.create(
+        id: sampleDiaryEntity1Id,
+        title: "updated_sample1",
+        mainText: "updated_sample1 message",
+        tags: [.fine]
+    )
+    static let sampleDiaryEntity2 = Diary.create(
+        id: sampleDiaryEntity2Id,
+        title: "sample2",
+        mainText: "sample2 message",
+        tags: [.unfine]
+    )
 }

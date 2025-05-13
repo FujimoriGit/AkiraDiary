@@ -68,8 +68,7 @@ struct DiaryListView: View {
         .alert(store: store.scope(state: \.$alert, action: \.alert))
         .transaction { $0.disablesAnimations = false }
         .fullScreenCover(item: $store.scope(state: \.destination, action: \.destination)) {
-            getModalDestination($0)
-                .presentationBackground(.clear)
+            PopUpView<DiaryListFilterView, DiaryListFilterFeature>(store: $0)
         }
         .transaction { $0.disablesAnimations = true }
     }
@@ -202,9 +201,8 @@ private extension DiaryListView {
                                   DiaryListFeature.Path.Action>) -> some View {
         switch store.case {
             
-        // TODO: 実装出来次第正しい画面に変更する
         case .editScreen(let editScreenStore):
-            AddContactView(store: editScreenStore)
+            DiaryCreationView(store: editScreenStore)
             
         case .createScreen(let createScreenStore):
             DiaryCreationView(store: createScreenStore)
@@ -214,21 +212,6 @@ private extension DiaryListView {
             
         case .detailScreen(let detailScreenStore):
             DiaryDetailView(store: detailScreenStore)
-        }
-    }
-}
-
-// MARK: - Modal Presentation Route Definition
-
-private extension DiaryListView {
-    
-    func getModalDestination(_ store: Store<DiaryListFeature.Destination.State,
-                             DiaryListFeature.Destination.Action>) -> some View {
-        
-        switch store.case {
-            
-        case .filterScreen(let filterScreenStore):
-            DiaryListFilterView(store: filterScreenStore)
         }
     }
 }

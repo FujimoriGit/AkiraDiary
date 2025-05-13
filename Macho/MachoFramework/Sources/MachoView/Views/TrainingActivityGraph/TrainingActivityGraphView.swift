@@ -18,10 +18,6 @@ struct TrainingActivityGraphView: View {
     
     // MARK: - layout property
     
-    // MARK: font
-    
-    private let filterTitleFontSize: CGFloat = 14
-    
     // MARK: size
     
     private let filterToggleIconSize: CGFloat = 30
@@ -29,12 +25,6 @@ struct TrainingActivityGraphView: View {
     
     // MARK: space
     
-    private let filterContentBottomMargin: CGFloat = 20
-    private let trainingTypeListLeadingMargin: CGFloat = 30
-    private let trainingTypeListSpace: CGFloat = 8
-    private let contentHorizontalPadding: CGFloat = 16
-    private let filterTitleBottomPadding: CGFloat = 16
-    private let filterItemRowSpace: CGFloat = 10
     private let filterButtonPadding: CGFloat = 4
     private let buttonPadding: CGFloat = 8
     
@@ -59,14 +49,32 @@ struct TrainingActivityGraphView: View {
             createFilterSettingArea()
                 .frame(maxWidth: .infinity)
             ScrollView {
-                LazyVStack(spacing: .zero) {}
+                LazyVStack(spacing: .zero) {
+                    ActivityCalendarView(store: store.scope(state: \.calendar,
+                                                            action: \.calendar))
+                }
+                .frame(maxHeight: .infinity)
+                .padding(.horizontal, .space(.medium))
             }
         }
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                NavigationButton(.back) {
+                    store.send(.tappedNavigationBackButton)
+                }
+            }
+        }
+        .navigationBarBackButtonHidden()
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("Activity")
-        .fullScreenCover(item: $store.scope(state: \.selectTrainingPopUp,
-                                            action: \.selectTrainingPopUp)) {
-            PopUpView<SelectTrainingTypeContentView, SelectTrainingTypeContentFeature>(store: $0)
+        .alert(store: store.scope(state: \.$alert, action: \.alert))
+        .navigationDestination(item: $store.scope(state: \.navigationDestination?.detailScreen,
+                                                  action: \.navigationDestination.detailScreen)) {
+            DiaryDetailView(store: $0)
+        }
+        .fullScreenCover(item: $store.scope(state: \.popup,
+                                            action: \.popup)) {
+            createPopupView($0.case)
         }
         .transaction { $0.disablesAnimations = true }
         .onAppear {
@@ -82,24 +90,23 @@ private extension TrainingActivityGraphView {
             if store.isShowingFilter {
                 VStack(alignment: .leading, spacing: .zero) {
                     Text("Filter")
-                        .font(.system(size: filterTitleFontSize,
-                                      weight: .bold))
+                        .font(.macho(.subTitle))
                     Spacer()
-                        .frame(maxHeight: filterTitleBottomPadding)
-                    VStack(spacing: filterItemRowSpace) {
+                        .frame(maxHeight: .space(.medium))
+                    VStack(spacing: .space(.small)) {
                         createStartActivityPeriodDateFilterRow()
                         createActivityPeriodFilterRow()
                         createTrainingTypeFilterRow()
                     }
                 }
-                .padding(.horizontal, contentHorizontalPadding)
+                .padding(.horizontal, .space(.medium))
                 .transition(
                     .move(edge: .top)
                     .combined(with: .opacity)
                 )
             }
             Spacer()
-                .frame(maxHeight: filterContentBottomMargin)
+                .frame(maxHeight: .space(.large))
             Button {
                 store.send(.tappedFilterDisplayButton,
                            animation: .spring)
@@ -128,8 +135,10 @@ private extension TrainingActivityGraphView {
         .gesture(
             DragGesture()
                 .onEnded {
-                    store.send(.onDragEndedFilterArea(result: .init(startLocation: $0.startLocation,
-                                                                    currentLocation: $0.location)),
+                    store.send(.onDragEndedFilterArea(result: .init(
+                        startLocation: $0.startLocation,
+                        currentLocation: $0.location
+                    )),
                                animation: .spring)
                 }
         )
@@ -138,16 +147,17 @@ private extension TrainingActivityGraphView {
     func createStartActivityPeriodDateFilterRow() -> some View {
         HStack {
             Text("表示開始日時")
-                .font(.system(size: filterTitleFontSize))
+                .font(.macho(.subTitle))
             Spacer()
-            DatePickerView(date: $store.activityStartPeriod.sending(\.didSelectActivityStartPeriodMenu))
+            DatePickerView(date: $store.activityStartPeriod.sending(\.didSelectActivityStartPeriodMenu),
+                           titleFont: .macho(.subTitle))
         }
     }
     
     func createActivityPeriodFilterRow() -> some View {
         HStack(spacing: .zero) {
             Text("表示開始期間")
-                .font(.system(size: filterTitleFontSize))
+                .font(.macho(.subTitle))
             Spacer()
             Menu {
                 ForEach(ActivityPeriod.allCases, id: \.self) { period in
@@ -159,7 +169,7 @@ private extension TrainingActivityGraphView {
                 }
             } label: {
                 Text(store.currentActivityPeriodTitle)
-                    .font(.system(size: filterTitleFontSize))
+                    .font(.macho(.subTitle))
                     .padding(filterButtonPadding)
             }
             .frameButtonStyle(frameWidth: .zero)
@@ -172,16 +182,16 @@ private extension TrainingActivityGraphView {
                 store.send(.tappedTargetTrainingTypeMenu)
             } label: {
                 Text("種目")
-                    .font(.system(size: filterTitleFontSize))
+                    .font(.macho(.subTitle))
                     .padding(filterButtonPadding)
             }
             .frameButtonStyle(frameWidth: .zero)
-            Spacer(minLength: trainingTypeListLeadingMargin)
+            Spacer(minLength: .space(.large))
             ScrollView(.horizontal) {
-                HStack(spacing: trainingTypeListSpace) {
+                HStack(spacing: .space(.small)) {
                     ForEach(store.selectingTrainingTypeNameList, id: \.self) {
                         Text($0)
-                            .font(.system(size: filterTitleFontSize))
+                            .font(.macho(.subTitle))
                             .padding(buttonPadding)
                             .foregroundStyle(Color(asset: CustomColor.fillButtonForegroundColor))
                             .background(.black)
@@ -192,43 +202,116 @@ private extension TrainingActivityGraphView {
             .scrollIndicators(.hidden)
         }
     }
+    
+    @ViewBuilder
+    func createPopupView(_ storeCase: TrainingActivityGraphFeature.PopUpDestination.CaseScope) -> some View {
+        
+        switch storeCase {
+            
+        case .selectTraining(let store):
+            PopUpView<
+                SelectTrainingTypeContentView,
+                SelectTrainingTypeContentFeature
+            >(store: store)
+            
+        case .detailDayOfActivity(let store):
+            PopUpView<
+                DetailDayOfActivityView,
+                DetailDayOfActivityFeature
+            >(store: store)
+        }
+    }
 }
 
 // MARK: - preview
 
 #Preview {
-    let selectableTrainingTypeList: [TrainingTypeData] = [
-        .init(id: UUID(), name: "腹筋"),
-        .init(id: UUID(), name: "ベンチプレス"),
-        .init(id: UUID(), name: "腕立て伏せ"),
-        .init(id: UUID(), name: "ああああああああああ"),
-        .init(id: UUID(), name: "ええええ"),
-        .init(id: UUID(), name: "ううう"),
-        .init(id: UUID(), name: "おおおおおおおおおおおお")
-    ]
+    
+    @Environment(\.calendar)
+    @Previewable var calendar
+    
+    let absId = UUID()
+    let benchPressId = UUID()
+    let diaryId = UUID()
+    
+    var fetchDiaries: [DiaryData] {
+        [
+            .init(id: diaryId,
+                  date: .now,
+                  title: "Test1",
+                  mainText: "",
+                  goals: [
+                    .init(id: UUID(),
+                          trainingType: .init(id: absId, name: "aaa"),
+                          goalNumberOfSets: 3,
+                          goalSetCount: 3,
+                          actualNumberOfSets: 3,
+                          actualSetCount: 3,
+                          isAchieved: true)
+                  ],
+                  tags: [],
+                  startTime: nil,
+                  endTime: nil)
+        ]
+    }
+    var selectableTrainingTypeList: [TrainingTypeData] {
+        
+        [
+            .init(id: absId, name: "腹筋"),
+            .init(id: benchPressId, name: "ベンチプレス")
+        ]
+    }
     var previewUserDefault: UserDefaults {
         
         // swiftlint:disable:next force_unwrapping
         let userDefaults = UserDefaults(suiteName: "preview")!
         userDefaults.setStringArray([
-            selectableTrainingTypeList[0].id.uuidString,
-            selectableTrainingTypeList[4].id.uuidString
+            selectableTrainingTypeList[0].id.uuidString
         ],
                                     .targetTrainingTypeList)
+        userDefaults.setDouble(
+            Date.now.addingTimeInterval(-(60 * 60 * 24 * 7)).timeIntervalSince1970,
+            .activityStartPeriod
+        )
+        userDefaults.setInt(ActivityPeriod.month.rawValue, .activityPeriod)
         return userDefaults
     }
-    TrainingActivityGraphView(store: Store(initialState: .init(),
-                                           reducer: { TrainingActivityGraphFeature() }, withDependencies: {
-        $0.defaultAppStorage = previewUserDefault
-        $0.trainingTypeClient = .init(fetchAllType: {
-            
-            return selectableTrainingTypeList
-        },
-                                      add: { _ in true },
-                                      getObserve: {
-            
-            return PassthroughSubject().eraseToAnyPublisher()
-        })
-    }))
+    
+    NavigationView {
+        TrainingActivityGraphView(store: Store(initialState: .init(),
+                                               reducer: { TrainingActivityGraphFeature() },
+                                               withDependencies: {
+            $0.defaultAppStorage = previewUserDefault
+            $0.trainingTypeClient = .init(fetchAllType: { return selectableTrainingTypeList },
+                                          add: { _ in true },
+                                          getObserve: {
+                
+                return PassthroughSubject().eraseToAnyPublisher()
+            })
+            $0.diaryEntityClient = .init(fetchAll: {
+                
+                return fetchDiaries
+            },
+                                         add: { _ in true },
+                                         deleteDiary: { _ in true },
+                                         getDiaryObserver: {
+                
+                return PassthroughSubject().eraseToAnyPublisher()
+            })
+        }))
+    }
     .environment(\.locale, Locale(identifier: "ja_JP"))
+}
+
+#Preview("日記なしのケース") {
+    
+    TrainingActivityGraphView(store: Store(
+        initialState: .init(),
+        reducer: { TrainingActivityGraphFeature() },
+        withDependencies: {
+            
+            // swiftlint:disable:next force_unwrapping
+            $0.defaultAppStorage = UserDefaults(suiteName: "日記なしのケース")!
+        }
+    ))
 }

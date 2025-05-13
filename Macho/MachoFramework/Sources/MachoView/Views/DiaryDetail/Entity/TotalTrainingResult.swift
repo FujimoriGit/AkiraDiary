@@ -17,42 +17,51 @@ struct TotalTrainingResult: Equatable {
     
     /// トレーニング種目数
     let trainingCount: Int
+    ///　トレーニングが終了しているかどうか
+    let isFinished: Bool
     /// 全ての目標を達成したかどうか
     let isAchievedTotalGoal: Bool
-    private let startDate: Date?
-    private let endDate: Date?
     
     /// トレーニング開始時間
-    var startDateDisplayText: String {
-        
-        return getDisplayDateText(startDate)
-    }
+    let startDateDisplayText: String
     
     /// トレーニング終了時間
-    var endDateDisplayText: String {
-        
-        return getDisplayDateText(endDate)
-    }
+    let endDateDisplayText: String
     
     /// トレーニング総時間
-    var totalTrainingTimeDurationText: String {
-        
-        guard let startDate, let endDate else { return Self.defaultDateDisplayText }
-        return getDisplayDateText(Date(timeIntervalSince1970: endDate.timeIntervalSince(startDate)))
-    }
+    let totalTrainingTimeDurationText: String
     
-    init(_ diary: DiaryData) {
+    init(_ diary: Diary) {
         
         trainingCount = diary.goals.count
-        isAchievedTotalGoal = diary.isAchieved
-        startDate = diary.startTime
-        endDate = diary.endTime
+        startDateDisplayText = Self.getDisplayDateText(diary.createdAt)
+        
+        if case .finished(let info) = diary.status {
+            
+            isFinished = true
+            isAchievedTotalGoal = info.isAchieved
+            endDateDisplayText = Self.getDisplayDateText(info.endTime)
+            totalTrainingTimeDurationText = Self.getTotalTrainingTimeDurationText(
+                from: diary.createdAt,
+                to: info.endTime
+            )
+        }
+        else {
+            
+            isFinished = false
+            isAchievedTotalGoal = false
+            endDateDisplayText = Self.getDisplayDateText(nil)
+            totalTrainingTimeDurationText = Self.getTotalTrainingTimeDurationText(
+                from: diary.createdAt,
+                to: nil
+            )
+        }
     }
 }
 
 private extension TotalTrainingResult {
     
-    func getDisplayDateText(_ date: Date?) -> String {
+    static func getDisplayDateText(_ date: Date?) -> String {
         
         guard let text = date?.formatted(Self.displayDateFormat,
                                          timeZone: .autoupdatingCurrent) else {
@@ -61,5 +70,11 @@ private extension TotalTrainingResult {
         }
         
         return text
+    }
+    
+    static func getTotalTrainingTimeDurationText(from startDate: Date, to endDate: Date?) -> String {
+        
+        guard let endDate else { return Self.defaultDateDisplayText }
+        return getDisplayDateText(Date(timeIntervalSince1970: endDate.timeIntervalSince(startDate)))
     }
 }
