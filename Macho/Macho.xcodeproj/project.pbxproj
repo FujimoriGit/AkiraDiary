@@ -8,11 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		BC5D7F382DCF25A4006F018B /* MachoFramework in Embed Frameworks */ = {isa = PBXBuildFile; productRef = BCEA14EF2D601A630045B580 /* MachoFramework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		BC6EEF042DD2FBE500F7D922 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BCEA14EF2D601A630045B580 /* MachoFramework */; };
+		BC6EEF082DD2FC6200F7D922 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC6EEF072DD2FC6100F7D922 /* GoogleService-Info.plist */; };
 		BC98AEA22D4CA4F400EFD0BF /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = BC98AEA12D4CA4F400EFD0BF /* FirebaseCrashlytics */; };
-		BC98AEA52D4CA61500EFD0BF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC98AEA42D4CA61500EFD0BF /* GoogleService-Info.plist */; };
 		BC98AEA72D4CA66200EFD0BF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC98AEA62D4CA66200EFD0BF /* AppDelegate.swift */; };
 		BC98AEA92D4CA71200EFD0BF /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = BC98AEA82D4CA71200EFD0BF /* FirebaseAnalytics */; };
-		BCEA14FC2D603A340045B580 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BCEA14FB2D603A340045B580 /* MachoFramework */; };
 		D9F160F12AE39EE40061307C /* MachoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F160F02AE39EE40061307C /* MachoApp.swift */; };
 		D9F160F52AE39EE60061307C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9F160F42AE39EE60061307C /* Assets.xcassets */; };
 		D9F160F82AE39EE60061307C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9F160F72AE39EE60061307C /* Preview Assets.xcassets */; };
@@ -74,7 +74,7 @@
 
 /* Begin PBXFileReference section */
 		BC0940B62B5BC57C00E11B53 /* Macho.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = Macho.xctestplan; path = ../Macho.xctestplan; sourceTree = "<group>"; };
-		BC98AEA42D4CA61500EFD0BF /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		BC6EEF072DD2FC6100F7D922 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		BC98AEA62D4CA66200EFD0BF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D9D72B912AED1A14007668FA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D9F160ED2AE39EE40061307C /* Macho.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Macho.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -93,9 +93,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC6EEF042DD2FBE500F7D922 /* MachoFramework in Frameworks */,
 				BC98AEA22D4CA4F400EFD0BF /* FirebaseCrashlytics in Frameworks */,
 				BC98AEA92D4CA71200EFD0BF /* FirebaseAnalytics in Frameworks */,
-				BCEA14FC2D603A340045B580 /* MachoFramework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -153,7 +153,7 @@
 				D9F160F02AE39EE40061307C /* MachoApp.swift */,
 				D9F160F42AE39EE60061307C /* Assets.xcassets */,
 				D9F160F62AE39EE60061307C /* Preview Content */,
-				BC98AEA42D4CA61500EFD0BF /* GoogleService-Info.plist */,
+				BC6EEF072DD2FC6100F7D922 /* GoogleService-Info.plist */,
 			);
 			path = Macho;
 			sourceTree = "<group>";
@@ -206,6 +206,7 @@
 				BC98AEA82D4CA71200EFD0BF /* FirebaseAnalytics */,
 				BCEA14EF2D601A630045B580 /* MachoFramework */,
 				BCEA14FB2D603A340045B580 /* MachoFramework */,
+				BC746CFB2DC8BBBF007E4222 /* MachoFramework */,
 			);
 			productName = Macho;
 			productReference = D9F160ED2AE39EE40061307C /* Macho.app */;
@@ -260,7 +261,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1500;
+				LastSwiftUpdateCheck = 1630;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					D9F160EC2AE39EE40061307C = {
@@ -287,7 +288,7 @@
 			mainGroup = D9F160E42AE39EE40061307C;
 			packageReferences = (
 				BC98AEA02D4CA4F400EFD0BF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
-				BCEA14FA2D603A340045B580 /* XCLocalSwiftPackageReference "MachoFramework" */,
+				BC746CFA2DC8BBBF007E4222 /* XCLocalSwiftPackageReference "MachoFramework" */,
 			);
 			productRefGroup = D9F160EE2AE39EE40061307C /* Products */;
 			projectDirPath = "";
@@ -306,8 +307,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				D9F160F82AE39EE60061307C /* Preview Assets.xcassets in Resources */,
+				BC6EEF082DD2FC6200F7D922 /* GoogleService-Info.plist in Resources */,
 				D9F160F52AE39EE60061307C /* Assets.xcassets in Resources */,
-				BC98AEA52D4CA61500EFD0BF /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -352,7 +353,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\nif [ \"$CONFIGURATION\" != \"Debug\" ]; then\n    \"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/upload-symbols\" \\\n        -gsp \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleService-Info.plist\" \\\n        -p ios \"${DWARF_DSYM_FOLDER_PATH}\"\nfi\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\necho debug\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -536,14 +537,23 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_EXPORT_SYMBOLS = NO;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				MERGEABLE_LIBRARY = NO;
+				MERGED_BINARY_TYPE = automatic;
 				NEW_SETTING = "";
 				"NEW_SETTING[arch=*]" = "";
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+					"-dead_strip",
+					"-Xlinker",
+					"-no_deduplicate",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = morimori.Macho;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -569,13 +579,20 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_EXPORT_SYMBOLS = NO;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				MERGEABLE_LIBRARY = NO;
+				MERGED_BINARY_TYPE = automatic;
 				NEW_SETTING = "";
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+					"-dead_strip",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = morimori.Macho;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -702,7 +719,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		BCEA14FA2D603A340045B580 /* XCLocalSwiftPackageReference "MachoFramework" */ = {
+		BC746CFA2DC8BBBF007E4222 /* XCLocalSwiftPackageReference "MachoFramework" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = MachoFramework;
 		};
@@ -720,6 +737,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		BC746CFB2DC8BBBF007E4222 /* MachoFramework */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MachoFramework;
+		};
 		BC98AEA12D4CA4F400EFD0BF /* FirebaseCrashlytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = BC98AEA02D4CA4F400EFD0BF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
