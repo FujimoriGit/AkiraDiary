@@ -47,8 +47,7 @@ let package = Package(
             dependencies: [
                 "MachoView",
                 "MachoLocalStorage",
-                "MachoCore",
-                "RealmHelper"
+                "MachoCore"
             ]
         ),
         .target(
@@ -61,15 +60,17 @@ let package = Package(
                 .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLintPlugins")
             ]
         ),
-        .target(name: "MachoLocalStorage",
-                dependencies: [
-                    "MachoCore",
-                    "RealmHelper"
-                ],
-                plugins: [
-                    .plugin(name: "SwiftLintBuildToolPlugin",
-                            package: "SwiftLintPlugins")
-                ]),
+        .target(
+            name: "MachoLocalStorage",
+            dependencies: [
+                "MachoCore",
+                "RealmHelper"
+            ],
+            plugins: [
+                .plugin(name: "SwiftLintBuildToolPlugin",
+                        package: "SwiftLintPlugins")
+            ]
+        ),
         .target(
             name: "RealmHelper",
             dependencies: [
@@ -100,11 +101,13 @@ let package = Package(
             dependencies: [
                 "MachoLocalStorage",
                 "MachoView"
-            ]),
+            ]
+        ),
         .testTarget(
             name: "MachoCoreTests",
             dependencies: [
                 "MachoCore",
-            ])
+            ]
+        )
     ]
 )
