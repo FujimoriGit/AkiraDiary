@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BC5D7F382DCF25A4006F018B /* MachoFramework in Embed Frameworks */ = {isa = PBXBuildFile; productRef = BCEA14EF2D601A630045B580 /* MachoFramework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		BC6EEF042DD2FBE500F7D922 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BCEA14EF2D601A630045B580 /* MachoFramework */; };
+		BC26A8EF2DD865F2001F5242 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BCEA14EF2D601A630045B580 /* MachoFramework */; };
+		BC26A8F52DD8662C001F5242 /* MachoFramework in Embed Frameworks */ = {isa = PBXBuildFile; productRef = BC26A8F32DD86608001F5242 /* MachoFramework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		BC6EEF082DD2FC6200F7D922 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC6EEF072DD2FC6100F7D922 /* GoogleService-Info.plist */; };
 		BC98AEA22D4CA4F400EFD0BF /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = BC98AEA12D4CA4F400EFD0BF /* FirebaseCrashlytics */; };
 		BC98AEA72D4CA66200EFD0BF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC98AEA62D4CA66200EFD0BF /* AppDelegate.swift */; };
@@ -65,7 +65,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				BC5D7F382DCF25A4006F018B /* MachoFramework in Embed Frameworks */,
+				BC26A8F52DD8662C001F5242 /* MachoFramework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -93,7 +93,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC6EEF042DD2FBE500F7D922 /* MachoFramework in Frameworks */,
+				BC26A8EF2DD865F2001F5242 /* MachoFramework in Frameworks */,
 				BC98AEA22D4CA4F400EFD0BF /* FirebaseCrashlytics in Frameworks */,
 				BC98AEA92D4CA71200EFD0BF /* FirebaseAnalytics in Frameworks */,
 			);
@@ -207,6 +207,7 @@
 				BCEA14EF2D601A630045B580 /* MachoFramework */,
 				BCEA14FB2D603A340045B580 /* MachoFramework */,
 				BC746CFB2DC8BBBF007E4222 /* MachoFramework */,
+				BC26A8F32DD86608001F5242 /* MachoFramework */,
 			);
 			productName = Macho;
 			productReference = D9F160ED2AE39EE40061307C /* Macho.app */;
@@ -288,7 +289,7 @@
 			mainGroup = D9F160E42AE39EE40061307C;
 			packageReferences = (
 				BC98AEA02D4CA4F400EFD0BF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
-				BC746CFA2DC8BBBF007E4222 /* XCLocalSwiftPackageReference "MachoFramework" */,
+				BC26A8F22DD86608001F5242 /* XCLocalSwiftPackageReference "MachoFramework" */,
 			);
 			productRefGroup = D9F160EE2AE39EE40061307C /* Products */;
 			projectDirPath = "";
@@ -537,7 +538,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				LD_EXPORT_SYMBOLS = NO;
+				LD_EXPORT_SYMBOLS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -579,7 +580,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				LD_EXPORT_SYMBOLS = NO;
+				LD_EXPORT_SYMBOLS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -719,7 +720,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		BC746CFA2DC8BBBF007E4222 /* XCLocalSwiftPackageReference "MachoFramework" */ = {
+		BC26A8F22DD86608001F5242 /* XCLocalSwiftPackageReference "MachoFramework" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = MachoFramework;
 		};
@@ -737,6 +738,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		BC26A8F32DD86608001F5242 /* MachoFramework */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MachoFramework;
+		};
 		BC746CFB2DC8BBBF007E4222 /* MachoFramework */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MachoFramework;
