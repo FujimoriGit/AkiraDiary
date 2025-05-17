@@ -77,6 +77,7 @@ struct AddGoalFeature: Sendable {
     
     var body: some ReducerOf<Self> {
         
+        // swiftlint:disable:next closure_body_length
         Reduce { state, action in
             
             switch action {

@@ -30,7 +30,7 @@ struct DiaryListItemFeature: Sendable {
         /// 日記の作成日付
         var date: Date { diary.createdAt }
         /// 日記に登録したトレーニング種別のID
-        var trainingList: [UUID] { diary.goals.compactMap { $0.trainingType.id } }
+        var trainingList: [UUID] { diary.goals.compactMap(\.trainingType.id) }
         /// 日記に登録したタグのID
         var tagList: [UUID] { diary.tags.map(\.id) }
         /// 日記のトレーニング状況の状態
