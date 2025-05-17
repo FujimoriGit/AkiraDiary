@@ -225,7 +225,7 @@ private extension TrainingActivityGraphView {
 
 // MARK: - preview
 
-#Preview {
+#Preview { // swiftlint:disable:this closure_body_length
     
     @Environment(\.calendar)
     @Previewable var calendar

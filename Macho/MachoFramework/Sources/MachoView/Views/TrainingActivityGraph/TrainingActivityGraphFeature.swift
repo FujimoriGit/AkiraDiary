@@ -147,7 +147,6 @@ struct TrainingActivityGraphFeature {
                 case .observeTrainingType:
                     return rhs.is(\.observeTrainingType)
                 }
-                
             }
         }
     }

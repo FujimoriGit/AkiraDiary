@@ -386,4 +386,3 @@ private extension DiaryListFeature {
         return updateTargetState
     }
 }
-// swiftlint:disable:this file_length

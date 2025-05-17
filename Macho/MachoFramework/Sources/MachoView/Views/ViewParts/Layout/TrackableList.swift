@@ -86,7 +86,7 @@ struct TrackableList<Content>: View where Content: View {
     }
     
     var body: some View {
-        WithViewStore(store, observe: { $0 }) { viewStore in
+        WithViewStore(store, observe: \.self) { viewStore in
             GeometryReader { outside in
                 ScrollView {
                     LazyVStack(spacing: .zero) {
