@@ -8,49 +8,51 @@
 @preconcurrency import Combine
 import Foundation
 import MachoCore
+import RealmHelper
 
 extension TrainingContentClient {
+    
+    init(realm: Task<RealmWrapper, Never>) {
         
-    public static var concreteValue: TrainingContentClient {
-        return .init {
+        self = TrainingContentClient {
             
-            return await insert($0)
+            return await Self.insert(realm: realm, entity: $0)
         } updateGoal: {
             
-            return await insert($0)
+            return await Self.insert(realm: realm, entity: $0)
         } fetchAll: {
             
-            return await fetchAll()
+            return await Self.fetchAll(realm: realm)
         } getTrainingGoalPublisher: {
             
-            return await getObserver()
+            return await Self.getObserver(realm: realm)
         }
     }
+        
+    public static let concreteValue = TrainingContentClient(realm: RealmStore.shared.getRealm())
 }
 
 private extension TrainingContentClient {
     
-    static func fetchAll() async -> [TrainingContentData] {
+    static func fetchAll(realm: Task<RealmWrapper, Never>) async -> [TrainingContentData] {
         
-        return await RealmStore.shared.getRealm()?.read() ?? []
+        return await realm.value.read()
     }
     
-    static func insert(_ entity: TrainingContentData) async -> Bool {
+    static func insert(realm: Task<RealmWrapper, Never>, entity: TrainingContentData) async -> Bool {
         
-        return await RealmStore.shared.getRealm()?.insert(records: [entity]) ?? false
+        return await realm.value.insert(records: [entity])
     }
     
-    static func delete(_ id: UUID) async -> Bool {
+    static func delete(realm: Task<RealmWrapper, Never>, id: UUID) async -> Bool {
         
-        return await RealmStore.shared.getRealm()?
-            .delete { (entity: TrainingContentData) in entity.id == id } ?? false
+        return await realm.value
+            .delete { (entity: TrainingContentData) in entity.id == id }
     }
     
-    static func getObserver() async -> AnyPublisher<[TrainingContentData], Never>? {
+    static func getObserver(realm: Task<RealmWrapper, Never>) async -> AnyPublisher<[TrainingContentData], Never>? {
         
-        logger.debug("[In]")
-        guard let realm = await RealmStore.shared.getRealm() else { return nil }
-        return await realm.readObjectsForObserve(type: TrainingContentData.self)
+        return await realm.value.readObjectsForObserve(type: TrainingContentData.self)
             .eraseToAnyPublisher()
     }
 }

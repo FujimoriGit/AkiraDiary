@@ -8,42 +8,48 @@
 @preconcurrency import Combine
 import Foundation
 import MachoCore
+import RealmHelper
 
-extension TrainingTypeClient {
+public extension TrainingTypeClient {
+    
+    init(realm: Task<RealmWrapper, Never>) {
         
-    public static let concreteValue = TrainingTypeClient {
-        
-        return await fetchAll()
-    } add: {
-        
-        return await insert($0)
-    } getObserve: {
-        
-        return await getObserver()
+        self = TrainingTypeClient {
+            
+            return await Self.fetchAll(realm: realm)
+        } add: {
+            
+            return await Self.insert(realm: realm, entity: $0)
+        } getObserve: {
+            
+            return await Self.getObserver(realm: realm)
+        }
     }
+        
+    static let concreteValue = TrainingTypeClient(realm: RealmStore.shared.getRealm())
 }
 
 private extension TrainingTypeClient {
     
-    static func fetchAll() async -> [TrainingTypeData] {
+    static func fetchAll(realm: Task<RealmWrapper, Never>) async -> [TrainingTypeData] {
         
-        return await RealmStore.shared.getRealm()?.read() ?? []
+        return await realm.value.read()
     }
     
-    static func insert(_ entity: TrainingTypeData) async -> Bool {
+    static func insert(realm: Task<RealmWrapper, Never>, entity: TrainingTypeData) async -> Bool {
         
-        return await RealmStore.shared.getRealm()?.insert(records: [entity]) ?? false
+        return await realm.value.insert(records: [entity])
     }
     
-    static func delete(_ id: UUID) async -> Bool {
+    static func delete(realm: Task<RealmWrapper, Never>, id: UUID) async -> Bool {
         
-        return await RealmStore.shared.getRealm()?
-            .delete { (entity: TrainingTypeData) in entity.id == id } ?? false
+        return await realm.value
+            .delete { (entity: TrainingTypeData) in entity.id == id }
     }
     
-    static func getObserver() async -> AnyPublisher<[TrainingTypeData], Never>? {
+    static func getObserver(realm: Task<RealmWrapper, Never>) async -> AnyPublisher<[TrainingTypeData], Never>? {
         
-        return await RealmStore.shared.getRealm()?.readObjectsForObserve(type: TrainingTypeData.self)
+        return await realm.value.readObjectsForObserve(type: TrainingTypeData.self)
             .eraseToAnyPublisher()
     }
 }

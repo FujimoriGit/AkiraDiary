@@ -6,25 +6,16 @@
 //
 
 import MachoCore
-import MachoModel
 import RealmHelper
 import XCTest
+
+@testable import MachoLocalStorage
 
 extension TrainingTypeClient {
     
     static func getMockClient(realm: RealmWrapper, initialValue: [TrainingTypeData]) async -> TrainingTypeClient {
         
-        let repository = TrainingTypeEntityRepositoryImpl(Task { realm })
-        let client = TrainingTypeClient {
-            
-            return await repository.fetchAll()
-        } add: {
-            
-            return await repository.insert($0)
-        } getObserve: {
-            
-            return await repository.getObserver()
-        }
+        let client = TrainingTypeClient(realm: Task { realm })
         
         await registeredValue(client, initialValue)
         

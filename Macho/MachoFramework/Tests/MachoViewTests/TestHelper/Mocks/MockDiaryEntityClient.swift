@@ -6,28 +6,16 @@
 //
 
 import MachoCore
-import MachoModel
 import RealmHelper
 import XCTest
+
+@testable import MachoLocalStorage
 
 extension DiaryEntityClient {
     
     static func getMockClient(realm: RealmWrapper, initialValue: [DiaryData]) async -> DiaryEntityClient {
         
-        let repository = DiaryEntityRepositoryImpl(Task { realm })
-        let client = DiaryEntityClient {
-            
-            return await repository.fetchAll()
-        } add: {
-            
-            return await repository.insertOrUpdate($0)
-        } deleteDiary: {
-            
-            return await repository.deleteDiary($0)
-        } getDiaryObserver: {
-            
-            return await repository.getDiaryObserver()
-        }
+        let client = DiaryEntityClient(realm: Task { realm })
         
         await registeredValue(client, initialValue)
         

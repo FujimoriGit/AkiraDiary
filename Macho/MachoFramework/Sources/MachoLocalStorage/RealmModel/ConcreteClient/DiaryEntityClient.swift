@@ -8,50 +8,51 @@
 @preconcurrency import Combine
 import Foundation
 import MachoCore
+import RealmHelper
 
 extension DiaryEntityClient {
     
-    public static let concreteValue = DiaryEntityClient {
+    init(realm: Task<RealmWrapper, Never>) {
         
-        return await fetchAll()
-    } add: { diary in
-        
-        return await insertOrUpdate(diary)
-    } deleteDiary: { id in
-        
-        return await deleteDiary(id)
-    } getDiaryObserver: {
-        
-        return await getDiaryObserver()
+        self = DiaryEntityClient {
+            
+            return await Self.fetchAll(realm: realm)
+        } add: { diary in
+            
+            return await Self.insertOrUpdate(realm: realm, diary: diary)
+        } deleteDiary: { id in
+            
+            return await Self.deleteDiary(realm: realm, id: id)
+        } getDiaryObserver: {
+            
+            return await Self.getDiaryObserver(realm: realm)
+        }
     }
+    
+    public static let concreteValue = DiaryEntityClient(realm: RealmStore.shared.getRealm())
 }
 
 private extension DiaryEntityClient {
     
-    static func fetchAll() async -> [DiaryData] {
+    static func fetchAll(realm: Task<RealmWrapper, Never>) async -> [DiaryData] {
         
-        logger.debug("[In]")
-        return await RealmStore.shared.getRealm()?.read() ?? []
+        return await realm.value.read()
     }
     
-    static func insertOrUpdate(_ diary: DiaryData) async -> Bool {
+    static func insertOrUpdate(realm: Task<RealmWrapper, Never>, diary: DiaryData) async -> Bool {
         
-        logger.debug("[In] diary: \(diary)")
-        return await RealmStore.shared.getRealm()?.insert(records: [diary]) ?? false
+        return await realm.value.insert(records: [diary])
     }
     
-    static func deleteDiary(_ id: UUID) async -> Bool {
+    static func deleteDiary(realm: Task<RealmWrapper, Never>, id: UUID) async -> Bool {
         
-        logger.debug("[In] id: \(id)")
-        return await RealmStore.shared.getRealm()?
-            .delete { (entity: DiaryData) in entity.id == id } ?? false
+        return await realm.value
+            .delete { (entity: DiaryData) in entity.id == id }
     }
     
-    static func getDiaryObserver() async -> AnyPublisher<[DiaryData], Never>? {
+    static func getDiaryObserver(realm: Task<RealmWrapper, Never>) async -> AnyPublisher<[DiaryData], Never>? {
         
-        logger.debug("[In]")
-        guard let realm = await RealmStore.shared.getRealm() else { return nil }
-        return await realm.readObjectsForObserve(type: DiaryData.self)
+        return await realm.value.readObjectsForObserve(type: DiaryData.self)
             .eraseToAnyPublisher()
     }
 }

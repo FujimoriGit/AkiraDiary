@@ -36,16 +36,17 @@ final class RealmStore: Sendable {
         logger.info("Created realm instance: \(config)")
     }
     
-    func getRealm() async -> RealmWrapper? {
+    func getRealm() -> Task<RealmWrapper, Never> {
         
-        do {
-            
-            return try await realm.value
-        }
-        catch {
-            
-            logger.error("Failed create realm: \(error)")
-            return nil
+        return Task {
+            do {
+                
+                return try await realm.value
+            }
+            catch {
+                
+                preconditionFailure("Failed create realm: \(error)")
+            }
         }
     }
 }

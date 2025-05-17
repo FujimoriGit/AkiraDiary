@@ -6,28 +6,16 @@
 //
 
 import MachoCore
-import MachoModel
 import RealmHelper
 import XCTest
+
+@testable import MachoLocalStorage
 
 extension DiaryListFilterClient {
     
     static func getMockClient(realm: RealmWrapper, initialValue: [DiaryListFilterData]) async -> DiaryListFilterClient {
         
-        let repository = DiaryListFilterEntityRepositoryImpl(realm: Task { realm })
-        let client = DiaryListFilterClient {
-            
-            return await repository.fetchAll()
-        } addFilter: {
-            
-            return await repository.add($0)
-        } deleteFilters: {
-            
-            return await repository.deleteFilters($0)
-        } getFilterListObserver: {
-            
-            return await repository.getObserver()
-        }
+        let client = DiaryListFilterClient(realm: Task { realm })
         
         await registeredValue(client, initialValue)
         

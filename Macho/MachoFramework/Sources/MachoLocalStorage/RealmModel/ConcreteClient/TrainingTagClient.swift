@@ -8,54 +8,62 @@
 @preconcurrency import Combine
 import Foundation
 import MachoCore
+import RealmHelper
 
 extension TrainingTagClient {
+    
+    init(realm: Task<RealmWrapper, Never>) {
         
-    public static let concreteValue = TrainingTagClient {
-        
-        return await fetchAll()
-    } add: {
-        
-        return await insert($0)
-    } update: {
-        
-        return await update($0)
-    } getObserve: {
-        
-        return await getObserver()
+        self = TrainingTagClient {
+            
+            return await Self.fetchAll(realm: realm)
+        } add: {
+            
+            return await Self.insert(realm: realm, entity: $0)
+        } update: {
+            
+            return await Self.update(realm: realm, entity: $0)
+        } getObserve: {
+            
+            return await Self.getObserver(realm: realm)
+        }
     }
+        
+    public static let concreteValue = TrainingTagClient(realm: RealmStore.shared.getRealm())
 }
 
 private extension TrainingTagClient {
     
-    static func fetchAll() async -> [TrainingTagData] {
+    static func fetchAll(realm: Task<RealmWrapper, Never>) async -> [TrainingTagData] {
         
-        return await RealmStore.shared.getRealm()?.read() ?? []
+        return await realm.value.read()
     }
     
-    static func insert(_ entity: TrainingTagData) async -> Bool {
+    static func insert(realm: Task<RealmWrapper, Never>, entity: TrainingTagData) async -> Bool {
         
-        return await RealmStore.shared.getRealm()?.insert(records: [entity]) ?? false
+        return await realm.value.insert(records: [entity])
     }
     
-    static func update(_ entity: TrainingTagData) async -> Bool {
+    static func update(realm: Task<RealmWrapper, Never>, entity: TrainingTagData) async -> Bool {
         
-        return await RealmStore.shared.getRealm()?.update(type: TrainingTagData.self,
-                                        value: [
-                                            "id": entity.id,
-                                            "name": entity.tagName
-                                        ]) ?? false
+        return await realm.value.update(
+            type: TrainingTagData.self,
+            value: [
+                "id": entity.id,
+                "name": entity.tagName
+            ]
+        )
     }
     
-    static func delete(_ id: UUID) async -> Bool {
+    static func delete(realm: Task<RealmWrapper, Never>, id: UUID) async -> Bool {
         
-        return await RealmStore.shared.getRealm()?
-            .delete { (entity: TrainingTagData) in entity.id == id } ?? false
+        return await realm.value
+            .delete { (entity: TrainingTagData) in entity.id == id }
     }
     
-    static func getObserver() async -> AnyPublisher<[TrainingTagData], Never>? {
+    static func getObserver(realm: Task<RealmWrapper, Never>) async -> AnyPublisher<[TrainingTagData], Never>? {
         
-        return await RealmStore.shared.getRealm()?.readObjectsForObserve(type: TrainingTagData.self)
+        return await realm.value.readObjectsForObserve(type: TrainingTagData.self)
             .eraseToAnyPublisher()
     }
 }

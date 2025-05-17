@@ -13,6 +13,9 @@
 		BC98AEA22D4CA4F400EFD0BF /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = BC98AEA12D4CA4F400EFD0BF /* FirebaseCrashlytics */; };
 		BC98AEA72D4CA66200EFD0BF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC98AEA62D4CA66200EFD0BF /* AppDelegate.swift */; };
 		BC98AEA92D4CA71200EFD0BF /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = BC98AEA82D4CA71200EFD0BF /* FirebaseAnalytics */; };
+		BC9D9F642DD8869300DE0AF3 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BCEA14FB2D603A340045B580 /* MachoFramework */; };
+		BC9D9F652DD8869300DE0AF3 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BC746CFB2DC8BBBF007E4222 /* MachoFramework */; };
+		BC9D9F662DD8869300DE0AF3 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BC26A8F32DD86608001F5242 /* MachoFramework */; };
 		D9F160F12AE39EE40061307C /* MachoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F160F02AE39EE40061307C /* MachoApp.swift */; };
 		D9F160F52AE39EE60061307C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9F160F42AE39EE60061307C /* Assets.xcassets */; };
 		D9F160F82AE39EE60061307C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9F160F72AE39EE60061307C /* Preview Assets.xcassets */; };
@@ -93,6 +96,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC9D9F662DD8869300DE0AF3 /* MachoFramework in Frameworks */,
+				BC9D9F652DD8869300DE0AF3 /* MachoFramework in Frameworks */,
+				BC9D9F642DD8869300DE0AF3 /* MachoFramework in Frameworks */,
 				BC26A8EF2DD865F2001F5242 /* MachoFramework in Frameworks */,
 				BC98AEA22D4CA4F400EFD0BF /* FirebaseCrashlytics in Frameworks */,
 				BC98AEA92D4CA71200EFD0BF /* FirebaseAnalytics in Frameworks */,
@@ -354,7 +360,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\necho debug\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif [ \"$CONFIGURATION\" != \"Debug\" ]; then\n\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/upload-symbols -gsp ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleService-Info.plist -p ios ${DWARF_DSYM_FOLDER_PATH}\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

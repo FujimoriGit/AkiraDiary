@@ -7,53 +7,53 @@
 
 @preconcurrency import Combine
 import MachoCore
+import RealmHelper
 
 extension DiaryListFilterClient {
     
-    public static let concreteValue = DiaryListFilterClient {
+    init(realm: Task<RealmWrapper, Never>) {
         
-        return await fetchAll()
-    } addFilter: { data in
-        
-        return await add(data)
-    } deleteFilters: { targets in
-        
-        return await deleteFilters(targets)
-    } getFilterListObserver: {
-        
-        return await getObserver()
+        self = DiaryListFilterClient {
+            
+            return await Self.fetchAll(realm: realm)
+        } addFilter: { data in
+            
+            return await Self.add(realm: realm, filter: data)
+        } deleteFilters: { targets in
+            
+            return await Self.deleteFilters(realm: realm, targets: targets)
+        } getFilterListObserver: {
+            
+            return await Self.getObserver(realm: realm)
+        }
     }
+    
+    public static let concreteValue = DiaryListFilterClient(realm: RealmStore.shared.getRealm())
 }
 
 private extension DiaryListFilterClient {
     
-    static func fetchAll() async -> [DiaryListFilterData] {
+    static func fetchAll(realm: Task<RealmWrapper, Never>) async -> [DiaryListFilterData] {
         
-        logger.debug("[In]")
-        return await RealmStore.shared.getRealm()?.read() ?? []
+        return await realm.value.read()
     }
     
-    static func add(_ filter: DiaryListFilterData) async -> Bool {
+    static func add(realm: Task<RealmWrapper, Never>, filter: DiaryListFilterData) async -> Bool {
         
-        logger.debug("[In] filter: \(filter)")
-        return await RealmStore.shared.getRealm()?.insert(records: [filter]) ?? false
+        return await realm.value.insert(records: [filter])
     }
     
-    static func deleteFilters(_ targets: [DiaryListFilterData]) async -> Bool {
+    static func deleteFilters(realm: Task<RealmWrapper, Never>, targets: [DiaryListFilterData]) async -> Bool {
         
-        logger.debug("[In] targets: \(targets)")
-        return await RealmStore.shared.getRealm()?.delete { (entity: DiaryListFilterData) in
+        return await realm.value.delete { (entity: DiaryListFilterData) in
             
             return targets.contains { $0.id == entity.id }
         }
-        ?? false
     }
     
-    static func getObserver() async -> AnyPublisher<[DiaryListFilterData], Never>? {
+    static func getObserver(realm: Task<RealmWrapper, Never>) async -> AnyPublisher<[DiaryListFilterData], Never>? {
         
-        logger.debug("[In]")
-        guard let realm = await RealmStore.shared.getRealm() else { return nil }
-        return await realm.readObjectsForObserve(type: DiaryListFilterData.self)
+        return await realm.value.readObjectsForObserve(type: DiaryListFilterData.self)
             .eraseToAnyPublisher()
     }
 }
