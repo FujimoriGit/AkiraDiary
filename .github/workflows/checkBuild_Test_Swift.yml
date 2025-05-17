@@ -95,10 +95,6 @@ jobs:
       - name: Show Xcode version
         run: xcodebuild -version
 
-      # xcbeautifyをインストール
-      - name: Install xcbeautify
-        run: brew install xcbeautify
-
       # DangerJSをインストール
       - name: Install Dnager JS
         run: npm install -g danger
