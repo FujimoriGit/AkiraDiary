@@ -19,59 +19,15 @@ env:
   # チェックアウト
   DEVELOPER_DIR: /Applications/Xcode_16.3.app
   WORKSPACE_DIR: ./Macho/Macho.xcworkspace
+  TARGET_SCHEME: Macho
   GOOGLE_SERVICE_INFO_PLIST_PATH: ./Macho/Macho/GoogleService-Info.plist
   SPM_PACKAGE_RESOLVED_FILE_PATH: Macho/Macho.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
 
 jobs:
-  determine-test-scheme:
-    runs-on: ubuntu-latest
-    outputs:
-      test_scheme: ${{ steps.set-scheme.outputs.scheme }}
-    steps:
-      - uses: actions/checkout@v4.2.2
-      - id: set-scheme
-        run: |
-          MODEL_CHANGED=false
-          VIEW_CHANGED=false
-
-          git fetch origin ${{ github.base_ref }}
-
-          TARGET_REF="${{ github.event.pull_request.base.sha }}"
-          CURRENT_REF=${{ github.sha }}
-          for file in $(git diff --name-only $TARGET_REF $CURRENT_REF); do
-            if [[ $file == Macho/MachoFramework/Sources/MachoModel/* ]] || [[ $file == Macho/MachoFramework/Tests/MachoModelTests/* ]] || [[ $file == Macho/MachoFramework/Sources/RealmHelper/* ]]; then
-              MODEL_CHANGED=true
-            fi
-            if [[ $file == Macho/MachoFramework/Sources/MachoView/* ]] || [[ $file == Macho/MachoFramework/Tests/MachoViewTests/* ]]; then
-              VIEW_CHANGED=true
-            fi
-            if [[ $file == Macho/MachoFramework/Sources/MachoCore/* ]]; then
-              VIEW_CHANGED=true
-              MODEL_CHANGED=true
-            fi
-            if $MODEL_CHANGED && $VIEW_CHANGED; then
-              break
-            fi
-          done
-          if $MODEL_CHANGED && $VIEW_CHANGED; then
-            echo "MachoFramework"
-            echo "scheme=MachoFramework" >> $GITHUB_OUTPUT
-          elif $MODEL_CHANGED; then
-            echo "MachoModel"
-            echo "scheme=MachoModel" >> $GITHUB_OUTPUT
-          elif $VIEW_CHANGED; then
-            echo "MachoView"
-            echo "scheme=MachoView" >> $GITHUB_OUTPUT
-          else
-            echo ""
-            echo "scheme=MachoFramework" >> $GITHUB_OUTPUT
-          fi
-
   build:
     if: ${{ github.event.issue.pull_request && github.event.comment.body == 'test-this-please' || !github.event.issue.pull_request }}
     # 実行環境はmacosに設定
     runs-on: macos-15
-    needs: determine-test-scheme
     steps:
       # fetch-depth の計算
       - run: echo "fetch_depth=$(( commits + 1 ))" >> $GITHUB_ENV
@@ -117,7 +73,7 @@ jobs:
         run: set -o pipefail &&
           xcodebuild
           -workspace ${WORKSPACE_DIR}
-          -scheme Macho
+          -scheme $TARGET_SCHEME
           -configuration Debug
           -clonedSourcePackagesDirPath SourcePackages
           -skipPackagePluginValidation
@@ -132,7 +88,7 @@ jobs:
           -workspace ${WORKSPACE_DIR}
           -configuration Debug
           -destination 'platform=iOS Simulator,OS=18.1,name=iPhone 16 Pro'
-          -scheme ${{ needs.determine-test-scheme.outputs.test_scheme }}
+          -scheme $TARGET_SCHEME
           -skipPackagePluginValidation
           -skipMacroValidation
           -scmProvider xcode
