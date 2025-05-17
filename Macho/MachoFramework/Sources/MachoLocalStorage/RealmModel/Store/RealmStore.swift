@@ -13,7 +13,7 @@ final class RealmStore: Sendable {
     
     static let shared = RealmStore()
     
-    let realm: Task<RealmWrapper, Error>
+    private let realm: Task<RealmWrapper, Error>
     
     init() {
         
@@ -34,5 +34,18 @@ final class RealmStore: Sendable {
                                      version: 1)
         realm = RealmFactory.create(config: config)
         logger.info("Created realm instance: \(config)")
+    }
+    
+    func getRealm() async -> RealmWrapper? {
+        
+        do {
+            
+            return try await realm.value
+        }
+        catch {
+            
+            logger.error("Failed create realm: \(error)")
+            return nil
+        }
     }
 }

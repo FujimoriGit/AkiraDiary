@@ -8,7 +8,7 @@
 //
 
 import Combine
-import ComposableArchitecture
+import Dependencies
 
 public struct TrainingContentClient: Sendable {
 

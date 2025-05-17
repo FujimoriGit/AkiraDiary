@@ -6,7 +6,7 @@
 //
 
 import Combine
-import ComposableArchitecture
+import Dependencies
 import Foundation
 
 public struct DiaryEntityClient: Sendable {
