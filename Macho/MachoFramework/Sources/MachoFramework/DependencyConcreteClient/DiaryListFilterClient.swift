@@ -7,7 +7,7 @@
 
 import Dependencies
 import MachoCore
-import MachoModel
+import MachoLocalStorage
 
 extension DiaryListFilterClient: DependencyKey {
     

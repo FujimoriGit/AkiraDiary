@@ -8,7 +8,7 @@
 import Combine
 import ComposableArchitecture
 import MachoCore
-import MachoModel
+import MachoLocalStorage
 import RealmHelper
 
 extension TrainingContentClient: DependencyKey {
