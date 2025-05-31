@@ -7,6 +7,8 @@
 //  Copyright © Macho All rights reserved.
 //
 
+import MachoCore
+
 struct ActivityGraphTrainingTypeFilter {
     
     let selectedIdList: [String]

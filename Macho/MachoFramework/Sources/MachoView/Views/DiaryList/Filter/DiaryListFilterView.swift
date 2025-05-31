@@ -5,8 +5,9 @@
 //  Created by 佐藤汰一 on 2024/07/28.
 //
 
-import Combine
+@preconcurrency import Combine
 import ComposableArchitecture
+import MachoCore
 import SwiftUI
 
 struct DiaryListFilterView: PopUpableContentView {
@@ -189,71 +190,6 @@ private extension DiaryListFilterView {
 // MARK: - preview section
 
 #Preview {
-    // priview内でprivateが使用できないため、警告を無視する
-    // swiftlint:disable:next private_subject
-    let publisher = PassthroughSubject<[DiaryListFilterItem], Never>()
-    var currentFilters = [
-        DiaryListFilterItem(target: .achievement, filterItemId: UUID(), value: "達成していない")
-    ]
-    
     DiaryListFilterView(store: Store(initialState: DiaryListFilterFeature.State(),
-                                     reducer: { DiaryListFilterFeature() },
-                                     withDependencies: {
-
-        $0.diaryListFilterApi = DiaryListFilterClient(addFilter: { filter in
-            
-            currentFilters += [filter]
-            publisher.send(currentFilters)
-            return true
-        }, updateFilter: { filter in
-            
-            guard let index = currentFilters.firstIndex(where: { $0.target == filter.target }) else { return false }
-            currentFilters[index] = filter
-            publisher.send(currentFilters)
-            return true
-        }, deleteFilters: { targets in
-            
-            currentFilters = currentFilters.filter { !targets.contains($0) }
-            publisher.send(currentFilters)
-            return true
-        }, fetchFilterList: {
-            
-            return currentFilters
-        }, getFilterListObserver: {
-            
-            return publisher.eraseToAnyPublisher()
-        })
-        $0.trainingTypeApi = TrainingTypeClient { _ in
-            
-            return true
-        } update: { _ in
-            
-            return true
-        } fetchAll: {
-            
-            return [
-                .init(id: UUID(), name: "腹筋"),
-                .init(id: UUID(), name: "ダンベルプレス")
-            ]
-        } getPublisher: {
-            
-            return PassthroughSubject<[TrainingTypeData], Never>().eraseToAnyPublisher()
-        }
-        $0.trainingTagApi = TrainingTagClient { _ in
-            
-            return true
-        } updateTag: { _ in
-            
-            return true
-        } fetchAll: {
-            
-            return [
-                .init(id: UUID(), tagName: "元気"),
-                .init(id: UUID(), tagName: "雨")
-            ]
-        } getTrainingTagPublisher: {
-            
-            return PassthroughSubject<[TrainingTagData], Never>().eraseToAnyPublisher()
-        }
-    }))
+                                     reducer: { DiaryListFilterFeature() }))
 }

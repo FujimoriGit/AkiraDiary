@@ -7,6 +7,8 @@
 //  Copyright © Macho All rights reserved.
 //
 
+import MachoCore
+
 enum SelectionTagConverter {
     
     static func toTag(_ entity: TrainingTagData, isSelected: Bool = false) -> SelectionTag {

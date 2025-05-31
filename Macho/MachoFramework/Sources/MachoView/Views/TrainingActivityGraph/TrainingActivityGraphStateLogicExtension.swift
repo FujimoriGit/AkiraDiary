@@ -8,6 +8,7 @@
 //
 
 import Foundation
+import MachoCore
 
 extension TrainingActivityGraphFeature.State {
     

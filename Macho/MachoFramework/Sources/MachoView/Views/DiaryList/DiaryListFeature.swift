@@ -5,8 +5,10 @@
 //  Created by 佐藤汰一 on 2024/01/07.
 //
 
+@preconcurrency import Combine
 import ComposableArchitecture
 import Foundation
+import MachoCore
 
 @Reducer
 struct DiaryListFeature: Sendable {
@@ -62,7 +64,7 @@ struct DiaryListFeature: Sendable {
     
     // MARK: - Action
     
-    enum Action: Sendable, Equatable {
+    enum Action: Sendable {
         
         // MARK: Presentation Action
         
@@ -115,8 +117,8 @@ struct DiaryListFeature: Sendable {
     
     // MARK: dependency property
     
-    @Dependency(\.diaryListFetchApi) var diaryListFetchClient
-    @Dependency(\.diaryListFilterApi) var diaryListFilterApi
+    @Dependency(\.diaryEntityClient) var diaryEntityApi
+    @Dependency(\.diaryListFilterClient) var diaryListFilterApi
     @Dependency(\.date) var date
     @Dependency(\.uuid) var uuid
     
@@ -260,7 +262,7 @@ private extension DiaryListFeature {
 
 extension DiaryListFeature {
     
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer(state: .equatable, .sendable, action: .equatable, .sendable)
     enum Path {
         
         // 日記編集画面
@@ -271,6 +273,18 @@ extension DiaryListFeature {
         case graphScreen(TrainingActivityGraphFeature)
         // 詳細画面
         case detailScreen(DiaryDetailFeature)
+    }
+}
+
+// MARK: - Presentation Destination Definition
+
+extension DiaryListFeature {
+    
+    @Reducer(state: .equatable, .sendable, action: .equatable, .sendable)
+    enum Destination {
+        
+        // フィルター画面
+        case filterScreen(DiaryListFilterFeature)
     }
 }
 
@@ -286,7 +300,9 @@ private extension DiaryListFeature {
             .run { send in
                 
                 let currentFilterList = await diaryListFilterApi.fetchFilterList()
-                await send(.receiveLoadDiaryListFilter(filters: currentFilterList))
+                await send(.receiveLoadDiaryListFilter(
+                    filters: DiaryListFilterDataConverter.convertToDiaryFilterItemList(currentFilterList)
+                ))
             },
             loadDiaryListItem(date.now)
         )
@@ -299,8 +315,15 @@ private extension DiaryListFeature {
         
         return .run { send in
             
-            let diaryItems = await diaryListFetchClient.fetch(startDate, limitFetchDiary)
-            await send(.receiveLoadDiaryItems(items: diaryItems),
+            var diaries = await diaryEntityApi.fetchAll()
+                .filter { $0.date <= startDate }
+            
+            diaries
+                .sort { $0.date > $1.date }
+            
+            diaries = diaries.prefix(limitFetchDiary).map(\.self)
+
+            await send(.receiveLoadDiaryItems(items: diaries),
                        animation: .spring)
         }
     }
@@ -320,7 +343,12 @@ private extension DiaryListFeature {
                 
         return .run { send in
             
-            try await diaryListFetchClient.deleteItem(id)
+            guard await diaryEntityApi.deleteDiary(id) else {
+                
+                logger.error("Failed delete diary(id: \(id)).")
+                return
+            }
+            
             await send(.deletedDiaryItem(id: id), animation: .spring)
         }
     }

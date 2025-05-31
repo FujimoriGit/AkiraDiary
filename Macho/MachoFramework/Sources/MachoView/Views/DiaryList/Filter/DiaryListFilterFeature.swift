@@ -5,8 +5,10 @@
 //  Created by 佐藤汰一 on 2024/07/28.
 //
 
+@preconcurrency import Combine
 import ComposableArchitecture
 import Foundation
+import MachoCore
 
 @Reducer
 struct DiaryListFilterFeature: PopUpableContentFeature {
@@ -73,15 +75,32 @@ struct DiaryListFilterFeature: PopUpableContentFeature {
             case confirmedFilter([DiaryListFilterItem])
         }
         
+        // MARK: Publisher Action
+        
+        /// フィルターの監視処理開始
+        case startObserve(PublisherEvent)
+        
+        @CasePathable
+        enum PublisherEvent: Equatable {
+            
+            case observeFilter(AnyPublisher<[DiaryListFilterItem], Never>)
+            
+            static func == (lhs: DiaryListFilterFeature.Action.PublisherEvent,
+                            rhs: DiaryListFilterFeature.Action.PublisherEvent) -> Bool {
+                
+                return lhs.is(\.observeFilter) == rhs.is(\.observeFilter)
+            }
+        }
+        
         static var willDismissAction: Self {
             
             return .willDismiss
         }
     }
     
-    @Dependency(\.diaryListFilterApi) var diaryListFilterApi
-    @Dependency(\.trainingTypeApi) var trainingTypeApi
-    @Dependency(\.trainingTagApi) var trainingTagApi
+    @Dependency(\.diaryListFilterClient) var diaryListFilterApi
+    @Dependency(\.trainingTypeClient) var trainingTypeApi
+    @Dependency(\.trainingTagClient) var trainingTagApi
     
     var body: some ReducerOf<Self> {
         
@@ -133,7 +152,11 @@ struct DiaryListFilterFeature: PopUpableContentFeature {
                 state.selectableFilterValues = selectableFilterValues
                 return .none
                 
-            case .delegate:
+            case .startObserve(.observeFilter(let publisher)):
+                logger.info("startFilterItemsObserver(publisher: \(publisher))")
+                return observeFilter(publisher)
+                
+            case .delegate, .startObserve:
                 return .none
             }
         }
@@ -144,23 +167,29 @@ private extension DiaryListFilterFeature {
     
     func initialLoadFilterInfo() -> Effect<DiaryListFilterFeature.Action> {
         
-        return .concatenate(
-            .run { send in
-                
-                await send(.receiveFetchSelectableFilterRes(await fetchSelectableFilterValues()))
-            },
-            .run { send in
-                
-                let result = await diaryListFilterApi.fetchFilterList()
-                await send(.receiveDidChangeFilterItems(result))
-            },
-            .publisher {
-                
-                return diaryListFilterApi.getFilterListObserver()
-                    .receive(on: DispatchQueue.main)
-                    .map { .receiveDidChangeFilterItems($0) }
-            }.cancellable(id: FilterObserveCancellable())
-        )
+        return .run { send in
+            
+            await send(.receiveFetchSelectableFilterRes(await fetchSelectableFilterValues()))
+            
+            let resultPublisher = await diaryListFilterApi.getFilterListObserver()?
+                .receive(on: DispatchQueue.main)
+                .map { output in
+                    
+                    return DiaryListFilterDataConverter.convertToDiaryFilterItemList(output)
+                }
+                .eraseToAnyPublisher() ?? PassthroughSubject().eraseToAnyPublisher()
+            
+            await send(.startObserve(.observeFilter(resultPublisher)))
+        }
+    }
+    
+    func observeFilter(_ publisher: AnyPublisher<[DiaryListFilterItem], Never>) -> EffectOf<Self> {
+        
+        return .publisher {
+            
+            publisher.map { .receiveDidChangeFilterItems($0) }
+        }
+        .cancellable(id: FilterObserveCancellable())
     }
     
     func deleteFilterType(currentFilters: IdentifiedArrayOf<DiaryListFilterItem>,
@@ -168,7 +197,9 @@ private extension DiaryListFilterFeature {
         
         return .run { _ in
             
-            guard await diaryListFilterApi.deleteFilters(currentFilters.filter { $0.target == type }) else {
+            let entities = DiaryListFilterDataConverter
+                .convertToDiaryListFilterDataList(currentFilters.elements.filter { $0.target == type })
+            guard await diaryListFilterApi.deleteFilters(entities) else {
                 
                 logger.error("did fail delete filter(target: \(type)).")
                 return
@@ -182,8 +213,9 @@ private extension DiaryListFilterFeature {
         
         return .run { _ in
             
-            guard let deleteItem = currentFilters.first(where: { $0.target == type && $0.value == value }),
-                  await diaryListFilterApi.deleteFilters([deleteItem]) else {
+            guard let deleteItem = currentFilters
+                .first(where: { $0.target == type && $0.value == value }),
+                  await diaryListFilterApi.deleteFilters([DiaryListFilterData(deleteItem)]) else {
                 
                 logger.error("did fail delete filter(target: \(type), value: \(value)).")
                 return
@@ -202,30 +234,13 @@ private extension DiaryListFilterFeature {
             return
         }
         
-        let hasSameTarget = currentFilters.contains { $0.target == targetFilter.target }
-        if !hasSameTarget || targetFilter.isMultiSelectFilter {
+        guard await diaryListFilterApi.addFilter(DiaryListFilterData(targetFilter)) else {
             
-            // 複数選択可能な場合または、まだ登録されていないフィルター種別の場合は、
-            // 新規のフィルターとしてDBに保存する
-            guard await diaryListFilterApi.addFilter(targetFilter) else {
-                
-                logger.error("did fail add filter(\(targetFilter)).")
-                return
-            }
-            
-            logger.debug("added filter(\(targetFilter)).")
+            logger.error("did fail add filter(\(targetFilter)).")
+            return
         }
-        else {
-            
-            // それ以外の場合は、すでに登録されている同じフィルター種別の値を更新する
-            guard await diaryListFilterApi.updateFilter(targetFilter) else {
-                
-                logger.error("did fail update filter(\(targetFilter)).")
-                return
-            }
-            
-            logger.debug("updated filter(\(targetFilter)).")
-        }
+        
+        logger.debug("added filter(\(targetFilter)).")
     }
     
     /// アプリに登録しているトレーニング種目を取得する
@@ -240,7 +255,7 @@ private extension DiaryListFilterFeature {
         }
         
         // トレーニング種目のフィルター値を追加
-        let trainingTypeList = await trainingTypeApi.fetchAll().map {
+        let trainingTypeList = await trainingTypeApi.fetchAllType().map {
             
             return DiaryListFilterItem(target: .trainingType, filterItemId: $0.id, value: $0.name)
         }

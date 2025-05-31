@@ -7,6 +7,7 @@
 
 import Combine
 import ComposableArchitecture
+import MachoCore
 import SwiftUI
 
 struct DiaryListView: View {
@@ -218,7 +219,5 @@ private extension DiaryListView {
 // MARK: - preview
 
 #Preview {
-    DiaryListView(store: Store(initialState: DiaryListFeature.State()) {
-        DiaryListFeature()
-    })
+    DiaryListView(store: Store(initialState: .init()) { DiaryListFeature() })
 }

@@ -7,6 +7,7 @@
 
 import Combine
 import ComposableArchitecture
+import MachoCore
 import SwiftUI
 
 struct TrainingActivityGraphView: View {
@@ -224,7 +225,7 @@ private extension TrainingActivityGraphView {
 
 // MARK: - preview
 
-#Preview {
+#Preview { // swiftlint:disable:this closure_body_length
     
     @Environment(\.calendar)
     @Previewable var calendar
@@ -245,7 +246,8 @@ private extension TrainingActivityGraphView {
                           goalNumberOfSets: 3,
                           goalSetCount: 3,
                           actualNumberOfSets: 3,
-                          actualSetCount: 3)
+                          actualSetCount: 3,
+                          isAchieved: true)
                   ],
                   tags: [],
                   startTime: nil,
@@ -280,19 +282,19 @@ private extension TrainingActivityGraphView {
                                                reducer: { TrainingActivityGraphFeature() },
                                                withDependencies: {
             $0.defaultAppStorage = previewUserDefault
-            $0.trainingTypeApi = .init(add: { _ in true },
-                                       update: { _ in true },
-                                       fetchAll: {
-                
-                return selectableTrainingTypeList
-            }, getPublisher: {
+            $0.trainingTypeClient = .init(fetchAllType: { return selectableTrainingTypeList },
+                                          add: { _ in true },
+                                          getObserve: {
                 
                 return PassthroughSubject().eraseToAnyPublisher()
             })
-            $0.diaryListFetchApi = .init(add: { _ in true },
-                                         fetch: { _, _ in fetchDiaries },
-                                         deleteItem: { _ in },
-                                         observeDiaryList: {
+            $0.diaryEntityClient = .init(fetchAll: {
+                
+                return fetchDiaries
+            },
+                                         add: { _ in true },
+                                         deleteDiary: { _ in true },
+                                         getDiaryObserver: {
                 
                 return PassthroughSubject().eraseToAnyPublisher()
             })
@@ -310,22 +312,6 @@ private extension TrainingActivityGraphView {
             
             // swiftlint:disable:next force_unwrapping
             $0.defaultAppStorage = UserDefaults(suiteName: "日記なしのケース")!
-            $0.trainingTypeApi = .init(add: { _ in true },
-                                       update: { _ in true },
-                                       fetchAll: {
-                
-                return []
-            }, getPublisher: {
-                
-                return PassthroughSubject().eraseToAnyPublisher()
-            })
-            $0.diaryListFetchApi = .init(add: { _ in true },
-                                         fetch: { _, _ in [] },
-                                         deleteItem: { _ in },
-                                         observeDiaryList: {
-                
-                return PassthroughSubject().eraseToAnyPublisher()
-            })
         }
     ))
 }

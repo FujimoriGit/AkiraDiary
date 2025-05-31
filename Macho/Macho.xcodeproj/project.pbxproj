@@ -7,14 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BC746CFC2DC8BBBF007E4222 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BC746CFB2DC8BBBF007E4222 /* MachoFramework */; };
-		BC746CFD2DC8BBCB007E4222 /* MachoFramework in Embed Frameworks */ = {isa = PBXBuildFile; productRef = BC746CFB2DC8BBBF007E4222 /* MachoFramework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		BC746CFE2DC8BE95007E4222 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BCEA14EF2D601A630045B580 /* MachoFramework */; };
-		BC746CFF2DC8BE95007E4222 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BCEA14FB2D603A340045B580 /* MachoFramework */; };
+		BC26A8EF2DD865F2001F5242 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BCEA14EF2D601A630045B580 /* MachoFramework */; };
+		BC26A8F52DD8662C001F5242 /* MachoFramework in Embed Frameworks */ = {isa = PBXBuildFile; productRef = BC26A8F32DD86608001F5242 /* MachoFramework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		BC6EEF082DD2FC6200F7D922 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC6EEF072DD2FC6100F7D922 /* GoogleService-Info.plist */; };
 		BC98AEA22D4CA4F400EFD0BF /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = BC98AEA12D4CA4F400EFD0BF /* FirebaseCrashlytics */; };
-		BC98AEA52D4CA61500EFD0BF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC98AEA42D4CA61500EFD0BF /* GoogleService-Info.plist */; };
 		BC98AEA72D4CA66200EFD0BF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC98AEA62D4CA66200EFD0BF /* AppDelegate.swift */; };
 		BC98AEA92D4CA71200EFD0BF /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = BC98AEA82D4CA71200EFD0BF /* FirebaseAnalytics */; };
+		BC9D9F642DD8869300DE0AF3 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BCEA14FB2D603A340045B580 /* MachoFramework */; };
+		BC9D9F652DD8869300DE0AF3 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BC746CFB2DC8BBBF007E4222 /* MachoFramework */; };
+		BC9D9F662DD8869300DE0AF3 /* MachoFramework in Frameworks */ = {isa = PBXBuildFile; productRef = BC26A8F32DD86608001F5242 /* MachoFramework */; };
 		D9F160F12AE39EE40061307C /* MachoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F160F02AE39EE40061307C /* MachoApp.swift */; };
 		D9F160F52AE39EE60061307C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9F160F42AE39EE60061307C /* Assets.xcassets */; };
 		D9F160F82AE39EE60061307C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9F160F72AE39EE60061307C /* Preview Assets.xcassets */; };
@@ -41,13 +42,33 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		BC66F7542D72D19A00CEC2AE /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BC66F7562D72D19C00CEC2AE /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BCEA14F42D601D6D0045B580 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				BC746CFD2DC8BBCB007E4222 /* MachoFramework in Embed Frameworks */,
+				BC26A8F52DD8662C001F5242 /* MachoFramework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -56,7 +77,7 @@
 
 /* Begin PBXFileReference section */
 		BC0940B62B5BC57C00E11B53 /* Macho.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = Macho.xctestplan; path = ../Macho.xctestplan; sourceTree = "<group>"; };
-		BC98AEA42D4CA61500EFD0BF /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		BC6EEF072DD2FC6100F7D922 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		BC98AEA62D4CA66200EFD0BF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D9D72B912AED1A14007668FA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D9F160ED2AE39EE40061307C /* Macho.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Macho.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -75,9 +96,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC746CFF2DC8BE95007E4222 /* MachoFramework in Frameworks */,
-				BC746CFE2DC8BE95007E4222 /* MachoFramework in Frameworks */,
-				BC746CFC2DC8BBBF007E4222 /* MachoFramework in Frameworks */,
+				BC9D9F662DD8869300DE0AF3 /* MachoFramework in Frameworks */,
+				BC9D9F652DD8869300DE0AF3 /* MachoFramework in Frameworks */,
+				BC9D9F642DD8869300DE0AF3 /* MachoFramework in Frameworks */,
+				BC26A8EF2DD865F2001F5242 /* MachoFramework in Frameworks */,
 				BC98AEA22D4CA4F400EFD0BF /* FirebaseCrashlytics in Frameworks */,
 				BC98AEA92D4CA71200EFD0BF /* FirebaseAnalytics in Frameworks */,
 			);
@@ -137,7 +159,7 @@
 				D9F160F02AE39EE40061307C /* MachoApp.swift */,
 				D9F160F42AE39EE60061307C /* Assets.xcassets */,
 				D9F160F62AE39EE60061307C /* Preview Content */,
-				BC98AEA42D4CA61500EFD0BF /* GoogleService-Info.plist */,
+				BC6EEF072DD2FC6100F7D922 /* GoogleService-Info.plist */,
 			);
 			path = Macho;
 			sourceTree = "<group>";
@@ -178,7 +200,7 @@
 				D9F160EA2AE39EE40061307C /* Frameworks */,
 				D9F160EB2AE39EE40061307C /* Resources */,
 				BCEA14F42D601D6D0045B580 /* Embed Frameworks */,
-				BC98AEA32D4CA52B00EFD0BF /* ShellScript */,
+				BC98AEA32D4CA52B00EFD0BF /* Upload dSYM */,
 			);
 			buildRules = (
 			);
@@ -191,6 +213,7 @@
 				BCEA14EF2D601A630045B580 /* MachoFramework */,
 				BCEA14FB2D603A340045B580 /* MachoFramework */,
 				BC746CFB2DC8BBBF007E4222 /* MachoFramework */,
+				BC26A8F32DD86608001F5242 /* MachoFramework */,
 			);
 			productName = Macho;
 			productReference = D9F160ED2AE39EE40061307C /* Macho.app */;
@@ -203,6 +226,7 @@
 				D9F160F92AE39EE60061307C /* Sources */,
 				D9F160FA2AE39EE60061307C /* Frameworks */,
 				D9F160FB2AE39EE60061307C /* Resources */,
+				BC66F7542D72D19A00CEC2AE /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -223,6 +247,7 @@
 				D9F161032AE39EE60061307C /* Sources */,
 				D9F161042AE39EE60061307C /* Frameworks */,
 				D9F161052AE39EE60061307C /* Resources */,
+				BC66F7562D72D19C00CEC2AE /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -270,7 +295,7 @@
 			mainGroup = D9F160E42AE39EE40061307C;
 			packageReferences = (
 				BC98AEA02D4CA4F400EFD0BF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
-				BC746CFA2DC8BBBF007E4222 /* XCLocalSwiftPackageReference "MachoFramework" */,
+				BC26A8F22DD86608001F5242 /* XCLocalSwiftPackageReference "MachoFramework" */,
 			);
 			productRefGroup = D9F160EE2AE39EE40061307C /* Products */;
 			projectDirPath = "";
@@ -289,8 +314,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				D9F160F82AE39EE60061307C /* Preview Assets.xcassets in Resources */,
+				BC6EEF082DD2FC6200F7D922 /* GoogleService-Info.plist in Resources */,
 				D9F160F52AE39EE60061307C /* Assets.xcassets in Resources */,
-				BC98AEA52D4CA61500EFD0BF /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -311,7 +336,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		BC98AEA32D4CA52B00EFD0BF /* ShellScript */ = {
+		BC98AEA32D4CA52B00EFD0BF /* Upload dSYM */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -329,13 +354,14 @@
 				"${DWARF_DSYM_FOLDER_PATH}/MachoFramework.framework.dSYM",
 				"${DWARF_DSYM_FOLDER_PATH}/MachoFramework.framework.dSYM/Contents/Resources/Info.plist",
 			);
+			name = "Upload dSYM";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\necho debug\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\nif [ \"$CONFIGURATION\" != \"Debug\" ]; then\n    \"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/upload-symbols\" \\\n        -gsp \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleService-Info.plist\" \\\n        -p ios \"${DWARF_DSYM_FOLDER_PATH}\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -519,7 +545,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				LD_EXPORT_SYMBOLS = NO;
+				LD_EXPORT_SYMBOLS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -539,7 +565,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = morimori.Macho;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -561,7 +587,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				LD_EXPORT_SYMBOLS = NO;
+				LD_EXPORT_SYMBOLS = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -578,7 +604,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = morimori.Macho;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -597,7 +623,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = morimori.MachoTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Macho.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Macho";
 			};
@@ -617,7 +643,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = morimori.MachoTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Macho.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Macho";
 			};
@@ -635,7 +661,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = morimori.MachoUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = Macho;
 			};
@@ -653,7 +679,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = morimori.MachoUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = Macho;
 			};
@@ -701,7 +727,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		BC746CFA2DC8BBBF007E4222 /* XCLocalSwiftPackageReference "MachoFramework" */ = {
+		BC26A8F22DD86608001F5242 /* XCLocalSwiftPackageReference "MachoFramework" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = MachoFramework;
 		};
@@ -719,6 +745,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		BC26A8F32DD86608001F5242 /* MachoFramework */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MachoFramework;
+		};
 		BC746CFB2DC8BBBF007E4222 /* MachoFramework */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MachoFramework;

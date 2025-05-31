@@ -1,0 +1,42 @@
+{
+  "configurations" : [
+    {
+      "id" : "9CC4C73D-9AC0-49F1-B8C7-EE6E2483A154",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:",
+          "identifier" : "MachoFramework",
+          "name" : "MachoFramework"
+        }
+      ]
+    },
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : false,
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "MachoViewTests",
+        "name" : "MachoViewTests"
+      }
+    },
+    {
+      "parallelizable" : false,
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "MachoModelTests",
+        "name" : "MachoModelTests"
+      }
+    }
+  ],
+  "version" : 1
+}

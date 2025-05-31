@@ -1,4 +1,4 @@
-// swift-tools-version: 5.9
+// swift-tools-version: 6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -7,12 +7,32 @@ let package = Package(
     name: "MachoFramework",
     platforms: [.iOS(.v17)],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "MachoFramework",
             type: .dynamic,
-            targets: ["MachoFramework"]
+            targets: [
+                "MachoFramework",
+                "MachoView",
+                "MachoLocalStorage",
+                "MachoCore",
+                "RealmHelper"
+            ]
         ),
+        .library(
+            name: "MachoView",
+            targets: [
+                "MachoView",
+                "MachoCore"
+            ]
+        ),
+        .library(
+            name: "MachoLocalStorage",
+            targets: [
+                "MachoLocalStorage",
+                "MachoCore",
+                "RealmHelper"
+            ]
+        )
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", exact: "1.12.1"),
@@ -22,25 +42,33 @@ let package = Package(
         .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins", exact: "0.56.1")
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "MachoFramework",
-            dependencies: ["MachoView"]
+            dependencies: [
+                "MachoView",
+                "MachoLocalStorage",
+                "MachoCore"
+            ]
         ),
         .target(
             name: "MachoView",
             dependencies: [
-                .product(
-                    name: "ComposableArchitecture",
-                    package: "swift-composable-architecture"
-                ),
-                "RealmHelper",
                 "MachoCore"
             ],
             plugins: [
                 .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin"),
                 .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLintPlugins")
+            ]
+        ),
+        .target(
+            name: "MachoLocalStorage",
+            dependencies: [
+                "MachoCore",
+                "RealmHelper"
+            ],
+            plugins: [
+                .plugin(name: "SwiftLintBuildToolPlugin",
+                        package: "SwiftLintPlugins")
             ]
         ),
         .target(
@@ -50,23 +78,36 @@ let package = Package(
                 "MachoCore"
             ],
             plugins: [
-                .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLintPlugins")
+                .plugin(name: "SwiftLintBuildToolPlugin",
+                        package: "SwiftLintPlugins")
             ]
         ),
         .target(
             name: "MachoCore",
-            dependencies: [.product(name: "Logging", package: "swift-log")]
-        ),
-        .testTarget(
-            name: "MachoFrameworkTests",
             dependencies: [
-                "MachoFramework",
-                "MachoView",
-                "RealmHelper",
-                "MachoCore",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(
+                    name: "ComposableArchitecture",
+                    package: "swift-composable-architecture"
+                ),
                 .product(name: "Logging", package: "swift-log")
+            ],
+            plugins: [
+                .plugin(name: "SwiftLintBuildToolPlugin",
+                        package: "SwiftLintPlugins")
             ]
         ),
+        .testTarget(
+            name: "MachoViewTests",
+            dependencies: [
+                "MachoLocalStorage",
+                "MachoView"
+            ]
+        ),
+        .testTarget(
+            name: "MachoCoreTests",
+            dependencies: [
+                "MachoCore",
+            ]
+        )
     ]
 )

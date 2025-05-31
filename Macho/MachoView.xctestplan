@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "32ED93A9-F492-43E0-A094-3C9FAF663955",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "MachoViewTests",
+        "name" : "MachoViewTests"
+      }
+    }
+  ],
+  "version" : 1
+}

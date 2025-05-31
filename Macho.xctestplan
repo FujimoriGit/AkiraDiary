@@ -25,6 +25,20 @@
     }
   ],
   "defaultOptions" : {
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:MachoFramework",
+          "identifier" : "MachoFramework",
+          "name" : "MachoFramework"
+        },
+        {
+          "containerPath" : "container:Macho.xcodeproj",
+          "identifier" : "D9F160EC2AE39EE40061307C",
+          "name" : "Macho"
+        }
+      ]
+    },
     "targetForVariableExpansion" : {
       "containerPath" : "container:Macho.xcodeproj",
       "identifier" : "D9F160FC2AE39EE60061307C",
@@ -51,8 +65,15 @@
     {
       "target" : {
         "containerPath" : "container:MachoFramework",
-        "identifier" : "MachoFrameworkTests",
-        "name" : "MachoFrameworkTests"
+        "identifier" : "MachoModelTests",
+        "name" : "MachoModelTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:MachoFramework",
+        "identifier" : "MachoViewTests",
+        "name" : "MachoViewTests"
       }
     }
   ],

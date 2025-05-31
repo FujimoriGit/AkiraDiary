@@ -7,6 +7,8 @@
 //  Copyright © Macho All rights reserved.
 //
 
+import MachoCore
+
 enum GoalConverter {
     
     static func toGoal(_ entity: TrainingContentData) -> Goal? {
@@ -26,6 +28,7 @@ enum GoalConverter {
                      goalNumberOfSets: goal.numberOfSets,
                      goalSetCount: goal.setCount,
                      actualNumberOfSets: nil,
-                     actualSetCount: goal.actualSetCount)
+                     actualSetCount: goal.actualSetCount,
+                     isAchieved: goal.isAchieved)
     }
 }

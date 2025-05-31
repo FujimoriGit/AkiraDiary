@@ -5,7 +5,9 @@
 //  Created by Daiki Fujimori on 2024/01/07
 //
 
+@preconcurrency import Combine
 import ComposableArchitecture
+import MachoCore
 import SwiftUI
 
 @Reducer
@@ -60,10 +62,23 @@ struct DiaryCreationFeature: Sendable {
         case tappedOutsideOfKeyboard
         case tappedNavigationBackButton
         case alert(PresentationAction<Alert>)
+        case observePublisher(PublisherEvent)
+        
+        @CasePathable
+        enum PublisherEvent: Equatable {
+            
+            case observeTags(AnyPublisher<[TrainingTagData], Never>)
+            
+            static func == (lhs: DiaryCreationFeature.Action.PublisherEvent,
+                            rhs: DiaryCreationFeature.Action.PublisherEvent) -> Bool {
+                
+                return lhs.is(\.observeTags) == rhs.is(\.observeTags)
+            }
+        }
     }
     
-    @Dependency(\.trainingTagApi) var trainingTagApi
-    @Dependency(\.diaryListFetchApi) var diaryListFetchApi
+    @Dependency(\.trainingTagClient) var trainingTagApi
+    @Dependency(\.diaryEntityClient) var diaryListFetchApi
     @Dependency(\.dismiss) var dismiss
     @Dependency(\.uuid) var uuid
     @Dependency(\.date) var date
@@ -79,10 +94,11 @@ struct DiaryCreationFeature: Sendable {
                 
             case .onAppear:
                 logger.debug("onAppear")
-                return .concatenate(
-                    addObserveTagEntity(),
-                    fetchTags()
-                )
+                return .run { send in
+                    
+                    guard let publisher = await trainingTagApi.getObserve() else { return }
+                    await send(.observePublisher(.observeTags(publisher)))
+                }
                 
             case .didChangeTags:
                 return fetchTags()
@@ -187,6 +203,9 @@ struct DiaryCreationFeature: Sendable {
                                                           firstButtonHandler: .tappedDismissAcceptButton)
                 return .none
                 
+            case .observePublisher(.observeTags(let publisher)):
+                return observeTag(publisher)
+                
             case .destination(.presented(.addGoal(.delegate(.saveGoal(let goal))))):
                 state = updateCreatingDiaryState(state.useCase.addGoal(goal), state: state)
                 return .none
@@ -194,7 +213,7 @@ struct DiaryCreationFeature: Sendable {
             case .alert(.presented(.tappedDismissAcceptButton)):
                 return popToPrev()
                 
-            case .destination, .alert:
+            case .destination, .alert, .observePublisher:
                 return .none
             }
         }
@@ -216,7 +235,7 @@ private extension DiaryCreationFeature {
         }
     }
     
-    func saveEffect(saveAction: @escaping () async -> Void) -> Effect<Self.Action> {
+    func saveEffect(saveAction: @Sendable @escaping () async -> Void) -> Effect<Self.Action> {
         
         return .concatenate(
             .send(.animateStartButton),
@@ -272,14 +291,15 @@ private extension DiaryCreationFeature {
         )
     }
     
-    func addObserveTagEntity() -> Effect<Self.Action> {
+    func observeTag(_ publisher: AnyPublisher<[TrainingTagData], Never>) -> EffectOf<Self> {
         
         return .publisher {
-             
-            return trainingTagApi.getTrainingTagPublisher()
+            
+            publisher
                 .receive(on: DispatchQueue.main)
                 .map { .fetchedTags($0) }
-        }.cancellable(id: TrainingTagsSubscriber())
+        }
+        .cancellable(id: TrainingTagsSubscriber())
     }
     
     func updateCreatingDiaryState(_ editEvent: CreatingDiaryUseCase.EditEvent, state: State) -> State {

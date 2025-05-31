@@ -5,9 +5,10 @@
 //  Created by 佐藤汰一 on 2024/11/24.
 //
 
-import Combine
+@preconcurrency import Combine
 import ComposableArchitecture
 import Foundation
+import MachoCore
 import SwiftUI
 
 @Reducer
@@ -105,6 +106,8 @@ struct TrainingActivityGraphFeature {
         case didReceiveDiaryDataForShowingDetail(DiaryData)
         /// 保存しているトレーニング種目取得時
         case didReceiveTrainingTypeList([TrainingTypeData])
+        /// 監視処理
+        case startObserve(PublisherEvent)
         
         // MARK: Delegate
         
@@ -126,14 +129,34 @@ struct TrainingActivityGraphFeature {
             /// 日記データが１件も登録されていない場合のアラート
             case emptyActivityData
         }
+        
+        @CasePathable
+        enum PublisherEvent: Equatable, Sendable {
+            
+            case observeDiaryList(AnyPublisher<[DiaryData], Never>)
+            case observeTrainingType(AnyPublisher<[TrainingTypeData], Never>)
+            
+            static func == (lhs: TrainingActivityGraphFeature.Action.PublisherEvent,
+                            rhs: TrainingActivityGraphFeature.Action.PublisherEvent) -> Bool {
+                
+                switch lhs {
+                    
+                case .observeDiaryList:
+                    return rhs.is(\.observeDiaryList)
+                    
+                case .observeTrainingType:
+                    return rhs.is(\.observeTrainingType)
+                }
+            }
+        }
     }
     
     // MARK: private property
     
     @Dependency(\.dismiss) private var dismiss
     @Dependency(\.calendar) private var calendar
-    @Dependency(\.diaryListFetchApi) private var diaryListFetchApi
-    @Dependency(\.trainingTypeApi) private var trainingTypeApi
+    @Dependency(\.diaryEntityClient) private var diaryListFetchApi
+    @Dependency(\.trainingTypeClient) private var trainingTypeApi
     @Dependency(\.defaultAppStorage) private var defaultAppStorage
     
     // MARK: - reduce definition
@@ -259,7 +282,13 @@ struct TrainingActivityGraphFeature {
                 state.popup = .detailDayOfActivity(.init(childState: .init(result)))
                 return .none
                 
-            case .calendar:
+            case .startObserve(.observeDiaryList(let publisher)):
+                return observeDiaryList(publisher)
+                
+            case .startObserve(.observeTrainingType(let publisher)):
+                return observeTrainingType(publisher)
+                
+            case .calendar, .startObserve:
                 return .none
             }
         }
@@ -309,33 +338,44 @@ private extension TrainingActivityGraphFeature {
     
     func buildEffectWhenAppear() -> Effect<Action> {
         
-        return .concatenate([
-            .run { send in
-                
-                await send(.didReceiveTrainingTypeList(trainingTypeApi.fetchAll()))
-            },
-            .publisher {
-                
-                diaryListFetchApi.observeDiaryList()
-                    .receive(on: DispatchQueue.main)
-                    .map { .didReceiveDiaryData($0) }
-            }
-                .cancellable(id: Cancellable.observeDiaryData),
-            .publisher {
-                
-                trainingTypeApi.getPublisher()
-                    .receive(on: DispatchQueue.main)
-                    .map { .didReceiveTrainingTypeList($0) }
-            }
-                .cancellable(id: Cancellable.observeTrainingType)
-        ])
+        return .run { send in
+            
+            await send(.startObserve(.observeDiaryList(
+                diaryListFetchApi.getDiaryObserver() ?? PassthroughSubject().eraseToAnyPublisher()
+            )))
+            await send(.startObserve(.observeTrainingType(
+                trainingTypeApi.getObserve() ?? PassthroughSubject().eraseToAnyPublisher()
+            )))
+        }
+    }
+    
+    func observeDiaryList(_ publisher: AnyPublisher<[DiaryData], Never>) -> EffectOf<Self> {
+        
+        return .publisher {
+            
+            publisher
+                .receive(on: DispatchQueue.main)
+                .map { .didReceiveDiaryData($0) }
+        }
+        .cancellable(id: Cancellable.observeDiaryData)
+    }
+    
+    func observeTrainingType(_ publisher: AnyPublisher<[TrainingTypeData], Never>) -> EffectOf<Self> {
+        
+        return .publisher {
+            
+            publisher
+                .receive(on: DispatchQueue.main)
+                .map { .didReceiveTrainingTypeList($0) }
+        }
+        .cancellable(id: Cancellable.observeTrainingType)
     }
     
     func loadActivityResult() -> Effect<Action> {
         
         return .run { send in
             
-            await send(.didReceiveDiaryData(diaryListFetchApi.fetch(.now, .zero)))
+            await send(.didReceiveDiaryData(diaryListFetchApi.fetchAll()))
         }
     }
     
@@ -343,7 +383,7 @@ private extension TrainingActivityGraphFeature {
         
         return .run { send in
             
-            guard let diaryData = await diaryListFetchApi.fetch(.now, .zero)
+            guard let diaryData = await diaryListFetchApi.fetchAll()
                 .first(where: { $0.id == diaryId }) else { return }
             await send(.didReceiveDiaryDataForShowingDetail(diaryData))
         }

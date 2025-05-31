@@ -5,8 +5,10 @@
 //  Created by 佐藤汰一 on 2024/12/11.
 //
 
+@preconcurrency import Combine
 import ComposableArchitecture
 import Foundation
+import MachoCore
 
 @Reducer
 struct SelectTrainingTypeContentFeature: PopUpableContentFeature {
@@ -51,6 +53,10 @@ struct SelectTrainingTypeContentFeature: PopUpableContentFeature {
         /// 選択可能なトレーニング種目取得時
         case didLoadSelectableTrainingTypeList([TrainingTypeData])
         
+        // MARK: publisher action
+        
+        case willStartObserve(PublisherEvent)
+        
         // MARK: delegate action
         
         /// デリゲートアクション
@@ -61,7 +67,7 @@ struct SelectTrainingTypeContentFeature: PopUpableContentFeature {
     
     // MARK: - dependency
     
-    @Dependency(\.trainingTypeApi) private var trainingTypeApi
+    @Dependency(\.trainingTypeClient) private var trainingTypeApi
     
     // MARK: - reducer body
     
@@ -74,20 +80,13 @@ struct SelectTrainingTypeContentFeature: PopUpableContentFeature {
             switch action {
                 
             case .onAppear:
-                return .concatenate([
-                    .run { send in
+                return .run { send in
+                    
+                    if let observer = await trainingTypeApi.getObserve() {
                         
-                        let selectableTrainingTypeList = await trainingTypeApi.fetchAll()
-                        await send(.didLoadSelectableTrainingTypeList(selectableTrainingTypeList))
-                    },
-                    .publisher {
-                        
-                        return trainingTypeApi.getPublisher()
-                            .receive(on: DispatchQueue.main)
-                            .map { .didLoadSelectableTrainingTypeList($0) }
+                        await send(.willStartObserve(.observeTrainingType(observer)))
                     }
-                        .cancellable(id: Cancellable())
-                ])
+                }
                 
             case .willDismiss:
                 return .concatenate(
@@ -126,7 +125,16 @@ struct SelectTrainingTypeContentFeature: PopUpableContentFeature {
                 }
                 return .none
                 
-            case .delegate:
+            case .willStartObserve(.observeTrainingType(let publisher)):
+                return .publisher {
+                    
+                    return publisher
+                        .receive(on: DispatchQueue.main)
+                        .map { .didLoadSelectableTrainingTypeList($0) }
+                }
+                .cancellable(id: Cancellable())
+                
+            case .delegate, .willStartObserve:
                 return .none
             }
         }
@@ -139,5 +147,21 @@ extension SelectTrainingTypeContentFeature.Action {
         
         /// 選択トレーニング種目の決定
         case selectedTrainingTypeList([TrainingTypeData])
+    }
+}
+
+extension SelectTrainingTypeContentFeature.Action {
+    
+    enum PublisherEvent: Equatable, Sendable {
+        
+        /// トレーニング種目の監視
+        case observeTrainingType(AnyPublisher<[TrainingTypeData], Never>)
+        
+        static func == (lhs: Self, rhs: Self) -> Bool {
+            
+            switch (lhs, rhs) {
+            case (.observeTrainingType, .observeTrainingType): true
+            }
+        }
     }
 }

@@ -7,6 +7,8 @@
 //  Copyright © Macho All rights reserved.
 //
 
+import MachoCore
+
 enum TrainingTypeConverter {
     
     static func toType(_ entity: TrainingTypeData) -> TrainingType {

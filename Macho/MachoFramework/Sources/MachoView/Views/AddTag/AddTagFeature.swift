@@ -7,6 +7,7 @@
 
 import ComposableArchitecture
 import Foundation
+import MachoCore
 
 @Reducer
 struct AddTagFeature: Sendable {
@@ -32,8 +33,9 @@ struct AddTagFeature: Sendable {
     
     // MARK: - Dependencies
     
-    @Dependency(\.trainingTagApi) var trainingTagApi
+    @Dependency(\.trainingTagClient) var trainingTagApi
     @Dependency(\.dismiss) var dismiss
+    @Dependency(\.uuid) var uuid
     
     // MARK: - body
     
@@ -73,13 +75,20 @@ private extension AddTagFeature {
     
     func saveTag(tagName: String) async {
         
-        let entity = TrainingTagData(id: UUID(), tagName: tagName)
+        let currentTagList = await trainingTagApi.fetchAll()
+        if currentTagList.contains(where: { $0.tagName == tagName }) {
+            
+            logger.error("same name already added.")
+            return
+        }
+        
+        let entity = TrainingTagData(id: uuid(), tagName: tagName)
         _ = await trainingTagApi.add(entity)
     }
     
     func updateTag(id: UUID, tagName: String) async {
         
         let entity = TrainingTagData(id: id, tagName: tagName)
-        _ = await trainingTagApi.updateTag(entity)
+        _ = await trainingTagApi.update(entity)
     }
 }

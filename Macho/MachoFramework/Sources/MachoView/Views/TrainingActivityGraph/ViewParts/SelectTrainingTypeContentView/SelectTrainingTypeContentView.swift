@@ -8,6 +8,7 @@
 import Combine
 import ComposableArchitecture
 import Foundation
+import MachoCore
 import SwiftUI
 
 struct SelectTrainingTypeContentView: PopUpableContentView {
@@ -109,13 +110,15 @@ private extension SelectTrainingTypeContentView {
             .padding(trainingTypeContentPadding)
         }
         // TODO: 色は仮決め
-        .fillButtonStyle(foregroundColor: Color(asset: CustomColor.fillButtonForegroundColor),
-                         backgroundColor: Color(
-                            asset: isSelectingTrainingType ?
-                            CustomColor.fillButtonBackgroundColor :
-                                CustomColor.deleteSwipeBackgroundColor
-                         ),
-                         cornerRadius: trainingTypeContentRadius)
+        .fillButtonStyle(
+            foregroundColor: Color(asset: CustomColor.fillButtonForegroundColor),
+            backgroundColor: Color(
+                asset: isSelectingTrainingType ?
+                CustomColor.fillButtonBackgroundColor :
+                    CustomColor.deleteSwipeBackgroundColor
+            ),
+            cornerRadius: trainingTypeContentRadius
+        )
     }
     
     func isSelectingTrainingType(_ targetType: TrainingTypeData) -> Bool {
@@ -146,11 +149,13 @@ private extension SelectTrainingTypeContentView {
         ),
                      reducer: { PopUpFeature() },
                      withDependencies: {
-                         $0.trainingTypeApi = TrainingTypeClient(add: { _ in false },
-                                                                 update: { _ in false },
-                                                                 fetchAll: {
+                         $0.trainingTypeClient = TrainingTypeClient(fetchAllType: {
+                             
                              return selectableTrainingTypeList
-                         }, getPublisher: {
+                         },
+                                                                    add: { _ in false },
+                                                                    getObserve: {
+                             
                              return PassthroughSubject().eraseToAnyPublisher()
                          })
                      })

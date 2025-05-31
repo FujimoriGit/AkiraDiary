@@ -86,7 +86,7 @@ struct TrackableList<Content>: View where Content: View {
     }
     
     var body: some View {
-        WithViewStore(store, observe: { $0 }) { viewStore in
+        WithViewStore(store, observe: \.self) { viewStore in
             GeometryReader { outside in
                 ScrollView {
                     LazyVStack(spacing: .zero) {
@@ -128,9 +128,9 @@ struct TrackableList<Content>: View where Content: View {
     }
 }
 
-struct ScrollOffsetPreferenceKey: PreferenceKey {
+struct ScrollOffsetPreferenceKey: @preconcurrency PreferenceKey {
     
-    static var defaultValue = CGFloat.zero
+    @MainActor static var defaultValue = CGFloat.zero
     
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
         

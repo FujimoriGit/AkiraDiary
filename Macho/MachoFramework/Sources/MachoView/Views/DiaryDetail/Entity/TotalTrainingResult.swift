@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import MachoCore
 
 struct TotalTrainingResult: Equatable {
     

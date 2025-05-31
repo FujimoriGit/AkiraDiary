@@ -7,6 +7,8 @@
 //  Copyright © Macho All rights reserved.
 //
 
+import MachoCore
+
 enum TagConverter {
     
     static func toTag(_ entity: TrainingTagData) -> Tag {

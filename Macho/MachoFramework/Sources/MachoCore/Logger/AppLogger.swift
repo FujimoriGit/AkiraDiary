@@ -7,9 +7,9 @@
 
 import Logging
 
-public struct AppLogger {
+public struct AppLogger: Sendable {
     
-    public static let shared = AppLogger(label: "Macho")
+    public static let shared = Self(label: "Macho")
     
     private let logger: Logger
     
@@ -33,7 +33,9 @@ public struct AppLogger {
                       line: Int = #line,
                       _ message: String) {
         
-        logger.debug(Logger.Message(stringLiteral: "\(file.getFileNameWithExtension() ?? "") \(function) \(line): \(message)"))
+        logger.debug(Logger.Message(
+            stringLiteral: "\(file.getFileNameWithExtension() ?? "") \(function) \(line): \(message)")
+        )
     }
     
     public func info(file: String = #file,
@@ -49,6 +51,8 @@ public struct AppLogger {
                       line: Int = #line,
                       _ message: String) {
         
-        logger.error(Logger.Message(stringLiteral: "\(file.getFileNameWithExtension() ?? "") \(function) \(line): \(message)"))
+        logger.error(Logger.Message(
+            stringLiteral: "\(file.getFileNameWithExtension() ?? "") \(function) \(line): \(message)")
+        )
     }
 }
