@@ -65,13 +65,6 @@
     {
       "target" : {
         "containerPath" : "container:MachoFramework",
-        "identifier" : "MachoModelTests",
-        "name" : "MachoModelTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:MachoFramework",
         "identifier" : "MachoViewTests",
         "name" : "MachoViewTests"
       }

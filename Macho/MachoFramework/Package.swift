@@ -36,7 +36,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", exact: "1.12.1"),
-        .package(url: "https://github.com/realm/realm-swift.git", exact: "10.51.0"),
+//        .package(url: "https://github.com/realm/realm-swift.git", exact: "10.51.0"),
         .package(url: "https://github.com/SwiftGen/SwiftGenPlugin", exact: "6.6.2"),
         .package(url: "https://github.com/apple/swift-log.git", exact: "1.6.1"),
         .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins", exact: "0.56.1")
@@ -74,7 +74,9 @@ let package = Package(
         .target(
             name: "RealmHelper",
             dependencies: [
-                .product(name: "RealmSwift", package: "realm-swift"),
+//                .product(name: "RealmSwift", package: "realm-swift"),
+                "RealmSwiftBinary",
+                "RealmBinary",
                 "MachoCore"
             ],
             plugins: [
@@ -95,6 +97,14 @@ let package = Package(
                 .plugin(name: "SwiftLintBuildToolPlugin",
                         package: "SwiftLintPlugins")
             ]
+        ),
+        .binaryTarget(
+            name: "RealmSwiftBinary",
+            path: "DependencyBinaries/RealmSwift.xcframework"
+        ),
+        .binaryTarget(
+            name: "RealmBinary",
+            path: "DependencyBinaries/Realm.xcframework"
         ),
         .testTarget(
             name: "MachoViewTests",
