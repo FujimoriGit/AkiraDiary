@@ -35,3 +35,6 @@ xcschememanagement.plist
 
 # FirebaseのAPIキーが格納されている秘匿情報なので、リポジトリには公開しない
 GoogleService-Info.plist
+
+# other
+.vscode
