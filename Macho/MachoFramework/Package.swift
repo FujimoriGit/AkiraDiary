@@ -74,9 +74,8 @@ let package = Package(
         .target(
             name: "RealmHelper",
             dependencies: [
-//                .product(name: "RealmSwift", package: "realm-swift"),
-                "RealmSwiftBinary",
-                "RealmBinary",
+                "RealmSwiftXcFramework",
+                "RealmXcFramework",
                 "MachoCore"
             ],
             plugins: [
@@ -99,12 +98,14 @@ let package = Package(
             ]
         ),
         .binaryTarget(
-            name: "RealmSwiftBinary",
-            path: "DependencyBinaries/RealmSwift.xcframework"
+            name: "RealmSwiftXcFramework",
+            url: "https://github.com/realm/realm-swift/releases/download/v20.0.2/RealmSwift@16.3.spm.zip",
+            checksum: "3746294c6d1f80ae58aa6da6659c2fb70de88b9c30c134062c7694b98ce28fac"
         ),
         .binaryTarget(
-            name: "RealmBinary",
-            path: "DependencyBinaries/Realm.xcframework"
+            name: "RealmXcFramework",
+            url: "https://github.com/realm/realm-swift/releases/download/v20.0.2/Realm.spm.zip",
+            checksum: "bc1e522f1ebf4e8afc21e502de424e57b8d155eb42dfbcf03202fd9a16cdcae7"
         ),
         .testTarget(
             name: "MachoViewTests",
