@@ -76,10 +76,10 @@ struct DiaryDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("Detail")
         .navigationDestination(item: $store.scope(
-            state: \.navigationDestination?.editDiaryView,
-            action: \.navigationDestination.editDiaryView
+            state: \.navigationDestination?.editDiary,
+            action: \.navigationDestination.editDiary
         )) {
-            AddContactView(store: $0)
+            DiaryCreationView(store: $0)
         }
         .onAppear {
             store.send(.onAppear)
@@ -105,7 +105,7 @@ private extension DiaryDetailView {
                 createTagsSectionView()
                     .padding(.horizontal, contentsHorizontalPadding)
                 createContentsDivider()
-                createTrainingResultSectionView(store.totalResult)
+                createTrainingResultSectionView(store.totalTrainingResult)
                     .padding(.horizontal, contentsHorizontalPadding)
                 createBasicDivider()
                     .padding(.vertical, resultPerTrainingSectionVerticalSpace)
