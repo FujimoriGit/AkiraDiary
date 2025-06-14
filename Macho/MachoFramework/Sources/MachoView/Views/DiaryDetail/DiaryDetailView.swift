@@ -19,12 +19,7 @@ struct DiaryDetailView: View {
     
     // MARK: layout constant
     
-    private let titleFontSize: CGFloat = 20
-    private let messageFontSize: CGFloat = 13
-    private let sectionTitleFontSize: CGFloat = 14
     private let achievedIconFontSize: CGFloat = 25
-    private let trainingDetailTextFontSize: CGFloat = 14
-    private let tagTextFontSize: CGFloat = 14
     
     private let contentsHorizontalPadding: CGFloat = 16
     private let titleBottomPadding: CGFloat = 18
@@ -118,24 +113,24 @@ private extension DiaryDetailView {
     
     func createTitleView() -> some View {
         Text(store.title)
-            .font(.system(size: titleFontSize, weight: .bold))
+            .font(.title)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
     
     func createMessageView() -> some View {
-        OmittableMessageView(store.message,
-                             fontSize: messageFontSize)
+        OmittableMessageView(store.message)
+            .font(.body)
     }
     
     func createTagsSectionView() -> some View {
         VStack(spacing: tagSectionVerticalPadding) {
             Text("Tags")
-                .font(.system(size: sectionTitleFontSize, weight: .bold))
+                .font(.title2)
                 .frame(maxWidth: .infinity, alignment: .leading)
             FlowLayout(alignment: .leading, spacing: tagsSpace) {
                 ForEach(store.tags) {
                     Text($0.tagName)
-                        .font(.system(size: tagTextFontSize))
+                        .font(.body)
                         .padding(.vertical, tagVerticalPadding)
                         .padding(.horizontal, tagHorizontalPadding)
                         .foregroundStyle(Color(asset: CustomColor.tagForegroundColor))
@@ -150,8 +145,7 @@ private extension DiaryDetailView {
     func createTrainingResultSectionView(_ trainingResult: TotalTrainingResult) -> some View {
         VStack(alignment: .leading, spacing: trainingTotalResultSectionSpace) {
             Text("Training")
-                .font(.system(size: sectionTitleFontSize,
-                              weight: .bold))
+                .font(.title2)
                 .frame(maxWidth: .infinity,
                        alignment: .leading)
             DiaryStatusIconView(status: store.diary.status,
@@ -162,7 +156,7 @@ private extension DiaryDetailView {
                 Text("トレーニング終了時間：\(trainingResult.endDateDisplayText)")
                 Text("総トレーニング時間：\(trainingResult.totalTrainingTimeDurationText)")
             }
-            .font(.system(size: trainingDetailTextFontSize))
+            .font(.body)
         }
     }
     
@@ -178,7 +172,7 @@ private extension DiaryDetailView {
     func createResultPerTrainingItemView(_ resultItem: Goal) -> some View {
         HStack(spacing: .zero) {
             Text(resultItem.trainingType.name)
-                .font(.system(size: sectionTitleFontSize, weight: .bold))
+                .font(.title3)
                 .frame(maxHeight: .infinity,
                        alignment: .topLeading)
             Spacer()
@@ -188,7 +182,7 @@ private extension DiaryDetailView {
                 Text("目標\(String(format: resultDescriptionTextFormat, resultItem.setCount, resultItem.numberOfSets))")
                 Text("達成セット数: \(resultItem.actualSetCount)")
             }
-            .font(.system(size: trainingDetailTextFontSize))
+            .font(.body)
             Spacer()
             if store.isFinishedTraining {
                 AchieveIconView(isAchieved: resultItem.isAchieved, size: achievedIconFontSize)
