@@ -197,7 +197,7 @@ private extension DiaryDetailView {
 
 // MARK: - preview
 
-#Preview {
+#Preview("トレーニング完了") {
     let goal1 = Goal(
         id: UUID(),
         trainingType: .init(id: UUID(), name: "腹筋"),
@@ -212,11 +212,37 @@ private extension DiaryDetailView {
         id: UUID(),
         createdAt: .now,
         title: "Preview",
-        // swiftlint:disable:next line_length
-        mainText: "preview sample message\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        mainText: "preview sample message",
         goals: [goal1],
         tags: [tag1, tag2, tag3],
         endTime: Date()
+    )
+    NavigationView {
+        DiaryDetailView(
+            store: Store(
+                initialState: DiaryDetailFeature.State(diary: initialDiaryEntity),
+                reducer: { DiaryDetailFeature() }
+            )
+        )
+    }
+}
+
+#Preview("トレーニング中") {
+    let goal1 = Goal(
+        id: UUID(),
+        trainingType: .init(id: UUID(), name: "腹筋"),
+        numberOfSets: 3,
+        setCount: 3,
+        actualSetCount: 3
+    )
+    let initialDiaryEntity = Diary(
+        id: UUID(),
+        createdAt: .now,
+        title: "Preview",
+        mainText: "preview sample message",
+        goals: [goal1],
+        tags: [],
+        endTime: nil
     )
     NavigationView {
         DiaryDetailView(
