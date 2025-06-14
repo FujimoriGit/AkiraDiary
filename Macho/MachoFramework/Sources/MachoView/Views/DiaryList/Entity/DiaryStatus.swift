@@ -7,10 +7,14 @@
 //  Copyright © Macho All rights reserved.
 //
 
+import CasePaths
 import Foundation
 
+@CasePathable
 enum DiaryStatus: Equatable {
     
     case training
     case finished(DiaryFinishInfo)
+    
+    var isFinished: Bool { self.is(\.finished) }
 }
