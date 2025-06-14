@@ -20,24 +20,9 @@ struct DiaryDetailView: View {
     // MARK: layout constant
     
     private let achievedIconFontSize: CGFloat = 25
-    
-    private let contentsHorizontalPadding: CGFloat = 16
-    private let titleBottomPadding: CGFloat = 18
-    private let dividerTopPadding: CGFloat = 30
-    private let dividerBottomPadding: CGFloat = 20
-    private let trainingTotalResultSectionSpace: CGFloat = 16
-    private let trainingTotalResultTextSpace: CGFloat = 8
-    private let resultPerTrainingSectionVerticalSpace: CGFloat = 10
-    private let trainingNameTrailingPadding: CGFloat = 16
-    private let tagSectionVerticalPadding: CGFloat = 10
-    private let tagsSpace: CGFloat = 8
-    private let tagVerticalPadding: CGFloat = 4
-    private let tagHorizontalPadding: CGFloat = 8
-    
     private let dividerHeight: CGFloat = 1
-    
     private let tagCornerRadius: CGFloat = 10
-    
+    private let trainingItemDividerOpacity = 0.3
     private let defaultMessageLineLimit = 3
     private let resultDescriptionTextFormat = ":%dセット%d回"
     
@@ -94,18 +79,17 @@ private extension DiaryDetailView {
                 Group {
                     createTitleView()
                     Spacer()
-                        .frame(height: titleBottomPadding)
+                        .frame(height: .space(.medium))
                     createMessageView()
                 }
-                .padding(.horizontal, contentsHorizontalPadding)
+                .padding(.horizontal, .space(.medium))
                 createContentsDivider()
                 createTagsSectionView()
-                    .padding(.horizontal, contentsHorizontalPadding)
+                    .padding(.horizontal, .space(.medium))
                 createContentsDivider()
                 createTrainingResultSectionView(store.totalTrainingResult)
-                    .padding(.horizontal, contentsHorizontalPadding)
-                createBasicDivider()
-                    .padding(.vertical, resultPerTrainingSectionVerticalSpace)
+                    .padding(.horizontal, .space(.medium))
+                createContentsDivider()
                 createResultPerTrainingSectionView(store.trainings)
             }
         }
@@ -123,16 +107,16 @@ private extension DiaryDetailView {
     }
     
     func createTagsSectionView() -> some View {
-        VStack(spacing: tagSectionVerticalPadding) {
+        VStack(spacing: .space(.small)) {
             Text("Tags")
                 .font(.title2)
                 .frame(maxWidth: .infinity, alignment: .leading)
-            FlowLayout(alignment: .leading, spacing: tagsSpace) {
+            FlowLayout(alignment: .leading, spacing: .space(.small)) {
                 ForEach(store.tags) {
                     Text($0.tagName)
                         .font(.body)
-                        .padding(.vertical, tagVerticalPadding)
-                        .padding(.horizontal, tagHorizontalPadding)
+                        .padding(.vertical, .space(.small))
+                        .padding(.horizontal, .space(.small))
                         .foregroundStyle(Color(asset: CustomColor.tagForegroundColor))
                         .background(Color(asset: CustomColor.tagBackgroundColor))
                         .clipShape(RoundedRectangle(cornerRadius: tagCornerRadius))
@@ -143,14 +127,14 @@ private extension DiaryDetailView {
     }
     
     func createTrainingResultSectionView(_ trainingResult: TotalTrainingResult) -> some View {
-        VStack(alignment: .leading, spacing: trainingTotalResultSectionSpace) {
+        VStack(alignment: .leading, spacing: .space(.medium)) {
             Text("Training")
                 .font(.title2)
                 .frame(maxWidth: .infinity,
                        alignment: .leading)
             DiaryStatusIconView(status: store.diary.status,
                                 size: achievedIconFontSize)
-            VStack(alignment: .leading, spacing: trainingTotalResultTextSpace) {
+            VStack(alignment: .leading, spacing: .space(.small)) {
                 Text("種目数：\(trainingResult.trainingCount)")
                 Text("トレーニング開始時間：\(trainingResult.startDateDisplayText)")
                 Text("トレーニング終了時間：\(trainingResult.endDateDisplayText)")
@@ -161,10 +145,13 @@ private extension DiaryDetailView {
     }
     
     func createResultPerTrainingSectionView(_ trainingResultList: [Goal]) -> some View {
-        VStack(alignment: .leading, spacing: resultPerTrainingSectionVerticalSpace) {
+        VStack(alignment: .leading, spacing: .space(.medium)) {
             ForEach(trainingResultList) {
                 createResultPerTrainingItemView($0)
+                Spacer()
+                    .frame(height: .space(.small))
                 createBasicDivider()
+                    .opacity(trainingItemDividerOpacity)
             }
         }
     }
@@ -176,7 +163,7 @@ private extension DiaryDetailView {
                 .frame(maxHeight: .infinity,
                        alignment: .topLeading)
             Spacer()
-                .frame(width: trainingNameTrailingPadding)
+                .frame(width: .space(.medium))
             VStack(spacing: .zero) {
                 Spacer()
                 Text("目標\(String(format: resultDescriptionTextFormat, resultItem.setCount, resultItem.numberOfSets))")
@@ -188,16 +175,14 @@ private extension DiaryDetailView {
                 AchieveIconView(isAchieved: resultItem.isAchieved, size: achievedIconFontSize)
             }
         }
-        .padding(.horizontal, contentsHorizontalPadding)
+        .padding(.horizontal, .space(.medium))
     }
     
     func createContentsDivider() -> some View {
-        VStack(spacing: .zero) {
+        VStack(spacing: .space(.medium)) {
             Spacer()
-                .frame(height: dividerTopPadding)
             createBasicDivider()
             Spacer()
-                .frame(height: dividerBottomPadding)
         }
     }
     
