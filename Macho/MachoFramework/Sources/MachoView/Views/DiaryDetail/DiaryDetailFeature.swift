@@ -147,9 +147,9 @@ extension DiaryDetailFeature {
 
 // MARK: - private method
 
-extension DiaryDetailFeature {
+private extension DiaryDetailFeature {
     
-    fileprivate func addObserveDiaryData(
+    func addObserveDiaryData(
         publisher: AnyPublisher<[DiaryData], Never>,
         targetId: UUID
     ) -> EffectOf<Self> {
