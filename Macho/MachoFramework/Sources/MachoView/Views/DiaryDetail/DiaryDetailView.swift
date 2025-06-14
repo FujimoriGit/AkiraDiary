@@ -134,13 +134,12 @@ private extension DiaryDetailView {
                 .frame(maxWidth: .infinity, alignment: .leading)
             FlowLayout(alignment: .leading, spacing: tagsSpace) {
                 ForEach(store.tags) {
-                    // TODO: 色は仮(藤森さんの実装に合わせる)
                     Text($0.tagName)
                         .font(.system(size: tagTextFontSize))
                         .padding(.vertical, tagVerticalPadding)
                         .padding(.horizontal, tagHorizontalPadding)
-                        .foregroundStyle(Color(asset: CustomColor.fillButtonForegroundColor))
-                        .background(Color(asset: CustomColor.fillButtonBackgroundColor))
+                        .foregroundStyle(Color(asset: CustomColor.tagForegroundColor))
+                        .background(Color(asset: CustomColor.tagBackgroundColor))
                         .clipShape(RoundedRectangle(cornerRadius: tagCornerRadius))
                 }
             }
