@@ -238,8 +238,12 @@ private extension DiaryCreationView {
                             .symbolEffect(.bounce, value: selectionTag.isSelected)
                     }
                     .padding(tagPadding)
-                    .background(selectionTag.isSelected ? .indigo : .gray)
-                    .foregroundStyle(.white)
+                    .background(
+                        selectionTag.isSelected ?
+                        Color(asset: CustomColor.tagBackgroundColor) :
+                            Color(asset: CustomColor.tagUnselectedBackgroundColor)
+                    )
+                    .foregroundStyle(Color(asset: CustomColor.tagForegroundColor))
                     .cornerRadius(14)
                     .onTapGesture {
                         
