@@ -47,6 +47,7 @@ struct DiaryListItemView: View {
         }, label: {
             createDiaryItemContent()
         })
+        .accessibilityLabel("日記項目ボタン")
         .foregroundStyle(Color(asset: CustomColor.appPrimaryTextColor))
         .background(Color(asset: CustomColor.appPrimaryBackgroundColor))
         .addSwipeAction {
@@ -59,7 +60,6 @@ struct DiaryListItemView: View {
                 store.send(.editItemSwipeAction)
             }
         }
-        .accessibilityHidden(true)
     }
 }
 

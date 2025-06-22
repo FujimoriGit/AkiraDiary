@@ -1,0 +1,25 @@
+appId: morimori.Macho
+---
+# 日記リスト画面にいて、日記が一つだけ存在する時に実行可能
+- tapOn: "filter"
+- takeScreenshot: snapshot/filter_diary_list_view.png
+- assertVisible: "日記リストのフィルター設定"
+- tapOn: "目標達成状況"
+- tapOn: "${ACHIEVE_STATUE}"
+- assertVisible: "${ACHIEVE_STATUE}"
+- tapOn: "種目"
+- tapOn: "${TRAINING_TYPE_NAME}"
+- assertVisible: "${TRAINING_TYPE_NAME}"
+- tapOn:
+    id: "minus.circle.fill"
+    index: 2
+- assertNotVisible: "${TRAINING_TYPE_NAME}"
+- tapOn: "タグ"
+- tapOn: "${TAG_NAME}"
+- assertVisible: "${TAG_NAME}"
+- tapOn:
+    id: "minus.circle.fill"
+    index: 2
+- tapOn: "ポップアップ閉じるボタン"
+- assertNotVisible: "日記リストのフィルター設定"
+- assertVisible: "Diary List"
