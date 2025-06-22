@@ -19,7 +19,7 @@ struct DiaryDetailFeature {
     struct DiaryObserveCancellable: Hashable {}
     
     // MARK: - State
-        
+    
     @ObservableState
     struct State: Equatable {
         
@@ -31,18 +31,18 @@ struct DiaryDetailFeature {
         
         /// メッセージをさらに表示しているかどうか
         var isShownMoreMessage = false
-        /// 日記EntityのID
-        @ObservationStateIgnored let diaryId: UUID
+        /// 日記
+        var diary: Diary
         /// 日記のタイトル
-        private(set) var title: String
+        var title: String { diary.title }
         /// 日記のメッセージ
-        private(set) var message: String
+        var message: String { diary.mainText }
         /// 日記のタグ
-        private(set) var tags: [Tag]
-        /// 日記に設定したトレーニングの総合結果
-        private(set) var totalResult: TotalTrainingResult
+        var tags: [Tag] { diary.tags }
         /// 日記に設定したトレーニング種目毎の結果
-        private(set) var trainings: [Goal]
+        var trainings: [Goal] { diary.goals }
+        /// トレーニング結果のメタ情報
+        var totalTrainingResult: TotalTrainingResult
     }
     
     // MARK: - Action
@@ -92,13 +92,8 @@ struct DiaryDetailFeature {
     var body: some ReducerOf<Self> {
         
         Reduce { state, action in
-            
-            logger.info("Did receive action: \(action)")
-            
+                        
             switch action {
-                
-            case .navigationDestination:
-                return .none
                 
             case .onAppear:
                 return .run { send in
@@ -108,8 +103,7 @@ struct DiaryDetailFeature {
                 }
                 
             case .tappedEditButton:
-                // TODO: 編集画面ができたら正しいStateを設定する
-                state.navigationDestination = .editDiaryView(.init(contact: .init(id: .init(.zero), name: "sample")))
+                state.navigationDestination = .editDiary(.init(editTarget: state.diary))
                 return .cancel(id: DiaryObserveCancellable())
                 
             case .tappedBackNavigationButton:
@@ -126,7 +120,11 @@ struct DiaryDetailFeature {
                 return .none
                 
             case .observePublisher(.observeDiaryList(let publisher)):
-                return addObserveDiaryData(publisher: publisher, targetId: state.diaryId)
+                return addObserveDiaryData(publisher: publisher,
+                                           targetId: state.diary.id)
+                
+            case .navigationDestination:
+                return .none
             }
         }
         .ifLet(\.$navigationDestination, action: \.navigationDestination)
@@ -140,8 +138,7 @@ extension DiaryDetailFeature {
     @Reducer(state: .equatable, action: .equatable)
     enum Path {
         
-        // TODO: 編集画面ができたら変更する
-        case editDiaryView(AddContactFeature)
+        case editDiary(DiaryCreationFeature)
     }
 }
 
@@ -167,20 +164,13 @@ extension DiaryDetailFeature.State {
     
     init(diary: Diary) {
         
-        diaryId = diary.id
-        title = diary.title
-        message = diary.mainText
-        tags = diary.tags
-        totalResult = TotalTrainingResult(diary)
-        trainings = diary.goals
+        self.diary = diary
+        totalTrainingResult = TotalTrainingResult(diary)
     }
     
     mutating func updateDiary(_ diary: Diary) {
         
-        title = diary.title
-        message = diary.mainText
-        tags = diary.tags
-        totalResult = TotalTrainingResult(diary)
-        trainings = diary.goals
+        self.diary = diary
+        totalTrainingResult = TotalTrainingResult(diary)
     }
 }
