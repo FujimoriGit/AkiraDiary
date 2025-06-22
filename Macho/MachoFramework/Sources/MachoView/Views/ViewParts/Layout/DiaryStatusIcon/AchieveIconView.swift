@@ -11,6 +11,7 @@ struct AchieveIconView: View {
     
     // MARK: - private property
     
+    @State private var startTime = Date()
     private let isAchieved: Bool
     private let size: CGFloat
     
@@ -29,10 +30,21 @@ struct AchieveIconView: View {
     // MARK: - view body
     
     var body: some View {
-        Text(isAchieved ? "Win" : "Lose")
-            .font(.system(size: size,
-                          weight: .heavy))
-            .foregroundStyle(Color.getWinOrLoseColorByIsAchieved(isAchieved))
+        TimelineView(.animation) { context in
+            Text(isAchieved ? "Win" : "Lose")
+                .font(.system(size: size,
+                              weight: .heavy))
+                .foregroundStyle(Color.getWinOrLoseColorByIsAchieved(isAchieved))
+                .visualEffect { [time = context.date.timeIntervalSince(startTime)] effect, proxy in
+                    effect
+                        .colorEffect(
+                            ShaderLibrary.machoViewLib.winIconShader(
+                                .float2(proxy.size),
+                                .float(time)
+                            )
+                        )
+                }
+        }
     }
 }
 
