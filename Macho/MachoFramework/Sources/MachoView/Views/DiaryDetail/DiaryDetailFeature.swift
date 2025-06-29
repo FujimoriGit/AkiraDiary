@@ -43,6 +43,8 @@ struct DiaryDetailFeature {
         var trainings: [Goal] { diary.goals }
         /// トレーニング結果のメタ情報
         var totalTrainingResult: TotalTrainingResult
+        /// トレーニングが完了しているかどうか
+        var isFinishedTraining: Bool { diary.status.isFinished }
     }
     
     // MARK: - Action
@@ -92,7 +94,7 @@ struct DiaryDetailFeature {
     var body: some ReducerOf<Self> {
         
         Reduce { state, action in
-                        
+            
             switch action {
                 
             case .onAppear:
@@ -120,8 +122,9 @@ struct DiaryDetailFeature {
                 return .none
                 
             case .observePublisher(.observeDiaryList(let publisher)):
-                return addObserveDiaryData(publisher: publisher,
-                                           targetId: state.diary.id)
+                return addObserveDiaryData(
+                    publisher: publisher,
+                    targetId: state.diary.id)
                 
             case .navigationDestination:
                 return .none
@@ -146,8 +149,10 @@ extension DiaryDetailFeature {
 
 private extension DiaryDetailFeature {
     
-    func addObserveDiaryData(publisher: AnyPublisher<[DiaryData], Never>,
-                             targetId: UUID) -> EffectOf<Self> {
+    func addObserveDiaryData(
+        publisher: AnyPublisher<[DiaryData], Never>,
+        targetId: UUID
+    ) -> EffectOf<Self> {
         
         return .publisher {
             publisher
