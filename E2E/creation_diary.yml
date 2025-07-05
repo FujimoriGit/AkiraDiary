@@ -7,13 +7,14 @@ appId: morimori.Macho
 - tapOn:
     id: "textField_title"
     index: 1
-- inputText: "Test"
+- inputText: "TestTitle"
 - tapOn:
     id: "Return"
 - tapOn:
     id: "textField_message"
     index: 1
-- inputText: "Test"
+- inputText: "TestMessage"
+- tapOn: "キーボードを閉じる"
 - tapOn:
     id: "plus.circle.fill"
     index: 0
@@ -41,13 +42,11 @@ appId: morimori.Macho
 - tapOn: "TestTrainingType"
 - tapOn:
     id: "textField_number_of_sets"
-- tapOn:
-    id: "delete"
+- tapOn: "Delete"
 - inputText: "3"
 - tapOn:
     id: "textField_set_count"
-- tapOn:
-    id: "delete"
+- tapOn: "Delete"
 - inputText: "3"
 - tapOn: "Save"
 - assertVisible: "TestTrainingType"
@@ -55,3 +54,5 @@ appId: morimori.Macho
 - assertVisible: "3 回, 3 セット"
 - takeScreenshot: snapshot/creation_diary_complete
 - tapOn: "Training Start!"
+- assertVisible: "TestTitle"
+- assertVisible: "TestMessage"

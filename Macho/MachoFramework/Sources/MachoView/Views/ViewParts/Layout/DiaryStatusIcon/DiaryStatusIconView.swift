@@ -37,6 +37,7 @@ struct DiaryStatusIconView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: size, height: size)
+                .accessibilityHidden(true)
         case .finished(let info):
             AchieveIconView(isAchieved: info.isAchieved, size: size)
         }

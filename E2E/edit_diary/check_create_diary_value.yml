@@ -1,0 +1,11 @@
+appId: morimori.Macho
+---
+# 日記作成/編集画面が表示されていること
+- assertVisible:
+    text: ${TITLE}
+- assertVisible:
+    text: ${MESSAGE}
+- assertVisible: ${TAGNAME}
+- assertVisible: ${TRAINING_TYPE_NAME}
+- assertVisible: "${COUNT_PER_SET} 回, ${SET_COUNT} セット"
+- assertVisible: "達成セット: ${ARCHIVE_SET_COUNT}"

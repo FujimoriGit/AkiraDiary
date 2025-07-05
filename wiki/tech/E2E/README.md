@@ -11,11 +11,10 @@ https://qiita.com/stotic-dev/items/90dc99e440a7378cdf2d
 - macos
 - homebrew をインストールしていること
 
-以下コマンドを実行して、maestro をインストールします。
+以下コマンドをリポジトリのルートディレクトリで実行して、maestro をインストールします。
 
 ```console
-brew tap mobile-dev-inc/tap
-brew install maestro
+bash scripts/create_e2e_env.sh
 ```
 
 ## E2E テストの実行方法

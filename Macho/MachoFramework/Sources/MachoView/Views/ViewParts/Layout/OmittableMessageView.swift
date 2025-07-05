@@ -18,7 +18,6 @@ struct OmittableMessageView: View {
     // MARK: parameter
     
     private let text: String
-    private let fontSize: CGFloat
     private let maxLength: Int
     
     // MARK: other
@@ -35,14 +34,12 @@ struct OmittableMessageView: View {
     // MARK: - initialize method
     
     init(_ text: String,
-         fontSize: CGFloat = 14,
          maxLength: Int = 200) {
         
         let isShowing = text.count <= maxLength
         
         self.text = text
         
-        self.fontSize = fontSize
         self.maxLength = maxLength
         self.isShowing = isShowing
     }
@@ -52,7 +49,6 @@ struct OmittableMessageView: View {
     var body: some View {
         if isShowing {
             Text(text)
-                .font(.system(size: fontSize))
                 .multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -63,7 +59,6 @@ struct OmittableMessageView: View {
                         let separateChars = getSeparateChar(text: lineText)
                         ForEach(separateChars, id: \.self) {
                             Text($0)
-                                .font(.system(size: fontSize))
                         }
                         if let lastString = separateChars.last,
                            lastString == Self.threePointLeader {
@@ -84,7 +79,6 @@ private extension OmittableMessageView {
             isShowing.toggle()
         } label: {
             Text("さらに表示")
-                .font(.system(size: fontSize))
         }
         .frameButtonStyle(backgroundColor: .clear,
                           frameWidth: .zero)
@@ -134,6 +128,7 @@ private extension OmittableMessageView {
     VStack {
         Text("Hello")
         OmittableMessageView("lsjfljslfjsiejflsjel")
+            .font(.body)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
 }

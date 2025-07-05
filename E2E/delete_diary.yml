@@ -1,0 +1,22 @@
+appId: morimori.Macho
+---
+# 日記が一つだけ存在する時に実行可能
+- swipe:
+    from:
+      text: "日記項目ボタン"
+    start: 85%,25%
+    end: 26%,24%
+    duration: 950
+- tapOn: "Trash"
+- assertVisible: "日記の削除しますか？"
+- tapOn: "Cancel"
+- swipe:
+    from:
+      text: "日記項目ボタン"
+    start: 85%,25%
+    end: 26%,24%
+    duration: 950
+- tapOn: "Trash"
+- tapOn: "OK"
+- assertNotVisible: "日記項目ボタン"
+- assertVisible: "表示する日記がありません"

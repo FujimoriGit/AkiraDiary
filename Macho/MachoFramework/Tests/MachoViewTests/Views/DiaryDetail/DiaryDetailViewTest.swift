@@ -8,8 +8,8 @@
 import ComposableArchitecture
 import XCTest
 
-@testable import MachoView
 @testable import MachoCore
+@testable import MachoView
 @testable import RealmHelper
 
 final class DiaryDetailViewTest: XCTestCase {
@@ -29,12 +29,14 @@ final class DiaryDetailViewTest: XCTestCase {
         let mockRealm = try await RealmTestHelper.getMockRealm()
         let mockClient = await DiaryEntityClient.getMockClient(realm: mockRealm, initialValue: [])
         
-        let testStore = TestStore(initialState: .init(diary: Self.sampleDiaryEntity1),
-                                  reducer: { DiaryDetailFeature() },
-                                  withDependencies: {
-            $0.diaryEntityClient = mockClient
-            $0.dismiss = .init { isDismissInvoked.setValue(true) }
-        })
+        let testStore = TestStore(
+            initialState: .init(diary: Self.sampleDiaryEntity1),
+            reducer: { DiaryDetailFeature() },
+            withDependencies: {
+                $0.diaryEntityClient = mockClient
+                $0.dismiss = .init { isDismissInvoked.setValue(true) }
+            }
+        )
         
         await testStore.send(.onAppear)
         await testStore.receive(\.observePublisher)
@@ -63,20 +65,21 @@ final class DiaryDetailViewTest: XCTestCase {
         
         let mockRealm = try await RealmTestHelper.getMockRealm()
         let mockClient = await DiaryEntityClient.getMockClient(realm: mockRealm, initialValue: [])
-        let testStore = TestStore(initialState: DiaryDetailFeature.State(diary: Self.sampleDiaryEntity1),
-                                  reducer: { DiaryDetailFeature() },
-                                  withDependencies: {
-            
-            $0.diaryEntityClient = mockClient
-        })
+        let testStore = TestStore(
+            initialState: DiaryDetailFeature.State(diary: Self.sampleDiaryEntity1),
+            reducer: { DiaryDetailFeature() },
+            withDependencies: {
+                
+                $0.diaryEntityClient = mockClient
+            }
+        )
         
         await testStore.send(.onAppear)
         await testStore.receive(\.observePublisher)
         
         await testStore.send(.tappedEditButton) {
             
-            // TODO: 編集画面が実装されたら正しい値を入れる
-            $0.navigationDestination = .editDiaryView(.init(contact: .init(id: .init(.zero), name: "sample")))
+            $0.navigationDestination = .editDiary(.init(editTarget: Self.sampleDiaryEntity1))
         }
     }
     
@@ -94,13 +97,15 @@ final class DiaryDetailViewTest: XCTestCase {
         let mockRealm = try await RealmTestHelper.getMockRealm()
         let mockClient = await DiaryEntityClient.getMockClient(realm: mockRealm, initialValue: [])
         
-        let testStore = TestStore(initialState: DiaryDetailFeature.State(diary: Self.sampleDiaryEntity1),
-                                  reducer: { DiaryDetailFeature() },
-                                  withDependencies: {
-            
-            $0.diaryEntityClient = mockClient
-            $0.dismiss = .init { isDismissInvoked.setValue(true) }
-        })
+        let testStore = TestStore(
+            initialState: DiaryDetailFeature.State(diary: Self.sampleDiaryEntity1),
+            reducer: { DiaryDetailFeature() },
+            withDependencies: {
+                
+                $0.diaryEntityClient = mockClient
+                $0.dismiss = .init { isDismissInvoked.setValue(true) }
+            }
+        )
         
         await testStore.send(.onAppear)
         await testStore.receive(\.observePublisher)
