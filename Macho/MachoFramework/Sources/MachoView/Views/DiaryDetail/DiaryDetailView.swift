@@ -136,8 +136,7 @@ private extension DiaryDetailView {
                                 size: achievedIconFontSize)
             VStack(alignment: .leading, spacing: .space(.small)) {
                 Text("種目数：\(trainingResult.trainingCount)")
-                Text("トレーニング開始時間：\(trainingResult.startDateDisplayText)")
-                Text("トレーニング終了時間：\(trainingResult.endDateDisplayText)")
+                Text("トレーニング日：\(trainingResult.startDateDisplayText)")
                 Text("総トレーニング時間：\(trainingResult.totalTrainingTimeDurationText)")
             }
             .font(.macho(.description))
