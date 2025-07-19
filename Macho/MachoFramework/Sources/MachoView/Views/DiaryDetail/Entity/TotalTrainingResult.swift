@@ -10,23 +10,14 @@ import MachoCore
 
 struct TotalTrainingResult: Equatable {
     
-    // 時間の表示形式
-    private static let displayDateFormat: Date.MachoFormat = .localeDateTime
     // 時間が表示できない場合のデフォルト文言
     private static let defaultDateDisplayText = "まだ記録されていません"
     
     /// トレーニング種目数
     let trainingCount: Int
-    ///　トレーニングが終了しているかどうか
-    let isFinished: Bool
-    /// 全ての目標を達成したかどうか
-    let isAchievedTotalGoal: Bool
     
-    /// トレーニング開始時間
+    /// トレーニング開始日
     let startDateDisplayText: String
-    
-    /// トレーニング終了時間
-    let endDateDisplayText: String
     
     /// トレーニング総時間
     let totalTrainingTimeDurationText: String
@@ -34,13 +25,10 @@ struct TotalTrainingResult: Equatable {
     init(_ diary: Diary) {
         
         trainingCount = diary.goals.count
-        startDateDisplayText = Self.getDisplayDateText(diary.createdAt)
+        startDateDisplayText = Self.getDisplayDateText(date: diary.createdAt)
         
         if case .finished(let info) = diary.status {
             
-            isFinished = true
-            isAchievedTotalGoal = info.isAchieved
-            endDateDisplayText = Self.getDisplayDateText(info.endTime)
             totalTrainingTimeDurationText = Self.getTotalTrainingTimeDurationText(
                 from: diary.createdAt,
                 to: info.endTime
@@ -48,33 +36,26 @@ struct TotalTrainingResult: Equatable {
         }
         else {
             
-            isFinished = false
-            isAchievedTotalGoal = false
-            endDateDisplayText = Self.getDisplayDateText(nil)
-            totalTrainingTimeDurationText = Self.getTotalTrainingTimeDurationText(
-                from: diary.createdAt,
-                to: nil
-            )
+            totalTrainingTimeDurationText = Self.defaultDateDisplayText
         }
     }
 }
 
 private extension TotalTrainingResult {
     
-    static func getDisplayDateText(_ date: Date?) -> String {
+    static func getDisplayDateText(date: Date) -> String {
         
-        guard let text = date?.formatted(Self.displayDateFormat,
-                                         timeZone: .autoupdatingCurrent) else {
-            
-            return Self.defaultDateDisplayText
-        }
-        
-        return text
+        return date.formatted(.localDate)
     }
     
-    static func getTotalTrainingTimeDurationText(from startDate: Date, to endDate: Date?) -> String {
+    static func getTotalTrainingTimeDurationText(from startDate: Date,
+                                                 to endDate: Date?) -> String {
         
         guard let endDate else { return Self.defaultDateDisplayText }
-        return getDisplayDateText(Date(timeIntervalSince1970: endDate.timeIntervalSince(startDate)))
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.hour, .minute, .second]
+        formatter.unitsStyle = .positional
+        formatter.zeroFormattingBehavior = .pad
+        return formatter.string(from: startDate, to: endDate) ?? Self.defaultDateDisplayText
     }
 }
