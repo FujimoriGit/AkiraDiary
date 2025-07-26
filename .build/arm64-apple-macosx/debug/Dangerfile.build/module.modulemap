@@ -1,4 +1,0 @@
-module Dangerfile {
-    header "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Dangerfile.build/Dangerfile-Swift.h"
-    requires objc
-}

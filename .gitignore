@@ -33,7 +33,10 @@ Macho/*.build/
 iOSInjectionProject/
 xcschememanagement.plist
 
+# SPM
 SourcePackages
+.swiftpm
+.build
 
 # FirebaseのAPIキーが格納されている秘匿情報なので、リポジトリには公開しない
 GoogleService-Info.plist
