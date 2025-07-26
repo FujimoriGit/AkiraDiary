@@ -21,7 +21,7 @@ if let github = danger.github {
 
 // SwiftLintのレビュー
 
-let swiftLintPath = SwiftLint.SwiftlintPath.bin(".build/artifacts/swiftlintplugins/SwiftLintBinary/SwiftLintBinary.artifactbundle/swiftlint-0.58.0-macos/bin/swiftlint")
+let swiftLintPath = SwiftLint.SwiftlintPath.bin("Danger/.build/artifacts/swiftlintplugins/SwiftLintBinary/SwiftLintBinary.artifactbundle/swiftlint-0.58.0-macos/bin/swiftlint")
 let lintTargets: [SwiftLintTarget] = [
     .init(
         targetPath: "Macho/MachoFramework/Sources/MachoView",
