@@ -108,7 +108,8 @@ jobs:
 
       # テスト結果の確認
       - name: Analyze Danger
-        run: swift run danger-swift ci --verbose
-        working-directory: Danger
+        run: |
+          cd Danger
+          swift run danger-swift ci --cwd ../ --verbose
         env:
           GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_TOKEN }}
