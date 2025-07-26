@@ -110,6 +110,7 @@ jobs:
       - name: Analyze Danger
         run: |
           cd Danger
+          swift build
           swift run danger-swift ci --cwd ../ --verbose
         env:
           GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_TOKEN }}
