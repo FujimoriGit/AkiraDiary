@@ -14,9 +14,7 @@ import MachoCore
 struct DiaryDetailFeature {
     
     // MARK: - Cancellable definition
-    
-    // TODO: Debug
-    
+        
     // フィルターテーブル監視のCancellable
     struct DiaryObserveCancellable: Hashable {}
     
