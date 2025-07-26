@@ -99,13 +99,13 @@ let package = Package(
         ),
         .binaryTarget(
             name: "RealmSwiftXcFramework",
-            url: "https://github.com/realm/realm-swift/releases/download/v20.0.2/RealmSwift@16.3.spm.zip",
-            checksum: "3746294c6d1f80ae58aa6da6659c2fb70de88b9c30c134062c7694b98ce28fac"
+            url: "https://github.com/realm/realm-swift/releases/download/v20.0.3/RealmSwift@16.4.spm.zip",
+            checksum: "840a5fb0ad5d55d29de2ced5a3c9cb9114360ad906c30b0502ed2a33f1dbba8c"
         ),
         .binaryTarget(
             name: "RealmXcFramework",
-            url: "https://github.com/realm/realm-swift/releases/download/v20.0.2/Realm.spm.zip",
-            checksum: "bc1e522f1ebf4e8afc21e502de424e57b8d155eb42dfbcf03202fd9a16cdcae7"
+            url: "https://github.com/realm/realm-swift/releases/download/v20.0.3/Realm.spm.zip",
+            checksum: "6185f0f65c081da02ac90cd3e3db867dfa832cc2f8f7f4d7aba2f091994b311f"
         ),
         .testTarget(
             name: "MachoViewTests",
