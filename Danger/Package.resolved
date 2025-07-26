@@ -1,5 +1,5 @@
 {
-  "originHash" : "91d3b9aaa1ab49c1d544d3832b5e7d8f3d04254cac23919164ada5302f060a6f",
+  "originHash" : "7159fe01d1884da75da0620a824c31a7e5f938d2d8af27f5a4eac02ce81f6ae8",
   "pins" : [
     {
       "identity" : "danger-swift-coverage",
@@ -42,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/danger/swift.git",
       "state" : {
-        "revision" : "bb4faf2c5613960b3de954c631cedd4dc63c3fef",
-        "version" : "3.21.1"
+        "revision" : "7e8470aa67b3096c132fa45d3e0ee5488b992f0f",
+        "version" : "3.21.2"
       }
     },
     {
