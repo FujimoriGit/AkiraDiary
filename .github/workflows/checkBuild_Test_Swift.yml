@@ -22,6 +22,7 @@ env:
   TARGET_SCHEME: Macho
   GOOGLE_SERVICE_INFO_PLIST_PATH: ./Macho/Macho/GoogleService-Info.plist
   SPM_PACKAGE_RESOLVED_FILE_PATH: Macho/Macho.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+  DANGER_SPM_PACKAGE_RESOLVED_FILE_PATH: Danger/Package.resolved
 
 jobs:
   build:
@@ -54,6 +55,14 @@ jobs:
       # DangerJSをインストール
       - name: Install Dnager JS
         run: npm install -g danger
+
+      # SPMのライブラリのキャッシュ
+      - name: Cache Swift Packages for Danger
+        uses: actions/cache@v4.2.0
+        with:
+          path: Danger/.build
+          key: ${{ runner.os }}-spm-${{ hashFiles(env.DANGER_SPM_PACKAGE_RESOLVED_FILE_PATH) }}
+          restore-keys: ${{ runner.os }}-spm-
 
       # SPMのライブラリのキャッシュ
       - name: Cache Swift Packages
@@ -99,6 +108,9 @@ jobs:
 
       # テスト結果の確認
       - name: Analyze Danger
-        run: swift run danger-swift ci
+        run: |
+          swift build
+          swift run danger-swift ci --cwd ../ --verbose
+        working-directory: Danger
         env:
           GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_TOKEN }}

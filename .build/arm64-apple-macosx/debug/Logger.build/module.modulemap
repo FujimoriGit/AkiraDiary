@@ -1,4 +1,0 @@
-module Logger {
-    header "/Users/satoutaichi/work/product/AkiraDiary/.build/arm64-apple-macosx/debug/Logger.build/Logger-Swift.h"
-    requires objc
-}
