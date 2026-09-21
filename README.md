@@ -5,7 +5,6 @@
 ## 目次
 
 - [タスク管理](wiki/rules/taskRule.md)
-- [タスク管理](wiki/rules/taskRule.md)
 - [ライブラリ管理ツール](wiki/tech/LibraryManagerTool/README.md)
 - [SPM でのライブラリアップデート](wiki/tech/SPMUpdate/README.md)
 - [GitHub Actions](wiki/tech/GitActions/README.md)
